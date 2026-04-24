@@ -52,15 +52,17 @@
 
 <header class="site-header">
   <nav class="nav" aria-label="Primary">
+
     <a class="nav-logo" href="/" aria-label="Velox Peptides">
-      <svg class="nav-logo-svg" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <svg class="nav-logo-svg" width="34" height="34" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="18" cy="18" r="16.5" fill="none" stroke="rgba(1,211,160,0.2)" stroke-width="4"/>
         <circle cx="18" cy="18" r="16.5" fill="none" stroke="#01D3A0" stroke-width="1.5"/>
         <circle cx="18" cy="18" r="11" fill="rgba(1,211,160,0.09)"/>
-        <circle cx="18" cy="18" r="16.5" fill="none" stroke="rgba(1,211,160,0.18)" stroke-width="4"/>
         <text x="18" y="23" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="900" font-size="13" fill="#01D3A0" letter-spacing="1.5">VP</text>
       </svg>
-      <span class="nav-logo-wordmark">Velox Peptides</span>
+      <span class="nav-logo-wordmark"><span class="nlw-vp">VP</span> VELOX PEPTIDES</span>
     </a>
+
     <div class="nav-links">
       <a class="nl " href="/compounds/">Compounds</a>
       <a class="nl active" href="/stacks/">Stacks</a>
@@ -68,15 +70,24 @@
       <a class="nl " href="/about/">About</a>
       <a class="nl " href="/contact/">Contact</a>
     </div>
+
     <div class="nav-actions">
+      <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
       <a class="nav-cart" href="/cart/" aria-label="View order">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span class="nav-cart-count" id="nav-cart-count">0</span>
       </a>
       <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
+
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true">
     <a href="/compounds/" class="mob-nl">Compounds</a>
@@ -97,8 +108,8 @@
 </header>
 
 
-<div class="disc-bar" role="note" aria-label="Research use disclaimer">
-  <span class="disc-track">RESEARCH USE ONLY — All compounds for in vitro scientific research only. Not for human or veterinary consumption. Not evaluated by MHRA or FDA. By placing an order you confirm you are a qualified researcher using compounds for lawful research purposes only.&nbsp;·&nbsp; RESEARCH USE ONLY — All compounds for in vitro scientific research only. Not for human or veterinary consumption. Not evaluated by MHRA or FDA. By placing an order you confirm you are a qualified researcher using compounds for lawful research purposes only.&nbsp;·&nbsp; RESEARCH USE ONLY — All compounds for in vitro scientific research only. Not for human or veterinary consumption. Not evaluated by MHRA or FDA. By placing an order you confirm you are a qualified researcher using compounds for lawful research purposes only.&nbsp;·&nbsp; </span>
+<div class="ann-bar" role="note" aria-label="Site announcements">
+  <div class="ann-track" aria-hidden="true">FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&middot;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&middot;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&middot;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&middot;&nbsp;&nbsp;48H UK DISPATCH&nbsp;&nbsp;&middot;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&middot;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&middot;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&middot;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&middot;&nbsp;&nbsp;48H UK DISPATCH&nbsp;&nbsp;&middot;&nbsp;&nbsp;</div>
 </div>
 
 <main class="site-main">
@@ -308,33 +319,55 @@
   </div>
 </footer>
 
-<div class="entry-gate" id="entry-gate" role="dialog" aria-modal="true" aria-labelledby="entry-gate-title">
+<div class="entry-gate" id="entry-gate" role="dialog" aria-modal="true" aria-labelledby="eg-av-title">
   <div class="eg-i">
-    <div class="eg-top">
-      <svg width="36" height="36" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="20" cy="20" r="19" fill="none" stroke="#01D3A0" stroke-width="1"/>
-        <text x="20" y="26" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="800" font-size="16" fill="#01D3A0">VP</text>
+
+    <div class="eg-logo-wrap">
+      <svg class="eg-logo-svg" width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="28" cy="28" r="26" fill="none" stroke="rgba(1,211,160,0.2)" stroke-width="6"/>
+        <circle cx="28" cy="28" r="26" fill="none" stroke="#01D3A0" stroke-width="1.5"/>
+        <circle cx="28" cy="28" r="17" fill="rgba(1,211,160,0.08)"/>
+        <text x="28" y="35" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="900" font-size="20" fill="#01D3A0" letter-spacing="2">VP</text>
       </svg>
-      <div class="eg-eyebrow">RESEARCH USE ONLY</div>
-      <h2 id="entry-gate-title" class="eg-title">Research-Use Acknowledgement</h2>
+      <span class="eg-logo-name">VELOX PEPTIDES</span>
     </div>
-    <div class="eg-body">
-      <p>Velox Peptides supplies research reagents for in vitro use by qualified researchers. All compounds sold on this website are intended strictly for laboratory scientific research and are not for human or veterinary consumption.</p>
-      <p>By continuing to use this website you confirm that:</p>
-      <ul>
-        <li>You are a qualified researcher, laboratory professional, or otherwise authorised to handle research chemicals under applicable UK law.</li>
-        <li>You will use all compounds solely for lawful in vitro research, and not for human or animal administration, diagnosis, treatment, cure, or prevention of any condition.</li>
-        <li>You accept our <a href="/legal/research-use-policy/">Research Use Policy</a> and <a href="/legal/terms/">Terms &amp; Conditions</a>.</li>
-        <li>You are aged 18 or over.</li>
-      </ul>
+
+    <div class="eg-eyebrow">AGE VERIFICATION</div>
+    <h2 id="eg-av-title" class="eg-av-title">Confirm your eligibility</h2>
+    <p class="eg-sub">This website is restricted to qualified researchers aged 21 or over. All products are for in vitro research use only.</p>
+
+    <div class="eg-checks">
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am 21 years of age or older</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am a qualified researcher, scientist, or laboratory professional</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">All products will be used for lawful in vitro research only &mdash; not for human consumption</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I accept the <a href="/legal/terms/" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank" rel="noopener">Research Use Disclaimer</a></span>
+      </label>
     </div>
+
+    <div class="eg-disclaimer">
+      All products sold for research use only. Not for human consumption. Not evaluated by the MHRA or FDA.
+    </div>
+
     <div class="eg-actions">
-      <button class="eg-btn eg-btn-p" id="eg-accept">I confirm &mdash; continue</button>
-      <a class="eg-btn eg-btn-o" href="https://www.gov.uk" rel="noopener">Exit site</a>
+      <button class="eg-btn eg-btn-p" id="eg-accept">I CONFIRM &mdash; ENTER SITE</button>
+      <a class="eg-exit-link" href="https://www.gov.uk" rel="noopener">Exit</a>
     </div>
-    <div class="eg-foot">
-      Not for human or veterinary consumption. Not evaluated by the MHRA or FDA.
-    </div>
+
   </div>
 </div>
 

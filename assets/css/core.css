@@ -2050,3 +2050,82 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 @media(max-width:479px){
   .stds-grid{grid-template-columns:1fr;}
 }
+
+/* =======================================================================
+   ENTRY GATE v2 — Age verification modal with checkboxes
+======================================================================= */
+
+/* Reset old eg-* rules that conflict */
+.eg-eyebrow{font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;text-align:center;}
+.eg-av-title{font-family:var(--disp);font-size:30px;font-weight:900;text-transform:uppercase;color:#fff;text-align:center;margin-bottom:8px;letter-spacing:-.01em;}
+.eg-sub{font-size:13px;color:var(--t2);line-height:1.65;text-align:center;margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto;}
+
+/* Logo inside entry gate */
+.eg-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:20px;}
+.eg-logo-svg{flex-shrink:0;}
+.eg-logo-name{font-family:var(--disp);font-size:18px;font-weight:900;color:#fff;letter-spacing:.12em;text-transform:uppercase;}
+
+/* Checkboxes */
+.eg-checks{display:flex;flex-direction:column;gap:0;margin-bottom:20px;}
+.eg-check-row{display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 0;border-bottom:1px solid var(--brd);}
+.eg-check-row:last-child{border-bottom:none;}
+.eg-check-row input[type="checkbox"]{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
+.eg-check-box{width:20px;height:20px;min-width:20px;border:2px solid var(--brd2);border-radius:4px;background:var(--bg2);display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;margin-top:1px;flex-shrink:0;}
+.eg-check-row input[type="checkbox"]:checked ~ .eg-check-box{background:var(--g);border-color:var(--g);}
+.eg-check-row input[type="checkbox"]:checked ~ .eg-check-box::after{content:'';display:block;width:5px;height:9px;border:2px solid #000;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);}
+.eg-check-label{font-size:13px;color:var(--t1);line-height:1.55;user-select:none;}
+.eg-check-label a{color:var(--g);text-decoration:none;}
+.eg-check-label a:hover{text-decoration:underline;}
+
+/* Gold disclaimer */
+.eg-disclaimer{font-family:var(--mono);font-size:10px;color:rgba(245,200,66,.75);letter-spacing:.04em;line-height:1.6;text-align:center;padding:14px 0;border-top:1px solid rgba(245,200,66,.15);border-bottom:1px solid rgba(245,200,66,.15);margin-bottom:20px;}
+
+/* Actions */
+.eg-actions{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.eg-btn-p{background:var(--g);color:#000;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:15px 32px;border:none;border-radius:var(--r);cursor:pointer;width:100%;transition:background .15s;line-height:1;}
+.eg-btn-p:hover{background:var(--gh);}
+.eg-btn-p:disabled{background:var(--bg4);color:var(--t3);cursor:not-allowed;}
+.eg-exit-link{font-family:var(--mono);font-size:11px;color:var(--t3);text-decoration:none;letter-spacing:.08em;transition:color .15s;}
+.eg-exit-link:hover{color:var(--t1);}
+
+/* =======================================================================
+   HEADER v2 — teal-underline nav links, Instagram icon, VP wordmark
+======================================================================= */
+
+/* VP prefix in wordmark */
+.nav-logo-wordmark{font-family:var(--disp);font-size:15px;font-weight:900;color:#fff;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+.nlw-vp{color:#01D3A0;}
+
+/* Nav links — teal underline on hover/active */
+.site-header .nl{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--t2);padding:7px 14px;background:none;border:none;border-radius:0;text-decoration:none;position:relative;transition:color .15s;display:inline-flex;align-items:center;}
+.site-header .nl::after{content:'';position:absolute;bottom:-1px;left:14px;right:14px;height:2px;background:var(--g);transform:scaleX(0);transform-origin:center;transition:transform .2s ease;}
+.site-header .nl:hover{color:#fff;background:none;}
+.site-header .nl:hover::after{transform:scaleX(1);}
+.site-header .nl.active{color:#fff;}
+.site-header .nl.active::after{transform:scaleX(1);}
+
+/* Instagram icon */
+.nav-ig{display:flex;align-items:center;justify-content:center;color:var(--t2);text-decoration:none;padding:7px 9px;border-radius:var(--r);transition:color .15s;}
+.nav-ig:hover{color:#fff;}
+
+/* =======================================================================
+   ANNOUNCEMENT BANNER — teal text, dark bg, continuous scroll
+======================================================================= */
+
+.ann-bar{background:#0d0f12;border-bottom:1px solid rgba(1,211,160,.12);padding:9px 0;overflow:hidden;white-space:nowrap;}
+.ann-track{display:inline-block;font-family:var(--mono);font-size:10px;color:#01D3A0;letter-spacing:.1em;animation:ann-scroll 35s linear infinite;}
+.ann-bar:hover .ann-track{animation-play-state:paused;}
+@keyframes ann-scroll{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+
+/* Hide old disc-bar if still rendered anywhere */
+.disc-bar{display:none !important;}
+
+/* Responsive */
+@media(max-width:767px){
+  .nav-logo-wordmark{font-size:13px;}
+  .nav-ig{padding:7px 6px;}
+  .ann-track{font-size:9px;}
+}

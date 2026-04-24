@@ -15,7 +15,25 @@
     } else {
       gate.style.display = 'none';
     }
+
+    // Checkbox validation — all four must be checked to confirm
     var acceptBtn = document.getElementById('eg-accept');
+    var checkboxes = gate.querySelectorAll('.eg-cb');
+
+    function syncBtn() {
+      if (!acceptBtn) return;
+      var allChecked = true;
+      for (var i = 0; i < checkboxes.length; i++) {
+        if (!checkboxes[i].checked) { allChecked = false; break; }
+      }
+      acceptBtn.disabled = !allChecked;
+    }
+
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].addEventListener('change', syncBtn);
+    }
+    syncBtn(); // set initial state
+
     if (acceptBtn) {
       acceptBtn.addEventListener('click', function () {
         document.cookie = 'vp_entry=1; Path=/; Max-Age=2592000; SameSite=Lax';
