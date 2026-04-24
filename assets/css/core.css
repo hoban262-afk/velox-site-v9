@@ -1981,3 +1981,72 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
   .cp-section { padding: 16px 12px 0; }
   .confirm-card { padding: 16px 12px; }
 }
+
+/* =======================================================================
+   DESIGN UPGRADE — Standards, Newsletter, Community + Typography overrides
+======================================================================= */
+
+/* -- Typography overrides: use display font for all major headings -- */
+.page-h1{font-family:var(--disp);font-size:52px;font-weight:900;text-transform:uppercase;letter-spacing:-.01em;}
+.cc-name,.cc .cc-name{font-family:var(--disp);font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;}
+.cat-tile-name{font-family:var(--disp);font-size:22px;font-weight:900;text-transform:uppercase;letter-spacing:.02em;}
+.cta-t{font-family:var(--disp);font-size:40px;font-weight:900;text-transform:uppercase;letter-spacing:-.01em;}
+.stack-card-name{font-family:var(--disp);font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;}
+.cp-h1{font-family:var(--disp) !important;font-weight:900 !important;text-transform:uppercase !important;}
+
+/* -- Standards section -- */
+.stds-sec{padding:72px 0;}
+.stds-sec .sec-i{display:flex;flex-direction:column;align-items:stretch;}
+.stds-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:8px;}
+.std-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);padding:28px 20px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s;}
+.std-card:hover{border-color:var(--g);}
+.std-ic{width:40px;height:40px;border-radius:50%;background:rgba(1,211,160,.1);border:1px solid rgba(1,211,160,.25);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.std-t{font-family:var(--disp);font-size:17px;font-weight:800;text-transform:uppercase;color:#fff;line-height:1.2;letter-spacing:.02em;}
+.std-p{font-size:12px;color:var(--t2);line-height:1.65;}
+
+/* -- Newsletter section -- */
+.nl-sec{padding:72px 0;background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);border-top:1px solid var(--brd);}
+.nl-inner{max-width:640px;margin:0 auto;text-align:center;}
+.nl-eyebrow{font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.15em;margin-bottom:12px;}
+.nl-t{font-family:var(--disp);font-size:40px;font-weight:900;text-transform:uppercase;color:#fff;margin-bottom:10px;}
+.nl-sub{font-size:15px;color:var(--t2);line-height:1.65;margin-bottom:28px;}
+.nl-row{display:flex;gap:10px;max-width:480px;margin:0 auto 12px;}
+.nl-inp{flex:1;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:0 16px;height:46px;font-family:'Inter',sans-serif;font-size:14px;color:#fff;outline:none;transition:border-color .15s;}
+.nl-inp::placeholder{color:var(--t3);}
+.nl-inp:focus{border-color:var(--g);}
+.nl-btn{background:var(--g);color:#000;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:0 22px;height:46px;border:none;border-radius:var(--r);cursor:pointer;white-space:nowrap;transition:background .15s;}
+.nl-btn:hover{background:var(--gh);}
+.nl-disc{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:.03em;}
+
+/* -- Community section -- */
+.comm-sec{padding:72px 0;border-top:1px solid var(--brd);}
+.comm-h{font-family:var(--disp);font-size:44px;font-weight:900;text-transform:uppercase;color:#fff;margin-bottom:8px;}
+.comm-sub{font-size:15px;color:var(--t2);line-height:1.65;margin-bottom:36px;}
+.comm-soc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.comm-soc-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);padding:32px 28px;display:flex;flex-direction:column;gap:14px;text-decoration:none;transition:border-color .2s,transform .15s;}
+.comm-soc-card:hover{border-color:var(--g);transform:translateY(-3px);}
+.csc-icon{font-size:28px;width:52px;height:52px;background:rgba(1,211,160,.08);border:1px solid rgba(1,211,160,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.csc-label{font-family:var(--disp);font-size:20px;font-weight:800;text-transform:uppercase;color:#fff;letter-spacing:.04em;}
+.csc-desc{font-size:13px;color:var(--t2);line-height:1.6;}
+.csc-cta{font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.08em;margin-top:auto;}
+
+/* -- Responsive: Standards & Newsletter -- */
+@media(max-width:1023px){
+  .stds-grid{grid-template-columns:repeat(3,1fr);}
+  .comm-soc-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:767px){
+  .stds-grid{grid-template-columns:repeat(2,1fr);}
+  .stds-sec{padding:48px 0;}
+  .nl-sec{padding:48px 0;}
+  .comm-sec{padding:48px 0;}
+  .nl-t{font-size:30px;}
+  .nl-row{flex-direction:column;}
+  .nl-btn{height:46px;width:100%;}
+  .comm-h{font-size:30px;}
+  .comm-soc-grid{grid-template-columns:1fr;}
+  .page-h1{font-size:36px;}
+}
+@media(max-width:479px){
+  .stds-grid{grid-template-columns:1fr;}
+}
