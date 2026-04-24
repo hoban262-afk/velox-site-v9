@@ -2373,3 +2373,53 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 @media(max-width:479px){
   .cp-img-placeholder{aspect-ratio:3/2;}
 }
+
+/* =======================================================================
+   FULL-WIDTH FIX — header and announcement banner, no side gaps
+======================================================================= */
+
+/* Ensure html/body have zero margin/padding so no browser defaults bleed */
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Announcement banner — true 100vw, no side padding on the outer element */
+.ann-bar {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* The scrolling text lives inside a flex wrapper — no margin needed there either */
+.ann-track-wrap {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Site header — true 100% width, zero outer padding/margin */
+.site-header {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;           /* outer wrapper has no padding */
+  box-sizing: border-box !important;
+}
+
+/* Inner nav row keeps its own padding for content alignment */
+.site-header .nav {
+  padding-left: 28px !important;
+  padding-right: 28px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  max-width: 100% !important;      /* remove the 1280px constraint on the bar itself */
+  box-sizing: border-box !important;
+}
