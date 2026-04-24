@@ -50,25 +50,33 @@
 </head>
 <body class="page-stacks-root">
 
+<div class="ann-bar" role="note" aria-label="Site announcements">
+  <div class="ann-track-wrap" aria-hidden="true">
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
+
 <header class="site-header">
   <nav class="nav" aria-label="Primary">
 
     <a class="nav-logo" href="/" aria-label="Velox Peptides">
-      <svg class="nav-logo-svg" width="34" height="34" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="18" cy="18" r="16.5" fill="none" stroke="rgba(1,211,160,0.2)" stroke-width="4"/>
-        <circle cx="18" cy="18" r="16.5" fill="none" stroke="#01D3A0" stroke-width="1.5"/>
-        <circle cx="18" cy="18" r="11" fill="rgba(1,211,160,0.09)"/>
-        <text x="18" y="23" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="900" font-size="13" fill="#01D3A0" letter-spacing="1.5">VP</text>
+      <svg class="nav-logo-svg" width="46" height="37" viewBox="0 0 230 185" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- V chevron: outer triangle minus inner triangle gives thick hollow arms -->
+        <path fill-rule="evenodd" fill="rgba(255,255,255,0.92)" d="M 0,0 L 120,0 L 60,168 Z M 21,0 L 99,0 L 60,135 Z"/>
+        <!-- P angular letterform: outer path minus inner bowl cutout -->
+        <path fill-rule="evenodd" fill="rgba(255,255,255,0.92)" d="M 71,0 L 196,0 L 218,22 L 218,106 L 196,128 L 91,128 L 91,168 L 71,168 Z M 91,22 L 180,22 L 198,37 L 198,91 L 180,106 L 91,106 Z"/>
       </svg>
-      <span class="nav-logo-wordmark"><span class="nlw-vp">VP</span> VELOX PEPTIDES</span>
+      <span class="nav-logo-wordmark"><span class="nlw-velox">VELOX</span><span class="nlw-peptides">PEPTIDES</span></span>
     </a>
 
     <div class="nav-links">
-      <a class="nl " href="/compounds/">Compounds</a>
-      <a class="nl active" href="/stacks/">Stacks</a>
-      <a class="nl " href="/research/">Research</a>
+      <a class="nl active" href="/compounds/">Shop</a>
       <a class="nl " href="/about/">About</a>
+      <a class="nl " href="/faq/">FAQ</a>
       <a class="nl " href="/contact/">Contact</a>
+      <a class="nl" href="/affiliates/">Affiliates</a>
+      <a class="nl " href="/research/">Research</a>
+      <a class="nl " href="/legal/terms/">Legal</a>
     </div>
 
     <div class="nav-actions">
@@ -79,8 +87,9 @@
           <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
         </svg>
       </a>
-      <a class="nav-cart" href="/cart/" aria-label="View order">
+      <a class="nav-cart" href="/cart/" aria-label="View cart">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="nav-cart-label">Order</span>
         <span class="nav-cart-count" id="nav-cart-count">0</span>
       </a>
       <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
@@ -90,27 +99,25 @@
 
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true">
-    <a href="/compounds/" class="mob-nl">Compounds</a>
+    <a href="/compounds/" class="mob-nl">Shop</a>
     <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub">— Cognitive</a>
     <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub">— Metabolic</a>
     <a href="/compounds/healing-and-repair/" class="mob-nl mob-nl-sub">— Healing &amp; Repair</a>
     <a href="/compounds/growth/" class="mob-nl mob-nl-sub">— Growth</a>
     <a href="/compounds/anti-ageing/" class="mob-nl mob-nl-sub">— Anti-Ageing</a>
-    <a href="/stacks/" class="mob-nl">Stacks</a>
-    <a href="/research/" class="mob-nl">Research Library</a>
-    <a href="/tools/reconstitution-calculator/" class="mob-nl">Reconstitution Calculator</a>
+    <a href="/stacks/" class="mob-nl mob-nl-sub">— Stacks</a>
+    <a href="/research/" class="mob-nl">Research</a>
+    <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">— Reconstitution Calculator</a>
     <a href="/about/" class="mob-nl">About</a>
     <a href="/faq/" class="mob-nl">FAQ</a>
-    <a href="/shipping/" class="mob-nl">Shipping</a>
+    <a href="/affiliates/" class="mob-nl">Affiliates</a>
+    <a href="/shipping/" class="mob-nl mob-nl-sub">— Shipping</a>
     <a href="/contact/" class="mob-nl">Contact</a>
+    <a href="/legal/terms/" class="mob-nl">Legal</a>
     <a href="/cart/" class="mob-nl">Order</a>
   </div>
 </header>
 
-
-<div class="ann-bar" role="note" aria-label="Site announcements">
-  <div class="ann-track" aria-hidden="true">FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&middot;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&middot;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&middot;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&middot;&nbsp;&nbsp;48H UK DISPATCH&nbsp;&nbsp;&middot;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&middot;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&middot;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&middot;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&middot;&nbsp;&nbsp;48H UK DISPATCH&nbsp;&nbsp;&middot;&nbsp;&nbsp;</div>
-</div>
 
 <main class="site-main">
 <nav class="breadcrumb" aria-label="Breadcrumb"><a class="bc-link" href="/">Home</a><span class="bc-sep" aria-hidden="true">›</span><span class="bc-current" aria-current="page">Stacks</span></nav>
@@ -323,13 +330,14 @@
   <div class="eg-i">
 
     <div class="eg-logo-wrap">
-      <svg class="eg-logo-svg" width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="28" cy="28" r="26" fill="none" stroke="rgba(1,211,160,0.2)" stroke-width="6"/>
-        <circle cx="28" cy="28" r="26" fill="none" stroke="#01D3A0" stroke-width="1.5"/>
-        <circle cx="28" cy="28" r="17" fill="rgba(1,211,160,0.08)"/>
-        <text x="28" y="35" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="900" font-size="20" fill="#01D3A0" letter-spacing="2">VP</text>
+      <svg class="eg-logo-svg" width="80" height="64" viewBox="0 0 230 185" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill-rule="evenodd" fill="rgba(255,255,255,0.92)" d="M 0,0 L 120,0 L 60,168 Z M 21,0 L 99,0 L 60,135 Z"/>
+        <path fill-rule="evenodd" fill="rgba(255,255,255,0.92)" d="M 71,0 L 196,0 L 218,22 L 218,106 L 196,128 L 91,128 L 91,168 L 71,168 Z M 91,22 L 180,22 L 198,37 L 198,91 L 180,106 L 91,106 Z"/>
       </svg>
-      <span class="eg-logo-name">VELOX PEPTIDES</span>
+      <div class="eg-logo-name-wrap">
+        <span class="eg-logo-velox">VELOX</span>
+        <span class="eg-logo-peptides">PEPTIDES</span>
+      </div>
     </div>
 
     <div class="eg-eyebrow">AGE VERIFICATION</div>

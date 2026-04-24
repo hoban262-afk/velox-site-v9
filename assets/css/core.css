@@ -2129,3 +2129,111 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
   .nav-ig{padding:7px 6px;}
   .ann-track{font-size:9px;}
 }
+
+/* =======================================================================
+   HEADER v3 + TEAL BANNER FIX
+======================================================================= */
+
+/* -- Teal announcement banner (VERY TOP of page) -- */
+.ann-bar{background:#01D3A0;border-bottom:none;padding:0;overflow:hidden;white-space:nowrap;line-height:1;}
+.ann-track-wrap{display:flex;width:max-content;}
+.ann-track{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;color:#030407;letter-spacing:.1em;padding:10px 0;animation:ann-scroll 30s linear infinite;white-space:nowrap;}
+.ann-bar:hover .ann-track{animation-play-state:paused;}
+@keyframes ann-scroll{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+
+/* -- Logo: white SVG + VP VELOX white + PEPTIDES teal -- */
+.nav-logo-wordmark{font-family:var(--disp);font-size:15px;font-weight:900;color:#ffffff;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+.nlw-peptides{color:#01D3A0;}
+
+/* -- Nav links: grey default, teal on hover -- */
+.site-header .nav-links{display:flex;gap:0;flex:1;justify-content:center;}
+.site-header .nl{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#8a8f9a;padding:8px 13px;background:none;border:none;border-radius:0;text-decoration:none;position:relative;transition:color .15s;display:inline-flex;align-items:center;white-space:nowrap;}
+.site-header .nl::after{content:'';position:absolute;bottom:0;left:13px;right:13px;height:2px;background:#01D3A0;transform:scaleX(0);transform-origin:center;transition:transform .2s ease;}
+.site-header .nl:hover{color:#01D3A0;background:none;}
+.site-header .nl:hover::after{transform:scaleX(1);}
+.site-header .nl.active{color:#fff;}
+.site-header .nl.active::after{transform:scaleX(1);}
+
+/* -- Cart: orange/red badge -- */
+.nav-cart{display:flex;align-items:center;gap:6px;color:#8a8f9a;text-decoration:none;padding:6px 10px;border-radius:var(--r);transition:color .15s;position:relative;}
+.nav-cart:hover{color:#fff;}
+.nav-cart-label{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:inherit;}
+.nav-cart-count{font-family:var(--mono);font-size:10px;background:#e8492a;color:#fff;border-radius:50%;min-width:18px;height:18px;padding:0 3px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;line-height:1;}
+
+/* -- Instagram icon -- */
+.nav-ig{display:flex;align-items:center;justify-content:center;color:#8a8f9a;text-decoration:none;padding:7px 9px;border-radius:var(--r);transition:color .15s;}
+.nav-ig:hover{color:#01D3A0;}
+
+/* -- Sticky header accounts for teal banner height -- */
+.site-header{top:0;}
+
+/* -- Responsive -- */
+@media(max-width:1100px){
+  .site-header .nl{font-size:12px;padding:8px 9px;}
+}
+@media(max-width:767px){
+  .ann-track{font-size:9px;}
+  .nav-logo-wordmark{font-size:13px;}
+  .nav-cart-label{display:none;}
+}
+
+/* =======================================================================
+   GEOMETRIC VP MARK + STACKED WORDMARK
+======================================================================= */
+
+/* Nav logo: VP SVG + stacked VELOX / PEPTIDES */
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.nav-logo-svg{flex-shrink:0;display:block;}
+.nav-logo-wordmark{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  line-height:1;
+  font-family:var(--disp);
+  font-weight:900;
+  text-transform:uppercase;
+}
+/* "VELOX" — outline/ghost style (stroke, transparent fill) */
+.nlw-velox{
+  font-size:11px;
+  letter-spacing:.18em;
+  -webkit-text-stroke:1px rgba(255,255,255,0.45);
+  color:transparent;
+}
+/* "PEPTIDES" — solid bold teal */
+.nlw-peptides{
+  font-size:19px;
+  letter-spacing:.06em;
+  color:#01D3A0;
+  -webkit-text-stroke:0;
+}
+
+/* Entry gate geometric logo */
+.eg-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:20px;}
+.eg-logo-name-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0;
+  line-height:1;
+  font-family:var(--disp);
+  font-weight:900;
+  text-transform:uppercase;
+}
+.eg-logo-velox{
+  font-size:13px;
+  letter-spacing:.2em;
+  -webkit-text-stroke:1px rgba(255,255,255,0.4);
+  color:transparent;
+}
+.eg-logo-peptides{
+  font-size:24px;
+  letter-spacing:.08em;
+  color:#01D3A0;
+}
+
+/* Responsive */
+@media(max-width:767px){
+  .nlw-velox{font-size:9px;letter-spacing:.14em;}
+  .nlw-peptides{font-size:15px;}
+}
