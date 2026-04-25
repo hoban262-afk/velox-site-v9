@@ -1808,12 +1808,12 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 
 
 /* =======================================================================
-   MULTIPAGE RESPONSIVE � COMPREHENSIVE POLISH
+   MULTIPAGE RESPONSIVE � COMPREHENSIVE POLISH
    Appended after initial extensions. These rules override earlier ones
    where needed (same or later specificity wins in cascade).
 ======================================================================= */
 
-/* -- Safe area insets � site header & footer -- */
+/* -- Safe area insets � site header & footer -- */
 .site-header .nav {
   padding-left:  max(28px, env(safe-area-inset-left));
   padding-right: max(28px, env(safe-area-inset-right));
@@ -1825,13 +1825,13 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
   padding-bottom: max(28px, calc(env(safe-area-inset-bottom) + 20px));
 }
 
-/* -- Desktop large (=1280px) � generous padding -- */
+/* -- Desktop large (=1280px) � generous padding -- */
 @media (min-width: 1280px) {
   .cp-hero    { padding: 40px; }
   .cp-section { padding: 40px 40px 0; }
 }
 
-/* -- Tablet (768�1023px) � fill the gap left by auto-fill grids -- */
+/* -- Tablet (768�1023px) � fill the gap left by auto-fill grids -- */
 @media (min-width: 768px) and (max-width: 1023px) {
   .sec-i      { padding: 0 24px; }
   .breadcrumb { padding-left: 24px; padding-right: 24px; }
@@ -1864,7 +1864,7 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
   .compliance-block { padding: 12px 24px; }
 }
 
-/* -- Mobile (=767px) � comprehensive -- */
+/* -- Mobile (=767px) � comprehensive -- */
 @media (max-width: 767px) {
 
   /* -- Header & nav -- */
@@ -3122,5 +3122,309 @@ a.eg-btn-p {
   color: #8a8f9a !important;
   margin: 8px 0 0 !important;
   font-weight: 400 !important;
+}
+
+/* =======================================================================
+   MOBILE OPTIMISATION — Phase 1 & 2 final fixes
+   Must stay at end of file so cascade overrides work correctly.
+======================================================================= */
+
+/* ── 1. Nav bar: reduce to 16px side-padding on mobile ── */
+@media (max-width: 767px) {
+  .site-header .nav {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+/* ── 2. Section container: tighter padding on mobile ── */
+@media (max-width: 767px) {
+  /* Inner content wrapper — goes from 32px to 16px */
+  .sec-i {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  /* hp-sec provides its own 16px wrapper — zero the inner padding to avoid doubling */
+  .hp-sec .sec-i {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  /* Breadcrumb: match tighter padding */
+  .breadcrumb {
+    padding: 10px 16px 0;
+  }
+  /* Page intro section */
+  .page-intro {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* ── 3. Homepage feature section footer button: full-width on mobile ── */
+@media (max-width: 767px) {
+  .hp-block-ft .btn-p,
+  .hp-block-ft .btn-o {
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ── 4. CTA card (e.g. "View research stacks"): stack on mobile ── */
+@media (max-width: 767px) {
+  .cta-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+  }
+  .cta-card .btn-p,
+  .cta-card .btn-o {
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+/* ── 5. Standards grid inside hp-sec: single column on mobile ── */
+@media (max-width: 767px) {
+  .hp-sec-stds .stds-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* ── 6. Featured section accent bar: hide on very small screens ── */
+@media (max-width: 479px) {
+  .hp-feat-accent-bar {
+    display: none !important;
+  }
+  .hp-feat-hdr {
+    gap: 0 !important;
+  }
+}
+
+/* ── 7. Featured section sub-heading: smaller on mobile ── */
+@media (max-width: 767px) {
+  .hp-feat-sub {
+    font-size: 13px !important;
+    margin-top: 6px !important;
+  }
+  .hp-feat-hdr {
+    margin-bottom: 24px !important;
+  }
+}
+
+/* ── 8. Category grid: 2 cols on mobile (was auto-fill/220px) ── */
+@media (max-width: 767px) {
+  .cat-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .cat-tile {
+    padding: 16px !important;
+  }
+  .cat-tile-name {
+    font-size: 16px !important;
+  }
+  .cat-tile-desc {
+    font-size: 12px !important;
+  }
+}
+@media (max-width: 379px) {
+  .cat-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── 9. Compound card grid: explicit single-column override on mobile ── */
+@media (max-width: 559px) {
+  .prod-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── 10. Stack grid: single column on mobile ── */
+@media (max-width: 767px) {
+  .stack-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── 11. Compound page hero: full column width on mobile ── */
+@media (max-width: 767px) {
+  .cp-hero {
+    padding: 20px 16px !important;
+    gap: 20px !important;
+  }
+  .cp-section {
+    padding: 18px 16px !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+    max-width: calc(100% - 32px) !important;
+  }
+  .cp-compliance {
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+    max-width: calc(100% - 32px) !important;
+    padding: 14px 16px !important;
+  }
+  .cp-lede {
+    font-size: 14px !important;
+  }
+  .cp-size-l {
+    font-size: 12px !important;
+  }
+}
+
+/* ── 12. Footer columns: 2-col on tablet, 1-col on mobile ── */
+@media (max-width: 767px) {
+  .ft-cols {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+  .site-footer {
+    padding: 36px 16px 24px !important;
+  }
+  .site-footer .ft-top {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+    margin-bottom: 28px !important;
+  }
+}
+@media (max-width: 379px) {
+  .ft-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── 13. Stats block: keep horizontal on mobile ── */
+@media (max-width: 767px) {
+  .hp-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  .hp-stat {
+    padding: 16px 20px !important;
+  }
+  .hp-stat-v {
+    font-size: 36px !important;
+  }
+  .hp-stat-mid {
+    border-top: 1px solid #242730 !important;
+    border-bottom: 1px solid #242730 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+}
+
+/* ── 14. Newsletter row: stack on mobile ── */
+@media (max-width: 767px) {
+  .hp-nl-block .nl-row {
+    flex-direction: column !important;
+    max-width: 100% !important;
+  }
+  .hp-nl-block .nl-inp {
+    font-size: 16px !important;
+    min-height: 48px !important;
+  }
+  .hp-nl-block .nl-btn {
+    width: 100% !important;
+    height: 48px !important;
+  }
+  .hp-nl-block .nl-t {
+    font-size: 26px !important;
+  }
+}
+
+/* ── 15. Community section: single column cards on mobile ── */
+@media (max-width: 767px) {
+  .hp-comm-block {
+    padding: 20px 18px !important;
+  }
+  .hp-comm-title {
+    font-size: 26px !important;
+  }
+}
+
+/* ── 16. Affiliate block: stack on mobile ── */
+@media (max-width: 767px) {
+  .hp-aff-block {
+    padding: 20px 18px !important;
+  }
+  .hp-aff-content {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .hp-aff-stats {
+    flex-direction: row !important;
+    min-width: 0 !important;
+    padding: 16px !important;
+  }
+  .hp-aff-stat {
+    flex: 1 !important;
+    border-bottom: none !important;
+    border-right: 1px solid #1a1d22 !important;
+    padding: 8px 0 !important;
+  }
+  .hp-aff-stat:last-child {
+    border-right: none !important;
+  }
+  .hp-aff-stat-v {
+    font-size: 26px !important;
+  }
+}
+
+/* ── 17. Calculator block: stack on mobile ── */
+@media (max-width: 767px) {
+  .hp-calc-block {
+    padding: 20px 18px !important;
+  }
+  .hp-calc-preview {
+    display: none !important;
+  }
+  .hp-calc-content {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+/* ── 18. Prevent horizontal scroll from wide elements ── */
+.prod-grid,
+.prod-grid-4,
+.cat-grid,
+.stack-grid,
+.hp-stats-grid,
+.hp-soc-row,
+.stds-grid,
+.ft-cols {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ── 19. Images: never exceed container ── */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── 20. Touch targets: ensure min 44px on all interactive elements ── */
+.nl,
+.mob-nl,
+.cat-tile,
+.bc-link,
+.ft-col a,
+.sec-link,
+.nav-ig,
+.nav-cart {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.cat-tile {
+  display: flex;
+}
+.ft-col a {
+  padding: 6px 0;
+  min-height: 36px;
 }
 

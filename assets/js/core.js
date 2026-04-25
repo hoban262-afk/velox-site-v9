@@ -46,12 +46,36 @@
   // ── Mobile nav ───────────────────────────────────────────────────────────────
   var hamburger = document.getElementById('hamburger');
   var mobMenu = document.getElementById('mob-menu');
+
+  function closeMobMenu() {
+    if (!hamburger || !mobMenu) return;
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.classList.remove('open');
+    mobMenu.setAttribute('aria-hidden', 'true');
+    mobMenu.style.display = 'none';
+  }
+
   if (hamburger && mobMenu) {
     hamburger.addEventListener('click', function () {
       var expanded = hamburger.getAttribute('aria-expanded') === 'true';
       hamburger.setAttribute('aria-expanded', String(!expanded));
+      hamburger.classList.toggle('open');
       mobMenu.setAttribute('aria-hidden', String(expanded));
       mobMenu.style.display = expanded ? 'none' : 'flex';
+    });
+
+    // Close menu when tapping outside
+    document.addEventListener('click', function (e) {
+      if (mobMenu.style.display === 'flex' &&
+          !mobMenu.contains(e.target) &&
+          !hamburger.contains(e.target)) {
+        closeMobMenu();
+      }
+    });
+
+    // Close menu when a nav link is followed
+    mobMenu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeMobMenu);
     });
   }
 
