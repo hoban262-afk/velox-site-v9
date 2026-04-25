@@ -2771,3 +2771,117 @@ a.eg-btn-p {
   .hp-aff-stats { flex-direction: column; }
   .hp-aff-stat { border-right: none; border-bottom: 1px solid #1a1d22; }
 }
+
+/* =======================================================================
+   COMMUNITY SECTION v2 — clean rewrite, no legacy class conflicts
+======================================================================= */
+
+/* Outer block */
+.hp-comm-block {
+  padding: 32px 36px;
+}
+
+/* Header */
+.hp-comm-hdr {
+  margin-bottom: 28px;
+  text-align: left;
+}
+.hp-comm-title {
+  font-family: var(--disp);
+  font-size: 36px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #ffffff;
+  letter-spacing: .03em;
+  margin-bottom: 8px;
+}
+.hp-comm-sub {
+  font-size: 14px;
+  color: #6B7280;
+  line-height: 1.6;
+}
+
+/* 3-column card row */
+.hp-soc-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Individual social card */
+.hp-soc-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px 16px;
+  background: #0a0a0a;
+  border: 1px solid #01D3A0;
+  border-radius: 4px;
+  text-decoration: none;
+  text-align: center;
+  transition: background .2s, border-color .2s, transform .15s;
+  box-sizing: border-box;
+}
+.hp-soc-card:hover {
+  background: #0f1f1a;
+  border-color: #00ffbe;
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+
+/* Icon circle */
+.hp-soc-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(1, 211, 160, 0.1);
+  border: 1px solid rgba(1, 211, 160, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #01D3A0;
+  flex-shrink: 0;
+}
+
+/* Platform name */
+.hp-soc-name {
+  font-family: var(--disp);
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #ffffff;
+  line-height: 1;
+}
+
+/* Handle / CTA */
+.hp-soc-handle {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #01D3A0;
+  letter-spacing: .08em;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .hp-soc-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .hp-soc-card {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 18px 20px;
+    gap: 16px;
+  }
+  .hp-soc-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+  .hp-soc-name { font-size: 17px; }
+  .hp-comm-block { padding: 20px 18px; }
+}
