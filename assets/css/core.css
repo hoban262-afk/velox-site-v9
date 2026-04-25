@@ -3428,3 +3428,73 @@ img {
   min-height: 36px;
 }
 
+/* =======================================================================
+   HERO INLINE STATS ROW
+   Replaces the old hp-sec-stats block section.
+   Sits between the H1 and the sub-paragraph inside the hero.
+======================================================================= */
+
+.h-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 0 0 26px;
+  flex-wrap: nowrap;
+}
+
+/* Each "value + label" pair */
+.h-stat-item {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+/* Numerical value — slightly brighter than the label, but far below hero headline */
+.hsi-v {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #c8c8c8;
+  line-height: 1;
+  letter-spacing: .01em;
+}
+
+/* Label text — very subdued */
+.hsi-l {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 400;
+  color: #505050;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+/* Thin vertical divider between items */
+.hsi-div {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+/* Tablet: shrink slightly */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hsi-v { font-size: 20px; }
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 767px) {
+  .h-stats-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .hsi-div {
+    display: none;
+  }
+  .hsi-v { font-size: 19px; }
+  .hsi-l { font-size: 9px; }
+}
+
