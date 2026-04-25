@@ -88,6 +88,37 @@
     }, 3000);
   };
 
+  // ── Card Add-to-Cart ─────────────────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.cc-atc');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    var slug  = btn.getAttribute('data-slug')  || '';
+    var name  = btn.getAttribute('data-name')  || '';
+    var url   = btn.getAttribute('data-url')   || '';
+    var size  = btn.getAttribute('data-size')  || 'default';
+    var price = parseFloat(btn.getAttribute('data-price')) || 0;
+
+    var cart = [];
+    try { cart = JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (err) { cart = []; }
+
+    var existing = null;
+    for (var j = 0; j < cart.length; j++) {
+      if (cart[j].slug === slug && cart[j].size === size) { existing = cart[j]; break; }
+    }
+    if (existing) {
+      existing.qty = (existing.qty || 1) + 1;
+    } else {
+      cart.push({ slug: slug, name: name, url: url, size: size, price: price, qty: 1 });
+    }
+
+    localStorage.setItem('vp_cart', JSON.stringify(cart));
+    updateCartCount();
+    if (window.toast) window.toast('Added to order \u2014 ' + name);
+  });
+
   // ── FAQ accordion ────────────────────────────────────────────────────────────
   // Native <details> handles this — no JS needed.
 
