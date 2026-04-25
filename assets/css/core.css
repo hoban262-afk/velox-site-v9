@@ -2423,3 +2423,126 @@ body {
   max-width: 100% !important;      /* remove the 1280px constraint on the bar itself */
   box-sizing: border-box !important;
 }
+
+/* =======================================================================
+   BUTTON SYSTEM v2 — definitive overrides, applied site-wide
+======================================================================= */
+
+/* ── Shared base for all <a> buttons (removes link underline / color) ── */
+a.btn-p, a.btn-o,
+a.cp-order-btn,
+a.eg-btn-p {
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── PRIMARY button — teal fill, white bold text ── */
+.btn-p {
+  background: #01D3A0 !important;
+  color: #ffffff !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  padding: 14px 28px !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: background .15s, transform .1s !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+}
+.btn-p:hover,
+.btn-p:focus-visible {
+  background: #00b388 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  text-decoration: none !important;
+}
+
+/* ── SECONDARY button — transparent, teal border + text ── */
+.btn-o {
+  background: transparent !important;
+  color: #01D3A0 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  padding: 12px 24px !important;
+  border: 2px solid #01D3A0 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: background .15s, color .15s, transform .1s !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+}
+.btn-o:hover,
+.btn-o:focus-visible {
+  background: #01D3A0 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  text-decoration: none !important;
+}
+
+/* ── Compound order button — matches primary ── */
+.cp-order-btn {
+  background: #01D3A0 !important;
+  color: #ffffff !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: background .15s !important;
+}
+.cp-order-btn:hover { background: #00b388 !important; }
+
+/* ── Entry gate confirm button — matches primary ── */
+.eg-btn-p {
+  background: #01D3A0 !important;
+  color: #ffffff !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: background .15s !important;
+}
+.eg-btn-p:hover { background: #00b388 !important; }
+.eg-btn-p:disabled {
+  background: #2a2d33 !important;
+  color: #6B7280 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* ── Hero button row: never go full-width on desktop ── */
+.h-btns .btn-p,
+.h-btns .btn-o {
+  width: auto !important;
+}
+
+/* ── Mobile: full-width buttons in hero and CTA blocks ── */
+@media (max-width: 767px) {
+  .h-btns .btn-p,
+  .h-btns .btn-o,
+  .sec-ft .btn-p,
+  .sec-ft .btn-o,
+  .cta-card .btn-p,
+  .cta-card .btn-o,
+  .confirm-cta .btn-p,
+  .confirm-cta .btn-o {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+}
