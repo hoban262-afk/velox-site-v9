@@ -3498,3 +3498,131 @@ img {
   .hsi-l { font-size: 9px; }
 }
 
+/* =======================================================================
+   COMPOUND CARD PRICING — was/rrp strikethrough + badge
+======================================================================= */
+
+/* Wrapper that holds struck-out price + live price + badge in a column */
+.cc-price-block {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
+  line-height: 1 !important;
+}
+
+/* Struck-out price — greyed out, smaller */
+.cc-was {
+  font-family: 'DM Mono', monospace !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: #555 !important;
+  text-decoration: line-through !important;
+  letter-spacing: .02em !important;
+  line-height: 1 !important;
+}
+
+/* Shared badge pill */
+.cc-badge {
+  font-family: 'DM Mono', monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  padding: 3px 7px !important;
+  border-radius: 3px !important;
+  line-height: 1 !important;
+  margin-top: 3px !important;
+  display: inline-block !important;
+}
+
+/* SAVE X% — teal */
+.cc-badge-save {
+  background: rgba(1, 211, 160, 0.15) !important;
+  color: #01D3A0 !important;
+  border: 1px solid rgba(1, 211, 160, 0.3) !important;
+}
+
+/* BEST PRICE — teal (same palette, different label) */
+.cc-badge-best {
+  background: rgba(1, 211, 160, 0.15) !important;
+  color: #01D3A0 !important;
+  border: 1px solid rgba(1, 211, 160, 0.3) !important;
+}
+
+/* Live price in the card — keep existing .cc-price size but make it pop on discounted cards */
+.cc-price-block .cc-price {
+  font-size: 22px !important;
+  color: #01D3A0 !important;
+}
+
+/* =======================================================================
+   COMPOUND PAGE ORDER PANEL — per-size discount display
+======================================================================= */
+
+/* Wrapper inside a size label row that holds was + live + badge */
+.cp-size-price-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+/* Struck-out price in order panel */
+.cp-size-was {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: #4a4a4a;
+  text-decoration: line-through;
+  letter-spacing: .02em;
+}
+
+/* Badge inside order panel */
+.cp-size-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  line-height: 1;
+}
+.cp-badge-save {
+  background: rgba(1, 211, 160, 0.15);
+  color: #01D3A0;
+  border: 1px solid rgba(1, 211, 160, 0.28);
+}
+.cp-badge-best {
+  background: rgba(1, 211, 160, 0.15);
+  color: #01D3A0;
+  border: 1px solid rgba(1, 211, 160, 0.28);
+}
+
+/* Make the live price teal in the order panel when there's a discount */
+.cp-size-price-wrap .cp-size-p {
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #01D3A0;
+}
+
+/* Ensure the order panel size option aligns was/live/badge in a row */
+.cp-size-opt {
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+/* Mobile: wrap price info neatly */
+@media (max-width: 767px) {
+  .cp-size-price-wrap {
+    gap: 6px;
+  }
+  .cp-size-was { font-size: 10px; }
+  .cp-size-badge { font-size: 8px; padding: 2px 5px; }
+  .cc-was { font-size: 11px !important; }
+  .cc-badge { font-size: 8px !important; padding: 2px 6px !important; }
+  .cc-price-block .cc-price { font-size: 20px !important; }
+}
+
