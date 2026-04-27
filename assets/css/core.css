@@ -3694,6 +3694,139 @@ img {
 }
 
 /* =======================================================================
+   STACK CONTENTS PILLS — "WHAT'S IN THIS STACK"
+   Used in the order panel on stack pages and in stack cards on /stacks/
+   ======================================================================= */
+
+/* ── Order panel: full pill section ──────────────────────────────────────── */
+.cp-stack-contents {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* "WHAT'S IN THIS STACK" label */
+.cp-stack-contents-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: #01D3A0;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* Pill row — wraps on overflow */
+.cp-stack-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Individual pill */
+.csp-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #111217;
+  border: 1px solid rgba(1, 211, 160, 0.35);
+  border-radius: 4px;
+  padding: 7px 11px;
+  line-height: 1;
+}
+
+/* Product name inside pill */
+.csp-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* Separator dot */
+.csp-dot {
+  font-size: 10px;
+  color: rgba(1, 211, 160, 0.4);
+}
+
+/* Size text */
+.csp-size {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  color: #01D3A0;
+  white-space: nowrap;
+}
+
+/* Individual price */
+.csp-price {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* ── Stack card pills on /stacks/ index ──────────────────────────────────── */
+.sc-card-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
+}
+
+/* Individual card pill — slightly more compact than order panel pills */
+.sc-card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #111217;
+  border: 1px solid rgba(1, 211, 160, 0.28);
+  border-radius: 4px;
+  padding: 5px 9px;
+  line-height: 1;
+  text-decoration: none !important;
+}
+
+/* Product name in card pill */
+.sc-cp-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #e8e8e8;
+  white-space: nowrap;
+}
+
+/* Size text in card pill */
+.sc-cp-size {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: #01D3A0;
+  white-space: nowrap;
+}
+.sc-cp-size::before { content: '·'; color: rgba(1,211,160,.35); margin-right: 4px; }
+
+/* Price in card pill */
+.sc-cp-price {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: #555;
+  white-space: nowrap;
+}
+.sc-cp-price::before { content: '·'; color: rgba(255,255,255,.12); margin-right: 4px; }
+
+/* Mobile: pills still wrap, slightly tighter padding */
+@media (max-width: 767px) {
+  .csp-pill    { padding: 6px 9px; }
+  .csp-name    { font-size: 11px; }
+  .csp-size,
+  .csp-price   { font-size: 9px; }
+  .sc-card-pill { padding: 4px 7px; }
+  .sc-cp-name  { font-size: 10px; }
+}
+
+/* =======================================================================
    CATALOGUE & CATEGORY PAGE OVERHAUL
    Scoped to body.page-catalogue (/compounds/) and body.page-category
    (/compounds/{cat}/) so nothing else is affected.
