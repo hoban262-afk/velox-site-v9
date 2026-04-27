@@ -3627,6 +3627,73 @@ img {
 }
 
 /* =======================================================================
+   STACK CARD PRICING — strikethrough orig + discounted price + badge
+   ======================================================================= */
+
+/* Price block: column layout (was → price → badge) */
+.sc-price-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1;
+}
+
+/* Struck-out original (sum of individual prices) */
+.sc-was {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 400;
+  color: #555;
+  text-decoration: line-through;
+  letter-spacing: .02em;
+  line-height: 1;
+}
+
+/* Live stack price */
+.sc-price {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: #01D3A0;
+  line-height: 1;
+}
+
+/* SAVE X% badge pill */
+.sc-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 3px;
+  line-height: 1;
+  margin-top: 3px;
+  display: inline-block;
+  background: rgba(1, 211, 160, 0.15);
+  color: #01D3A0;
+  border: 1px solid rgba(1, 211, 160, 0.3);
+}
+
+/* "Save X% vs buying individually" line inside the order panel */
+.cp-stack-saving {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #01D3A0;
+  letter-spacing: .04em;
+  margin: 6px 0 10px;
+  opacity: .85;
+}
+
+/* Mobile: slightly smaller stack price */
+@media (max-width: 767px) {
+  .sc-price   { font-size: 18px; }
+  .sc-was     { font-size: 11px; }
+  .sc-badge   { font-size: 8px; padding: 2px 6px; }
+}
+
+/* =======================================================================
    CATALOGUE & CATEGORY PAGE OVERHAUL
    Scoped to body.page-catalogue (/compounds/) and body.page-category
    (/compounds/{cat}/) so nothing else is affected.
