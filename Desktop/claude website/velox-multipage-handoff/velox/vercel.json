@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "outputDirectory": "output",
+  "functions": {
+    "api/send-order.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
