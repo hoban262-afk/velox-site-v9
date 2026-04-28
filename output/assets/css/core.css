@@ -4227,82 +4227,86 @@ svg { max-width: none; }
 }
 
 /* =======================================================================
-   CARD + HERO IMAGE LAYOUT FIX — mobile (max-width: 768px)
-   Fix 1: card overflow — block layout on wrap, overflow:hidden, 260px,
-           eliminates flex side-by-side bug that pushed text off-screen.
-   Fix 2: hero container — height:auto + position:static on img so the
-           dashed border hugs the image with 10px padding, no empty space.
+   IMAGE NATURAL SIZING — universal (all breakpoints)
+   Images define their own container size. No fixed heights, no object-fit,
+   no aspect-ratio constraints. Container grows to wrap the image cleanly.
    ======================================================================= */
 
 /* Viewport-level overflow guard */
 html { overflow-x: hidden !important; }
 
-@media (max-width: 768px) {
+/* ── Product grid cards ──────────────────────────────────────────────────── */
 
-  /* ── Force grids to single column, no min-width blowout ─────────────── */
+/* Wrap: no height cap — image drives the height */
+.cc-img-wrap {
+  height: auto !important;
+  min-height: unset !important;
+  overflow: visible !important;
+  width: 100% !important;
+  background: #13171c !important;
+  display: block !important;
+  position: static !important;
+  box-sizing: border-box !important;
+}
+
+/* Image: full width, natural height, no object-fit */
+.cc-img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: unset !important;
+}
+
+/* Hide the text label inside the wrap (image makes it redundant) */
+.cc-img-name {
+  display: none !important;
+}
+
+/* Card grid: single column on mobile, no min-width blowout */
+@media (max-width: 768px) {
   .prod-grid,
   .prod-grid-4 {
     grid-template-columns: 1fr !important;
     min-width: 0 !important;
     width: 100% !important;
   }
-
   .cc {
     min-width: 0 !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
+}
 
-  /* ── Card image wrap: block, overflow hidden, 260px tall ─────────────── */
-  .cc-img-wrap {
-    height: 260px !important;
-    overflow: hidden !important;        /* contain the image — no bleed outside card */
-    width: 100% !important;
-    background: #13171c !important;
-    display: block !important;          /* NOT flex — avoids img+span going side-by-side */
-    position: relative !important;
-  }
+/* ── Product detail hero ─────────────────────────────────────────────────── */
 
-  .cc-img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;     /* show full vial without cropping */
-    display: block !important;
-  }
+/* Container: no aspect-ratio, no fixed height — wraps the image */
+.cp-img-placeholder {
+  aspect-ratio: unset !important;
+  min-height: unset !important;
+  height: auto !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: #1e2024 !important;
+  position: static !important;
+}
 
-  /* Hide the in-wrap text label (image makes it redundant on mobile) */
-  .cc-img-name {
-    display: none !important;
-  }
+/* Image: in normal flow, full width, natural height, no object-fit */
+.cp-prod-img {
+  position: static !important;
+  inset: unset !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: unset !important;
+  border-radius: 6px !important;
+}
 
-  /* ── Product detail hero: container sizes to the image ───────────────── */
-  .cp-img-placeholder {
-    aspect-ratio: unset !important;     /* remove 1/1 and 4/3 ratio that adds blank space */
-    min-height: unset !important;
-    height: auto !important;
-    overflow: hidden !important;
-    padding: 10px !important;           /* tight border gap — 10px all around the vial */
-    display: block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    background: #1e2024 !important;
-  }
-
-  .cp-prod-img {
-    position: static !important;        /* in normal flow so container height follows image */
-    inset: unset !important;
-    width: 100% !important;
-    height: auto !important;            /* natural aspect ratio — no blank space above/below */
-    object-fit: contain !important;
-    display: block !important;
-    border-radius: 4px !important;
-  }
-
-  /* Hide redundant text labels inside hero placeholder */
-  .cp-img-label,
-  .cp-img-sub {
-    display: none !important;
-  }
-
+/* Hide redundant text labels — image replaces them */
+.cp-img-label,
+.cp-img-sub {
+  display: none !important;
 }
 
