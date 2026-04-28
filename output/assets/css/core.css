@@ -4786,3 +4786,166 @@ html { overflow-x: hidden !important; }
 }
 
 /* 2. Mobile: image area remains natural — no fixed heights */
+
+/* ============================================================
+   FULL MOBILE OPTIMISATION PASS — 375 / 390 / 430px (iPhone)
+   Only fills gaps not covered by earlier mobile rules.
+   Desktop layouts are completely unaffected.
+   ============================================================ */
+
+/* ── 0. Global overflow guard ────────────────────────────────── */
+body {
+  overflow-x: hidden !important;
+}
+
+/* ── 1. Homepage hero buttons: full-width stacked on mobile ──── */
+@media (max-width: 767px) {
+  .h-btns {
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-bottom: 24px !important;
+  }
+  .h-btns .btn-p,
+  .h-btns .btn-o {
+    width: 100% !important;
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+  /* Compliance note: bump from 10px to at least 12px */
+  .h-compliance {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* ── 2. Product cards: price row safe at 375px ───────────────── */
+@media (max-width: 767px) {
+  /* Allow price block to grow and push ATC button right */
+  .cc-price-block {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  .cc-atc {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+  .cc-ft {
+    gap: 8px !important;
+  }
+  /* Body text floor: 14px */
+  .cc-body {
+    font-size: 14px !important;
+  }
+}
+
+/* ── 3. Product / stack detail: spec grid 2 columns on mobile ── */
+/*    User requirement: "wraps to 2 columns" — override the
+      current 1-col rule set earlier in the cascade.             */
+@media (max-width: 767px) {
+  .cp-spec {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── 4. Order panel: button full-width + min tap height ─────── */
+@media (max-width: 767px) {
+  .cp-order-btn {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* ── 5. Nav: hide cart label at narrow widths to reclaim space ── */
+@media (max-width: 430px) {
+  .nav-cart-label {
+    display: none !important;
+  }
+  .nav-logo-img {
+    width: 100px !important;
+  }
+}
+
+/* ── 6. Footer: single column at 479px and below ────────────── */
+@media (max-width: 479px) {
+  .ft-cols {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+/* ── 7. Universal container guard: every layout box must stay
+        within viewport width on any screen in the 375–430 range */
+@media (max-width: 767px) {
+  .hp-sec,
+  .hp-block,
+  .sec-i,
+  .cp-hero,
+  .cp-section,
+  .cp-compliance,
+  .cp-order,
+  .cp-img-col,
+  .stack-card,
+  .cc,
+  .cat-tile,
+  .hp-stacks-block,
+  .breadcrumb,
+  .compliance-block,
+  .cta-card,
+  .nl-sec,
+  .stds-sec,
+  .rp-card,
+  .legal-i {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* Prevent long compound/stack names from overflowing */
+  .cc-name,
+  .cp-h1,
+  .stack-card-name,
+  .cat-tile-name,
+  .page-h1 {
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+  /* Body text: floor at 14px */
+  body {
+    font-size: 14px;
+  }
+  p, li, td, th {
+    font-size: max(14px, 1em);
+  }
+}
+
+/* ── 8. 375px micro-fixes ─────────────────────────────────────── */
+@media (max-width: 375px) {
+  .cp-hero {
+    padding: 12px !important;
+    gap: 14px !important;
+  }
+  .cc-body {
+    padding: 12px !important;
+  }
+  .cp-order {
+    padding: 14px !important;
+  }
+  /* Section inner padding: minimum 12px each side */
+  .sec-i {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .hp-sec {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  /* Cards: remove any residual min-width */
+  .cc, .stack-card, .cat-tile {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
