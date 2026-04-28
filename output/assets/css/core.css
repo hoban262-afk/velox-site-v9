@@ -3975,3 +3975,254 @@ img {
   }
 }
 
+/* =======================================================================
+   MOBILE OPTIMISATION — Phase 3: comprehensive 375–430 px pass
+   All rules appended at end-of-file so cascade order guarantees override.
+   ======================================================================= */
+
+/* ── 0. Global guards ─────────────────────────────────────────────────── */
+
+/* Flex/grid children can shrink below their content size */
+*, *::before, *::after { min-width: 0; }
+
+/* All images respect their container */
+img { max-width: 100%; height: auto; display: block; }
+/* Exception: inline SVG icons keep natural size */
+svg { max-width: none; }
+
+/* Long chemical names / sequences / CAS numbers break safely */
+.cp-h1, .cc-name, .stack-card-name,
+.cp-spec td, .cp-spec dd,
+.cp-spec-table td, .cp-spec-table th,
+.legal-i p, .legal-i li,
+.cp-section p, .cp-section li { overflow-wrap: break-word; word-break: break-word; }
+.mono { word-break: break-all; }
+
+/* Page lede: remove desktop max-width on mobile */
+@media (max-width: 767px) {
+  .page-lede { max-width: 100%; }
+}
+
+
+/* ── 1. Nav ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  /* Guarantee hamburger always visible — belt & suspenders override */
+  .hamburger,
+  .site-header .hamburger { display: flex !important; }
+  .nav-links,
+  .site-header .nav-links  { display: none !important; }
+
+  /* Logo: compact but readable */
+  .nav-logo-img { width: 110px !important; }
+
+  /* Announcement bar: ensure single-line scroll, no page overflow */
+  .ann-bar { overflow: hidden !important; }
+}
+
+
+/* ── 2. Hero heading: step down below 480 px ─────────────────────────── */
+
+@media (max-width: 479px) {
+  .h-h1 { font-size: 38px !important; line-height: .95 !important; }
+}
+@media (max-width: 375px) {
+  .h-h1 { font-size: 32px !important; }
+}
+
+
+/* ── 3. Compound page detail ─────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+
+  /* Order panel: full-width, comfortable padding */
+  .cp-order {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 16px !important;
+  }
+
+  /* Size option row: wrap price details onto a second line on narrow screens */
+  .cp-size-opt {
+    flex-wrap: wrap !important;
+    row-gap: 6px !important;
+  }
+  .cp-size-price-wrap {
+    flex-basis: 100% !important;
+    margin-left: 0 !important;
+    margin-top: 2px !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Spec grid: already 1-col at 767 (line 1798) — reinforce */
+  .cp-spec { grid-template-columns: 1fr !important; }
+
+  /* Disclaimer notice: comfortable on small screen */
+  .disc-inline { font-size: 12px !important; padding: 10px 12px !important; }
+}
+
+
+/* ── 4. Checkout ─────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+
+  /* Submit always full-width */
+  .co-submit {
+    width: 100% !important;
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Back link: tappable */
+  .co-back {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 44px !important;
+    font-size: 13px !important;
+    margin-top: 8px !important;
+  }
+
+  /* Error message */
+  .co-err { font-size: 13px !important; line-height: 1.5 !important; padding: 8px 0 !important; }
+
+  /* Order summary sidebar: always static on mobile */
+  .co-summary, .cart-summary {
+    position: static !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 20px !important;
+  }
+}
+
+@media (max-width: 479px) {
+  /* Checkout steps text: tighten */
+  .co-steps { gap: 4px !important; }
+  .co-step  { font-size: 11px !important; padding: 7px 10px !important; white-space: nowrap !important; }
+}
+
+
+/* ── 5. Confirmation page ────────────────────────────────────────────── */
+
+@media (max-width: 479px) {
+  .confirm-t       { font-size: 22px !important; }
+  .confirm-bank-dl { font-size: 13px !important; }
+  .confirm-bank-dl dt { font-size: 11px !important; }
+  .confirm-bank-dl dd { font-size: 13px !important; word-break: break-all !important; }
+}
+
+
+/* ── 6. Footer: 44 px touch targets on mobile ────────────────────────── */
+
+@media (max-width: 767px) {
+  .ft-col a {
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 2px 0 !important;
+  }
+  .ft-col-h { margin-bottom: 6px !important; }
+
+  /* Bottom bar: smaller text already set; ensure it wraps */
+  .ft-bot { flex-wrap: wrap !important; gap: 6px !important; }
+}
+
+
+/* ── 7. Entry gate: compact padding on small phones ─────────────────── */
+
+@media (max-width: 479px) {
+  .eg-i { padding: 24px 18px !important; }
+  .eg-title { font-size: 19px !important; }
+  .eg-i .eg-eyebrow { font-size: 9px !important; }
+}
+
+
+/* ── 8. Catalogue / category pages ──────────────────────────────────── */
+
+@media (max-width: 479px) {
+  /* sec-hdr: wrap "View X hub →" link below title if space is tight */
+  .page-catalogue .sec-hdr,
+  .page-category  .sec-hdr {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  .page-catalogue .sec-link,
+  .page-category  .sec-link { font-size: 11px !important; }
+}
+
+
+/* ── 9. Stack content pills: allow wrap on narrow screens ────────────── */
+
+@media (max-width: 479px) {
+  /* Allow pill names to wrap rather than force wide pill */
+  .csp-name    { white-space: normal !important; }
+  .sc-cp-name  { white-space: normal !important; }
+  .csp-pill    { padding: 5px 8px !important; }
+  .sc-card-pill{ padding: 4px 7px !important; }
+}
+
+
+/* ── 10. Typography: clamp page headings on mobile ───────────────────── */
+
+@media (max-width: 767px) {
+  /* Catalogue / legal / about h1 */
+  .page-h1 { font-size: clamp(22px, 7vw, 36px) !important; }
+
+  /* Compound product name heading */
+  .cp-h1 { font-size: clamp(22px, 7vw, 32px) !important; }
+}
+
+
+/* ── 11. General overflow prevention ─────────────────────────────────── */
+
+/* All grid containers stay within viewport */
+.prod-grid, .prod-grid-4, .cat-grid, .stack-grid,
+.hp-stats-grid, .stds-grid, .ft-cols, .hp-soc-row,
+.f-grid-2, .co-grid, .cp-hero { width: 100%; box-sizing: border-box; }
+
+/* Scroll containers */
+.cp-table-wrap, .co-steps, .trust-i {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Breadcrumb: wrap gracefully */
+.breadcrumb { flex-wrap: wrap !important; }
+
+/* Prevent any fixed-width element from causing page scroll */
+@media (max-width: 767px) {
+  .hp-block, .cp-section, .cp-compliance, .compliance-block {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+  }
+}
+
+
+/* ── 12. Input focus: prevent iOS auto-zoom everywhere ───────────────── */
+
+@media (max-width: 767px) {
+  input, select, textarea,
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="password"] {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+
+/* ── 13. Buttons: white-space relax on very small screens ────────────── */
+
+@media (max-width: 375px) {
+  /* Allow label text to wrap rather than overflow the button */
+  .btn-p, .btn-o, .cp-order-btn, .eg-btn-p, .eg-btn-o {
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    min-height: 48px !important;
+  }
+}
+
