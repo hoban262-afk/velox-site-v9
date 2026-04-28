@@ -2283,6 +2283,17 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
   gap:10px;
   padding:20px;
   box-sizing:border-box;
+  overflow:hidden;
+  position:relative;
+}
+.cp-prod-img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  border-radius:6px;
 }
 .cp-img-label{
   font-family:var(--disp);
@@ -2915,12 +2926,15 @@ a.eg-btn-p {
   background: #13171c !important;
   border-bottom: 1px solid #1e2228 !important;
   height: 148px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 10px !important;
+  display: block !important;
+  overflow: hidden !important;
   transition: background .2s ease !important;
+}
+.cc-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
 }
 .cc:hover .cc-img-wrap {
   background: #161b21 !important;
