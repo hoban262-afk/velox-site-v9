@@ -4354,35 +4354,33 @@ html { overflow-x: hidden !important; }
 
 /* ── 2. Stack card image placeholder ────────────────────────────────────── */
 
+/* Stack image container: natural sizing — image drives the height */
 .sc-img-placeholder {
   width: 100%;
   background: #1e2024;
   border: 2px dashed #01D3A0;
   border-radius: 8px;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 20px;
+  display: block;
+  padding: 10px;
   box-sizing: border-box;
   margin-bottom: 16px;
+  overflow: visible;
 }
 
-/* Hide the broken-image icon when src is empty */
+/* Hide broken-image icon when src is empty */
 .sc-prod-img[src=""] {
   display: none !important;
 }
 
-/* When a real image is present, fill the placeholder */
-.sc-prod-img:not([src=""]) {
+/* Image: full width, natural height, no object-fit */
+.sc-prod-img {
   width: 100%;
   height: auto;
   display: block;
   border-radius: 4px;
 }
 
+/* Label shown only when no image (src="") */
 .sc-img-label {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 10px;
@@ -4390,6 +4388,9 @@ html { overflow-x: hidden !important; }
   letter-spacing: .16em;
   text-transform: uppercase;
   color: #4a5568;
+  display: block;
+  text-align: center;
+  padding: 40px 0;
 }
 
 /* ── 3. Homepage stacks section ─────────────────────────────────────────── */
