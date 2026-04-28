@@ -4327,3 +4327,204 @@ html { overflow-x: hidden !important; }
 
 }
 
+/* =======================================================================
+   STACKS PROMINENCE — nav highlight, stack-card image placeholders,
+   homepage stacks section, category CTA banner
+   ======================================================================= */
+
+/* ── 1. Nav: Stacks link teal highlight ─────────────────────────────────── */
+
+.nav-links a.nl-stacks {
+  color: #01D3A0 !important;
+  font-weight: 600 !important;
+}
+.nav-links a.nl-stacks:hover {
+  color: #ffffff !important;
+}
+
+/* Mobile menu: Stacks as top-level teal item */
+.mob-menu a.mob-nl-stacks {
+  color: #01D3A0 !important;
+  font-weight: 700 !important;
+  padding-left: 0 !important;        /* full-width, not indented like sub-items */
+  border-top: 1px solid rgba(1,211,160,.15) !important;
+  border-bottom: 1px solid rgba(1,211,160,.15) !important;
+  margin: 4px 0 !important;
+}
+
+/* ── 2. Stack card image placeholder ────────────────────────────────────── */
+
+.sc-img-placeholder {
+  width: 100%;
+  background: #1e2024;
+  border: 2px dashed #01D3A0;
+  border-radius: 8px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+/* Hide the broken-image icon when src is empty */
+.sc-prod-img[src=""] {
+  display: none !important;
+}
+
+/* When a real image is present, fill the placeholder */
+.sc-prod-img:not([src=""]) {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+.sc-img-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #4a5568;
+}
+
+/* ── 3. Homepage stacks section ─────────────────────────────────────────── */
+
+.hp-stacks-block {
+  border-top-color: #01D3A0 !important;
+}
+
+.hp-stacks-inner {
+  display: flex;
+  gap: 36px;
+  align-items: flex-start;
+}
+
+.hp-stacks-text {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hp-stacks-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.hp-stacks-sub {
+  font-size: 14px;
+  color: #8a8f9a;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.hp-stacks-cta {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.hp-stacks-pills {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.hp-stack-pill {
+  background: #13171c;
+  border: 1px solid #1e2228;
+  border-left: 3px solid #01D3A0;
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  transition: border-color .2s ease, background .2s ease;
+}
+.hp-stack-pill:hover {
+  border-color: #01D3A0;
+  background: #161b21;
+}
+
+.hp-stack-pill-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: .01em;
+}
+
+.hp-stack-pill-cmpds {
+  font-size: 11px;
+  color: #01D3A0;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+
+@media (max-width: 900px) {
+  .hp-stacks-inner {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .hp-stacks-text {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .hp-stacks-pills {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 4. Category hub: "View all stacks" CTA banner ──────────────────────── */
+
+.cat-stacks-cta-sec {
+  margin-top: 0 !important;
+}
+
+.cat-stacks-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #0d1014;
+  border: 1px solid #1e2228;
+  border-left: 3px solid #01D3A0;
+  border-radius: 6px;
+  padding: 18px 24px;
+}
+
+.cat-stacks-cta-label {
+  font-size: 14px;
+  color: #8a8f9a;
+}
+
+.cat-stacks-cta-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .cat-stacks-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cat-stacks-cta-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
