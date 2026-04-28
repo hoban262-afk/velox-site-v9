@@ -1,9 +1,3 @@
 {
-  "buildCommand": null,
-  "outputDirectory": "output",
-  "functions": {
-    "api/send-order.js": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "outputDirectory": "output"
 }
