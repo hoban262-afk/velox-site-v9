@@ -1,9 +1,7 @@
 {
   "version": 2,
-  "outputDirectory": "output",
-  "functions": {
-    "api/send-order.js": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/output/$1" }
+  ]
 }
