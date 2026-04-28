@@ -4669,3 +4669,31 @@ html { overflow-x: hidden !important; }
   }
 }
 
+/* ============================================================
+   ORDER PANEL TOP-ALIGNMENT + STICKY
+   Problem: base rule has position:sticky then position:relative
+   which kills sticky. Hero needs align-items:start so the order
+   panel doesn't stretch or drift downward.
+   ============================================================ */
+
+/* Ensure hero grid top-aligns all columns */
+.cp-hero {
+  align-items: start !important;
+}
+
+/* Order panel: fix broken sticky (relative was overriding it),
+   top-align with no margin pushing it down                     */
+.cp-order {
+  position: sticky !important;
+  top: 20px !important;
+  align-self: flex-start !important;
+  margin-top: 0 !important;
+}
+
+/* Tablet / single-column: sticky causes scroll issues — revert */
+@media (max-width: 1024px) {
+  .cp-order {
+    position: static !important;
+    align-self: auto !important;
+  }
+}
