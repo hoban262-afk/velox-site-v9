@@ -4697,3 +4697,119 @@ html { overflow-x: hidden !important; }
     align-self: auto !important;
   }
 }
+
+/* ============================================================
+   PRODUCT CARD REFINEMENT
+   Uniform height, fixed image area, consistent spacing,
+   badge lock, hover glow
+   ============================================================ */
+
+/* 1. Card shell — flex column so body grows and price always hits bottom.
+      height:100% fills the CSS Grid row (grid default is stretch).        */
+.cc {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  /* 6. Border: locked 3px teal top, 1px sides/bottom */
+  border-top: 3px solid #01D3A0 !important;
+  border-right: 1px solid #242730 !important;
+  border-bottom: 1px solid #242730 !important;
+  border-left: 1px solid #242730 !important;
+}
+
+/* 7. Hover: teal glow + lift */
+.cc:hover {
+  border-color: #01D3A0 !important;
+  box-shadow: 0 0 12px rgba(1,211,160,0.20), 0 4px 20px rgba(1,211,160,0.08) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 2. Uniform image area — fixed height, image centred with object-fit:contain
+      Overrides the natural-sizing backstop (height:auto) that was added earlier. */
+.cc-img-wrap {
+  height: 280px !important;
+  min-height: 280px !important;
+  max-height: 280px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+  background: #13171c !important;
+  position: relative !important;
+}
+.cc-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 240px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* 3. Consistent body padding: 16px all sides */
+.cc-body {
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+}
+
+/* 3. Consistent internal spacing */
+.cc-hdr {
+  margin-bottom: 10px !important;
+}
+.cc-name {
+  margin: 0 0 4px !important;
+}
+.cc-full {
+  margin-bottom: 6px !important;
+}
+.cc-meta {
+  margin-bottom: 10px !important;
+}
+
+/* 4. Category badge — locked to same size, teal, mono */
+.cc-cat {
+  font-family: 'DM Mono', monospace !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: .12em !important;
+  color: #01D3A0 !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+}
+
+/* 5. Price block stays at the bottom of the card */
+.cc-ft {
+  margin-top: auto !important;
+  padding-top: 12px !important;
+  border-top: 1px solid #1e2228 !important;
+}
+
+/* 2. Mobile: shrink image area proportionally */
+@media (max-width: 768px) {
+  .cc-img-wrap {
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    padding: 14px !important;
+  }
+  .cc-img {
+    max-height: 190px !important;
+  }
+}
+
+/* 2. Very small screens */
+@media (max-width: 375px) {
+  .cc-img-wrap {
+    height: 180px !important;
+    min-height: 180px !important;
+    max-height: 180px !important;
+    padding: 12px !important;
+  }
+  .cc-img {
+    max-height: 156px !important;
+  }
+}
