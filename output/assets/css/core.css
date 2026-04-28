@@ -4226,3 +4226,50 @@ svg { max-width: none; }
   }
 }
 
+/* =======================================================================
+   PRODUCT IMAGE DISPLAY — mobile fix (max-width: 768px)
+   Show full vial without cropping: contain not cover, taller containers,
+   no overflow clipping.
+   ======================================================================= */
+
+@media (max-width: 768px) {
+
+  /* ── Product grid cards ─────────────────────────────────────────────── */
+
+  .cc-img-wrap {
+    height: 280px !important;          /* was 148px — tall enough for full vial */
+    overflow: visible !important;       /* remove clip that cut the image */
+    width: 100% !important;
+    background: #13171c !important;    /* keep dark bg so padding areas look clean */
+    display: flex !important;          /* centre the contained image */
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .cc-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;    /* show full vial — no cropping */
+    display: block !important;
+  }
+
+  /* ── Product detail hero image ──────────────────────────────────────── */
+
+  .cp-img-placeholder {
+    min-height: 320px !important;       /* tall enough for full vial */
+    overflow: visible !important;       /* remove clip */
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: #1e2024 !important;    /* keep dark bg */
+  }
+
+  .cp-prod-img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;    /* show full vial — no cropping */
+    display: block !important;
+  }
+}
+
