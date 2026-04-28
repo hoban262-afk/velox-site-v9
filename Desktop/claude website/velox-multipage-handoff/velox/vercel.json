@@ -1,17 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "output/api/send-order.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "output/**",
-      "use": "@vercel/static"
+  "buildCommand": null,
+  "outputDirectory": "output",
+  "functions": {
+    "api/send-order.js": {
+      "runtime": "nodejs20.x"
     }
-  ],
-  "routes": [
-    { "src": "/api/send-order", "dest": "/output/api/send-order.js" },
-    { "src": "/(.*)", "dest": "/output/$1" }
-  ]
+  }
 }
