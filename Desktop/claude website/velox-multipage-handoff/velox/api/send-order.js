@@ -5,7 +5,20 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const d = req.body;
+  // Vercel does not auto-parse JSON — collect and parse the body manually
+  const raw = await new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', chunk => { data += chunk; });
+    req.on('end', () => resolve(data));
+    req.on('error', reject);
+  });
+
+  let d;
+  try {
+    d = JSON.parse(raw);
+  } catch {
+    return res.status(400).json({ error: 'Invalid JSON' });
+  }
 
   const itemsHtml = d.order_items
     .split('\n')
