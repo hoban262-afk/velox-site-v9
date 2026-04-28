@@ -1,3 +1,17 @@
 {
-  "version": 2
+  "version": 2,
+  "builds": [
+    {
+      "src": "output/api/send-order.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "output/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/api/send-order", "dest": "/output/api/send-order.js" },
+    { "src": "/(.*)", "dest": "/output/$1" }
+  ]
 }
