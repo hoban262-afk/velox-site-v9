@@ -4296,3 +4296,34 @@ html { overflow-x: hidden !important; }
   display: none !important;
 }
 
+/* =======================================================================
+   MOBILE: Product detail hero — reorder to name → pricing → description
+   Technique: display:contents on cp-hero-main surfaces its children as
+   direct flex children of cp-hero, enabling order: control without
+   touching HTML. Desktop grid layout is completely unaffected.
+   ======================================================================= */
+
+@media (max-width: 768px) {
+
+  /* Switch hero from CSS grid to flex column */
+  .cp-hero {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Dissolve the wrapper div — its children become direct flex children */
+  .cp-hero .cp-hero-main {
+    display: contents !important;
+  }
+
+  /* Stacking order: image → eyebrow → title → order panel → rest */
+  .cp-hero .cp-img-col  { order: 1 !important; }
+  .cp-hero .cp-eyebrow  { order: 2 !important; }
+  .cp-hero .cp-h1       { order: 3 !important; }
+  .cp-hero .cp-order    { order: 4 !important; }
+  .cp-hero .disc-inline { order: 5 !important; }
+  .cp-hero .cp-lede     { order: 6 !important; }
+  .cp-hero .cp-spec     { order: 7 !important; }
+
+}
+
