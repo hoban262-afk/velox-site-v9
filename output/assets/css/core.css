@@ -4590,3 +4590,82 @@ html { overflow-x: hidden !important; }
   margin-top: auto !important;
 }
 
+/* ============================================================
+   LAYOUT AUDIT FIXES — order panel wrapping, image clipping,
+   3-column min-width guards, mobile safety
+   ============================================================ */
+
+/* 1. Order panel compound-label word wrap
+   Root cause: .cp-size-l { flex: 1 1 0% } + wide price block (~160px)
+   squeezes label to ~40-80px → one word per line.
+   Fix: give label a real flex-basis so when price block is wide it
+   wraps to its own row rather than crushing the label.               */
+.cp-size-opt {
+  align-items: flex-start !important;
+  flex-wrap: wrap !important;
+  row-gap: 4px !important;
+  column-gap: 8px !important;
+}
+.cp-size-opt input[type="radio"] {
+  flex-shrink: 0 !important;
+  margin-top: 3px !important;
+}
+.cp-size-l {
+  flex: 1 1 120px !important;
+  min-width: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+.cp-size-price-wrap {
+  flex-shrink: 0 !important;
+  flex-basis: auto !important;
+  margin-left: auto !important;
+}
+
+/* At ≤1100px panel gets narrower — move price to its own line */
+@media (max-width: 1100px) {
+  .cp-size-price-wrap {
+    flex-basis: 100% !important;
+    margin-left: 28px !important;
+  }
+}
+
+/* 2. Hero image not clipped at top
+   Ensure image column and placeholder never hide overflow              */
+.cp-img-col {
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+.cp-img-placeholder {
+  overflow: visible !important;
+}
+
+/* 3. 3-column grid children: prevent any child causing overflow       */
+.cp-hero > * {
+  min-width: 0;
+}
+.cp-hero-main {
+  min-width: 0 !important;
+  overflow-wrap: break-word !important;
+}
+.cp-order {
+  min-width: 0 !important;
+}
+
+/* 4. Mobile safety — all hero columns full-width, no overflow         */
+@media (max-width: 768px) {
+  .cp-order,
+  .cp-img-col,
+  .cp-hero-main {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+  .cp-size-price-wrap {
+    flex-basis: 100% !important;
+    margin-left: 28px !important;
+  }
+}
+
