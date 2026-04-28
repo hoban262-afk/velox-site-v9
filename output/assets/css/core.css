@@ -4521,3 +4521,72 @@ html { overflow-x: hidden !important; }
   }
 }
 
+/* =======================================================================
+   STACK TILE REDESIGN — full-width flush image, clean text layout below
+   ======================================================================= */
+
+/* Card: ensure overflow clips image to rounded corners */
+.stack-card {
+  overflow: hidden !important;
+}
+
+/* Link wrapper: remove padding — image fills edge to edge */
+.stack-card-link {
+  padding: 0 !important;
+}
+
+/* Image container: no border, no padding, no margin — flush with card */
+.sc-img-placeholder {
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+
+/* Image: full width, natural height, no gaps */
+.sc-prod-img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  object-fit: cover !important;
+}
+
+/* sc-img-label: only visible when no image (src="") — give it padding */
+.sc-img-label {
+  display: block !important;
+  text-align: center !important;
+  padding: 48px 16px !important;
+}
+
+/* Hide label when image is present */
+.sc-img-placeholder:has(img:not([src=""])) .sc-img-label {
+  display: none !important;
+}
+
+/* Text content block below image: restore padding */
+.stack-card-eyebrow {
+  padding: 14px 16px 0 !important;
+}
+
+.stack-card-name {
+  padding: 4px 16px 0 !important;
+}
+
+.stack-card-full {
+  padding: 0 16px !important;
+}
+
+.sc-card-pills {
+  padding: 8px 16px 0 !important;
+}
+
+.stack-card-ft {
+  padding: 12px 16px 16px !important;
+  margin-top: auto !important;
+}
+
