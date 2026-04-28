@@ -4227,49 +4227,82 @@ svg { max-width: none; }
 }
 
 /* =======================================================================
-   PRODUCT IMAGE DISPLAY — mobile fix (max-width: 768px)
-   Show full vial without cropping: contain not cover, taller containers,
-   no overflow clipping.
+   CARD + HERO IMAGE LAYOUT FIX — mobile (max-width: 768px)
+   Fix 1: card overflow — block layout on wrap, overflow:hidden, 260px,
+           eliminates flex side-by-side bug that pushed text off-screen.
+   Fix 2: hero container — height:auto + position:static on img so the
+           dashed border hugs the image with 10px padding, no empty space.
    ======================================================================= */
+
+/* Viewport-level overflow guard */
+html { overflow-x: hidden !important; }
 
 @media (max-width: 768px) {
 
-  /* ── Product grid cards ─────────────────────────────────────────────── */
-
-  .cc-img-wrap {
-    height: 280px !important;          /* was 148px — tall enough for full vial */
-    overflow: visible !important;       /* remove clip that cut the image */
+  /* ── Force grids to single column, no min-width blowout ─────────────── */
+  .prod-grid,
+  .prod-grid-4 {
+    grid-template-columns: 1fr !important;
+    min-width: 0 !important;
     width: 100% !important;
-    background: #13171c !important;    /* keep dark bg so padding areas look clean */
-    display: flex !important;          /* centre the contained image */
-    align-items: center !important;
-    justify-content: center !important;
+  }
+
+  .cc {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ── Card image wrap: block, overflow hidden, 260px tall ─────────────── */
+  .cc-img-wrap {
+    height: 260px !important;
+    overflow: hidden !important;        /* contain the image — no bleed outside card */
+    width: 100% !important;
+    background: #13171c !important;
+    display: block !important;          /* NOT flex — avoids img+span going side-by-side */
+    position: relative !important;
   }
 
   .cc-img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important;    /* show full vial — no cropping */
+    object-fit: contain !important;     /* show full vial without cropping */
     display: block !important;
   }
 
-  /* ── Product detail hero image ──────────────────────────────────────── */
+  /* Hide the in-wrap text label (image makes it redundant on mobile) */
+  .cc-img-name {
+    display: none !important;
+  }
 
+  /* ── Product detail hero: container sizes to the image ───────────────── */
   .cp-img-placeholder {
-    min-height: 320px !important;       /* tall enough for full vial */
-    overflow: visible !important;       /* remove clip */
+    aspect-ratio: unset !important;     /* remove 1/1 and 4/3 ratio that adds blank space */
+    min-height: unset !important;
+    height: auto !important;
+    overflow: hidden !important;
+    padding: 10px !important;           /* tight border gap — 10px all around the vial */
+    display: block !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    background: #1e2024 !important;    /* keep dark bg */
+    background: #1e2024 !important;
   }
 
   .cp-prod-img {
-    position: absolute !important;
-    inset: 0 !important;
+    position: static !important;        /* in normal flow so container height follows image */
+    inset: unset !important;
     width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;    /* show full vial — no cropping */
+    height: auto !important;            /* natural aspect ratio — no blank space above/below */
+    object-fit: contain !important;
     display: block !important;
+    border-radius: 4px !important;
   }
+
+  /* Hide redundant text labels inside hero placeholder */
+  .cp-img-label,
+  .cp-img-sub {
+    display: none !important;
+  }
+
 }
 
