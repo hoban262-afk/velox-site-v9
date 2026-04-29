@@ -42,6 +42,22 @@ function buildCustomerHtml(d, itemsHtml) {
   </table>
 </td></tr>
 <tr><td style="padding:0 40px 20px">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.inner}">
+    <tr><td style="padding:10px 18px;border-bottom:1px solid #1a1a1a"><span style="${S.lbl}">DELIVERY DETAILS</span></td></tr>
+    <tr><td style="padding:14px 18px">
+      <p style="margin:0 0 4px;font-size:13px;color:#fff;font-weight:600">${d.customer_name}</p>
+      ${d.customer_phone ? `<p style="margin:0 0 8px;font-size:13px;color:#888">${d.customer_phone}</p>` : ''}
+      <p style="margin:0;font-size:13px;color:#888;line-height:1.7">
+        ${d.addr1 || ''}<br>
+        ${d.addr2 ? d.addr2 + '<br>' : ''}
+        ${d.city || ''}<br>
+        ${d.postcode || ''}<br>
+        ${d.country || 'United Kingdom'}
+      </p>
+    </td></tr>
+  </table>
+</td></tr>
+<tr><td style="padding:0 40px 20px">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#1a0f00;border:1px solid #ff9900;border-radius:6px">
     <tr><td style="padding:12px 16px"><p style="margin:0;font-size:12px;color:#ff9900;font-weight:600;line-height:1.6">&#9888; This order is for in vitro research use only. Not for human or veterinary consumption.</p></td></tr>
   </table>
@@ -79,7 +95,9 @@ function buildAdminHtml(d, itemsHtml) {
     <tr><td style="padding:10px 18px;border-bottom:1px solid #1a1a1a"><span style="${S.lbl}">Customer</span></td></tr>
     <tr><td style="padding:12px 18px">
       <p style="margin:0 0 5px;font-size:13px;color:#fff"><span style="color:#888">Name:</span> ${d.customer_name}</p>
-      <p style="margin:0;font-size:13px;color:#fff"><span style="color:#888">Email:</span> ${d.customer_email}</p>
+      <p style="margin:0 0 5px;font-size:13px;color:#fff"><span style="color:#888">Email:</span> ${d.customer_email}</p>
+      ${d.customer_phone ? `<p style="margin:0 0 5px;font-size:13px;color:#fff"><span style="color:#888">Phone:</span> ${d.customer_phone}</p>` : ''}
+      <p style="margin:0;font-size:13px;color:#fff"><span style="color:#888">Address:</span> ${d.shipping_address || ''}</p>
     </td></tr>
   </table>
 </td></tr>

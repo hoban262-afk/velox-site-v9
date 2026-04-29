@@ -83,7 +83,7 @@
       e.preventDefault();
       var errEl = document.getElementById('co-err');
 
-      var required = ['sh-fname', 'sh-lname', 'sh-email', 'sh-addr1', 'sh-city', 'sh-post'];
+      var required = ['sh-fname', 'sh-lname', 'sh-email', 'sh-phone', 'sh-addr1', 'sh-city', 'sh-post'];
       var missing = required.filter(function (id) {
         var el = document.getElementById(id);
         return !el || !el.value.trim();
@@ -101,7 +101,7 @@
         fname:    document.getElementById('sh-fname').value.trim(),
         lname:    document.getElementById('sh-lname').value.trim(),
         email:    document.getElementById('sh-email').value.trim(),
-        phone:    (document.getElementById('sh-phone') || {}).value || '',
+        phone:    document.getElementById('sh-phone').value.trim(),
         addr1:    document.getElementById('sh-addr1').value.trim(),
         addr2:    (document.getElementById('sh-addr2') || {}).value || '',
         city:     document.getElementById('sh-city').value.trim(),
@@ -219,6 +219,11 @@
           customer_name:    (chk.fname || '') + ' ' + (chk.lname || ''),
           customer_email:   chk.email,
           customer_phone:   chk.phone || '',
+          addr1:            chk.addr1    || '',
+          addr2:            chk.addr2    || '',
+          city:             chk.city     || '',
+          postcode:         chk.postcode || '',
+          country:          chk.country  || 'United Kingdom',
           shipping_address: shippingAddr,
           shipping_method:  'Royal Mail Tracked 48',
           order_items:      itemLines,

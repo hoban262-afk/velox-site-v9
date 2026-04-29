@@ -83,7 +83,7 @@
       e.preventDefault();
       var errEl = document.getElementById('co-err');
 
-      var required = ['sh-fname', 'sh-lname', 'sh-email', 'sh-addr1', 'sh-city', 'sh-post'];
+      var required = ['sh-fname', 'sh-lname', 'sh-email', 'sh-phone', 'sh-addr1', 'sh-city', 'sh-post'];
       var missing = required.filter(function (id) {
         var el = document.getElementById(id);
         return !el || !el.value.trim();
@@ -101,7 +101,7 @@
         fname:    document.getElementById('sh-fname').value.trim(),
         lname:    document.getElementById('sh-lname').value.trim(),
         email:    document.getElementById('sh-email').value.trim(),
-        phone:    (document.getElementById('sh-phone') || {}).value || '',
+        phone:    document.getElementById('sh-phone').value.trim(),
         addr1:    document.getElementById('sh-addr1').value.trim(),
         addr2:    (document.getElementById('sh-addr2') || {}).value || '',
         city:     document.getElementById('sh-city').value.trim(),
