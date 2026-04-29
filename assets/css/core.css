@@ -5119,3 +5119,54 @@ a.cat-tile[href="/stacks/"] .cat-tile-action { color: #FF6B00 !important; }
 body.page-stacks-root .bc-current { color: #FF6B00 !important; }
 body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !important; }
 body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !important; box-shadow: 0 0 14px rgba(255,107,0,0.35), 0 4px 20px rgba(255,107,0,0.10) !important; transform: translateY(-2px) !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CAT-GRID 6-COLUMN LAYOUT
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Desktop default: all 6 cards in a single row */
+.cat-grid {
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 12px !important;
+}
+.cat-tile {
+  padding: 16px 14px !important;
+}
+.cat-tile-name {
+  font-size: 18px !important;
+}
+
+/* Tablet 768–1023px: 3×2 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cat-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+  .cat-tile {
+    padding: 18px 16px !important;
+  }
+  .cat-tile-name {
+    font-size: 20px !important;
+  }
+}
+
+/* Mobile ≤767px: 2×3 */
+@media (max-width: 767px) {
+  .cat-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .cat-tile {
+    padding: 14px 12px !important;
+  }
+  .cat-tile-name {
+    font-size: 15px !important;
+  }
+}
+
+/* Very small phones ≤380px: single column */
+@media (max-width: 380px) {
+  .cat-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
