@@ -5010,3 +5010,88 @@ body.page-cat-metabolic  .bc-current { color: #F5A623 !important; }
 body.page-cat-healing    .bc-current { color: #4FC3F7 !important; }
 body.page-cat-growth     .bc-current { color: #69D98C !important; }
 body.page-cat-antiageing .bc-current { color: #FF6B9D !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STACK CATEGORY COLOUR SYSTEM
+   Cognitive #9B6DFF · Metabolic #F5A623 · Healing #4FC3F7 · Growth #69D98C · Anti-Ageing #FF6B9D
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Stack tiles — top border ── */
+article.stack-card:has(a[href*="/stacks/cognitive/"]),
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]),
+article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]) { border-top: 4px solid #9B6DFF !important; }
+
+article.stack-card:has(a[href*="/stacks/metabolic/"]),
+article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]) { border-top: 4px solid #F5A623 !important; }
+
+article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]),
+article.stack-card:has(a[href*="/stacks/ultimate-repair/"]) { border-top: 4px solid #4FC3F7 !important; }
+
+article.stack-card:has(a[href*="/stacks/gh-peptide/"]) { border-top: 4px solid #69D98C !important; }
+
+article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]),
+article.stack-card:has(a[href*="/stacks/anti-ageing/"]) { border-top: 4px solid #FF6B9D !important; }
+
+/* ── Stack tiles — eyebrow badge text colour ── */
+article.stack-card:has(a[href*="/stacks/cognitive/"]) .stack-card-eyebrow,
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]) .stack-card-eyebrow,
+article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]) .stack-card-eyebrow { color: #9B6DFF !important; }
+
+article.stack-card:has(a[href*="/stacks/metabolic/"]) .stack-card-eyebrow,
+article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]) .stack-card-eyebrow { color: #F5A623 !important; }
+
+article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]) .stack-card-eyebrow,
+article.stack-card:has(a[href*="/stacks/ultimate-repair/"]) .stack-card-eyebrow { color: #4FC3F7 !important; }
+
+article.stack-card:has(a[href*="/stacks/gh-peptide/"]) .stack-card-eyebrow { color: #69D98C !important; }
+
+article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]) .stack-card-eyebrow,
+article.stack-card:has(a[href*="/stacks/anti-ageing/"]) .stack-card-eyebrow { color: #FF6B9D !important; }
+
+/* ── Stack tiles — "View stack →" action link colour ── */
+article.stack-card:has(a[href*="/stacks/cognitive/"]) .stack-card-action,
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]) .stack-card-action,
+article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]) .stack-card-action { color: #9B6DFF !important; }
+
+article.stack-card:has(a[href*="/stacks/metabolic/"]) .stack-card-action,
+article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]) .stack-card-action { color: #F5A623 !important; }
+
+article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]) .stack-card-action,
+article.stack-card:has(a[href*="/stacks/ultimate-repair/"]) .stack-card-action { color: #4FC3F7 !important; }
+
+article.stack-card:has(a[href*="/stacks/gh-peptide/"]) .stack-card-action { color: #69D98C !important; }
+
+article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]) .stack-card-action,
+article.stack-card:has(a[href*="/stacks/anti-ageing/"]) .stack-card-action { color: #FF6B9D !important; }
+
+/* ── Stack tiles — hover glow ── */
+article.stack-card:has(a[href*="/stacks/cognitive/"]):hover,
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]):hover,
+article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]):hover { border-color: #9B6DFF !important; box-shadow: 0 0 14px rgba(155,109,255,0.35), 0 4px 20px rgba(155,109,255,0.10) !important; transform: translateY(-2px) !important; }
+
+article.stack-card:has(a[href*="/stacks/metabolic/"]):hover,
+article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]):hover { border-color: #F5A623 !important; box-shadow: 0 0 14px rgba(245,166,35,0.35), 0 4px 20px rgba(245,166,35,0.10) !important; transform: translateY(-2px) !important; }
+
+article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]):hover,
+article.stack-card:has(a[href*="/stacks/ultimate-repair/"]):hover { border-color: #4FC3F7 !important; box-shadow: 0 0 14px rgba(79,195,247,0.35), 0 4px 20px rgba(79,195,247,0.10) !important; transform: translateY(-2px) !important; }
+
+article.stack-card:has(a[href*="/stacks/gh-peptide/"]):hover { border-color: #69D98C !important; box-shadow: 0 0 14px rgba(105,217,140,0.35), 0 4px 20px rgba(105,217,140,0.10) !important; transform: translateY(-2px) !important; }
+
+article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]):hover,
+article.stack-card:has(a[href*="/stacks/anti-ageing/"]):hover { border-color: #FF6B9D !important; box-shadow: 0 0 14px rgba(255,107,157,0.35), 0 4px 20px rgba(255,107,157,0.10) !important; transform: translateY(-2px) !important; }
+
+/* ── Stack detail pages — section accents (stack-comp-link, order meta icons) ── */
+body.page-cat-cognitive  .stack-comp-link,
+body.page-cat-cognitive  .cpom-ic { color: #9B6DFF !important; }
+
+body.page-cat-metabolic  .stack-comp-link,
+body.page-cat-metabolic  .cpom-ic { color: #F5A623 !important; }
+
+body.page-cat-healing    .stack-comp-link,
+body.page-cat-healing    .cpom-ic { color: #4FC3F7 !important; }
+
+body.page-cat-growth     .stack-comp-link,
+body.page-cat-growth     .cpom-ic { color: #69D98C !important; }
+
+body.page-cat-antiageing .stack-comp-link,
+body.page-cat-antiageing .cpom-ic { color: #FF6B9D !important; }
