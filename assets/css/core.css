@@ -2272,17 +2272,21 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 /* -- Image placeholder -- */
 .cp-img-placeholder{
   width:100%;
-  aspect-ratio:1/1;
   background:#1e2024;
   border:2px dashed #01D3A0;
   border-radius:8px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:20px;
+  display:block;
+  padding:0;
   box-sizing:border-box;
+  overflow:visible;
+  position:static;
+}
+.cp-prod-img{
+  position:static;
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:6px;
 }
 .cp-img-label{
   font-family:var(--disp);
@@ -2362,16 +2366,11 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 @media(max-width:1024px){
   .cp-hero{grid-template-columns:1fr 320px;}
   .cp-img-col{grid-column:1/-1;}
-  .cp-img-placeholder{aspect-ratio:16/7;max-height:300px;}
 }
 @media(max-width:767px){
   .cp-hero{grid-template-columns:1fr;}
-  .cp-img-placeholder{aspect-ratio:4/3;}
   .cp-section{padding:20px 18px 18px;margin:14px auto;}
   .cp-compliance{padding:16px 18px;margin:14px auto;}
-}
-@media(max-width:479px){
-  .cp-img-placeholder{aspect-ratio:3/2;}
 }
 
 /* =======================================================================
@@ -2914,13 +2913,14 @@ a.eg-btn-p {
 .cc-img-wrap {
   background: #13171c !important;
   border-bottom: 1px solid #1e2228 !important;
-  height: 148px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 10px !important;
+  display: block !important;
+  overflow: visible !important;
   transition: background .2s ease !important;
+}
+.cc-img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
 }
 .cc:hover .cc-img-wrap {
   background: #161b21 !important;
@@ -3961,3 +3961,1052 @@ img {
   }
 }
 
+/* =======================================================================
+   MOBILE OPTIMISATION — Phase 3: comprehensive 375–430 px pass
+   All rules appended at end-of-file so cascade order guarantees override.
+   ======================================================================= */
+
+/* ── 0. Global guards ─────────────────────────────────────────────────── */
+
+/* Flex/grid children can shrink below their content size */
+*, *::before, *::after { min-width: 0; }
+
+/* All images respect their container */
+img { max-width: 100%; height: auto; display: block; }
+/* Exception: inline SVG icons keep natural size */
+svg { max-width: none; }
+
+/* Long chemical names / sequences / CAS numbers break safely */
+.cp-h1, .cc-name, .stack-card-name,
+.cp-spec td, .cp-spec dd,
+.cp-spec-table td, .cp-spec-table th,
+.legal-i p, .legal-i li,
+.cp-section p, .cp-section li { overflow-wrap: break-word; word-break: break-word; }
+.mono { word-break: break-all; }
+
+/* Page lede: remove desktop max-width on mobile */
+@media (max-width: 767px) {
+  .page-lede { max-width: 100%; }
+}
+
+
+/* ── 1. Nav ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  /* Guarantee hamburger always visible — belt & suspenders override */
+  .hamburger,
+  .site-header .hamburger { display: flex !important; }
+  .nav-links,
+  .site-header .nav-links  { display: none !important; }
+
+  /* Logo: compact but readable */
+  .nav-logo-img { width: 110px !important; }
+
+  /* Announcement bar: ensure single-line scroll, no page overflow */
+  .ann-bar { overflow: hidden !important; }
+}
+
+
+/* ── 2. Hero heading: step down below 480 px ─────────────────────────── */
+
+@media (max-width: 479px) {
+  .h-h1 { font-size: 38px !important; line-height: .95 !important; }
+}
+@media (max-width: 375px) {
+  .h-h1 { font-size: 32px !important; }
+}
+
+
+/* ── 3. Compound page detail ─────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+
+  /* Order panel: full-width, comfortable padding */
+  .cp-order {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 16px !important;
+  }
+
+  /* Size option row: wrap price details onto a second line on narrow screens */
+  .cp-size-opt {
+    flex-wrap: wrap !important;
+    row-gap: 6px !important;
+  }
+  .cp-size-price-wrap {
+    flex-basis: 100% !important;
+    margin-left: 0 !important;
+    margin-top: 2px !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Spec grid: already 1-col at 767 (line 1798) — reinforce */
+  .cp-spec { grid-template-columns: 1fr !important; }
+
+  /* Disclaimer notice: comfortable on small screen */
+  .disc-inline { font-size: 12px !important; padding: 10px 12px !important; }
+}
+
+
+/* ── 4. Checkout ─────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+
+  /* Submit always full-width */
+  .co-submit {
+    width: 100% !important;
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Back link: tappable */
+  .co-back {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 44px !important;
+    font-size: 13px !important;
+    margin-top: 8px !important;
+  }
+
+  /* Error message */
+  .co-err { font-size: 13px !important; line-height: 1.5 !important; padding: 8px 0 !important; }
+
+  /* Order summary sidebar: always static on mobile */
+  .co-summary, .cart-summary {
+    position: static !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 20px !important;
+  }
+}
+
+@media (max-width: 479px) {
+  /* Checkout steps text: tighten */
+  .co-steps { gap: 4px !important; }
+  .co-step  { font-size: 11px !important; padding: 7px 10px !important; white-space: nowrap !important; }
+}
+
+
+/* ── 5. Confirmation page ────────────────────────────────────────────── */
+
+@media (max-width: 479px) {
+  .confirm-t       { font-size: 22px !important; }
+  .confirm-bank-dl { font-size: 13px !important; }
+  .confirm-bank-dl dt { font-size: 11px !important; }
+  .confirm-bank-dl dd { font-size: 13px !important; word-break: break-all !important; }
+}
+
+
+/* ── 6. Footer: 44 px touch targets on mobile ────────────────────────── */
+
+@media (max-width: 767px) {
+  .ft-col a {
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 2px 0 !important;
+  }
+  .ft-col-h { margin-bottom: 6px !important; }
+
+  /* Bottom bar: smaller text already set; ensure it wraps */
+  .ft-bot { flex-wrap: wrap !important; gap: 6px !important; }
+}
+
+
+/* ── 7. Entry gate: compact padding on small phones ─────────────────── */
+
+@media (max-width: 479px) {
+  .eg-i { padding: 24px 18px !important; }
+  .eg-title { font-size: 19px !important; }
+  .eg-i .eg-eyebrow { font-size: 9px !important; }
+}
+
+
+/* ── 8. Catalogue / category pages ──────────────────────────────────── */
+
+@media (max-width: 479px) {
+  /* sec-hdr: wrap "View X hub →" link below title if space is tight */
+  .page-catalogue .sec-hdr,
+  .page-category  .sec-hdr {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  .page-catalogue .sec-link,
+  .page-category  .sec-link { font-size: 11px !important; }
+}
+
+
+/* ── 9. Stack content pills: allow wrap on narrow screens ────────────── */
+
+@media (max-width: 479px) {
+  /* Allow pill names to wrap rather than force wide pill */
+  .csp-name    { white-space: normal !important; }
+  .sc-cp-name  { white-space: normal !important; }
+  .csp-pill    { padding: 5px 8px !important; }
+  .sc-card-pill{ padding: 4px 7px !important; }
+}
+
+
+/* ── 10. Typography: clamp page headings on mobile ───────────────────── */
+
+@media (max-width: 767px) {
+  /* Catalogue / legal / about h1 */
+  .page-h1 { font-size: clamp(22px, 7vw, 36px) !important; }
+
+  /* Compound product name heading */
+  .cp-h1 { font-size: clamp(22px, 7vw, 32px) !important; }
+}
+
+
+/* ── 11. General overflow prevention ─────────────────────────────────── */
+
+/* All grid containers stay within viewport */
+.prod-grid, .prod-grid-4, .cat-grid, .stack-grid,
+.hp-stats-grid, .stds-grid, .ft-cols, .hp-soc-row,
+.f-grid-2, .co-grid, .cp-hero { width: 100%; box-sizing: border-box; }
+
+/* Scroll containers */
+.cp-table-wrap, .co-steps, .trust-i {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Breadcrumb: wrap gracefully */
+.breadcrumb { flex-wrap: wrap !important; }
+
+/* Prevent any fixed-width element from causing page scroll */
+@media (max-width: 767px) {
+  .hp-block, .cp-section, .cp-compliance, .compliance-block {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+  }
+}
+
+
+/* ── 12. Input focus: prevent iOS auto-zoom everywhere ───────────────── */
+
+@media (max-width: 767px) {
+  input, select, textarea,
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="password"] {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+
+/* ── 13. Buttons: white-space relax on very small screens ────────────── */
+
+@media (max-width: 375px) {
+  /* Allow label text to wrap rather than overflow the button */
+  .btn-p, .btn-o, .cp-order-btn, .eg-btn-p, .eg-btn-o {
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    min-height: 48px !important;
+  }
+}
+
+/* =======================================================================
+   IMAGE NATURAL SIZING — universal (all breakpoints)
+   Images define their own container size. No fixed heights, no object-fit,
+   no aspect-ratio constraints. Container grows to wrap the image cleanly.
+   ======================================================================= */
+
+/* Viewport-level overflow guard */
+html { overflow-x: hidden !important; }
+
+/* ── Product grid cards ──────────────────────────────────────────────────── */
+
+/* Wrap: no height cap — image drives the height */
+.cc-img-wrap {
+  height: auto !important;
+  min-height: unset !important;
+  overflow: visible !important;
+  width: 100% !important;
+  background: #13171c !important;
+  display: block !important;
+  position: static !important;
+  box-sizing: border-box !important;
+}
+
+/* Image: full width, natural height, no object-fit */
+.cc-img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: unset !important;
+}
+
+/* Hide the text label inside the wrap (image makes it redundant) */
+.cc-img-name {
+  display: none !important;
+}
+
+/* Card grid: single column on mobile, no min-width blowout */
+@media (max-width: 768px) {
+  .prod-grid,
+  .prod-grid-4 {
+    grid-template-columns: 1fr !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  .cc {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ── Product detail hero ─────────────────────────────────────────────────── */
+
+/* Container: no aspect-ratio, no fixed height — wraps the image */
+.cp-img-placeholder {
+  aspect-ratio: unset !important;
+  min-height: unset !important;
+  height: auto !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: #1e2024 !important;
+  position: static !important;
+}
+
+/* Image: in normal flow, full width, natural height, no object-fit */
+.cp-prod-img {
+  position: static !important;
+  inset: unset !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: unset !important;
+  border-radius: 6px !important;
+}
+
+/* Hide redundant text labels — image replaces them */
+.cp-img-label,
+.cp-img-sub {
+  display: none !important;
+}
+
+/* =======================================================================
+   MOBILE: Product detail hero — reorder to name → pricing → description
+   Technique: display:contents on cp-hero-main surfaces its children as
+   direct flex children of cp-hero, enabling order: control without
+   touching HTML. Desktop grid layout is completely unaffected.
+   ======================================================================= */
+
+@media (max-width: 768px) {
+
+  /* Switch hero from CSS grid to flex column */
+  .cp-hero {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Dissolve the wrapper div — its children become direct flex children */
+  .cp-hero .cp-hero-main {
+    display: contents !important;
+  }
+
+  /* Stacking order: image → eyebrow → title → order panel → rest */
+  .cp-hero .cp-img-col  { order: 1 !important; }
+  .cp-hero .cp-eyebrow  { order: 2 !important; }
+  .cp-hero .cp-h1       { order: 3 !important; }
+  .cp-hero .cp-order    { order: 4 !important; }
+  .cp-hero .disc-inline { order: 5 !important; }
+  .cp-hero .cp-lede     { order: 6 !important; }
+  .cp-hero .cp-spec     { order: 7 !important; }
+
+}
+
+/* =======================================================================
+   STACKS PROMINENCE — nav highlight, stack-card image placeholders,
+   homepage stacks section, category CTA banner
+   ======================================================================= */
+
+/* ── 1. Nav: Stacks link teal highlight ─────────────────────────────────── */
+
+.nav-links a.nl-stacks {
+  color: #01D3A0 !important;
+  font-weight: 600 !important;
+}
+.nav-links a.nl-stacks:hover {
+  color: #ffffff !important;
+}
+
+/* Mobile menu: Stacks as top-level teal item */
+.mob-menu a.mob-nl-stacks {
+  color: #01D3A0 !important;
+  font-weight: 700 !important;
+  padding-left: 0 !important;        /* full-width, not indented like sub-items */
+  border-top: 1px solid rgba(1,211,160,.15) !important;
+  border-bottom: 1px solid rgba(1,211,160,.15) !important;
+  margin: 4px 0 !important;
+}
+
+/* ── 2. Stack card image placeholder ────────────────────────────────────── */
+
+.sc-img-placeholder {
+  width: 100%;
+  background: #1e2024;
+  border: 2px dashed #01D3A0;
+  border-radius: 8px;
+  display: block;
+  padding: 0;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+/* Hide broken-image icon when src is empty */
+.sc-prod-img[src=""] {
+  display: none !important;
+}
+
+/* Image fills container at natural aspect ratio */
+.sc-prod-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Label: only visible when no image is loaded (src="") */
+.sc-img-label {
+  display: none !important;
+}
+
+/* ── 3. Homepage stacks section ─────────────────────────────────────────── */
+
+.hp-stacks-block {
+  border-top-color: #01D3A0 !important;
+}
+
+.hp-stacks-inner {
+  display: flex;
+  gap: 36px;
+  align-items: flex-start;
+}
+
+.hp-stacks-text {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hp-stacks-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.hp-stacks-sub {
+  font-size: 14px;
+  color: #8a8f9a;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.hp-stacks-cta {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.hp-stacks-pills {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.hp-stack-pill {
+  background: #13171c;
+  border: 1px solid #1e2228;
+  border-left: 3px solid #01D3A0;
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  transition: border-color .2s ease, background .2s ease;
+}
+.hp-stack-pill:hover {
+  border-color: #01D3A0;
+  background: #161b21;
+}
+
+.hp-stack-pill-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: .01em;
+}
+
+.hp-stack-pill-cmpds {
+  font-size: 11px;
+  color: #01D3A0;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+
+@media (max-width: 900px) {
+  .hp-stacks-inner {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .hp-stacks-text {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .hp-stacks-pills {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 4. Category hub: "View all stacks" CTA banner ──────────────────────── */
+
+.cat-stacks-cta-sec {
+  margin-top: 0 !important;
+}
+
+.cat-stacks-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #0d1014;
+  border: 1px solid #1e2228;
+  border-left: 3px solid #01D3A0;
+  border-radius: 6px;
+  padding: 18px 24px;
+}
+
+.cat-stacks-cta-label {
+  font-size: 14px;
+  color: #8a8f9a;
+}
+
+.cat-stacks-cta-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .cat-stacks-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cat-stacks-cta-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* =======================================================================
+   STACK TILE REDESIGN — full-width flush image, clean text layout below
+   ======================================================================= */
+
+/* Card: ensure overflow clips image to rounded corners */
+.stack-card {
+  overflow: hidden !important;
+}
+
+/* Link wrapper: remove padding — image fills edge to edge */
+.stack-card-link {
+  padding: 0 !important;
+}
+
+/* Image container: no border, no padding, no margin — flush with card */
+.sc-img-placeholder {
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+
+/* Image: full width, natural height, no gaps */
+.sc-prod-img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  object-fit: cover !important;
+}
+
+/* sc-img-label: only visible when no image (src="") — give it padding */
+.sc-img-label {
+  display: block !important;
+  text-align: center !important;
+  padding: 48px 16px !important;
+}
+
+/* Hide label when image is present */
+.sc-img-placeholder:has(img:not([src=""])) .sc-img-label {
+  display: none !important;
+}
+
+/* Text content block below image: restore padding */
+.stack-card-eyebrow {
+  padding: 14px 16px 0 !important;
+}
+
+.stack-card-name {
+  padding: 4px 16px 0 !important;
+}
+
+.stack-card-full {
+  padding: 0 16px !important;
+}
+
+.sc-card-pills {
+  padding: 8px 16px 0 !important;
+}
+
+.stack-card-ft {
+  padding: 12px 16px 16px !important;
+  margin-top: auto !important;
+}
+
+/* ============================================================
+   LAYOUT AUDIT FIXES — order panel wrapping, image clipping,
+   3-column min-width guards, mobile safety
+   ============================================================ */
+
+/* 1. Order panel compound-label word wrap
+   Root cause: .cp-size-l { flex: 1 1 0% } + wide price block (~160px)
+   squeezes label to ~40-80px → one word per line.
+   Fix: give label a real flex-basis so when price block is wide it
+   wraps to its own row rather than crushing the label.               */
+.cp-size-opt {
+  align-items: flex-start !important;
+  flex-wrap: wrap !important;
+  row-gap: 4px !important;
+  column-gap: 8px !important;
+}
+.cp-size-opt input[type="radio"] {
+  flex-shrink: 0 !important;
+  margin-top: 3px !important;
+}
+.cp-size-l {
+  flex: 1 1 120px !important;
+  min-width: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+.cp-size-price-wrap {
+  flex-shrink: 0 !important;
+  flex-basis: auto !important;
+  margin-left: auto !important;
+}
+
+/* At ≤1100px panel gets narrower — move price to its own line */
+@media (max-width: 1100px) {
+  .cp-size-price-wrap {
+    flex-basis: 100% !important;
+    margin-left: 28px !important;
+  }
+}
+
+/* 2. Hero image not clipped at top
+   Ensure image column and placeholder never hide overflow              */
+.cp-img-col {
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+.cp-img-placeholder {
+  overflow: visible !important;
+}
+
+/* 3. 3-column grid children: prevent any child causing overflow       */
+.cp-hero > * {
+  min-width: 0;
+}
+.cp-hero-main {
+  min-width: 0 !important;
+  overflow-wrap: break-word !important;
+}
+.cp-order {
+  min-width: 0 !important;
+}
+
+/* 4. Mobile safety — all hero columns full-width, no overflow         */
+@media (max-width: 768px) {
+  .cp-order,
+  .cp-img-col,
+  .cp-hero-main {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+  .cp-size-price-wrap {
+    flex-basis: 100% !important;
+    margin-left: 28px !important;
+  }
+}
+
+/* ============================================================
+   ORDER PANEL TOP-ALIGNMENT + STICKY
+   Problem: base rule has position:sticky then position:relative
+   which kills sticky. Hero needs align-items:start so the order
+   panel doesn't stretch or drift downward.
+   ============================================================ */
+
+/* Ensure hero grid top-aligns all columns */
+.cp-hero {
+  align-items: start !important;
+}
+
+/* Order panel: fix broken sticky (relative was overriding it),
+   top-align with no margin pushing it down                     */
+.cp-order {
+  position: sticky !important;
+  top: 20px !important;
+  align-self: flex-start !important;
+  margin-top: 0 !important;
+}
+
+/* Tablet / single-column: sticky causes scroll issues — revert */
+@media (max-width: 1024px) {
+  .cp-order {
+    position: static !important;
+    align-self: auto !important;
+  }
+}
+
+/* ============================================================
+   PRODUCT CARD REFINEMENT
+   Uniform height, fixed image area, consistent spacing,
+   badge lock, hover glow
+   ============================================================ */
+
+/* 1. Card shell — flex column so body grows and price always hits bottom.
+      height:100% fills the CSS Grid row (grid default is stretch).        */
+.cc {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  /* 6. Border: locked 3px teal top, 1px sides/bottom */
+  border-top: 3px solid #01D3A0 !important;
+  border-right: 1px solid #242730 !important;
+  border-bottom: 1px solid #242730 !important;
+  border-left: 1px solid #242730 !important;
+}
+
+/* 7. Hover: teal glow + lift */
+.cc:hover {
+  border-color: #01D3A0 !important;
+  box-shadow: 0 0 12px rgba(1,211,160,0.20), 0 4px 20px rgba(1,211,160,0.08) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 2. Image area — container height driven by image's natural aspect ratio.
+      No fixed height, no object-fit — image fills full width, height auto. */
+.cc-img-wrap {
+  height: auto !important;
+  min-height: unset !important;
+  max-height: unset !important;
+  overflow: hidden !important;
+  display: block !important;
+  padding: 0 !important;
+  background: #13171c !important;
+  position: static !important;
+}
+.cc-img {
+  width: 100% !important;
+  height: auto !important;
+  max-height: unset !important;
+  object-fit: unset !important;
+  display: block !important;
+}
+
+/* 3. Consistent body padding: 16px all sides */
+.cc-body {
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+}
+
+/* 3. Consistent internal spacing */
+.cc-hdr {
+  margin-bottom: 10px !important;
+}
+.cc-name {
+  margin: 0 0 4px !important;
+}
+.cc-full {
+  margin-bottom: 6px !important;
+}
+.cc-meta {
+  margin-bottom: 10px !important;
+}
+
+/* 4. Category badge — locked to same size, teal, mono */
+.cc-cat {
+  font-family: 'DM Mono', monospace !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: .12em !important;
+  color: #01D3A0 !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+}
+
+/* 5. Price block stays at the bottom of the card */
+.cc-ft {
+  margin-top: auto !important;
+  padding-top: 12px !important;
+  border-top: 1px solid #1e2228 !important;
+}
+
+/* 2. Mobile: image area remains natural — no fixed heights */
+
+/* ============================================================
+   FULL MOBILE OPTIMISATION PASS — 375 / 390 / 430px (iPhone)
+   Only fills gaps not covered by earlier mobile rules.
+   Desktop layouts are completely unaffected.
+   ============================================================ */
+
+/* ── 0. Global overflow guard ────────────────────────────────── */
+body {
+  overflow-x: hidden !important;
+}
+
+/* ── 1. Homepage hero buttons: full-width stacked on mobile ──── */
+@media (max-width: 767px) {
+  .h-btns {
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-bottom: 24px !important;
+  }
+  .h-btns .btn-p,
+  .h-btns .btn-o {
+    width: 100% !important;
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+  /* Compliance note: bump from 10px to at least 12px */
+  .h-compliance {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* ── 2. Product cards: price row safe at 375px ───────────────── */
+@media (max-width: 767px) {
+  /* Allow price block to grow and push ATC button right */
+  .cc-price-block {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  .cc-atc {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+  .cc-ft {
+    gap: 8px !important;
+  }
+  /* Body text floor: 14px */
+  .cc-body {
+    font-size: 14px !important;
+  }
+}
+
+/* ── 3. Product / stack detail: spec grid 2 columns on mobile ── */
+/*    User requirement: "wraps to 2 columns" — override the
+      current 1-col rule set earlier in the cascade.             */
+@media (max-width: 767px) {
+  .cp-spec {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── 4. Order panel: button full-width + min tap height ─────── */
+@media (max-width: 767px) {
+  .cp-order-btn {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* ── 5. Nav: hide cart label at narrow widths to reclaim space ── */
+@media (max-width: 430px) {
+  .nav-cart-label {
+    display: none !important;
+  }
+  .nav-logo-img {
+    width: 100px !important;
+  }
+}
+
+/* ── 6. Footer: single column at 479px and below ────────────── */
+@media (max-width: 479px) {
+  .ft-cols {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+/* ── 7. Universal container guard: every layout box must stay
+        within viewport width on any screen in the 375–430 range */
+@media (max-width: 767px) {
+  .hp-sec,
+  .hp-block,
+  .sec-i,
+  .cp-hero,
+  .cp-section,
+  .cp-compliance,
+  .cp-order,
+  .cp-img-col,
+  .stack-card,
+  .cc,
+  .cat-tile,
+  .hp-stacks-block,
+  .breadcrumb,
+  .compliance-block,
+  .cta-card,
+  .nl-sec,
+  .stds-sec,
+  .rp-card,
+  .legal-i {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* Prevent long compound/stack names from overflowing */
+  .cc-name,
+  .cp-h1,
+  .stack-card-name,
+  .cat-tile-name,
+  .page-h1 {
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+  /* Body text: floor at 14px */
+  body {
+    font-size: 14px;
+  }
+  p, li, td, th {
+    font-size: max(14px, 1em);
+  }
+}
+
+/* ── 8. 375px micro-fixes ─────────────────────────────────────── */
+@media (max-width: 375px) {
+  .cp-hero {
+    padding: 12px !important;
+    gap: 14px !important;
+  }
+  .cc-body {
+    padding: 12px !important;
+  }
+  .cp-order {
+    padding: 14px !important;
+  }
+  /* Section inner padding: minimum 12px each side */
+  .sec-i {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .hp-sec {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  /* Cards: remove any residual min-width */
+  .cc, .stack-card, .cat-tile {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CATEGORY COLOUR SYSTEM
+   Cognitive #9B6DFF · Metabolic #F5A623 · Healing #4FC3F7 · Growth #69D98C · Anti-Ageing #FF6B9D
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Remove flavour-text paragraph from category tiles ── */
+.cat-tile-desc { display: none !important; }
+
+/* ── Category tiles — top border + name colour + action link colour ── */
+a.cat-tile[href*="/cognitive/"]      { border-top: 4px solid #9B6DFF !important; }
+a.cat-tile[href*="/metabolic/"]      { border-top: 4px solid #F5A623 !important; }
+a.cat-tile[href*="/healing-and-repair/"] { border-top: 4px solid #4FC3F7 !important; }
+a.cat-tile[href*="/growth/"]         { border-top: 4px solid #69D98C !important; }
+a.cat-tile[href*="/anti-ageing/"]    { border-top: 4px solid #FF6B9D !important; }
+
+a.cat-tile[href*="/cognitive/"]      .cat-tile-name, a.cat-tile[href*="/cognitive/"]      .cat-tile-action { color: #9B6DFF !important; }
+a.cat-tile[href*="/metabolic/"]      .cat-tile-name, a.cat-tile[href*="/metabolic/"]      .cat-tile-action { color: #F5A623 !important; }
+a.cat-tile[href*="/healing-and-repair/"] .cat-tile-name, a.cat-tile[href*="/healing-and-repair/"] .cat-tile-action { color: #4FC3F7 !important; }
+a.cat-tile[href*="/growth/"]         .cat-tile-name, a.cat-tile[href*="/growth/"]         .cat-tile-action { color: #69D98C !important; }
+a.cat-tile[href*="/anti-ageing/"]    .cat-tile-name, a.cat-tile[href*="/anti-ageing/"]    .cat-tile-action { color: #FF6B9D !important; }
+
+/* ── Product cards — top border, badge label colour, hover glow ── */
+.cc.cc-cognitive  { border-top-color: #9B6DFF !important; }
+.cc.cc-metabolic  { border-top-color: #F5A623 !important; }
+.cc.cc-healing    { border-top-color: #4FC3F7 !important; }
+.cc.cc-growth     { border-top-color: #69D98C !important; }
+.cc.cc-antiageing { border-top-color: #FF6B9D !important; }
+
+.cc.cc-cognitive  .cc-cat { color: #9B6DFF !important; }
+.cc.cc-metabolic  .cc-cat { color: #F5A623 !important; }
+.cc.cc-healing    .cc-cat { color: #4FC3F7 !important; }
+.cc.cc-growth     .cc-cat { color: #69D98C !important; }
+.cc.cc-antiageing .cc-cat { color: #FF6B9D !important; }
+
+.cc.cc-cognitive:hover  { border-color: #9B6DFF !important; box-shadow: 0 0 14px rgba(155,109,255,0.35), 0 4px 20px rgba(155,109,255,0.10) !important; }
+.cc.cc-metabolic:hover  { border-color: #F5A623 !important; box-shadow: 0 0 14px rgba(245,166,35,0.35),  0 4px 20px rgba(245,166,35,0.10)  !important; }
+.cc.cc-healing:hover    { border-color: #4FC3F7 !important; box-shadow: 0 0 14px rgba(79,195,247,0.35),  0 4px 20px rgba(79,195,247,0.10)  !important; }
+.cc.cc-growth:hover     { border-color: #69D98C !important; box-shadow: 0 0 14px rgba(105,217,140,0.35), 0 4px 20px rgba(105,217,140,0.10) !important; }
+.cc.cc-antiageing:hover { border-color: #FF6B9D !important; box-shadow: 0 0 14px rgba(255,107,157,0.35), 0 4px 20px rgba(255,107,157,0.10) !important; }
+
+/* ── Product detail pages — eyebrow text colour ── */
+body.page-cat-cognitive  .cp-eyebrow { color: #9B6DFF !important; }
+body.page-cat-metabolic  .cp-eyebrow { color: #F5A623 !important; }
+body.page-cat-healing    .cp-eyebrow { color: #4FC3F7 !important; }
+body.page-cat-growth     .cp-eyebrow { color: #69D98C !important; }
+body.page-cat-antiageing .cp-eyebrow { color: #FF6B9D !important; }
+
+/* ── Breadcrumb — category link colour on hub and detail pages ── */
+a.bc-link[href*="/compounds/cognitive/"]          { color: #9B6DFF !important; }
+a.bc-link[href*="/compounds/metabolic/"]          { color: #F5A623 !important; }
+a.bc-link[href*="/compounds/healing-and-repair/"] { color: #4FC3F7 !important; }
+a.bc-link[href*="/compounds/growth/"]             { color: #69D98C !important; }
+a.bc-link[href*="/compounds/anti-ageing/"]        { color: #FF6B9D !important; }
+
+/* Hub page current breadcrumb (the <span.bc-current>) */
+body.page-cat-cognitive  .bc-current { color: #9B6DFF !important; }
+body.page-cat-metabolic  .bc-current { color: #F5A623 !important; }
+body.page-cat-healing    .bc-current { color: #4FC3F7 !important; }
+body.page-cat-growth     .bc-current { color: #69D98C !important; }
+body.page-cat-antiageing .bc-current { color: #FF6B9D !important; }

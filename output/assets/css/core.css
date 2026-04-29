@@ -4949,3 +4949,64 @@ body {
     width: 100% !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CATEGORY COLOUR SYSTEM
+   Cognitive #9B6DFF · Metabolic #F5A623 · Healing #4FC3F7 · Growth #69D98C · Anti-Ageing #FF6B9D
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Remove flavour-text paragraph from category tiles ── */
+.cat-tile-desc { display: none !important; }
+
+/* ── Category tiles — top border + name colour + action link colour ── */
+a.cat-tile[href*="/cognitive/"]      { border-top: 4px solid #9B6DFF !important; }
+a.cat-tile[href*="/metabolic/"]      { border-top: 4px solid #F5A623 !important; }
+a.cat-tile[href*="/healing-and-repair/"] { border-top: 4px solid #4FC3F7 !important; }
+a.cat-tile[href*="/growth/"]         { border-top: 4px solid #69D98C !important; }
+a.cat-tile[href*="/anti-ageing/"]    { border-top: 4px solid #FF6B9D !important; }
+
+a.cat-tile[href*="/cognitive/"]      .cat-tile-name, a.cat-tile[href*="/cognitive/"]      .cat-tile-action { color: #9B6DFF !important; }
+a.cat-tile[href*="/metabolic/"]      .cat-tile-name, a.cat-tile[href*="/metabolic/"]      .cat-tile-action { color: #F5A623 !important; }
+a.cat-tile[href*="/healing-and-repair/"] .cat-tile-name, a.cat-tile[href*="/healing-and-repair/"] .cat-tile-action { color: #4FC3F7 !important; }
+a.cat-tile[href*="/growth/"]         .cat-tile-name, a.cat-tile[href*="/growth/"]         .cat-tile-action { color: #69D98C !important; }
+a.cat-tile[href*="/anti-ageing/"]    .cat-tile-name, a.cat-tile[href*="/anti-ageing/"]    .cat-tile-action { color: #FF6B9D !important; }
+
+/* ── Product cards — top border, badge label colour, hover glow ── */
+.cc.cc-cognitive  { border-top-color: #9B6DFF !important; }
+.cc.cc-metabolic  { border-top-color: #F5A623 !important; }
+.cc.cc-healing    { border-top-color: #4FC3F7 !important; }
+.cc.cc-growth     { border-top-color: #69D98C !important; }
+.cc.cc-antiageing { border-top-color: #FF6B9D !important; }
+
+.cc.cc-cognitive  .cc-cat { color: #9B6DFF !important; }
+.cc.cc-metabolic  .cc-cat { color: #F5A623 !important; }
+.cc.cc-healing    .cc-cat { color: #4FC3F7 !important; }
+.cc.cc-growth     .cc-cat { color: #69D98C !important; }
+.cc.cc-antiageing .cc-cat { color: #FF6B9D !important; }
+
+.cc.cc-cognitive:hover  { border-color: #9B6DFF !important; box-shadow: 0 0 14px rgba(155,109,255,0.35), 0 4px 20px rgba(155,109,255,0.10) !important; }
+.cc.cc-metabolic:hover  { border-color: #F5A623 !important; box-shadow: 0 0 14px rgba(245,166,35,0.35),  0 4px 20px rgba(245,166,35,0.10)  !important; }
+.cc.cc-healing:hover    { border-color: #4FC3F7 !important; box-shadow: 0 0 14px rgba(79,195,247,0.35),  0 4px 20px rgba(79,195,247,0.10)  !important; }
+.cc.cc-growth:hover     { border-color: #69D98C !important; box-shadow: 0 0 14px rgba(105,217,140,0.35), 0 4px 20px rgba(105,217,140,0.10) !important; }
+.cc.cc-antiageing:hover { border-color: #FF6B9D !important; box-shadow: 0 0 14px rgba(255,107,157,0.35), 0 4px 20px rgba(255,107,157,0.10) !important; }
+
+/* ── Product detail pages — eyebrow text colour ── */
+body.page-cat-cognitive  .cp-eyebrow { color: #9B6DFF !important; }
+body.page-cat-metabolic  .cp-eyebrow { color: #F5A623 !important; }
+body.page-cat-healing    .cp-eyebrow { color: #4FC3F7 !important; }
+body.page-cat-growth     .cp-eyebrow { color: #69D98C !important; }
+body.page-cat-antiageing .cp-eyebrow { color: #FF6B9D !important; }
+
+/* ── Breadcrumb — category link colour on hub and detail pages ── */
+a.bc-link[href*="/compounds/cognitive/"]          { color: #9B6DFF !important; }
+a.bc-link[href*="/compounds/metabolic/"]          { color: #F5A623 !important; }
+a.bc-link[href*="/compounds/healing-and-repair/"] { color: #4FC3F7 !important; }
+a.bc-link[href*="/compounds/growth/"]             { color: #69D98C !important; }
+a.bc-link[href*="/compounds/anti-ageing/"]        { color: #FF6B9D !important; }
+
+/* Hub page current breadcrumb (the <span.bc-current>) */
+body.page-cat-cognitive  .bc-current { color: #9B6DFF !important; }
+body.page-cat-metabolic  .bc-current { color: #F5A623 !important; }
+body.page-cat-healing    .bc-current { color: #4FC3F7 !important; }
+body.page-cat-growth     .bc-current { color: #69D98C !important; }
+body.page-cat-antiageing .bc-current { color: #FF6B9D !important; }
