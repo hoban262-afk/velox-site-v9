@@ -5322,6 +5322,24 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRODUCT CARD DIVIDER — follows name, not floating at footer
+   Move border from .cc-ft (bottom of card) to .cc-name-link (below name text)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Divider attached to name: appears immediately below name text at every height */
+.cc-name-link {
+  border-bottom: 1px solid #1e2228 !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Remove the old floating divider from the footer row */
+.cc-ft {
+  border-top: none !important;
+  padding-top: 0 !important;
+}
+
 /* ── Category cards: centre name both axes (cards now contain only h3) ── */
 .cat-tile {
   display: flex !important;
