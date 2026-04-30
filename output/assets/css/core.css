@@ -5170,9 +5170,12 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
    ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* Grid: 2 columns */
+  /* Grid: 2 columns — generic + page-specific selectors to beat higher-specificity
+     rules on .page-catalogue and .page-category bodies */
   .prod-grid,
-  .prod-grid-4 {
+  .prod-grid-4,
+  .page-catalogue .prod-grid,
+  .page-category  .prod-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
