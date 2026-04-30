@@ -5340,6 +5340,35 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
   padding-top: 0 !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRODUCT CARD — centre all text content
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Card body: centre all inline/text content */
+.cc-body {
+  text-align: center !important;
+}
+
+/* Header row (category badge): centre horizontally */
+.cc-hdr {
+  justify-content: center !important;
+}
+
+/* Name link / divider: full width so border spans card, text centred via inheritance */
+.cc-name-link {
+  width: 100% !important;
+}
+
+/* Price block: stack centred */
+.cc-price-block {
+  align-items: center !important;
+}
+
+/* Footer row (price + ATC): centre both items */
+.cc-ft {
+  justify-content: center !important;
+}
+
 /* ── Category cards: centre name both axes (cards now contain only h3) ── */
 .cat-tile {
   display: flex !important;
