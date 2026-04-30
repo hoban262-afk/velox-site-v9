@@ -5381,3 +5381,77 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
 .cat-tile-name {
   margin: 0 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CATALOGUE PAGE — category section dividers
+   Inserted before each .cat-group section in output/compounds/index.html
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.cat-divider {
+  padding-top: 48px;
+  margin-bottom: 48px;
+}
+
+/* Label above the line */
+.cat-divider::before {
+  content: attr(data-label);
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* The line itself */
+.cat-divider::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+}
+
+/* ── Cognitive — #9B6DFF ── */
+.cat-divider-cognitive::before {
+  color: #9B6DFF;
+}
+.cat-divider-cognitive::after {
+  background: rgba(155, 109, 255, 0.3);
+  box-shadow: 0 0 8px 1px rgba(155, 109, 255, 0.35);
+}
+
+/* ── Metabolic — #FFE500 ── */
+.cat-divider-metabolic::before {
+  color: #FFE500;
+}
+.cat-divider-metabolic::after {
+  background: rgba(255, 229, 0, 0.3);
+  box-shadow: 0 0 8px 1px rgba(255, 229, 0, 0.35);
+}
+
+/* ── Healing & Repair — #4FC3F7 ── */
+.cat-divider-healing::before {
+  color: #4FC3F7;
+}
+.cat-divider-healing::after {
+  background: rgba(79, 195, 247, 0.3);
+  box-shadow: 0 0 8px 1px rgba(79, 195, 247, 0.35);
+}
+
+/* ── Growth — #69D98C ── */
+.cat-divider-growth::before {
+  color: #69D98C;
+}
+.cat-divider-growth::after {
+  background: rgba(105, 217, 140, 0.3);
+  box-shadow: 0 0 8px 1px rgba(105, 217, 140, 0.35);
+}
+
+/* ── Anti-Ageing — #FF6B9D ── */
+.cat-divider-antiageing::before {
+  color: #FF6B9D;
+}
+.cat-divider-antiageing::after {
+  background: rgba(255, 107, 157, 0.3);
+  box-shadow: 0 0 8px 1px rgba(255, 107, 157, 0.35);
+}
