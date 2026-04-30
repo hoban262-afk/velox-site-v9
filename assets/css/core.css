@@ -3556,6 +3556,16 @@ img {
   color: #01D3A0 !important;
 }
 
+/* ── Price alignment: pin footer to card bottom across all breakpoints ──────
+   .cc already has display:flex/flex-direction:column.
+   .cc-body already has flex:1.
+   .cc-ft already has margin-top:auto.
+   Reserve the was-price line height on cards that have no strikethrough so
+   the main price sits at the same y-position in every card in a row.        */
+.cc-price-block:not(:has(.cc-was)) {
+  padding-top: 1.15em;   /* matches approx height of one .cc-was line */
+}
+
 /* =======================================================================
    COMPOUND PAGE ORDER PANEL — per-size discount display
 ======================================================================= */
