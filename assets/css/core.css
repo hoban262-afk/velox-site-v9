@@ -5171,6 +5171,16 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
   }
 }
 
+/* ── Category cards: larger name on mobile ── */
+@media (max-width: 768px) {
+  .cat-tile-name {
+    font-size: 1.4rem !important;
+    line-height: 1.1 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+}
+
 /* ── Category cards: centre name both axes (cards now contain only h3) ── */
 .cat-tile {
   display: flex !important;
