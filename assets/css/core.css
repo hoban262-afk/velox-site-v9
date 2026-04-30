@@ -5180,18 +5180,27 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
     gap: 10px !important;
   }
 
-  /* Card body: tighter padding */
-  .cc-body {
-    padding: 10px 10px 12px !important;
+  /* Card: ensure flex-column so body can grow and price sticks to bottom */
+  .cc {
+    display: flex !important;
+    flex-direction: column !important;
   }
 
-  /* Header row: badge + tag */
+  /* Card body: 12px all sides, grow to fill card */
+  .cc-body {
+    padding: 12px !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Header row: category badge + optional tag */
   .cc-hdr {
     gap: 5px !important;
-    margin-bottom: 5px !important;
+    margin-bottom: 6px !important;
   }
 
-  /* Category badge */
+  /* Category badge: keep small, breathe below it */
   .cc-cat {
     font-size: 0.65rem !important;
     letter-spacing: .05em !important;
@@ -5201,68 +5210,88 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
     padding: 2px 5px !important;
   }
 
-  /* Product name */
+  /* Product name: readable at half-width, no truncation */
   .cc-name {
-    font-size: 0.85rem !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
     line-height: 1.2 !important;
-    margin-bottom: 2px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    margin-bottom: 4px !important;
   }
 
   /* Scientific full name */
   .cc-full {
     font-size: 9px !important;
-    margin-bottom: 5px !important;
+    margin-bottom: 4px !important;
   }
 
   /* Meta (purity/CAS) */
   .cc-meta {
     font-size: 9px !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
   }
 
-  /* Description: 2-line clamp, smaller text */
+  /* Description: 2-line clamp */
   .cc-desc {
     font-size: 11px !important;
     -webkit-line-clamp: 2 !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 0 !important;
   }
 
-  /* Footer row */
+  /* Footer row: push to bottom of card */
   .cc-ft {
-    gap: 6px !important;
+    margin-top: auto !important;
     padding-top: 10px !important;
+    gap: 8px !important;
+    align-items: flex-end !important;
   }
 
-  /* Price */
+  /* Price block: column-stacked, separated from name above */
+  .cc-price-block {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    margin-top: 8px !important;
+  }
+
+  /* Struck-out original price: own line, muted, small */
+  .cc-was {
+    font-size: 0.75rem !important;
+    color: #555 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Main price: own line, bold, teal, larger */
   .cc-price,
   .cc-price-block .cc-price {
-    font-size: 0.9rem !important;
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: #01D3A0 !important;
     letter-spacing: 0 !important;
+    line-height: 1.1 !important;
   }
 
-  /* Struck-out was-price */
-  .cc-was {
-    font-size: 10px !important;
-  }
-
-  /* Save / Best Price badge */
+  /* Save / Best Price badge: own line below price */
   .cc-badge {
     font-size: 7px !important;
     padding: 2px 5px !important;
-    margin-top: 2px !important;
+    margin-top: 3px !important;
+    display: inline-block !important;
   }
 
-  /* Add-to-cart button */
+  /* Add-to-cart button: compact, flex-shrink so price gets space */
   .cc-atc {
-    padding: 7px 8px !important;
+    flex-shrink: 0 !important;
+    padding: 8px 9px !important;
     font-size: 9px !important;
     letter-spacing: .06em !important;
-  }
-
-  /* Price-block: still allow it to fill available space */
-  .cc-price-block {
-    flex: 1 !important;
-    min-width: 0 !important;
+    white-space: nowrap !important;
+    align-self: flex-end !important;
   }
 }
 
