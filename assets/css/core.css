@@ -5170,3 +5170,16 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ── Category cards: centre name both axes (cards now contain only h3) ── */
+.cat-tile {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: 80px !important;
+}
+.cat-tile-name {
+  margin: 0 !important;
+}
