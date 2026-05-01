@@ -18,7 +18,8 @@
 
 var DISCOUNT_CODES = [
   // ── Active codes ──────────────────────────────────────────────────────────
-  { code: "VELOX10", type: "percentage", value: 10, active: true }
+  { code: "VELOX10",   type: "percentage", value: 10, active: true },
+  { code: "Anisha15%", type: "percentage", value: 15, active: true }
 
   // ── Add more codes below in the same format ───────────────────────────────
   // { code: "EXAMPLE", type: "percentage", value: 15, active: true },
