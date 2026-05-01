@@ -171,9 +171,23 @@
       <aside class="co-summary">
         <div class="co-sum-hdr">Order summary</div>
         <div id="co-cart-items"></div>
+
+        <!-- Discount code -->
+        <div class="co-discount-wrap">
+          <div class="co-discount-row">
+            <input type="text" id="discount-input" class="f-inp co-discount-inp" placeholder="Discount code" autocomplete="off" spellcheck="false">
+            <button type="button" id="discount-apply" class="co-discount-btn">Apply</button>
+          </div>
+          <div id="discount-msg" class="co-discount-msg"></div>
+        </div>
+
         <div class="co-sum-rows">
           <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">£0.00</span></div>
           <div class="co-sum-row"><span>Shipping</span><span id="co-shipping">£4.99</span></div>
+          <div class="co-sum-row co-discount-line" id="co-discount-line" style="display:none">
+            <span>Discount (<span id="co-discount-label"></span>)</span>
+            <span id="co-discount-amount" class="co-discount-saving">−£0.00</span>
+          </div>
           <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">£4.99</span></div>
         </div>
         <div class="co-deliver-to" id="co-deliver-to"></div>
@@ -298,6 +312,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="/assets/js/core.js"></script>
+<script src="/assets/js/discount-codes.js"></script>
 <script src="/assets/js/checkout.js"></script>
 </body>
 </html>

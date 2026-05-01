@@ -1,7 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(python3 add_product_images.py)",
+      "Bash(python3 fix_img_paths.py)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(python stacks_prominence.py)",
+      "Bash(python -c ' *)",
+      "Bash(python stacks_imgs.py)",
+      "Bash(python add_stack_hero_images.py)",
+      "Bash(python3 -c \"import base64; data=open\\('output/assets/images/veloxpeps2.png','rb'\\).read\\(\\); print\\(base64.b64encode\\(data\\).decode\\(\\)[:80]\\); print\\('...'\\); print\\('Length:', len\\(base64.b64encode\\(data\\).decode\\(\\)\\)\\)\")",
+      "Bash(python3 gen_email.py)",
+      "Bash(node --check api/send-order.js)",
+      "Bash(node -e ' *)",
+      "Bash(xargs grep *)",
+      "Bash(python add_cat_classes.py)",
+      "Bash(python add_stack_cat_classes.py)"
     ]
   }
 }

@@ -5455,3 +5455,92 @@ body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !importan
   background: rgba(255, 107, 157, 0.3);
   box-shadow: 0 0 8px 1px rgba(255, 107, 157, 0.35);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHECKOUT — discount code section (payment page sidebar)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.co-discount-wrap {
+  padding: 12px 0 14px;
+  border-bottom: 1px solid #1a1d24;
+  margin-bottom: 4px;
+}
+
+.co-discount-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.co-discount-inp {
+  flex: 1;
+  font-size: 13px !important;
+  padding: 9px 12px !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #0d1017 !important;
+  border-color: #2a2f3a !important;
+}
+
+.co-discount-inp::placeholder {
+  text-transform: none;
+  letter-spacing: 0;
+  color: #4b5563;
+}
+
+.co-discount-inp:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.co-discount-btn {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: transparent;
+  border: 1px solid #2a2f3a;
+  color: #9CA3AF;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.co-discount-btn:hover:not(:disabled) {
+  border-color: #01D3A0;
+  color: #01D3A0;
+}
+
+.co-discount-btn:disabled {
+  border-color: #01D3A0;
+  color: #01D3A0;
+  cursor: default;
+  opacity: 0.85;
+}
+
+.co-discount-msg {
+  margin-top: 8px;
+  font-size: 12px;
+  min-height: 18px;
+}
+
+.dc-ok {
+  color: #01D3A0;
+  font-weight: 500;
+}
+
+.dc-err {
+  color: #f87171;
+}
+
+/* Discount saving row in totals */
+.co-discount-line {
+  font-size: 13px;
+}
+
+.co-discount-saving {
+  color: #01D3A0;
+  font-weight: 600;
+}
