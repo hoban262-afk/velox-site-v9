@@ -338,6 +338,34 @@
           order_total:      (Number(chk.total)            || 0).toFixed(2),
         })
       }).catch(function () { /* silent — don't block the confirmation page */ });
+
+      // ── Google Sheets order logging (fire-and-forget, always silent) ────
+      // Uses no-cors + text/plain to avoid a CORS preflight on the GAS endpoint.
+      // The Apps Script receives e.postData.contents and parses the JSON itself.
+      try {
+        fetch(
+          'https://script.google.com/macros/s/AKfycbwC6RyBK2pMsU7crR7TXpbUtgKNN6305hNvePzFmkMtz3kpXWZShIgdFkT68AhHAb1ZOg/exec',
+          {
+            method:  'POST',
+            mode:    'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body:    JSON.stringify({
+              orderId:      chk.orderRef,
+              date:         new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
+              name:         ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+              email:        chk.email        || '',
+              phone:        chk.phone        || '',
+              address:      shippingAddr,
+              products:     confirmedCart.map(function (item) {
+                              return item.name + ' ' + item.size + ' x' + (item.qty || 1);
+                            }).join(', '),
+              total:        '£' + (Number(chk.total) || 0).toFixed(2),
+              discountCode: chk.discount_code || 'None',
+            })
+          }
+        ).catch(function () { /* silent */ });
+      } catch (ex) { /* silent — sheet logging must never surface to the customer */ }
+      // ────────────────────────────────────────────────────────────────────
     }
 
     // Render order summary
