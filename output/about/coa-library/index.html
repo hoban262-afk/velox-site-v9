@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Certificate of Analysis Library — Velox Peptides</title>
+  <meta name="description" content="Batch certificates of analysis for every Velox Peptides research compound. CoA library under construction — CoA documents are supplied with every order. For in vitro research use only.">
+  <link rel="canonical" href="https://veloxpeps.com/about/coa-library/">
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Velox Peptides">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://veloxpeps.com/about/coa-library/">
+  <meta property="og:title" content="Certificate of Analysis Library — Velox Peptides">
+  <meta property="og:description" content="Batch certificates of analysis for every Velox Peptides research compound. CoA documents supplied with every order.">
+  <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_GB">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Certificate of Analysis Library — Velox Peptides">
+  <meta name="twitter:description" content="Batch certificates of analysis for every Velox Peptides research compound.">
+  <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
+
+  <!-- Icons and manifest -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#030407">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/assets/css/core.css">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "veloxpeps@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeptides"]}</script>
+
+  <style>
+    /* ── CoA Library page styles ───────────────────────────────────────── */
+    .coa-notice {
+      background: #0d1017;
+      border: 1px solid #1a1d24;
+      border-left: 4px solid #01D3A0;
+      border-radius: 6px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .coa-notice-icon {
+      flex-shrink: 0;
+      color: #01D3A0;
+      margin-top: 1px;
+    }
+
+    .coa-notice p {
+      font-size: 0.9rem;
+      color: #9CA3AF;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .coa-notice a {
+      color: #01D3A0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Category group */
+    .coa-group {
+      margin-bottom: 48px;
+    }
+
+    .coa-group-hdr {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1a1d24;
+    }
+
+    .coa-group-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .coa-group-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #6B7280;
+    }
+
+    /* Compound grid */
+    .coa-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) { .coa-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .coa-grid { grid-template-columns: 1fr; } }
+
+    .coa-item {
+      background: #0d1017;
+      border: 1px solid #1a1d24;
+      border-radius: 8px;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+
+    .coa-item:hover {
+      border-color: #2a2f3a;
+    }
+
+    .coa-item-cat {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .coa-item-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #d1d5db;
+      line-height: 1.3;
+    }
+
+    .coa-item-footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .coa-pending-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(107,114,128,0.12);
+      color: #6B7280;
+      border: 1px solid rgba(107,114,128,0.25);
+      white-space: nowrap;
+    }
+
+    .coa-purity {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #4B5563;
+    }
+
+    /* contact note */
+    .coa-contact-note {
+      background: #0d1017;
+      border: 1px solid #1a1d24;
+      border-radius: 8px;
+      padding: 24px 28px;
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    .coa-contact-note p {
+      font-size: 0.9rem;
+      color: #9CA3AF;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .coa-contact-note a {
+      color: #01D3A0;
+      font-weight: 500;
+    }
+
+    .coa-contact-note .coa-contact-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #d1d5db;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body class="page-about">
+
+<div class="ann-bar" role="note" aria-label="Site announcements">
+  <div class="ann-track-wrap" aria-hidden="true">
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-logo" href="/" aria-label="Velox Peptides">
+      <img class="nav-logo-img" src="../../assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="auto">
+    </a>
+    <div class="nav-links">
+      <a class="nl " href="/compounds/">Shop</a>
+      <a class="nl nl-stacks" href="/stacks/">Stacks</a>
+      <a class="nl active" href="/about/">About</a>
+      <a class="nl " href="/faq/">FAQ</a>
+      <a class="nl " href="/contact/">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+      <a class="nav-cart" href="/cart/" aria-label="View cart">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="nav-cart-label">Order</span>
+        <span class="nav-cart-count" id="nav-cart-count">0</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mob-menu" id="mob-menu" aria-hidden="true">
+    <a href="/compounds/" class="mob-nl">Shop</a>
+    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub">— Cognitive</a>
+    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub">— Metabolic</a>
+    <a href="/compounds/healing-and-repair/" class="mob-nl mob-nl-sub">— Healing &amp; Repair</a>
+    <a href="/compounds/growth/" class="mob-nl mob-nl-sub">— Growth</a>
+    <a href="/compounds/anti-ageing/" class="mob-nl mob-nl-sub">— Anti-Ageing</a>
+    <a href="/stacks/" class="mob-nl mob-nl-stacks">Stacks</a>
+    <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">— Reconstitution Calculator</a>
+    <a href="/about/" class="mob-nl">About</a>
+    <a href="/faq/" class="mob-nl">FAQ</a>
+    <a href="/shipping/" class="mob-nl mob-nl-sub">— Shipping</a>
+    <a href="/contact/" class="mob-nl">Contact</a>
+    <a href="/cart/" class="mob-nl">Order</a>
+  </div>
+</header>
+
+<main class="site-main">
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a class="bc-link" href="/">Home</a><span class="bc-sep" aria-hidden="true">›</span>
+  <a class="bc-link" href="/about/">About</a><span class="bc-sep" aria-hidden="true">›</span>
+  <span class="bc-current" aria-current="page">CoA Library</span>
+</nav>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://veloxpeps.com/"}, {"@type": "ListItem", "position": 2, "name": "About", "item": "https://veloxpeps.com/about/"}, {"@type": "ListItem", "position": 3, "name": "CoA Library"}]}</script>
+
+<section class="page-intro">
+  <div class="sec-i">
+    <div class="cp-eyebrow">— About Velox</div>
+    <h1 class="page-h1">Certificate of Analysis Library</h1>
+    <p class="page-lede">Batch certificates of analysis are supplied with every order. A public CoA library — with downloadable CoA documents for every batch of every compound — is being built and will be available here shortly.</p>
+  </div>
+</section>
+
+<section class="about-section">
+  <div class="sec-i">
+
+    <!-- Info notice -->
+    <div class="coa-notice">
+      <div class="coa-notice-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <p>If you have already placed an order and need your batch CoA, please contact us at <a href="mailto:veloxpeps@gmail.com?subject=CoA request">veloxpeps@gmail.com</a> with your order reference. We will send your batch CoA by return email.</p>
+    </div>
+
+    <!-- Cognitive category -->
+    <div class="coa-group">
+      <div class="coa-group-hdr">
+        <div class="coa-group-dot" style="background:#9B6DFF;" aria-hidden="true"></div>
+        <span class="coa-group-name">Cognitive</span>
+      </div>
+      <div class="coa-grid">
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#9B6DFF;">Cognitive</div>
+          <div class="coa-item-name">DSIP</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.7%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#9B6DFF;">Cognitive</div>
+          <div class="coa-item-name">Selank</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.9%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#9B6DFF;">Cognitive</div>
+          <div class="coa-item-name">Semax</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">99.0%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#9B6DFF;">Cognitive</div>
+          <div class="coa-item-name">Dihexa</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.5%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Metabolic category -->
+    <div class="coa-group">
+      <div class="coa-group-hdr">
+        <div class="coa-group-dot" style="background:#FFE500;" aria-hidden="true"></div>
+        <span class="coa-group-name">Metabolic</span>
+      </div>
+      <div class="coa-grid">
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#c8b800;">Metabolic</div>
+          <div class="coa-item-name">Mots-C</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.5%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#c8b800;">Metabolic</div>
+          <div class="coa-item-name">NAD+</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">99.5%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#c8b800;">Metabolic</div>
+          <div class="coa-item-name">Retatrutide</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.8%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Healing & Repair category -->
+    <div class="coa-group">
+      <div class="coa-group-hdr">
+        <div class="coa-group-dot" style="background:#4FC3F7;" aria-hidden="true"></div>
+        <span class="coa-group-name">Healing &amp; Repair</span>
+      </div>
+      <div class="coa-grid">
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#4FC3F7;">Healing &amp; Repair</div>
+          <div class="coa-item-name">BPC-157</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">99.4%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#4FC3F7;">Healing &amp; Repair</div>
+          <div class="coa-item-name">TB-500</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.8%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#4FC3F7;">Healing &amp; Repair</div>
+          <div class="coa-item-name">BPC-157 &amp; TB-500</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.5%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#4FC3F7;">Healing &amp; Repair</div>
+          <div class="coa-item-name">GHK-Cu</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">99.0%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Growth category -->
+    <div class="coa-group">
+      <div class="coa-group-hdr">
+        <div class="coa-group-dot" style="background:#69D98C;" aria-hidden="true"></div>
+        <span class="coa-group-name">Growth</span>
+      </div>
+      <div class="coa-grid">
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#69D98C;">Growth</div>
+          <div class="coa-item-name">CJC-1295 (wo DAC)</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">99.1%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#69D98C;">Growth</div>
+          <div class="coa-item-name">Tesamorelin</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">98.6%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Anti-Ageing category -->
+    <div class="coa-group">
+      <div class="coa-group-hdr">
+        <div class="coa-group-dot" style="background:#FF6B9D;" aria-hidden="true"></div>
+        <span class="coa-group-name">Anti-Ageing</span>
+      </div>
+      <div class="coa-grid">
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#FF6B9D;">Anti-Ageing</div>
+          <div class="coa-item-name">Glutathione</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">99.2%</span>
+          </div>
+        </div>
+
+        <div class="coa-item">
+          <div class="coa-item-cat" style="color:#FF6B9D;">Anti-Ageing</div>
+          <div class="coa-item-name">Melanotan II</div>
+          <div class="coa-item-footer">
+            <span class="coa-pending-badge">CoA Pending</span>
+            <span class="coa-purity">99.3%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Contact note -->
+    <div class="coa-contact-note">
+      <p class="coa-contact-title">Need your batch CoA now?</p>
+      <p>Batch CoAs are supplied with every order. If you need yours urgently, email <a href="mailto:veloxpeps@gmail.com?subject=CoA request">veloxpeps@gmail.com</a> with your order reference number and we will send it by return. The public CoA library with downloadable PDFs will be live shortly.</p>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<div class="compliance-block" role="note" aria-label="Compliance notice">
+  <div class="cb-i">
+    <strong>Compliance statement.</strong>
+    Velox Peptides supplies research reagents for <em>in vitro</em> use by qualified researchers. Every compound is sold strictly as a research reagent. No product is a medicinal product within the meaning of the Human Medicines Regulations 2012. No product has been evaluated by the MHRA or FDA. No product is intended for human or veterinary consumption, diagnosis, treatment, cure, or prevention of any condition. Any use outside lawful scientific research is outside the scope of sale. See our <a href="/legal/research-use-policy/">Research Use Policy</a> and <a href="/legal/mhra-statement/">MHRA Statement</a>.
+  </div>
+</div>
+
+<footer class="site-footer" id="footer">
+  <div class="ft-i">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="ft-logo-wordmark">Velox Peptides</div>
+        <p class="ft-tag">UK research peptide supplier. HPLC-verified, CoA on every order, dispatched from Northern Ireland via Royal Mail Tracked 48.</p>
+        <address class="ft-address">
+          CRP Labs Ltd<br>
+          Company no. NI738125<br>
+          Holywood, Northern Ireland, United Kingdom<br>
+          <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a>
+        </address>
+      </div>
+      <div class="ft-cols">
+        <div class="ft-col">
+          <div class="ft-col-h">Compounds</div>
+          <a href="/compounds/">All compounds</a>
+          <a href="/compounds/cognitive/">Cognitive</a>
+          <a href="/compounds/metabolic/">Metabolic</a>
+          <a href="/compounds/healing-and-repair/">Healing &amp; Repair</a>
+          <a href="/compounds/growth/">Growth</a>
+          <a href="/compounds/anti-ageing/">Anti-Ageing</a>
+          <a href="/stacks/">Stacks</a>
+          <a href="/supplies/bacteriostatic-water/">Bacteriostatic Water</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Resources</div>
+          <a href="/research/">Research Library</a>
+          <a href="/tools/reconstitution-calculator/">Reconstitution Calculator</a>
+          <a href="/about/">About Velox</a>
+          <a href="/about/quality-and-testing/">Quality &amp; Testing</a>
+          <a href="/about/coa-library/">CoA Library</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Order &amp; Delivery</div>
+          <a href="/cart/">Current order</a>
+          <a href="/shipping/">Shipping &amp; Delivery</a>
+          <a href="/legal/refunds/">Refunds &amp; Returns</a>
+          <a href="/contact/">Contact</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Legal</div>
+          <a href="/legal/research-use-policy/">Research Use Policy</a>
+          <a href="/legal/mhra-statement/">MHRA Statement</a>
+          <a href="/legal/terms/">Terms &amp; Conditions</a>
+          <a href="/legal/privacy/">Privacy Policy</a>
+          <a href="/legal/cookies/">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div class="ft-cr">&copy; 2026 CRP Labs Ltd. All rights reserved.</div>
+      <div class="ft-disc">For in vitro research use only. Not for human or veterinary consumption.</div>
+    </div>
+  </div>
+</footer>
+
+<div class="entry-gate" id="entry-gate" role="dialog" aria-modal="true" aria-labelledby="eg-av-title">
+  <div class="eg-i">
+    <div class="eg-logo-wrap">
+      <img class="eg-logo-img" src="../../assets/images/veloxpeps2.png" alt="Velox Peptides" width="190">
+    </div>
+    <div class="eg-eyebrow">AGE VERIFICATION</div>
+    <h2 id="eg-av-title" class="eg-av-title">Confirm your eligibility</h2>
+    <p class="eg-sub">This website is restricted to qualified researchers aged 21 or over. All products are for in vitro research use only.</p>
+    <div class="eg-checks">
+      <label class="eg-check-row"><input type="checkbox" class="eg-cb" checked><span class="eg-check-box" aria-hidden="true"></span><span class="eg-check-label">I am 21 years of age or older</span></label>
+      <label class="eg-check-row"><input type="checkbox" class="eg-cb" checked><span class="eg-check-box" aria-hidden="true"></span><span class="eg-check-label">I am a qualified researcher, scientist, or laboratory professional</span></label>
+      <label class="eg-check-row"><input type="checkbox" class="eg-cb" checked><span class="eg-check-box" aria-hidden="true"></span><span class="eg-check-label">All products will be used for lawful in vitro research only &mdash; not for human consumption</span></label>
+      <label class="eg-check-row"><input type="checkbox" class="eg-cb" checked><span class="eg-check-box" aria-hidden="true"></span><span class="eg-check-label">I accept the <a href="/legal/terms/" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank" rel="noopener">Research Use Disclaimer</a></span></label>
+    </div>
+    <div class="eg-disclaimer">All products sold for research use only. Not for human consumption. Not evaluated by the MHRA or FDA.</div>
+    <div class="eg-actions">
+      <button class="eg-btn eg-btn-p" id="eg-accept">I CONFIRM &mdash; ENTER SITE</button>
+      <a class="eg-exit-link" href="https://www.gov.uk" rel="noopener">Exit</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/assets/js/core.js"></script>
+</body>
+</html>
