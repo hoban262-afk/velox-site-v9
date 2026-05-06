@@ -258,12 +258,15 @@
 
       try {
         var existing = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
-        existing.orderRef       = ref;
-        existing.subtotal       = t.subtotal;
-        existing.shipping       = t.shipping;
-        existing.discount_code  = appliedDiscount ? appliedDiscount.code : '';
+        existing.orderRef        = ref;
+        existing.subtotal        = t.subtotal;
+        existing.shipping        = t.shipping;
+        existing.discount_code   = appliedDiscount ? appliedDiscount.code : '';
         existing.discount_saving = saving;
-        existing.total          = finalTotal;
+        existing.total           = finalTotal;
+        // Snapshot the cart so the confirmation page can recover it even if
+        // localStorage has already been cleared (e.g. page refresh)
+        existing.cart_snapshot   = JSON.stringify(cart);
         sessionStorage.setItem('vp_checkout', JSON.stringify(existing));
       } catch (ex) {}
 
@@ -274,19 +277,32 @@
   // ── CONFIRMATION PAGE ─────────────────────────────────────────────────────
   var confirmSummary = document.getElementById('confirm-summary');
   if (confirmSummary) {
-    // Snapshot cart before clearing — needed for the order email
+
+    // Parse sessionStorage FIRST — we need cart_snapshot before deciding on confirmedCart
+    var chk = {};
+    try { chk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+
+    // Build confirmedCart from localStorage. If the page was refreshed and
+    // localStorage was already cleared on the first visit, fall back to the
+    // cart_snapshot saved into sessionStorage at payment-form submit time.
     var confirmedCart = cart.slice();
+    if (!confirmedCart.length && chk.cart_snapshot) {
+      try { confirmedCart = JSON.parse(chk.cart_snapshot); } catch (ex) {}
+    }
 
     // Clear cart — order is placed
     localStorage.removeItem('vp_cart');
     var countEl = document.getElementById('nav-cart-count');
     if (countEl) countEl.textContent = '0';
 
-    // Parse sessionStorage — isolated so a parse failure doesn't block the fetch
-    var chk = {};
-    try { chk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+    // Build the products string once — used by both email and Sheets
+    // Format: "Semax 10mg x1 — £34.99, Selank 10mg x1 — £39.99"
+    var productsList = confirmedCart.map(function (item) {
+      return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
+             ' — ' + fmt(item.price * (item.qty || 1));
+    }).join(', ');
 
-    // Update DOM with order reference and total — isolated so a DOM error can't kill the fetch
+    // Update DOM with order reference and total
     try {
       var refEl  = document.getElementById('confirm-ref');
       var ref2El = document.getElementById('confirm-ref-2');
@@ -305,22 +321,18 @@
       }
     } catch (ex) {}
 
-    // Send order notification emails (fire-and-forget) — runs outside any try/catch
+    // Send order notification emails + log to Sheets (fire-and-forget)
     if (chk.orderRef && chk.email) {
-      var itemLines = confirmedCart.map(function (item) {
-        return item.name + ' (' + item.size + ') x' + (item.qty || 1) +
-               ' — ' + fmt(item.price * (item.qty || 1));
-      }).join('\n');
-
       var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
         .filter(Boolean).join(', ');
 
+      // ── Resend order emails ──────────────────────────────────────────────
       fetch('/api/send-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           order_number:     chk.orderRef,
-          customer_name:    (chk.fname || '') + ' ' + (chk.lname || ''),
+          customer_name:    ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
           customer_email:   chk.email,
           customer_phone:   chk.phone || '',
           addr1:            chk.addr1    || '',
@@ -330,16 +342,16 @@
           country:          chk.country  || 'United Kingdom',
           shipping_address: shippingAddr,
           shipping_method:  'Royal Mail Tracked 48',
-          order_items:      itemLines,
-          order_subtotal:   (Number(chk.subtotal)        || 0).toFixed(2),
-          shipping_cost:    (Number(chk.shipping)         || 0).toFixed(2),
-          discount_code:    chk.discount_code              || '',
-          discount_saving:  (Number(chk.discount_saving)  || 0).toFixed(2),
-          order_total:      (Number(chk.total)            || 0).toFixed(2),
+          order_items:      productsList,
+          order_subtotal:   (Number(chk.subtotal)       || 0).toFixed(2),
+          shipping_cost:    (Number(chk.shipping)        || 0).toFixed(2),
+          discount_code:    chk.discount_code             || '',
+          discount_saving:  (Number(chk.discount_saving) || 0).toFixed(2),
+          order_total:      (Number(chk.total)           || 0).toFixed(2),
         })
       }).catch(function () { /* silent — don't block the confirmation page */ });
 
-      // ── Google Sheets order logging (fire-and-forget, always silent) ────
+      // ── Google Sheets order logging ──────────────────────────────────────
       // Uses no-cors + text/plain to avoid a CORS preflight on the GAS endpoint.
       // The Apps Script receives e.postData.contents and parses the JSON itself.
       try {
@@ -353,12 +365,10 @@
               orderId:      chk.orderRef,
               date:         new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
               name:         ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-              email:        chk.email        || '',
-              phone:        chk.phone        || '',
+              email:        chk.email  || '',
+              phone:        chk.phone  || '',
               address:      shippingAddr,
-              products:     confirmedCart.map(function (item) {
-                              return item.name + ' ' + item.size + ' x' + (item.qty || 1);
-                            }).join(', '),
+              products:     productsList,
               total:        '£' + (Number(chk.total) || 0).toFixed(2),
               discountCode: chk.discount_code || 'None',
             })
@@ -368,7 +378,7 @@
       // ────────────────────────────────────────────────────────────────────
     }
 
-    // Render order summary
+    // Render order summary on the confirmation page
     renderCartSummary(confirmedCart.length ? confirmedCart : []);
   }
 
