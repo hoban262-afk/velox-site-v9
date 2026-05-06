@@ -36,6 +36,10 @@ function buildCustomerHtml(d, itemsHtml) {
     <tr><td style="padding:14px 18px">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         ${itemRows(itemsHtml)}
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">&pound;${d.order_subtotal}</td></tr>
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 48)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
+        ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;&pound;${d.discount_saving}</td></tr>` : ''}
+        <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
         <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">&pound;${d.order_total}</td></tr>
       </table>
     </td></tr>
@@ -142,6 +146,10 @@ function buildAdminHtml(d, itemsHtml) {
     <tr><td style="padding:14px 18px">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         ${itemRows(itemsHtml)}
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">&pound;${d.order_subtotal}</td></tr>
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 48)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
+        ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;&pound;${d.discount_saving}</td></tr>` : ''}
+        <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
         <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">&pound;${d.order_total}</td></tr>
       </table>
     </td></tr>

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SHIPPING_FLAT = 4.99;
+  var SHIPPING_FLAT = 3.80;
   var FREE_THRESHOLD = 80;
 
   function getCart() {
@@ -62,7 +62,10 @@
   function renderTotalsWithDiscount(cart, discount) {
     var t = cartTotals(cart);
     var saving = (discount && discount.saving) ? discount.saving : 0;
-    var discountedTotal = Math.max(0, t.total - saving);
+    // Post-discount subtotal determines whether delivery is free
+    var discountedSubtotal = Math.max(0, t.subtotal - saving);
+    var shipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    var discountedTotal = discountedSubtotal + shipping;
 
     var subEl    = document.getElementById('co-subtotal');
     var shipEl   = document.getElementById('co-shipping');
@@ -72,7 +75,7 @@
     var discAmt  = document.getElementById('co-discount-amount');
 
     if (subEl)  subEl.textContent  = fmt(t.subtotal);
-    if (shipEl) shipEl.textContent = t.shipping === 0 ? 'Free' : fmt(t.shipping);
+    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping);
 
     if (discount && saving > 0) {
       if (discLine) discLine.style.display = '';
@@ -81,7 +84,7 @@
       if (totEl)    totEl.textContent    = fmt(discountedTotal);
     } else {
       if (discLine) discLine.style.display = 'none';
-      if (totEl)    totEl.textContent = fmt(t.total);
+      if (totEl)    totEl.textContent = fmt(discountedTotal);
     }
   }
 
@@ -106,7 +109,7 @@
     var shipEl = document.getElementById('co-shipping');
     var totEl  = document.getElementById('co-total');
     if (subEl) subEl.textContent = fmt(t.subtotal);
-    if (shipEl) shipEl.textContent = t.shipping === 0 ? 'Free' : fmt(t.shipping);
+    if (shipEl) shipEl.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping);
     if (totEl) totEl.textContent = fmt(t.total);
   }
 
@@ -254,13 +257,15 @@
       var ref = 'VP-' + todayStr() + '-' + randChars(4);
       var t = cartTotals(cart);
       var saving = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-      var finalTotal = Math.max(0, t.total - saving);
+      var discountedSubtotal = Math.max(0, t.subtotal - saving);
+      var finalShipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+      var finalTotal = discountedSubtotal + finalShipping;
 
       try {
         var existing = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
         existing.orderRef        = ref;
         existing.subtotal        = t.subtotal;
-        existing.shipping        = t.shipping;
+        existing.shipping        = finalShipping;
         existing.discount_code   = appliedDiscount ? appliedDiscount.code : '';
         existing.discount_saving = saving;
         existing.total           = finalTotal;
@@ -300,16 +305,20 @@
     var productsList = confirmedCart.map(function (item) {
       return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
              ' — ' + fmt(item.price * (item.qty || 1));
-    }).join(', ');
+    }).join('\n');
 
     // Update DOM with order reference and total
     try {
-      var refEl  = document.getElementById('confirm-ref');
-      var ref2El = document.getElementById('confirm-ref-2');
-      var amtEl  = document.getElementById('confirm-amount');
-      if (refEl  && chk.orderRef) refEl.textContent  = chk.orderRef;
-      if (ref2El && chk.orderRef) ref2El.textContent = chk.orderRef;
-      if (amtEl  && chk.total)    amtEl.textContent  = fmt(Number(chk.total));
+      var refEl   = document.getElementById('confirm-ref');
+      var ref2El  = document.getElementById('confirm-ref-2');
+      var amtEl   = document.getElementById('confirm-amount');
+      var subEl2  = document.getElementById('confirm-subtotal');
+      var shipEl2 = document.getElementById('confirm-shipping');
+      if (refEl   && chk.orderRef)           refEl.textContent   = chk.orderRef;
+      if (ref2El  && chk.orderRef)           ref2El.textContent  = chk.orderRef;
+      if (amtEl   && chk.total)              amtEl.textContent   = fmt(Number(chk.total));
+      if (subEl2  && chk.subtotal != null)   subEl2.textContent  = fmt(Number(chk.subtotal));
+      if (shipEl2 && chk.shipping != null)   shipEl2.textContent = Number(chk.shipping) === 0 ? 'FREE' : fmt(Number(chk.shipping));
 
       // Show discount row in bank details if a code was used
       if (chk.discount_code) {

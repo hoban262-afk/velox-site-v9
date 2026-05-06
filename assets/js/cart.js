@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SHIPPING_FLAT = 4.99;
+  var SHIPPING_FLAT = 3.80;
   var FREE_THRESHOLD = 80;
 
   function getCart() {
