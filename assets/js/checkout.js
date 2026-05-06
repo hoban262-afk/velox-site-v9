@@ -350,7 +350,7 @@
           postcode:         chk.postcode || '',
           country:          chk.country  || 'United Kingdom',
           shipping_address: shippingAddr,
-          shipping_method:  'Royal Mail Tracked 48',
+          shipping_method:  'Royal Mail Tracked 24',
           order_items:      productsList,
           order_subtotal:   (Number(chk.subtotal)       || 0).toFixed(2),
           shipping_cost:    (Number(chk.shipping)        || 0).toFixed(2),

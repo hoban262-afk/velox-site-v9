@@ -37,7 +37,7 @@ function buildCustomerHtml(d, itemsHtml) {
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         ${itemRows(itemsHtml)}
         <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">&pound;${d.order_subtotal}</td></tr>
-        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 48)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 24)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
         ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;&pound;${d.discount_saving}</td></tr>` : ''}
         <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
         <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">&pound;${d.order_total}</td></tr>
@@ -105,7 +105,7 @@ function buildCustomerHtml(d, itemsHtml) {
   <p style="margin:0 0 14px;${S.lbl}">WHAT HAPPENS NEXT</p>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td width="30" valign="top"><span style="${S.step}">1</span></td><td style="padding-bottom:12px"><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Order received</p><p style="margin:2px 0 0;font-size:12px;color:#888">We&rsquo;ve received your order and it&rsquo;s being prepared.</p></td></tr>
-    <tr><td width="30" valign="top"><span style="${S.step}">2</span></td><td style="padding-bottom:12px"><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Dispatched within 48 hrs</p><p style="margin:2px 0 0;font-size:12px;color:#888">Sent via Royal Mail Tracked 48 once payment clears.</p></td></tr>
+    <tr><td width="30" valign="top"><span style="${S.step}">2</span></td><td style="padding-bottom:12px"><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Dispatched within 48 hrs</p><p style="margin:2px 0 0;font-size:12px;color:#888">Sent via Royal Mail Tracked 24 once payment clears.</p></td></tr>
     <tr><td width="30" valign="top"><span style="${S.step}">3</span></td><td><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Tracking sent when available</p><p style="margin:2px 0 0;font-size:12px;color:#888">You&rsquo;ll receive your Royal Mail tracking number by email.</p></td></tr>
   </table>
 </td></tr>
@@ -147,7 +147,7 @@ function buildAdminHtml(d, itemsHtml) {
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         ${itemRows(itemsHtml)}
         <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">&pound;${d.order_subtotal}</td></tr>
-        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 48)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 24)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
         ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;&pound;${d.discount_saving}</td></tr>` : ''}
         <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
         <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">&pound;${d.order_total}</td></tr>
