@@ -254,6 +254,10 @@
       }
       if (errEl) errEl.textContent = '';
 
+      // Disable the submit button immediately — prevents double-click resubmission
+      var submitBtn = paymentForm.querySelector('button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Processing…'; }
+
       var ref = 'VP-' + todayStr() + '-' + randChars(4);
       var t = cartTotals(cart);
       var saving = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
@@ -274,6 +278,9 @@
         existing.cart_snapshot   = JSON.stringify(cart);
         sessionStorage.setItem('vp_checkout', JSON.stringify(existing));
       } catch (ex) {}
+
+      // Reset the fired flag so the confirmation page treats this as a fresh order
+      try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
 
       window.location.href = '/checkout/confirmation/';
     });
@@ -331,7 +338,14 @@
     } catch (ex) {}
 
     // Send order notification emails + log to Sheets (fire-and-forget)
-    if (chk.orderRef && chk.email) {
+    // Guard: vp_order_fired is set to '1' the first time this runs.
+    // On any subsequent page load or refresh the flag is already present,
+    // so we skip the API calls entirely — preventing duplicate emails / sheet rows.
+    var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
+    if (!alreadyFired && chk.orderRef && chk.email) {
+      // Mark fired BEFORE the async calls — a refresh during the fetch cannot re-enter
+      try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
+
       var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
         .filter(Boolean).join(', ');
 
@@ -385,7 +399,7 @@
         ).catch(function () { /* silent */ });
       } catch (ex) { /* silent — sheet logging must never surface to the customer */ }
       // ────────────────────────────────────────────────────────────────────
-    }
+    } // end !alreadyFired guard
 
     // Render order summary on the confirmation page
     renderCartSummary(confirmedCart.length ? confirmedCart : []);
