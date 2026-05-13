@@ -291,15 +291,34 @@
         try { sessionStorage.setItem('vp_checkout', JSON.stringify(gcChk)); } catch (ex) {}
         try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
 
+        // Build products list for webhook metadata (same format as email)
+        var gcProductsList = cart.map(function (item) {
+          return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
+                 ' — £' + (item.price * (item.qty || 1)).toFixed(2);
+        }).join('\n');
+
         fetch('/api/create-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount_pence:  amountPence,
-            customer_name: ((gcChk.fname || '') + ' ' + (gcChk.lname || '')).trim(),
-            email:         gcChk.email || '',
-            description:   'Velox Peptides research compounds',
-            order_ref:     ref
+            amount_pence:     amountPence,
+            customer_name:    ((gcChk.fname || '') + ' ' + (gcChk.lname || '')).trim(),
+            email:            gcChk.email    || '',
+            description:      'Velox Peptides research compounds',
+            order_ref:        ref,
+            // Full order data so GoCardless metadata can power webhook emails
+            phone:            gcChk.phone    || '',
+            addr1:            gcChk.addr1    || '',
+            addr2:            gcChk.addr2    || '',
+            city:             gcChk.city     || '',
+            postcode:         gcChk.postcode || '',
+            country:          gcChk.country  || 'United Kingdom',
+            order_items:      gcProductsList,
+            subtotal:         t.subtotal.toFixed(2),
+            shipping:         finalShipping.toFixed(2),
+            discount_code:    appliedDiscount ? appliedDiscount.code : '',
+            discount_saving:  saving.toFixed(2),
+            total:            finalTotal.toFixed(2)
           })
         })
         .then(function (resp) { return resp.json(); })

@@ -96,7 +96,7 @@ function buildCustomerHtml(d, itemsHtml) {
           <td style="font-size:13px;color:#fff;padding:5px 0;font-weight:700">${d.order_number}</td>
         </tr>
       </table>
-      <p style="margin:14px 0 0;font-size:12px;color:#888;line-height:1.6"><strong style="color:#fff">Important:</strong> Faster Payments typically clear within 1&ndash;2 hours. Your order will be dispatched within 48 hours of payment clearing.</p>
+      <p style="margin:14px 0 0;font-size:12px;color:#888;line-height:1.6"><strong style="color:#fff">Important:</strong> Faster Payments typically clear within 1&ndash;2 hours. Your order will be dispatched within 24 hours of payment confirmation.</p>
       `}
     </td></tr>
   </table>
@@ -110,7 +110,7 @@ function buildCustomerHtml(d, itemsHtml) {
   <p style="margin:0 0 14px;${S.lbl}">WHAT HAPPENS NEXT</p>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td width="30" valign="top"><span style="${S.step}">1</span></td><td style="padding-bottom:12px"><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Order received</p><p style="margin:2px 0 0;font-size:12px;color:#888">We&rsquo;ve received your order and it&rsquo;s being prepared.</p></td></tr>
-    <tr><td width="30" valign="top"><span style="${S.step}">2</span></td><td style="padding-bottom:12px"><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Dispatched within 48 hrs</p><p style="margin:2px 0 0;font-size:12px;color:#888">Sent via Royal Mail Tracked 24 once payment clears.</p></td></tr>
+    <tr><td width="30" valign="top"><span style="${S.step}">2</span></td><td style="padding-bottom:12px"><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Dispatched within 24 hrs</p><p style="margin:2px 0 0;font-size:12px;color:#888">Sent via Royal Mail Tracked 24 once payment is confirmed.</p></td></tr>
     <tr><td width="30" valign="top"><span style="${S.step}">3</span></td><td><p style="margin:0;font-size:14px;color:#fff;font-weight:600">Tracking sent when available</p><p style="margin:2px 0 0;font-size:12px;color:#888">You&rsquo;ll receive your Royal Mail tracking number by email.</p></td></tr>
   </table>
 </td></tr>
@@ -165,13 +165,14 @@ function buildAdminHtml(d, itemsHtml) {
 </body></html>`;
 }
 
-module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
-
+/**
+ * Shared email-sending function — used by both the HTTP handler and the
+ * GoCardless webhook so each can send the same order emails without duplication.
+ */
+async function sendEmails(d) {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const d = req.body;
 
-  // Parse "Product Name £XX.XX" lines into two-column rows
+  // Parse "Product Name size x1 — £XX.XX" lines into two-column rows
   const itemsHtml = (d.order_items || '')
     .split('\n')
     .filter(l => l.trim())
@@ -182,25 +183,35 @@ module.exports = async function handler(req, res) {
     })
     .join('');
 
+  await resend.emails.send({
+    from: 'Velox Peptides <orders@veloxpeps.com>',
+    to: 'veloxpeps@gmail.com',
+    subject: `New Order ${d.order_number} — £${d.order_total}`,
+    html: buildAdminHtml(d, itemsHtml)
+  });
+
+  await resend.emails.send({
+    from: 'Velox Peptides <orders@veloxpeps.com>',
+    to: d.customer_email,
+    subject: d.payment_method === 'instant'
+      ? `Payment Confirmed — ${d.order_number}`
+      : `Order Confirmed — ${d.order_number}`,
+    html: buildCustomerHtml(d, itemsHtml)
+  });
+}
+
+// HTTP handler — called from payment-complete page (GoCardless) and
+// confirmation page (bank transfer).
+async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).end();
+
   try {
-    await resend.emails.send({
-      from: 'Velox Peptides <orders@veloxpeps.com>',
-      to: 'veloxpeps@gmail.com',
-      subject: `New Order ${d.order_number} — £${d.order_total}`,
-      html: buildAdminHtml(d, itemsHtml)
-    });
-
-    await resend.emails.send({
-      from: 'Velox Peptides <orders@veloxpeps.com>',
-      to: d.customer_email,
-      subject: d.payment_method === 'instant'
-        ? `Payment Confirmed — ${d.order_number}`
-        : `Order Confirmed — ${d.order_number}`,
-      html: buildCustomerHtml(d, itemsHtml)
-    });
-
+    await sendEmails(req.body);
     res.status(200).json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-};
+}
+
+module.exports = handler;
+module.exports.sendEmails = sendEmails;
