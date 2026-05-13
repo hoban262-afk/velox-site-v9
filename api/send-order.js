@@ -27,8 +27,8 @@ function buildCustomerHtml(d, itemsHtml) {
 <table width="600" cellpadding="0" cellspacing="0" border="0" style="${S.card}">
 <tr><td style="${S.bar}">&nbsp;</td></tr>
 <tr><td align="center" style="padding:32px 40px 20px"><img src="${LOGO}" alt="Velox Peptides" width="160" style="max-width:160px;height:auto;display:block;border:0"></td></tr>
-<tr><td align="center" style="padding:0 40px 8px"><h1 style="margin:0;font-size:26px;font-weight:700;color:#fff">Order Confirmed</h1></td></tr>
-<tr><td align="center" style="padding:0 40px 24px"><p style="margin:0;font-size:15px;color:#888;line-height:1.6">Thank you for your order, ${d.customer_name}.<br>We&rsquo;ll dispatch within 48 hours of payment.</p></td></tr>
+<tr><td align="center" style="padding:0 40px 8px"><h1 style="margin:0;font-size:26px;font-weight:700;color:#fff">${d.payment_method === 'instant' ? 'Payment Confirmed' : 'Order Confirmed'}</h1></td></tr>
+<tr><td align="center" style="padding:0 40px 24px"><p style="margin:0;font-size:15px;color:#888;line-height:1.6">Thank you for your order, ${d.customer_name}.<br>${d.payment_method === 'instant' ? 'Your payment is confirmed. We&rsquo;ll dispatch within 48 hours.' : 'We&rsquo;ll dispatch within 48 hours of payment.'}</p></td></tr>
 <tr><td style="padding:0 40px"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="${S.divider}">&nbsp;</td></tr></table></td></tr>
 <tr><td style="padding:20px 40px">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.inner}">
@@ -63,8 +63,12 @@ function buildCustomerHtml(d, itemsHtml) {
 </td></tr>
 <tr><td style="padding:0 40px 20px">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.inner}">
-    <tr><td style="padding:10px 18px;border-bottom:1px solid #1a1a1a"><span style="${S.lbl}">HOW TO PAY</span></td></tr>
+    <tr><td style="padding:10px 18px;border-bottom:1px solid #1a1a1a"><span style="${S.lbl}">${d.payment_method === 'instant' ? 'PAYMENT RECEIVED' : 'HOW TO PAY'}</span></td></tr>
     <tr><td style="padding:14px 18px">
+      ${d.payment_method === 'instant' ? `
+      <p style="margin:0 0 8px;font-size:13px;color:#888;line-height:1.6">Your payment of &pound;${d.order_total} has been received via Instant Bank Pay.</p>
+      <p style="margin:0;font-size:13px;color:#01D3A0;font-weight:600;line-height:1.6">&#10003; Payment confirmed &mdash; your order is now being processed.</p>
+      ` : `
       <p style="margin:0 0 12px;font-size:13px;color:#888;line-height:1.6">Please make a bank transfer using the details below. Use your order reference as the payment reference so we can match your transfer.</p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -93,6 +97,7 @@ function buildCustomerHtml(d, itemsHtml) {
         </tr>
       </table>
       <p style="margin:14px 0 0;font-size:12px;color:#888;line-height:1.6"><strong style="color:#fff">Important:</strong> Faster Payments typically clear within 1&ndash;2 hours. Your order will be dispatched within 48 hours of payment clearing.</p>
+      `}
     </td></tr>
   </table>
 </td></tr>
@@ -188,7 +193,9 @@ module.exports = async function handler(req, res) {
     await resend.emails.send({
       from: 'Velox Peptides <orders@veloxpeps.com>',
       to: d.customer_email,
-      subject: `Order Confirmed — ${d.order_number}`,
+      subject: d.payment_method === 'instant'
+        ? `Payment Confirmed — ${d.order_number}`
+        : `Order Confirmed — ${d.order_number}`,
       html: buildCustomerHtml(d, itemsHtml)
     });
 

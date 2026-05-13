@@ -244,6 +244,85 @@
       });
     }
 
+    // Bank transfer fallback toggle
+    var bankToggle = document.getElementById('bank-toggle');
+    var bankDetailsPanel = document.getElementById('bank-details-panel');
+    if (bankToggle && bankDetailsPanel) {
+      bankToggle.addEventListener('click', function () {
+        var open = bankDetailsPanel.style.display !== 'none';
+        bankDetailsPanel.style.display = open ? 'none' : '';
+        bankToggle.textContent = open ? 'Or pay by manual bank transfer ↓' : 'Hide bank transfer option ↑';
+      });
+    }
+
+    // GoCardless Instant Bank Pay handler
+    var gcPayBtn = document.getElementById('gc-pay-btn');
+    if (gcPayBtn) {
+      gcPayBtn.addEventListener('click', function () {
+        var errEl = document.getElementById('co-err');
+        var terms = paymentForm.querySelector('input[name="terms"]');
+        if (!terms || !terms.checked) {
+          if (errEl) errEl.textContent = 'Please accept the Terms & Conditions and Research Use Policy.';
+          return;
+        }
+        if (errEl) errEl.textContent = '';
+
+        gcPayBtn.disabled = true;
+        gcPayBtn.textContent = 'Preparing payment…';
+
+        var ref = 'VP-' + todayStr() + '-' + randChars(4);
+        var t = cartTotals(cart);
+        var saving = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
+        var discountedSubtotal = Math.max(0, t.subtotal - saving);
+        var finalShipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+        var finalTotal = discountedSubtotal + finalShipping;
+        var amountPence = Math.round(finalTotal * 100);
+
+        var gcChk = {};
+        try { gcChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+        gcChk.orderRef        = ref;
+        gcChk.subtotal        = t.subtotal;
+        gcChk.shipping        = finalShipping;
+        gcChk.discount_code   = appliedDiscount ? appliedDiscount.code : '';
+        gcChk.discount_saving = saving;
+        gcChk.total           = finalTotal;
+        gcChk.cart_snapshot   = JSON.stringify(cart);
+        gcChk.payment_method  = 'instant';
+        try { sessionStorage.setItem('vp_checkout', JSON.stringify(gcChk)); } catch (ex) {}
+        try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
+
+        fetch('/api/create-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount_pence:  amountPence,
+            customer_name: ((gcChk.fname || '') + ' ' + (gcChk.lname || '')).trim(),
+            email:         gcChk.email || '',
+            description:   'Velox Peptides research compounds',
+            order_ref:     ref
+          })
+        })
+        .then(function (resp) { return resp.json(); })
+        .then(function (data) {
+          if (data.authorisation_url) {
+            try {
+              var latestChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
+              latestChk.billing_request_id = data.billing_request_id;
+              sessionStorage.setItem('vp_checkout', JSON.stringify(latestChk));
+            } catch (ex) {}
+            window.location.href = data.authorisation_url;
+          } else {
+            throw new Error(data.error || 'Failed to create payment');
+          }
+        })
+        .catch(function () {
+          if (errEl) errEl.textContent = 'Payment initialisation failed. Please try again or use bank transfer below.';
+          gcPayBtn.disabled = false;
+          gcPayBtn.textContent = 'Pay Now →';
+        });
+      });
+    }
+
     paymentForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var errEl = document.getElementById('co-err');
