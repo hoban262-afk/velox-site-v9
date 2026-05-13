@@ -40,8 +40,48 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="/assets/css/core.css">
 
+  <style>
+    .confirm-ic-pending {
+      width: 80px; height: 80px;
+      background: rgba(245,158,11,.12); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .confirm-ic-pending svg { color: #F59E0B; }
+    .confirm-warning {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.3);
+      border-radius: 8px; padding: 12px 14px; margin-bottom: 24px;
+      font-size: 13px; color: #FCD34D; line-height: 1.45;
+    }
+    .confirm-warning svg { flex-shrink: 0; margin-top: 1px; }
+    /* Visual timeline */
+    .co-timeline { margin: 20px 0 0; display: flex; flex-direction: column; gap: 0; }
+    .co-tl-item { display: flex; gap: 14px; position: relative; }
+    .co-tl-item:not(:last-child)::before {
+      content: ''; position: absolute; left: 11px; top: 24px; bottom: -4px;
+      width: 2px; background: #1F2937;
+    }
+    .co-tl-dot {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      border: 2px solid #374151; background: #111827;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #6B7280; margin-top: 2px;
+    }
+    .co-tl-done .co-tl-dot { background: #01D3A0; border-color: #01D3A0; color: #000; }
+    .co-tl-active .co-tl-dot { background: #F59E0B; border-color: #F59E0B; color: #000; animation: tl-pulse-amber 1.8s ease-in-out infinite; }
+    @keyframes tl-pulse-amber { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.4)} 50%{box-shadow:0 0 0 6px rgba(245,158,11,0)} }
+    .co-tl-body { padding-bottom: 20px; }
+    .co-tl-body strong { display: block; font-size: 13px; color: #F9FAFB; font-weight: 600; line-height: 1.3; }
+    .co-tl-body span { font-size: 12px; color: #6B7280; line-height: 1.4; }
+    .confirm-support { margin-top: 20px; padding: 12px 16px; background: #0D1117; border: 1px solid #1F2937; border-radius: 8px; font-size: 13px; color: #9CA3AF; text-align: center; }
+    .confirm-support a { color: #01D3A0; text-decoration: none; }
+    .confirm-support a:hover { text-decoration: underline; }
+    .confirm-bank-amount-row dd { color: #F9FAFB; font-weight: 700; font-size: 16px; }
+  </style>
+
   <!-- Homepage hash-redirect map (only on /) -->
-  
+
 
   <!-- JSON-LD -->
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "veloxpeps@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeptides"]}</script>
@@ -125,20 +165,25 @@
 <section class="confirm-sec">
   <div class="sec-i">
     <div class="confirm-card">
-      <div class="confirm-ic">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <div class="confirm-ic-pending">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </div>
-      <h1 class="confirm-t">Order received</h1>
-      <p class="confirm-sub">Complete your bank transfer to finalise the order. Dispatch confirmation will follow by email once payment clears.</p>
+      <h1 class="confirm-t">Order Reserved — Payment Awaited</h1>
+      <p class="confirm-sub">Your order is reserved. Transfer the amount below to confirm it — we'll dispatch as soon as payment clears.</p>
+
+      <div class="confirm-warning">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Your order will be cancelled if payment is not received within 24 hours.
+      </div>
 
       <div class="confirm-ref">
         <div class="confirm-ref-lbl">Order reference</div>
         <div class="confirm-ref-v" id="confirm-ref">VP-…</div>
-        <div class="confirm-ref-note">Use this as your payment reference.</div>
+        <div class="confirm-ref-note">Use this as your payment reference so we can match your transfer.</div>
       </div>
 
       <div class="confirm-bank">
-        <div class="confirm-bank-hdr">Bank transfer details</div>
+        <div class="confirm-bank-hdr">Transfer to this account</div>
         <dl class="confirm-bank-dl">
           <div><dt>Account name</dt><dd>CRP Labs Ltd</dd></div>
           <div><dt>Bank</dt><dd>Zempler Bank</dd></div>
@@ -147,26 +192,39 @@
           <div><dt>Subtotal</dt><dd id="confirm-subtotal">—</dd></div>
           <div><dt>Delivery (Royal Mail Tracked 24)</dt><dd id="confirm-shipping">—</dd></div>
           <div id="confirm-discount-row" style="display:none"><dt>Discount</dt><dd id="confirm-discount-info"></dd></div>
-          <div><dt>Amount to transfer</dt><dd id="confirm-amount">£0.00</dd></div>
-          <div><dt>Reference</dt><dd id="confirm-ref-2">VP-…</dd></div>
+          <div class="confirm-bank-amount-row"><dt>Amount to transfer</dt><dd id="confirm-amount">£0.00</dd></div>
+          <div><dt>Payment reference</dt><dd id="confirm-ref-2">VP-…</dd></div>
         </dl>
         <p class="confirm-bank-note">
-          <strong>Important.</strong> Use your order reference as the payment reference so we can match your transfer to your order. Faster Payments typically clear within 1–2 hours; other transfers may take up to 1 working day.
+          <strong>Important.</strong> Use your order reference exactly as shown so we can match your payment. Faster Payments typically clear within 1–2 hours; other transfers may take up to 1 working day.
         </p>
       </div>
 
       <div class="confirm-next">
         <h2 class="sec-t">What happens next</h2>
-        <ol class="confirm-next-list">
-          <li>You'll receive an order confirmation email with these bank details repeated.</li>
-          <li>Complete the bank transfer using your order reference.</li>
-          <li>Once payment clears, we dispatch your order within 24 hours (working days).</li>
-          <li>You'll receive a dispatch confirmation email with your Royal Mail tracking number.</li>
-          <li>Your order arrives within 1–2 working days via Royal Mail Tracked 24.</li>
+        <ol class="co-timeline">
+          <li class="co-tl-item co-tl-done">
+            <div class="co-tl-dot">✓</div>
+            <div class="co-tl-body"><strong>Order reserved</strong><span>Your order is held for 24 hours awaiting payment.</span></div>
+          </li>
+          <li class="co-tl-item co-tl-active">
+            <div class="co-tl-dot">2</div>
+            <div class="co-tl-body"><strong>Awaiting your payment</strong><span>Transfer £<span id="confirm-amount-2">—</span> to the account above using reference <span id="confirm-ref-3">VP-…</span>.</span></div>
+          </li>
+          <li class="co-tl-item">
+            <div class="co-tl-dot">3</div>
+            <div class="co-tl-body"><strong>Payment clears — we dispatch within 24 hours</strong><span>Sent via Royal Mail Tracked 24. You'll receive a dispatch email with your tracking number.</span></div>
+          </li>
+          <li class="co-tl-item">
+            <div class="co-tl-dot">4</div>
+            <div class="co-tl-body"><strong>Delivered in 1–2 working days</strong><span>Royal Mail Tracked 24 to your delivery address.</span></div>
+          </li>
         </ol>
       </div>
 
       <div class="confirm-summary" id="confirm-summary"></div>
+
+      <div class="confirm-support">Need help? Email us at <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a> with your order reference.</div>
 
       <div class="confirm-cta">
         <a class="btn-p" href="/compounds/">Continue browsing</a>

@@ -57,7 +57,7 @@
     }
     @keyframes pc-spin { to { transform: rotate(360deg); } }
     .pc-loading-state p { color: #9CA3AF; font-size: 14px; margin: 0; }
-    .pc-confirm-ic { width: 64px; height: 64px; background: rgba(1,211,160,.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+    .pc-confirm-ic { width: 80px; height: 80px; background: rgba(1,211,160,.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
     .pc-confirm-ic svg { color: #01D3A0; }
     .pc-payment-badge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -65,8 +65,32 @@
       color: #01D3A0; font-size: 12px; font-weight: 600;
       padding: 4px 12px; border-radius: 20px; margin-bottom: 24px;
     }
+    .pc-email-highlight { color: #01D3A0; font-weight: 600; }
     .pc-error-ic { width: 64px; height: 64px; background: rgba(239,68,68,.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
     .pc-error-ic svg { color: #EF4444; }
+    /* Visual timeline */
+    .co-timeline { margin: 20px 0 0; display: flex; flex-direction: column; gap: 0; }
+    .co-tl-item { display: flex; gap: 14px; position: relative; }
+    .co-tl-item:not(:last-child)::before {
+      content: ''; position: absolute; left: 11px; top: 24px; bottom: -4px;
+      width: 2px; background: #1F2937;
+    }
+    .co-tl-dot {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      border: 2px solid #374151; background: #111827;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #6B7280; margin-top: 2px;
+    }
+    .co-tl-done .co-tl-dot { background: #01D3A0; border-color: #01D3A0; color: #000; }
+    .co-tl-active .co-tl-dot { background: #01D3A0; border-color: #01D3A0; color: #000; animation: tl-pulse 1.8s ease-in-out infinite; }
+    @keyframes tl-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(1,211,160,.4)} 50%{box-shadow:0 0 0 6px rgba(1,211,160,0)} }
+    .co-tl-body { padding-bottom: 20px; }
+    .co-tl-body strong { display: block; font-size: 13px; color: #F9FAFB; font-weight: 600; line-height: 1.3; }
+    .co-tl-body span { font-size: 12px; color: #6B7280; line-height: 1.4; }
+    .co-tracking-note { margin-top: 16px; font-size: 12px; color: #9CA3AF; line-height: 1.5; }
+    .confirm-support { margin-top: 20px; padding: 12px 16px; background: #0D1117; border: 1px solid #1F2937; border-radius: 8px; font-size: 13px; color: #9CA3AF; text-align: center; }
+    .confirm-support a { color: #01D3A0; text-decoration: none; }
+    .confirm-support a:hover { text-decoration: underline; }
   </style>
 </head>
 <body class="page-confirmation">
@@ -154,14 +178,14 @@
     <!-- Success state -->
     <div id="pc-success" class="confirm-card" style="display:none;">
       <div class="pc-confirm-ic">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div class="pc-payment-badge">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Payment confirmed via Instant Bank Pay
       </div>
-      <h1 class="confirm-t">Order confirmed</h1>
-      <p class="confirm-sub">Your payment was received and your order is now being processed. A confirmation email is on its way.</p>
+      <h1 class="confirm-t">Payment Confirmed — Thank You</h1>
+      <p class="confirm-sub">Your order has been received and is being prepared for dispatch. You'll receive a confirmation email at <strong class="pc-email-highlight" id="pc-email"></strong> shortly.</p>
 
       <div class="confirm-ref">
         <div class="confirm-ref-lbl">Order reference</div>
@@ -180,15 +204,30 @@
 
       <div class="confirm-next">
         <h2 class="sec-t">What happens next</h2>
-        <ol class="confirm-next-list">
-          <li>You'll receive a confirmation email with your order details.</li>
-          <li>We prepare your order and dispatch within 24 hours (working days).</li>
-          <li>You'll receive a dispatch email with your Royal Mail tracking number.</li>
-          <li>Your order arrives within 1–2 working days via Royal Mail Tracked 24.</li>
+        <ol class="co-timeline">
+          <li class="co-tl-item co-tl-done">
+            <div class="co-tl-dot">✓</div>
+            <div class="co-tl-body"><strong>Payment confirmed</strong><span>Your payment has been received via Instant Bank Pay.</span></div>
+          </li>
+          <li class="co-tl-item co-tl-active">
+            <div class="co-tl-dot">2</div>
+            <div class="co-tl-body"><strong>Order being prepared</strong><span>We're picking and packing your order now.</span></div>
+          </li>
+          <li class="co-tl-item">
+            <div class="co-tl-dot">3</div>
+            <div class="co-tl-body"><strong>Dispatched within 24 hours</strong><span>Sent via Royal Mail Tracked 24. You'll get a dispatch email with your tracking number.</span></div>
+          </li>
+          <li class="co-tl-item">
+            <div class="co-tl-dot">4</div>
+            <div class="co-tl-body"><strong>Delivered in 1–2 working days</strong><span>Royal Mail Tracked 24 to your delivery address.</span></div>
+          </li>
         </ol>
+        <p class="co-tracking-note">Once dispatched, you'll receive a tracking number by email so you can follow your order in real time.</p>
       </div>
 
       <div class="confirm-summary" id="pc-summary"></div>
+
+      <div class="confirm-support">Need help? Email us at <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a> with your order reference.</div>
 
       <div class="confirm-cta">
         <a class="btn-p" href="/compounds/">Continue browsing</a>
@@ -412,10 +451,12 @@
       var shipEl   = document.getElementById('pc-shipping');
       var discRow  = document.getElementById('pc-discount-row');
       var discInfo = document.getElementById('pc-discount-info');
-      if (refEl  && chk.orderRef)           refEl.textContent  = chk.orderRef;
-      if (amtEl  && chk.total)              amtEl.textContent  = fmt(chk.total);
-      if (subEl  && chk.subtotal  != null)  subEl.textContent  = fmt(chk.subtotal);
-      if (shipEl && chk.shipping  != null)  shipEl.textContent = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping);
+      var emailEl = document.getElementById('pc-email');
+      if (refEl   && chk.orderRef)           refEl.textContent   = chk.orderRef;
+      if (amtEl   && chk.total)              amtEl.textContent   = fmt(chk.total);
+      if (subEl   && chk.subtotal  != null)  subEl.textContent   = fmt(chk.subtotal);
+      if (shipEl  && chk.shipping  != null)  shipEl.textContent  = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping);
+      if (emailEl && chk.email)              emailEl.textContent = chk.email;
       if (chk.discount_code && discRow && discInfo) {
         discRow.style.display = '';
         discInfo.textContent  = chk.discount_code + ' (−' + fmt(chk.discount_saving || 0) + ')';

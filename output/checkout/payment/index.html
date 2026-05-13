@@ -8,6 +8,10 @@
   <meta name="robots" content="noindex,nofollow">
   <link rel="canonical" href="https://veloxpeps.com/checkout/payment/">
   <style>
+    .pay-page-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: #01D3A0; margin-bottom: 6px;
+    }
     .pay-method-primary { border-color: #01D3A0 !important; }
     .pay-recommended {
       display: inline-block;
@@ -22,7 +26,12 @@
       margin-left: 8px;
       vertical-align: middle;
     }
-    .pay-bank-fallback { margin-top: 20px; }
+    .pay-trust-points {
+      list-style: none; margin: 14px 0 0; padding: 0;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .pay-trust-points li { font-size: 13px; color: #D1D5DB; line-height: 1.45; }
+    .pay-bank-fallback { margin-top: 24px; }
     .pay-bank-toggle {
       background: none;
       border: none;
@@ -37,10 +46,39 @@
     .pay-bank-toggle:hover { color: #fff; }
     #bank-details-panel { margin-top: 16px; }
     .pay-method-bank { margin-bottom: 14px; }
-    #gc-pay-btn { background: #01D3A0; border-color: #01D3A0; color: #000; }
+    .pay-bank-dl { margin: 12px 0 0; }
+    .pay-bank-dl dt { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 1px; }
+    .pay-bank-dl dd { font-size: 14px; color: #F9FAFB; font-weight: 600; margin: 0 0 10px; font-family: 'DM Mono', monospace; }
+    .pay-bank-note-inline { font-size: 12px; color: #9CA3AF; margin: 10px 0 0; line-height: 1.5; }
+    #gc-pay-btn { background: #01D3A0; border-color: #01D3A0; color: #000; font-size: 16px; width: 100%; }
     #gc-pay-btn:hover:not(:disabled) { background: #00b889; border-color: #00b889; }
     #gc-pay-btn:disabled { opacity: .6; cursor: not-allowed; }
-    .gc-secure-note { font-size: 11px; color: #6B7280; margin: 8px 0 0; text-align: center; }
+    .pay-trust-bar {
+      display: flex; gap: 0; margin: 14px 0 0;
+      border: 1px solid #1F2937; border-radius: 8px; overflow: hidden;
+    }
+    .pay-trust-item {
+      flex: 1; padding: 10px 8px; text-align: center;
+      border-right: 1px solid #1F2937; font-size: 11px; color: #9CA3AF; line-height: 1.35;
+    }
+    .pay-trust-item:last-child { border-right: none; }
+    .pay-trust-item strong { display: block; color: #D1D5DB; font-size: 11px; font-weight: 600; margin-bottom: 1px; }
+    .pay-redirect-note {
+      font-size: 12px; color: #6B7280; margin: 10px 0 0; text-align: center; line-height: 1.5;
+    }
+    .co-support-note {
+      margin-top: 14px; padding: 10px 12px;
+      background: #0D1117; border: 1px solid #1F2937; border-radius: 6px;
+      font-size: 12px; color: #9CA3AF; text-align: center;
+    }
+    .co-support-note a { color: #01D3A0; text-decoration: none; }
+    .co-support-note a:hover { text-decoration: underline; }
+    @media (max-width: 480px) {
+      #gc-pay-btn { font-size: 15px; padding: 14px 16px; }
+      .pay-trust-bar { flex-wrap: wrap; }
+      .pay-trust-item { flex: 1 1 45%; border-right: none; border-bottom: 1px solid #1F2937; }
+      .pay-trust-item:last-child { border-bottom: none; }
+    }
   </style>
 
   <!-- Open Graph -->
@@ -161,8 +199,9 @@
   <div class="sec-i">
     <div class="co-grid">
       <div class="co-form-col">
-        <h1 class="page-h1">Payment</h1>
-        <p class="page-lede">Pay instantly via your banking app, or by UK bank transfer below.</p>
+        <div class="pay-page-eyebrow">SECURE CHECKOUT</div>
+        <h1 class="page-h1">Secure Payment</h1>
+        <p class="page-lede">Pay instantly and securely via your existing bank account, or by UK bank transfer below.</p>
 
         <div class="pay-method pay-method-primary">
           <div class="pay-method-hdr">
@@ -170,11 +209,11 @@
             <span>Instant Bank Pay</span>
             <span class="pay-recommended">Recommended</span>
           </div>
-          <p>Pay securely via your banking app — no card details required. Powered by GoCardless, FCA-authorised payment institution.</p>
-          <ul>
-            <li>Instant confirmation — your order is processed immediately</li>
-            <li>Authorise directly in your banking app in seconds</li>
-            <li>Dispatched within 24 hours of ordering</li>
+          <p>Click Pay Now and you'll be taken to a secure GoCardless page. Select your bank, log in as normal, and approve the payment in seconds. No card details, no new accounts — just your existing banking app. Your order is confirmed the moment payment goes through.</p>
+          <ul class="pay-trust-points">
+            <li>🔒 Bank-level security — your details never touch our servers</li>
+            <li>✓ FCA authorised payment provider</li>
+            <li>⚡ Instant confirmation — order processed immediately after payment</li>
           </ul>
         </div>
 
@@ -199,18 +238,31 @@
 
           <div class="co-err" id="co-err"></div>
 
+          <div class="pay-trust-bar">
+            <div class="pay-trust-item"><strong>GoCardless + FCA</strong>authorised provider</div>
+            <div class="pay-trust-item"><strong>256-bit encrypted</strong>bank-grade security</div>
+            <div class="pay-trust-item"><strong>No card details</strong>stored or required</div>
+          </div>
+
           <button type="button" id="gc-pay-btn" class="btn-p co-submit">Pay Now →</button>
-          <p class="gc-secure-note">🔒 Secured by GoCardless · FCA authorised · No card details required</p>
+          <p class="pay-redirect-note">You will be redirected to GoCardless's secure payment page. Once payment is approved you'll be returned here automatically.</p>
 
           <div class="pay-bank-fallback">
-            <button type="button" id="bank-toggle" class="pay-bank-toggle">Or pay by manual bank transfer ↓</button>
+            <button type="button" id="bank-toggle" class="pay-bank-toggle">Prefer to pay by bank transfer? ↓</button>
             <div id="bank-details-panel" style="display:none;">
               <div class="pay-method pay-method-bank">
                 <div class="pay-method-hdr">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
                   <span>UK Bank Transfer — Zempler Bank</span>
                 </div>
-                <p>After you place this order, you will receive your order reference and full bank transfer details by email. Your order is processed once payment clears (typically within 1–2 hours for Faster Payments).</p>
+                <p>No problem. Transfer directly to our account using the details below. Your order is reserved for 24 hours — we'll dispatch as soon as payment clears.</p>
+                <dl class="pay-bank-dl">
+                  <div><dt>Account name</dt><dd>CRP Labs Ltd</dd></div>
+                  <div><dt>Bank</dt><dd>Zempler Bank</dd></div>
+                  <div><dt>Sort code</dt><dd>08-71-99</dd></div>
+                  <div><dt>Account number</dt><dd>14617029</dd></div>
+                </dl>
+                <p class="pay-bank-note-inline">Use your order reference as the payment reference. Faster Payments typically clear within 1–2 hours.</p>
               </div>
               <button type="submit" class="btn-o co-submit">Place order (bank transfer) →</button>
             </div>
@@ -243,6 +295,7 @@
           <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">£3.80</span></div>
         </div>
         <div class="co-deliver-to" id="co-deliver-to"></div>
+        <div class="co-support-note">Questions? Email us at <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a></div>
       </aside>
     </div>
   </div>

@@ -424,6 +424,11 @@
       if (amtEl   && chk.total)              amtEl.textContent   = fmt(Number(chk.total));
       if (subEl2  && chk.subtotal != null)   subEl2.textContent  = fmt(Number(chk.subtotal));
       if (shipEl2 && chk.shipping != null)   shipEl2.textContent = Number(chk.shipping) === 0 ? 'FREE' : fmt(Number(chk.shipping));
+      // Populate timeline step 2 spans
+      var amt2El = document.getElementById('confirm-amount-2');
+      var ref3El = document.getElementById('confirm-ref-3');
+      if (amt2El && chk.total)    amt2El.textContent = Number(chk.total).toFixed(2);
+      if (ref3El && chk.orderRef) ref3El.textContent = chk.orderRef;
 
       // Show discount row in bank details if a code was used
       if (chk.discount_code) {
