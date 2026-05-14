@@ -17,7 +17,8 @@
       "Bash(node -e ' *)",
       "Bash(xargs grep *)",
       "Bash(python add_cat_classes.py)",
-      "Bash(python add_stack_cat_classes.py)"
+      "Bash(python add_stack_cat_classes.py)",
+      "Bash(node -e \"const gc = require\\('gocardless-nodejs'\\); console.log\\('type:', typeof gc\\); console.log\\('keys:', Object.keys\\(gc\\).join\\(', '\\)\\);\")"
     ]
   }
 }

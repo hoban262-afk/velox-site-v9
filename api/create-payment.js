@@ -4,13 +4,19 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const {
-    amount_pence, order_ref,
+    amount_pence, order_ref, currency: rawCurrency,
     // Extended order data stored in sessionStorage — used by client-side
     // payment-complete page to send emails; not sent to GoCardless.
     customer_name, email, description,
     phone, addr1, addr2, city, postcode, country,
     order_items, subtotal, shipping, discount_code, discount_saving, total,
+    region, shipping_method,
   } = req.body || {};
+
+  const currency = (rawCurrency || 'GBP').toUpperCase();
+  if (!['GBP', 'EUR'].includes(currency)) {
+    return res.status(400).json({ error: 'Unsupported currency: must be GBP or EUR' });
+  }
 
   if (!amount_pence || !order_ref) {
     return res.status(400).json({ error: 'Missing required fields: amount_pence, order_ref' });
@@ -35,7 +41,7 @@ module.exports = async function handler(req, res) {
     const billingRequest = await client.billingRequests.create({
       payment_request: {
         amount:      amountPence,
-        currency:    'GBP',
+        currency:    currency,   // 'GBP' or 'EUR'
         description: 'Velox Peptides Order',
       },
     });

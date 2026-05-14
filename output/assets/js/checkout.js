@@ -1,42 +1,49 @@
 (function () {
   'use strict';
 
-  var SHIPPING_FLAT = 3.80;
-  var FREE_THRESHOLD = 80;
+  // ── Constants ─────────────────────────────────────────────────────────────
+  var SHIPPING_FLAT     = 3.80;
+  var FREE_THRESHOLD    = 80;
+  var EU_SHIPPING_FLAT  = 9.99;
+  var EU_FREE_THRESHOLD = 100;
+  var EU_FX_RATE        = 1.18; // fixed GBP → EUR conversion rate
 
+  // ── Core helpers ──────────────────────────────────────────────────────────
   function getCart() {
-    try {
-      return JSON.parse(localStorage.getItem('vp_cart') || '[]');
-    } catch (e) {
-      return [];
-    }
+    try { return JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { return []; }
   }
 
-  function fmt(n) {
-    return '£' + n.toFixed(2);
+  function currentRegion() {
+    try {
+      var s = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
+      return s.region === 'EU' ? 'EU' : 'UK';
+    } catch (e) { return 'UK'; }
+  }
+
+  function fmt(n, region) {
+    var r = (region !== undefined) ? region : currentRegion();
+    return (r === 'EU' ? '€' : '£') + Number(n).toFixed(2);
   }
 
   function escHtml(s) {
     return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function cartTotals(cart) {
-    var subtotal = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
-    var shipping = subtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-    return { subtotal: subtotal, shipping: shipping, total: subtotal + shipping };
+  function cartTotals(cart, region) {
+    var r = (region !== undefined) ? region : currentRegion();
+    var subtotalGBP = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
+    if (r === 'EU') {
+      var sub = Math.round(subtotalGBP * EU_FX_RATE * 100) / 100;
+      var sh  = sub >= EU_FREE_THRESHOLD ? 0 : EU_SHIPPING_FLAT;
+      return { subtotal: sub, shipping: sh, total: Math.round((sub + sh) * 100) / 100, currency: 'EUR', subtotalGBP: subtotalGBP };
+    }
+    var sh = subtotalGBP >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    return { subtotal: subtotalGBP, shipping: sh, total: subtotalGBP + sh, currency: 'GBP', subtotalGBP: subtotalGBP };
   }
 
-  // ── Discount code helpers ─────────────────────────────────────────────────
-
-  /**
-   * Look up a code in DISCOUNT_CODES (defined in discount-codes.js).
-   * Returns { code, type, value, saving } or null if invalid/inactive.
-   * Saving is computed against the order subtotal.
-   */
+  // ── Discount helpers ──────────────────────────────────────────────────────
   function calcDiscount(subtotal, rawCode) {
     if (typeof DISCOUNT_CODES === 'undefined' || !rawCode) return null;
     var upper = rawCode.trim().toUpperCase();
@@ -55,17 +62,22 @@
     return { code: match.code, type: match.type, value: match.value, saving: saving };
   }
 
-  /**
-   * Update the totals sidebar to reflect an applied discount.
-   * Pass null as `discount` to reset to undiscounted totals.
-   */
-  function renderTotalsWithDiscount(cart, discount) {
-    var t = cartTotals(cart);
-    var saving = (discount && discount.saving) ? discount.saving : 0;
-    // Post-discount subtotal determines whether delivery is free
+  // Convert GBP discount saving to customer's currency
+  function savingInCurrency(savingGBP, region) {
+    if (region === 'EU') return Math.round(savingGBP * EU_FX_RATE * 100) / 100;
+    return savingGBP;
+  }
+
+  function renderTotalsWithDiscount(cart, discount, region) {
+    var r = (region !== undefined) ? region : currentRegion();
+    var t = cartTotals(cart, r);
+    var savingGBP = (discount && discount.saving) ? discount.saving : 0;
+    var saving = savingInCurrency(savingGBP, r);
     var discountedSubtotal = Math.max(0, t.subtotal - saving);
-    var shipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-    var discountedTotal = discountedSubtotal + shipping;
+    var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
+    var flatRate   = r === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
+    var shipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
+    var discountedTotal = Math.round((discountedSubtotal + shipping) * 100) / 100;
 
     var subEl    = document.getElementById('co-subtotal');
     var shipEl   = document.getElementById('co-shipping');
@@ -74,21 +86,22 @@
     var discLbl  = document.getElementById('co-discount-label');
     var discAmt  = document.getElementById('co-discount-amount');
 
-    if (subEl)  subEl.textContent  = fmt(t.subtotal);
-    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping);
+    if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
+    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
 
     if (discount && saving > 0) {
       if (discLine) discLine.style.display = '';
       if (discLbl)  discLbl.textContent  = discount.code;
-      if (discAmt)  discAmt.textContent  = '−' + fmt(saving);
-      if (totEl)    totEl.textContent    = fmt(discountedTotal);
+      if (discAmt)  discAmt.textContent  = '−' + fmt(saving, r);
+      if (totEl)    totEl.textContent    = fmt(discountedTotal, r);
     } else {
       if (discLine) discLine.style.display = 'none';
-      if (totEl)    totEl.textContent = fmt(discountedTotal);
+      if (totEl)    totEl.textContent = fmt(discountedTotal, r);
     }
   }
 
-  function renderCartSummary(cart) {
+  function renderCartSummary(cart, region) {
+    var r = (region !== undefined) ? region : currentRegion();
     var el = document.getElementById('co-cart-items');
     if (!el) return;
     if (!cart.length) {
@@ -97,46 +110,79 @@
     }
     var html = '<ul class="co-cart-list">';
     cart.forEach(function (item) {
+      var priceInCurrency = r === 'EU'
+        ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+        : item.price * (item.qty || 1);
       html += '<li class="co-cart-row"><span class="co-cart-name">' + escHtml(item.name) +
         ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-        '<span class="co-cart-price">' + fmt(item.price * (item.qty || 1)) + '</span></li>';
+        '<span class="co-cart-price">' + fmt(priceInCurrency, r) + '</span></li>';
     });
     html += '</ul>';
     el.innerHTML = html;
 
-    var t = cartTotals(cart);
-    var subEl = document.getElementById('co-subtotal');
+    var t      = cartTotals(cart, r);
+    var subEl  = document.getElementById('co-subtotal');
     var shipEl = document.getElementById('co-shipping');
     var totEl  = document.getElementById('co-total');
-    if (subEl) subEl.textContent = fmt(t.subtotal);
-    if (shipEl) shipEl.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping);
-    if (totEl) totEl.textContent = fmt(t.total);
+    var shpLbl = document.getElementById('co-shipping-label');
+    if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
+    if (shipEl) shipEl.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping, r);
+    if (totEl)  totEl.textContent  = fmt(t.total, r);
+    if (shpLbl) shpLbl.textContent = r === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
   }
 
   function randChars(n) {
     var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     var out = '';
-    for (var i = 0; i < n; i++) {
-      out += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    for (var i = 0; i < n; i++) { out += chars.charAt(Math.floor(Math.random() * chars.length)); }
     return out;
   }
 
   function todayStr() {
     var d = new Date();
-    var y = d.getFullYear();
-    var m = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    return '' + y + m + day;
+    return '' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
   }
 
   var cart = getCart();
-  var appliedDiscount = null; // set when a valid code is applied on the payment page
+  var appliedDiscount = null;
 
-  // ── SHIPPING PAGE ────────────────────────────────────────────────────────
+  // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
   var shippingForm = document.getElementById('shipping-form');
   if (shippingForm) {
-    renderCartSummary(cart);
+
+    // Restore region from sessionStorage if returning to this page
+    var savedChk = {};
+    try { savedChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+    var activeRegion = savedChk.region === 'EU' ? 'EU' : 'UK';
+
+    var regionUkBtn      = document.getElementById('region-uk');
+    var regionEuBtn      = document.getElementById('region-eu');
+    var ukCountryWrap    = document.getElementById('uk-country-wrap');
+    var euCountryWrap    = document.getElementById('eu-country-wrap');
+    var euComplianceWrap = document.getElementById('eu-compliance-wrap');
+    var shipOptName      = document.getElementById('ship-opt-name');
+    var shipOptSub       = document.getElementById('ship-opt-sub');
+    var shipPrice        = document.getElementById('ship-price');
+
+    function applyRegion(r) {
+      activeRegion = r;
+      if (regionUkBtn) regionUkBtn.classList.toggle('region-btn-active', r === 'UK');
+      if (regionEuBtn) regionEuBtn.classList.toggle('region-btn-active', r === 'EU');
+      if (ukCountryWrap)    ukCountryWrap.style.display    = r === 'UK' ? '' : 'none';
+      if (euCountryWrap)    euCountryWrap.style.display    = r === 'EU' ? '' : 'none';
+      if (euComplianceWrap) euComplianceWrap.style.display = r === 'EU' ? '' : 'none';
+      if (shipOptName) shipOptName.textContent = r === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+      if (shipOptSub)  shipOptSub.textContent  = r === 'EU' ? '3–5 working days, tracked. EU & Europe.' : '1–2 working days, tracked. UK only.';
+      var t = cartTotals(cart, r);
+      if (shipPrice) shipPrice.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping, r);
+      renderCartSummary(cart, r);
+    }
+
+    if (regionUkBtn) regionUkBtn.addEventListener('click', function () { applyRegion('UK'); });
+    if (regionEuBtn) regionEuBtn.addEventListener('click', function () { applyRegion('EU'); });
+
+    // Set initial state
+    applyRegion(activeRegion);
 
     shippingForm.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -147,14 +193,29 @@
         var el = document.getElementById(id);
         return !el || !el.value.trim();
       });
+
       var ack = shippingForm.querySelector('input[name="ack"]');
       if (ack && !ack.checked) missing.push('ack');
 
+      // EU-specific validation
+      if (activeRegion === 'EU') {
+        var euCountryEl = document.getElementById('sh-eu-country');
+        if (!euCountryEl || !euCountryEl.value) missing.push('eu-country');
+        var euComp = shippingForm.querySelector('input[name="eu-compliance"]');
+        if (euComp && !euComp.checked) missing.push('eu-compliance');
+      }
+
       if (missing.length) {
-        if (errEl) errEl.textContent = 'Please fill in all required fields and tick the acknowledgement.';
+        if (errEl) errEl.textContent = activeRegion === 'EU'
+          ? 'Please fill in all required fields, select your country, and tick both acknowledgements.'
+          : 'Please fill in all required fields and tick the acknowledgement.';
         return;
       }
       if (errEl) errEl.textContent = '';
+
+      var country = activeRegion === 'EU'
+        ? (document.getElementById('sh-eu-country') || {}).value || ''
+        : 'United Kingdom';
 
       var data = {
         fname:    document.getElementById('sh-fname').value.trim(),
@@ -165,23 +226,72 @@
         addr2:    (document.getElementById('sh-addr2') || {}).value || '',
         city:     document.getElementById('sh-city').value.trim(),
         postcode: document.getElementById('sh-post').value.trim(),
-        country:  'United Kingdom',
+        country:  country,
+        region:   activeRegion,
+        currency: activeRegion === 'EU' ? 'EUR' : 'GBP',
       };
 
-      try {
-        sessionStorage.setItem('vp_checkout', JSON.stringify(data));
-      } catch (ex) {}
-
+      try { sessionStorage.setItem('vp_checkout', JSON.stringify(data)); } catch (ex) {}
       window.location.href = '/checkout/payment/';
     });
   }
 
-  // ── PAYMENT PAGE ─────────────────────────────────────────────────────────
+  // ── PAYMENT PAGE ──────────────────────────────────────────────────────────
   var paymentForm = document.getElementById('payment-form');
   if (paymentForm) {
-    renderCartSummary(cart);
+    var payRegion = currentRegion();
+    renderCartSummary(cart, payRegion);
 
-    // ── Discount code input ───────────────────────────────────────────────
+    // EU: hide bank transfer, update lede
+    if (payRegion === 'EU') {
+      var bankFallbackWrap = document.getElementById('bank-fallback-wrap');
+      var payLede          = document.getElementById('pay-lede');
+      var euOnlyNotice     = document.getElementById('eu-only-notice');
+      if (bankFallbackWrap) bankFallbackWrap.style.display = 'none';
+      if (euOnlyNotice)     euOnlyNotice.style.display     = '';
+      if (payLede) payLede.textContent = 'Pay instantly and securely via your existing bank account. EU payments are processed via GoCardless.';
+    }
+
+    // Show delivery address in sidebar
+    var deliverEl = document.getElementById('co-deliver-to');
+    if (deliverEl) {
+      try {
+        var chkDelivery = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
+        if (chkDelivery.fname) {
+          deliverEl.innerHTML = '<div class="co-deliver-hdr">Delivering to</div>' +
+            '<div class="co-deliver-addr">' +
+            escHtml(chkDelivery.fname + ' ' + chkDelivery.lname) + '<br>' +
+            escHtml(chkDelivery.addr1) + '<br>' +
+            (chkDelivery.addr2 ? escHtml(chkDelivery.addr2) + '<br>' : '') +
+            escHtml(chkDelivery.city) + '<br>' +
+            escHtml(chkDelivery.postcode) + '<br>' +
+            escHtml(chkDelivery.country) +
+            '</div>';
+        }
+      } catch (ex) {}
+    }
+
+    // Billing same-as-delivery toggle
+    var billSame   = document.getElementById('bill-same');
+    var billFields = document.getElementById('bill-fields');
+    if (billSame && billFields) {
+      billSame.addEventListener('change', function () {
+        billFields.style.display = billSame.checked ? 'none' : '';
+      });
+    }
+
+    // Bank transfer panel toggle (UK only)
+    var bankToggle      = document.getElementById('bank-toggle');
+    var bankDetailsPanel = document.getElementById('bank-details-panel');
+    if (bankToggle && bankDetailsPanel) {
+      bankToggle.addEventListener('click', function () {
+        var open = bankDetailsPanel.style.display !== 'none';
+        bankDetailsPanel.style.display = open ? 'none' : '';
+        bankToggle.textContent = open ? 'Prefer to pay by bank transfer? ↓' : 'Hide bank transfer option ↑';
+      });
+    }
+
+    // ── Discount code ─────────────────────────────────────────────────────
     var discountInput = document.getElementById('discount-input');
     var discountApply = document.getElementById('discount-apply');
     var discountMsg   = document.getElementById('discount-msg');
@@ -193,18 +303,20 @@
         discountMsg.innerHTML = '<span class="dc-err">Please enter a discount code.</span>';
         return;
       }
-      var t = cartTotals(cart);
-      var result = calcDiscount(t.subtotal, code);
+      // calcDiscount always works in GBP; convert saving to display currency
+      var tGBP   = cartTotals(cart, 'UK');
+      var result = calcDiscount(tGBP.subtotal, code);
       if (result) {
         appliedDiscount = result;
-        discountMsg.innerHTML = '<span class="dc-ok">✓ Code applied — saving ' + fmt(result.saving) + '</span>';
+        var displaySaving = savingInCurrency(result.saving, payRegion);
+        discountMsg.innerHTML = '<span class="dc-ok">✓ Code applied — saving ' + fmt(displaySaving, payRegion) + '</span>';
         discountInput.disabled = true;
         if (discountApply) { discountApply.textContent = 'Applied'; discountApply.disabled = true; }
-        renderTotalsWithDiscount(cart, appliedDiscount);
+        renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
       } else {
         appliedDiscount = null;
         discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
-        renderTotalsWithDiscount(cart, null);
+        renderTotalsWithDiscount(cart, null, payRegion);
       }
     }
 
@@ -214,48 +326,8 @@
         if (e.key === 'Enter') { e.preventDefault(); handleApply(); }
       });
     }
-    // ─────────────────────────────────────────────────────────────────────
 
-    // Show delivery address
-    var deliverEl = document.getElementById('co-deliver-to');
-    if (deliverEl) {
-      try {
-        var chk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
-        if (chk.fname) {
-          deliverEl.innerHTML = '<div class="co-deliver-hdr">Delivering to</div>' +
-            '<div class="co-deliver-addr">' +
-            escHtml(chk.fname + ' ' + chk.lname) + '<br>' +
-            escHtml(chk.addr1) + '<br>' +
-            (chk.addr2 ? escHtml(chk.addr2) + '<br>' : '') +
-            escHtml(chk.city) + '<br>' +
-            escHtml(chk.postcode) + '<br>' +
-            escHtml(chk.country) +
-            '</div>';
-        }
-      } catch (ex) {}
-    }
-
-    // Billing same as delivery toggle
-    var billSame = document.getElementById('bill-same');
-    var billFields = document.getElementById('bill-fields');
-    if (billSame && billFields) {
-      billSame.addEventListener('change', function () {
-        billFields.style.display = billSame.checked ? 'none' : '';
-      });
-    }
-
-    // Bank transfer fallback toggle
-    var bankToggle = document.getElementById('bank-toggle');
-    var bankDetailsPanel = document.getElementById('bank-details-panel');
-    if (bankToggle && bankDetailsPanel) {
-      bankToggle.addEventListener('click', function () {
-        var open = bankDetailsPanel.style.display !== 'none';
-        bankDetailsPanel.style.display = open ? 'none' : '';
-        bankToggle.textContent = open ? 'Or pay by manual bank transfer ↓' : 'Hide bank transfer option ↑';
-      });
-    }
-
-    // GoCardless Instant Bank Pay handler
+    // ── GoCardless Instant Bank Pay ───────────────────────────────────────
     var gcPayBtn = document.getElementById('gc-pay-btn');
     if (gcPayBtn) {
       gcPayBtn.addEventListener('click', function () {
@@ -270,55 +342,68 @@
         gcPayBtn.disabled = true;
         gcPayBtn.textContent = 'Preparing payment…';
 
-        var ref = 'VP-' + todayStr() + '-' + randChars(4);
-        var t = cartTotals(cart);
-        var saving = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
+        var ref     = 'VP-' + todayStr() + '-' + randChars(4);
+        var t       = cartTotals(cart, payRegion);
+        var savingGBP = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
+        var saving  = savingInCurrency(savingGBP, payRegion);
         var discountedSubtotal = Math.max(0, t.subtotal - saving);
-        var finalShipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-        var finalTotal = discountedSubtotal + finalShipping;
-        var amountPence = Math.round(finalTotal * 100);
+        var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
+        var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
+        var finalShipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
+        var finalTotal    = Math.round((discountedSubtotal + finalShipping) * 100) / 100;
+        var amountSmallest = Math.round(finalTotal * 100); // pence (GBP) or cents (EUR)
+        var currency       = payRegion === 'EU' ? 'EUR' : 'GBP';
+        var currSym        = payRegion === 'EU' ? '€' : '£';
+        var shippingMethod = payRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
 
         var gcChk = {};
         try { gcChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
         gcChk.orderRef        = ref;
         gcChk.subtotal        = t.subtotal;
         gcChk.shipping        = finalShipping;
-        gcChk.discount_code   = appliedDiscount ? appliedDiscount.code : '';
-        gcChk.discount_saving = saving;
+        gcChk.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
+        gcChk.discount_saving = saving; // stored in customer's currency
         gcChk.total           = finalTotal;
         gcChk.cart_snapshot   = JSON.stringify(cart);
         gcChk.payment_method  = 'instant';
+        gcChk.currency        = currency;
+        gcChk.region          = payRegion;
         try { sessionStorage.setItem('vp_checkout', JSON.stringify(gcChk)); } catch (ex) {}
         try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
 
-        // Build products list for webhook metadata (same format as email)
+        // Product list in customer's currency
         var gcProductsList = cart.map(function (item) {
+          var priceInCurrency = payRegion === 'EU'
+            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+            : item.price * (item.qty || 1);
           return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-                 ' — £' + (item.price * (item.qty || 1)).toFixed(2);
+                 ' — ' + currSym + priceInCurrency.toFixed(2);
         }).join('\n');
 
         fetch('/api/create-payment', {
-          method: 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount_pence:     amountPence,
-            customer_name:    ((gcChk.fname || '') + ' ' + (gcChk.lname || '')).trim(),
-            email:            gcChk.email    || '',
-            description:      'Velox Peptides research compounds',
-            order_ref:        ref,
-            // Full order data so GoCardless metadata can power webhook emails
-            phone:            gcChk.phone    || '',
-            addr1:            gcChk.addr1    || '',
-            addr2:            gcChk.addr2    || '',
-            city:             gcChk.city     || '',
-            postcode:         gcChk.postcode || '',
-            country:          gcChk.country  || 'United Kingdom',
-            order_items:      gcProductsList,
-            subtotal:         t.subtotal.toFixed(2),
-            shipping:         finalShipping.toFixed(2),
-            discount_code:    appliedDiscount ? appliedDiscount.code : '',
-            discount_saving:  saving.toFixed(2),
-            total:            finalTotal.toFixed(2)
+            amount_pence:    amountSmallest,
+            currency:        currency,
+            customer_name:   ((gcChk.fname || '') + ' ' + (gcChk.lname || '')).trim(),
+            email:           gcChk.email    || '',
+            description:     'Velox Peptides research compounds',
+            order_ref:       ref,
+            phone:           gcChk.phone    || '',
+            addr1:           gcChk.addr1    || '',
+            addr2:           gcChk.addr2    || '',
+            city:            gcChk.city     || '',
+            postcode:        gcChk.postcode || '',
+            country:         gcChk.country  || 'United Kingdom',
+            order_items:     gcProductsList,
+            subtotal:        t.subtotal.toFixed(2),
+            shipping:        finalShipping.toFixed(2),
+            discount_code:   appliedDiscount ? appliedDiscount.code : '',
+            discount_saving: saving.toFixed(2),
+            total:           finalTotal.toFixed(2),
+            region:          payRegion,
+            shipping_method: shippingMethod,
           })
         })
         .then(function (resp) { return resp.json(); })
@@ -344,6 +429,7 @@
       });
     }
 
+    // ── Bank transfer form submit (UK / GBP only) ─────────────────────────
     paymentForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var errEl = document.getElementById('co-err');
@@ -354,16 +440,15 @@
       }
       if (errEl) errEl.textContent = '';
 
-      // Disable the submit button immediately — prevents double-click resubmission
       var submitBtn = paymentForm.querySelector('button[type="submit"]');
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Processing…'; }
 
-      var ref = 'VP-' + todayStr() + '-' + randChars(4);
-      var t = cartTotals(cart);
-      var saving = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-      var discountedSubtotal = Math.max(0, t.subtotal - saving);
+      var ref       = 'VP-' + todayStr() + '-' + randChars(4);
+      var t         = cartTotals(cart, 'UK'); // bank transfer is UK/GBP only
+      var savingGBP = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
+      var discountedSubtotal = Math.max(0, t.subtotal - savingGBP);
       var finalShipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-      var finalTotal = discountedSubtotal + finalShipping;
+      var finalTotal    = discountedSubtotal + finalShipping;
 
       try {
         var existing = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
@@ -371,50 +456,46 @@
         existing.subtotal        = t.subtotal;
         existing.shipping        = finalShipping;
         existing.discount_code   = appliedDiscount ? appliedDiscount.code : '';
-        existing.discount_saving = saving;
+        existing.discount_saving = savingGBP;
         existing.total           = finalTotal;
-        // Snapshot the cart so the confirmation page can recover it even if
-        // localStorage has already been cleared (e.g. page refresh)
         existing.cart_snapshot   = JSON.stringify(cart);
+        existing.currency        = 'GBP';
+        existing.region          = 'UK';
         sessionStorage.setItem('vp_checkout', JSON.stringify(existing));
       } catch (ex) {}
 
-      // Reset the fired flag so the confirmation page treats this as a fresh order
       try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
-
       window.location.href = '/checkout/confirmation/';
     });
   }
 
-  // ── CONFIRMATION PAGE ─────────────────────────────────────────────────────
+  // ── CONFIRMATION PAGE (bank transfer) ────────────────────────────────────
   var confirmSummary = document.getElementById('confirm-summary');
   if (confirmSummary) {
-
-    // Parse sessionStorage FIRST — we need cart_snapshot before deciding on confirmedCart
     var chk = {};
     try { chk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+    var confRegion = chk.region === 'EU' ? 'EU' : 'UK'; // bank transfer always UK, but defensive
 
-    // Build confirmedCart from localStorage. If the page was refreshed and
-    // localStorage was already cleared on the first visit, fall back to the
-    // cart_snapshot saved into sessionStorage at payment-form submit time.
     var confirmedCart = cart.slice();
     if (!confirmedCart.length && chk.cart_snapshot) {
       try { confirmedCart = JSON.parse(chk.cart_snapshot); } catch (ex) {}
     }
 
-    // Clear cart — order is placed
     localStorage.removeItem('vp_cart');
     var countEl = document.getElementById('nav-cart-count');
     if (countEl) countEl.textContent = '0';
 
-    // Build the products string once — used by both email and Sheets
-    // Format: "Semax 10mg x1 — £34.99, Selank 10mg x1 — £39.99"
+    var currSym = confRegion === 'EU' ? '€' : '£';
+    var shippingMethod = confRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+
     var productsList = confirmedCart.map(function (item) {
+      var priceInCurrency = confRegion === 'EU'
+        ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+        : item.price * (item.qty || 1);
       return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-             ' — ' + fmt(item.price * (item.qty || 1));
+             ' — ' + currSym + priceInCurrency.toFixed(2);
     }).join('\n');
 
-    // Update DOM with order reference and total
     try {
       var refEl   = document.getElementById('confirm-ref');
       var ref2El  = document.getElementById('confirm-ref-2');
@@ -423,65 +504,57 @@
       var shipEl2 = document.getElementById('confirm-shipping');
       if (refEl   && chk.orderRef)           refEl.textContent   = chk.orderRef;
       if (ref2El  && chk.orderRef)           ref2El.textContent  = chk.orderRef;
-      if (amtEl   && chk.total)              amtEl.textContent   = fmt(Number(chk.total));
-      if (subEl2  && chk.subtotal != null)   subEl2.textContent  = fmt(Number(chk.subtotal));
-      if (shipEl2 && chk.shipping != null)   shipEl2.textContent = Number(chk.shipping) === 0 ? 'FREE' : fmt(Number(chk.shipping));
-      // Populate timeline step 2 spans
+      if (amtEl   && chk.total)              amtEl.textContent   = fmt(Number(chk.total), confRegion);
+      if (subEl2  && chk.subtotal != null)   subEl2.textContent  = fmt(Number(chk.subtotal), confRegion);
+      if (shipEl2 && chk.shipping != null)   shipEl2.textContent = Number(chk.shipping) === 0 ? 'FREE' : fmt(Number(chk.shipping), confRegion);
       var amt2El = document.getElementById('confirm-amount-2');
       var ref3El = document.getElementById('confirm-ref-3');
       if (amt2El && chk.total)    amt2El.textContent = Number(chk.total).toFixed(2);
       if (ref3El && chk.orderRef) ref3El.textContent = chk.orderRef;
 
-      // Show discount row in bank details if a code was used
       if (chk.discount_code) {
         var discRow  = document.getElementById('confirm-discount-row');
         var discInfo = document.getElementById('confirm-discount-info');
         if (discRow)  discRow.style.display = '';
         if (discInfo) discInfo.textContent = chk.discount_code +
-          ' (−' + fmt(Number(chk.discount_saving || 0)) + ')';
+          ' (−' + fmt(Number(chk.discount_saving || 0), confRegion) + ')';
       }
     } catch (ex) {}
 
-    // Send order notification emails + log to Sheets (fire-and-forget)
-    // Guard: vp_order_fired is set to '1' the first time this runs.
-    // On any subsequent page load or refresh the flag is already present,
-    // so we skip the API calls entirely — preventing duplicate emails / sheet rows.
     var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
     if (!alreadyFired && chk.orderRef && chk.email) {
-      // Mark fired BEFORE the async calls — a refresh during the fetch cannot re-enter
       try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
 
       var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
         .filter(Boolean).join(', ');
 
-      // ── Resend order emails ──────────────────────────────────────────────
       fetch('/api/send-order', {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          order_number:     chk.orderRef,
-          customer_name:    ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-          customer_email:   chk.email,
-          customer_phone:   chk.phone || '',
-          addr1:            chk.addr1    || '',
-          addr2:            chk.addr2    || '',
-          city:             chk.city     || '',
-          postcode:         chk.postcode || '',
-          country:          chk.country  || 'United Kingdom',
+          order_number:    chk.orderRef,
+          customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+          customer_email:  chk.email,
+          customer_phone:  chk.phone    || '',
+          addr1:           chk.addr1    || '',
+          addr2:           chk.addr2    || '',
+          city:            chk.city     || '',
+          postcode:        chk.postcode || '',
+          country:         chk.country  || 'United Kingdom',
           shipping_address: shippingAddr,
-          shipping_method:  'Royal Mail Tracked 24',
-          order_items:      productsList,
-          order_subtotal:   (Number(chk.subtotal)       || 0).toFixed(2),
-          shipping_cost:    (Number(chk.shipping)        || 0).toFixed(2),
-          discount_code:    chk.discount_code             || '',
-          discount_saving:  (Number(chk.discount_saving) || 0).toFixed(2),
-          order_total:      (Number(chk.total)           || 0).toFixed(2),
+          shipping_method: shippingMethod,
+          order_items:     productsList,
+          order_subtotal:  (Number(chk.subtotal)        || 0).toFixed(2),
+          shipping_cost:   (Number(chk.shipping)         || 0).toFixed(2),
+          discount_code:   chk.discount_code              || '',
+          discount_saving: (Number(chk.discount_saving)  || 0).toFixed(2),
+          order_total:     (Number(chk.total)             || 0).toFixed(2),
+          currency:        chk.currency || 'GBP',
+          region:          confRegion,
+          payment_method:  'bank',
         })
-      }).catch(function () { /* silent — don't block the confirmation page */ });
+      }).catch(function () {});
 
-      // ── Google Sheets order logging ──────────────────────────────────────
-      // Uses no-cors + text/plain to avoid a CORS preflight on the GAS endpoint.
-      // The Apps Script receives e.postData.contents and parses the JSON itself.
       try {
         fetch(
           'https://script.google.com/macros/s/AKfycbwC6RyBK2pMsU7crR7TXpbUtgKNN6305hNvePzFmkMtz3kpXWZShIgdFkT68AhHAb1ZOg/exec',
@@ -490,24 +563,25 @@
             mode:    'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body:    JSON.stringify({
-              orderId:      chk.orderRef,
-              date:         new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
-              name:         ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-              email:        chk.email  || '',
-              phone:        chk.phone  || '',
-              address:      shippingAddr,
-              products:     productsList,
-              total:        '£' + (Number(chk.total) || 0).toFixed(2),
-              discountCode: chk.discount_code || 'None',
+              orderId:       chk.orderRef,
+              date:          new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
+              name:          ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+              email:         chk.email  || '',
+              phone:         chk.phone  || '',
+              address:       shippingAddr,
+              products:      productsList,
+              total:         currSym + (Number(chk.total) || 0).toFixed(2),
+              discountCode:  chk.discount_code || 'None',
+              region:        confRegion,
+              currency:      chk.currency || 'GBP',
+              paymentMethod: 'Bank Transfer',
             })
           }
-        ).catch(function () { /* silent */ });
-      } catch (ex) { /* silent — sheet logging must never surface to the customer */ }
-      // ────────────────────────────────────────────────────────────────────
-    } // end !alreadyFired guard
+        ).catch(function () {});
+      } catch (ex) {}
+    }
 
-    // Render order summary on the confirmation page
-    renderCartSummary(confirmedCart.length ? confirmedCart : []);
+    renderCartSummary(confirmedCart.length ? confirmedCart : [], confRegion);
   }
 
 }());

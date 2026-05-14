@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8">
@@ -126,7 +126,7 @@
 
 <div class="ann-bar" role="note" aria-label="Site announcements">
   <div class="ann-track-wrap" aria-hidden="true">
-    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
 
@@ -201,7 +201,8 @@
       <div class="co-form-col">
         <div class="pay-page-eyebrow">SECURE CHECKOUT</div>
         <h1 class="page-h1">Secure Payment</h1>
-        <p class="page-lede">Pay instantly and securely via your existing bank account, or by UK bank transfer below.</p>
+        <p class="page-lede" id="pay-lede">Pay instantly and securely via your existing bank account, or by UK bank transfer below.</p>
+        <div id="eu-only-notice" style="display:none;margin-bottom:14px;padding:10px 14px;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.2);border-radius:6px;font-size:13px;color:#9CA3AF;">🌍 EU orders use GoCardless Instant Bank Pay. Bank transfer is not available for EU deliveries.</div>
 
         <div class="pay-method pay-method-primary">
           <div class="pay-method-hdr">
@@ -247,7 +248,7 @@
           <button type="button" id="gc-pay-btn" class="btn-p co-submit">Pay Now →</button>
           <p class="pay-redirect-note">You will be redirected to GoCardless's secure payment page. Once payment is approved you'll be returned here automatically.</p>
 
-          <div class="pay-bank-fallback">
+          <div class="pay-bank-fallback" id="bank-fallback-wrap">
             <button type="button" id="bank-toggle" class="pay-bank-toggle">Prefer to pay by bank transfer? ↓</button>
             <div id="bank-details-panel" style="display:none;">
               <div class="pay-method pay-method-bank">
@@ -287,7 +288,7 @@
 
         <div class="co-sum-rows">
           <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">£0.00</span></div>
-          <div class="co-sum-row"><span>Royal Mail Tracked 24</span><span id="co-shipping">£3.80</span></div>
+          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">£3.80</span></div>
           <div class="co-sum-row co-discount-line" id="co-discount-line" style="display:none">
             <span>Discount (<span id="co-discount-label"></span>)</span>
             <span id="co-discount-amount" class="co-discount-saving">−£0.00</span>
@@ -315,7 +316,7 @@
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-logo-wordmark">Velox Peptides</div>
-        <p class="ft-tag">UK research peptide supplier. HPLC-verified, CoA on every order, dispatched from Northern Ireland via Royal Mail Tracked 24.</p>
+        <p class="ft-tag">Research peptide supplier &mdash; shipping to UK &amp; EU. HPLC-verified, CoA on every order, dispatched from Northern Ireland.</p>
         <address class="ft-address">
           CRP Labs Ltd<br>
           Company no. NI738125<br>

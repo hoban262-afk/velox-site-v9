@@ -22,16 +22,23 @@ function itemRows(itemsHtml) {
     `<tr><td colspan="2" style="${S.divider};padding-top:14px">&nbsp;</td></tr>`;
 }
 
+function currencySymbol(d) {
+  return d.currency === 'EUR' ? '&euro;' : '&pound;';
+}
+
 function orderTotalsRows(d) {
+  const sym = currencySymbol(d);
+  const shippingLabel = d.shipping_method || 'Royal Mail Tracked 24';
   return `
-    <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">&pound;${d.order_subtotal}</td></tr>
-    <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 24)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
-    ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;&pound;${d.discount_saving}</td></tr>` : ''}
+    <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${sym}${d.order_subtotal}</td></tr>
+    <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (${shippingLabel})</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : sym + d.shipping_cost}</td></tr>
+    ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;${sym}${d.discount_saving}</td></tr>` : ''}
     <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
-    <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">&pound;${d.order_total}</td></tr>`;
+    <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">${sym}${d.order_total}</td></tr>`;
 }
 
 function deliveryBlock(d) {
+  const shippingLabel = d.shipping_method || 'Royal Mail Tracked 24';
   return `
 <tr><td style="padding:0 40px 20px">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.inner}">
@@ -46,7 +53,7 @@ function deliveryBlock(d) {
         ${d.postcode || ''}<br>
         ${d.country || 'United Kingdom'}
       </p>
-      <p style="margin:10px 0 0;font-size:12px;color:#888">Shipped via <strong style="color:#fff">Royal Mail Tracked 24</strong></p>
+      <p style="margin:10px 0 0;font-size:12px;color:#888">Shipped via <strong style="color:#fff">${shippingLabel}</strong></p>
     </td></tr>
   </table>
 </td></tr>`;
@@ -82,6 +89,11 @@ function emailFooter() {
 
 /* ── 1. Customer email — GoCardless instant payment ────────────────────────── */
 function buildCustomerInstantHtml(d, itemsHtml) {
+  const sym          = currencySymbol(d);
+  const isEU         = d.region === 'EU';
+  const shippingName = d.shipping_method || (isEU ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24');
+  const deliveryTime = isEU ? '3&ndash;5 working days' : '1&ndash;2 working days';
+
   return emailHeader('Order Confirmed') + `
 <tr><td align="center" style="padding:0 40px 8px">
   <table cellpadding="0" cellspacing="0" border="0"><tr><td style="background:rgba(1,211,160,.1);border:1px solid rgba(1,211,160,.25);border-radius:20px;padding:5px 14px">
@@ -114,7 +126,7 @@ ${deliveryBlock(d)}
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#030f0b;border:1px solid #014d39;border-radius:6px">
     <tr><td style="padding:12px 18px">
       <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#01D3A0">&#10003; PAYMENT RECEIVED</p>
-      <p style="margin:0;font-size:13px;color:#888;line-height:1.6">Your payment of <strong style="color:#fff">&pound;${d.order_total}</strong> has been received and confirmed. No further action is needed from you.</p>
+      <p style="margin:0;font-size:13px;color:#888;line-height:1.6">Your payment of <strong style="color:#fff">${sym}${d.order_total}</strong> has been received and confirmed. No further action is needed from you.</p>
     </td></tr>
   </table>
 </td></tr>
@@ -140,14 +152,14 @@ ${deliveryBlock(d)}
       <td width="30" valign="top" style="padding-top:1px"><span style="${S.step}">3</span></td>
       <td style="padding-bottom:14px">
         <p style="margin:0;font-size:14px;color:#fff;font-weight:600">Dispatched within 24 hours</p>
-        <p style="margin:2px 0 0;font-size:12px;color:#888">Sent via Royal Mail Tracked 24. You&rsquo;ll receive a dispatch email with your tracking number.</p>
+        <p style="margin:2px 0 0;font-size:12px;color:#888">Sent via ${shippingName}. You&rsquo;ll receive a dispatch email with your tracking number.</p>
       </td>
     </tr>
     <tr>
       <td width="30" valign="top" style="padding-top:1px"><span style="${S.step}">4</span></td>
       <td>
-        <p style="margin:0;font-size:14px;color:#fff;font-weight:600">Delivered in 1&ndash;2 working days</p>
-        <p style="margin:2px 0 0;font-size:12px;color:#888">Royal Mail Tracked 24 to your delivery address.</p>
+        <p style="margin:0;font-size:14px;color:#fff;font-weight:600">Delivered in ${deliveryTime}</p>
+        <p style="margin:2px 0 0;font-size:12px;color:#888">${shippingName} to your delivery address.</p>
       </td>
     </tr>
   </table>
@@ -192,7 +204,7 @@ function buildCustomerBankHtml(d, itemsHtml) {
         <tr><td style="font-size:12px;color:#888;padding:5px 0">Sort code</td><td style="font-size:15px;color:#01D3A0;padding:5px 0;font-weight:700;font-family:monospace;letter-spacing:.08em">08-71-99</td></tr>
         <tr><td style="font-size:12px;color:#888;padding:5px 0">Account number</td><td style="font-size:15px;color:#01D3A0;padding:5px 0;font-weight:700;font-family:monospace;letter-spacing:.08em">14617029</td></tr>
         <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
-        <tr><td style="font-size:12px;color:#888;padding:5px 0">Amount to transfer</td><td style="font-size:18px;color:#fff;padding:5px 0;font-weight:700">&pound;${d.order_total}</td></tr>
+        <tr><td style="font-size:12px;color:#888;padding:5px 0">Amount to transfer</td><td style="font-size:18px;color:#fff;padding:5px 0;font-weight:700">${currencySymbol(d)}${d.order_total}</td></tr>
         <tr><td style="font-size:12px;color:#888;padding:5px 0">Payment reference</td><td style="font-size:14px;color:#01D3A0;padding:5px 0;font-weight:700;font-family:monospace">${d.order_number}</td></tr>
       </table>
       <p style="margin:14px 0 0;font-size:12px;color:#888;line-height:1.6"><strong style="color:#fff">Important:</strong> Use your order reference exactly as shown so we can match your payment. Faster Payments typically clear within 1&ndash;2 hours.</p>
@@ -227,7 +239,7 @@ ${deliveryBlock(d)}
     <tr>
       <td width="30" valign="top" style="padding-top:1px"><span style="display:inline-block;width:22px;height:22px;background:#F59E0B;color:#000;font-size:10px;font-weight:700;text-align:center;line-height:22px;border-radius:50%">2</span></td>
       <td style="padding-bottom:14px">
-        <p style="margin:0;font-size:14px;color:#fff;font-weight:600">You transfer &pound;${d.order_total} using reference <span style="color:#01D3A0;font-family:monospace">${d.order_number}</span></p>
+        <p style="margin:0;font-size:14px;color:#fff;font-weight:600">You transfer ${currencySymbol(d)}${d.order_total} using reference <span style="color:#01D3A0;font-family:monospace">${d.order_number}</span></p>
         <p style="margin:2px 0 0;font-size:12px;color:#F59E0B">Action required &mdash; your order will be cancelled without payment.</p>
       </td>
     </tr>
@@ -286,11 +298,11 @@ function buildAdminHtml(d, itemsHtml) {
     <tr><td style="padding:14px 18px">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         ${itemRows(itemsHtml)}
-        <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">&pound;${d.order_subtotal}</td></tr>
-        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (Royal Mail Tracked 24)</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : '&pound;' + d.shipping_cost}</td></tr>
-        ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;&pound;${d.discount_saving}</td></tr>` : ''}
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${currencySymbol(d)}${d.order_subtotal}</td></tr>
+        <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (${d.shipping_method || 'Royal Mail Tracked 24'})</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : currencySymbol(d) + d.shipping_cost}</td></tr>
+        ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;${currencySymbol(d)}${d.discount_saving}</td></tr>` : ''}
         <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
-        <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">&pound;${d.order_total}</td></tr>
+        <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">${currencySymbol(d)}${d.order_total}</td></tr>
       </table>
     </td></tr>
   </table>
@@ -369,13 +381,14 @@ async function sendEmails(d) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const isInstant = d.payment_method === 'instant';
 
-  // Parse "Product Name size x1 — £XX.XX" lines into two-column rows
+  // Parse "Product Name size x1 — £XX.XX" or "...— €XX.XX" lines into two-column rows
+  const sym = d.currency === 'EUR' ? '&euro;' : '&pound;';
   const itemsHtml = (d.order_items || '')
     .split('\n')
     .filter(l => l.trim())
     .map(l => {
-      const m = l.match(/^(.+?)\s+[\xA3£](\S+)$/);
-      if (m) return `<tr><td style="font-size:13px;color:#fff;padding:4px 0">${m[1].trim()}</td><td align="right" style="font-size:13px;color:#888;padding:4px 0;white-space:nowrap">&pound;${m[2]}</td></tr>`;
+      const m = l.match(/^(.+?)\s+[£€\xA3€](\S+)$/);
+      if (m) return `<tr><td style="font-size:13px;color:#fff;padding:4px 0">${m[1].trim()}</td><td align="right" style="font-size:13px;color:#888;padding:4px 0;white-space:nowrap">${sym}${m[2]}</td></tr>`;
       return `<tr><td colspan="2" style="font-size:13px;color:#fff;padding:4px 0">${l}</td></tr>`;
     })
     .join('');
@@ -384,7 +397,7 @@ async function sendEmails(d) {
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
     to: 'veloxpeps@gmail.com',
-    subject: `New Order ${d.order_number} — £${d.order_total} — ${isInstant ? 'PAID' : 'PENDING'}`,
+    subject: `New Order ${d.order_number} — ${d.currency === 'EUR' ? '€' : '£'}${d.order_total} — ${isInstant ? 'PAID' : 'PENDING'}`,
     html: buildAdminHtml(d, itemsHtml),
   });
 

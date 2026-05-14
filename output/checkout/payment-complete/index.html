@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8">
@@ -97,7 +97,7 @@
 
 <div class="ann-bar" role="note" aria-label="Site announcements">
   <div class="ann-track-wrap" aria-hidden="true">
-    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
 
@@ -196,7 +196,7 @@
         <div class="confirm-bank-hdr">Order summary</div>
         <dl class="confirm-bank-dl">
           <div><dt>Subtotal</dt><dd id="pc-subtotal">—</dd></div>
-          <div><dt>Delivery (Royal Mail Tracked 24)</dt><dd id="pc-shipping">—</dd></div>
+          <div><dt id="pc-shipping-label">Delivery (Royal Mail Tracked 24)</dt><dd id="pc-shipping">—</dd></div>
           <div id="pc-discount-row" style="display:none"><dt>Discount</dt><dd id="pc-discount-info"></dd></div>
           <div><dt>Total paid</dt><dd id="pc-amount">£0.00</dd></div>
         </dl>
@@ -265,7 +265,7 @@
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-logo-wordmark">Velox Peptides</div>
-        <p class="ft-tag">UK research peptide supplier. HPLC-verified, CoA on every order, dispatched from Northern Ireland via Royal Mail Tracked 24.</p>
+        <p class="ft-tag">Research peptide supplier &mdash; shipping to UK &amp; EU. HPLC-verified, CoA on every order, dispatched from Northern Ireland.</p>
         <address class="ft-address">
           CRP Labs Ltd<br>
           Company no. NI738125<br>
@@ -371,16 +371,20 @@
 (function () {
   'use strict';
 
-  function fmt(n) { return '£' + Number(n).toFixed(2); }
+  var EU_FX_RATE = 1.18;
+
+  function getChk() {
+    try { return JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (e) { return {}; }
+  }
+
+  function fmt(n, currency) {
+    return (currency === 'EUR' ? '€' : '£') + Number(n).toFixed(2);
+  }
 
   function escHtml(s) {
     return String(s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  function getChk() {
-    try { return JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (e) { return {}; }
   }
 
   // Read billing_request_id from URL params or sessionStorage
@@ -399,7 +403,6 @@
     if (stateLoading) stateLoading.style.display = which === 'loading' ? '' : 'none';
     if (stateSuccess) stateSuccess.style.display = which === 'success' ? '' : 'none';
     if (stateError)   stateError.style.display   = which === 'error'   ? '' : 'none';
-    // Update steps indicator on success
     if (which === 'success') {
       var steps = document.querySelectorAll('.co-step');
       steps.forEach(function (s) {
@@ -413,22 +416,20 @@
   showState('loading');
 
   if (!billingRequestId) {
-    // No billing request ID — probably direct navigation; show error
     showState('error');
     return;
   }
 
-  // Verify payment with our API
   fetch('/api/verify-payment?id=' + encodeURIComponent(billingRequestId))
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      if (!data.success) {
-        showState('error');
-        return;
-      }
+      if (!data.success) { showState('error'); return; }
 
-      // Payment confirmed — refresh chk in case it changed
       chk = getChk();
+      var pcRegion   = chk.region   === 'EU' ? 'EU' : 'UK';
+      var pcCurrency = chk.currency === 'EUR' ? 'EUR' : 'GBP';
+      var currSym    = pcCurrency === 'EUR' ? '€' : '£';
+      var shippingMethod = pcRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
 
       // Build confirmedCart
       var confirmedCart = [];
@@ -451,15 +452,33 @@
       var shipEl   = document.getElementById('pc-shipping');
       var discRow  = document.getElementById('pc-discount-row');
       var discInfo = document.getElementById('pc-discount-info');
-      var emailEl = document.getElementById('pc-email');
-      if (refEl   && chk.orderRef)           refEl.textContent   = chk.orderRef;
-      if (amtEl   && chk.total)              amtEl.textContent   = fmt(chk.total);
-      if (subEl   && chk.subtotal  != null)  subEl.textContent   = fmt(chk.subtotal);
-      if (shipEl  && chk.shipping  != null)  shipEl.textContent  = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping);
-      if (emailEl && chk.email)              emailEl.textContent = chk.email;
+      var emailEl  = document.getElementById('pc-email');
+      var shpLbl   = document.getElementById('pc-shipping-label');
+      if (refEl   && chk.orderRef)          refEl.textContent   = chk.orderRef;
+      if (amtEl   && chk.total)             amtEl.textContent   = fmt(chk.total, pcCurrency);
+      if (subEl   && chk.subtotal  != null) subEl.textContent   = fmt(chk.subtotal, pcCurrency);
+      if (shipEl  && chk.shipping  != null) shipEl.textContent  = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping, pcCurrency);
+      if (emailEl && chk.email)             emailEl.textContent = chk.email;
+      if (shpLbl) shpLbl.textContent = shippingMethod;
       if (chk.discount_code && discRow && discInfo) {
         discRow.style.display = '';
-        discInfo.textContent  = chk.discount_code + ' (−' + fmt(chk.discount_saving || 0) + ')';
+        discInfo.textContent  = chk.discount_code + ' (−' + fmt(chk.discount_saving || 0, pcCurrency) + ')';
+      }
+
+      // Update delivery timeline for EU
+      if (pcRegion === 'EU') {
+        var tlItems = document.querySelectorAll('.co-tl-body');
+        tlItems.forEach(function (el) {
+          var strong = el.querySelector('strong');
+          var span   = el.querySelector('span');
+          if (strong && strong.textContent.indexOf('Dispatched') !== -1) {
+            if (span) span.textContent = 'Sent via Royal Mail International Tracked. You\'ll receive a dispatch email with your tracking number.';
+          }
+          if (strong && strong.textContent.indexOf('Delivered') !== -1) {
+            strong.textContent = 'Delivered in 3–5 working days';
+            if (span) span.textContent = 'Royal Mail International Tracked to your delivery address.';
+          }
+        });
       }
 
       // Render cart items
@@ -467,10 +486,13 @@
       if (sumEl && confirmedCart.length) {
         var html = '<ul class="co-cart-list">';
         confirmedCart.forEach(function (item) {
+          var priceInCurrency = pcRegion === 'EU'
+            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+            : item.price * (item.qty || 1);
           html += '<li class="co-cart-row">' +
             '<span class="co-cart-name">' + escHtml(item.name) +
             ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-            '<span class="co-cart-price">£' + (item.price * (item.qty || 1)).toFixed(2) + '</span>' +
+            '<span class="co-cart-price">' + currSym + priceInCurrency.toFixed(2) + '</span>' +
             '</li>';
         });
         html += '</ul>';
@@ -485,40 +507,43 @@
         try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
 
         var productsList = confirmedCart.map(function (item) {
+          var priceInCurrency = pcRegion === 'EU'
+            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+            : item.price * (item.qty || 1);
           return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-                 ' — £' + (item.price * (item.qty || 1)).toFixed(2);
+                 ' — ' + currSym + priceInCurrency.toFixed(2);
         }).join('\n');
 
         var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
           .filter(Boolean).join(', ');
 
-        // Resend emails
         fetch('/api/send-order', {
-          method: 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            order_number:     chk.orderRef,
-            customer_name:    ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-            customer_email:   chk.email,
-            customer_phone:   chk.phone    || '',
-            addr1:            chk.addr1    || '',
-            addr2:            chk.addr2    || '',
-            city:             chk.city     || '',
-            postcode:         chk.postcode || '',
-            country:          chk.country  || 'United Kingdom',
+            order_number:    chk.orderRef,
+            customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+            customer_email:  chk.email,
+            customer_phone:  chk.phone    || '',
+            addr1:           chk.addr1    || '',
+            addr2:           chk.addr2    || '',
+            city:            chk.city     || '',
+            postcode:        chk.postcode || '',
+            country:         chk.country  || 'United Kingdom',
             shipping_address: shippingAddr,
-            shipping_method:  'Royal Mail Tracked 24',
-            order_items:      productsList,
-            order_subtotal:   (Number(chk.subtotal)        || 0).toFixed(2),
-            shipping_cost:    (Number(chk.shipping)         || 0).toFixed(2),
-            discount_code:    chk.discount_code              || '',
-            discount_saving:  (Number(chk.discount_saving)  || 0).toFixed(2),
-            order_total:      (Number(chk.total)             || 0).toFixed(2),
-            payment_method:   'instant'
+            shipping_method: shippingMethod,
+            order_items:     productsList,
+            order_subtotal:  (Number(chk.subtotal)       || 0).toFixed(2),
+            shipping_cost:   (Number(chk.shipping)        || 0).toFixed(2),
+            discount_code:   chk.discount_code             || '',
+            discount_saving: (Number(chk.discount_saving) || 0).toFixed(2),
+            order_total:     (Number(chk.total)            || 0).toFixed(2),
+            currency:        pcCurrency,
+            region:          pcRegion,
+            payment_method:  'instant',
           })
         }).catch(function () {});
 
-        // Google Sheets logging
         try {
           fetch(
             'https://script.google.com/macros/s/AKfycbwC6RyBK2pMsU7crR7TXpbUtgKNN6305hNvePzFmkMtz3kpXWZShIgdFkT68AhHAb1ZOg/exec',
@@ -534,18 +559,18 @@
                 phone:         chk.phone  || '',
                 address:       shippingAddr,
                 products:      productsList,
-                total:         '£' + (Number(chk.total) || 0).toFixed(2),
+                total:         currSym + (Number(chk.total) || 0).toFixed(2),
                 discountCode:  chk.discount_code || 'None',
-                paymentMethod: 'Instant Bank Pay'
+                region:        pcRegion,
+                currency:      pcCurrency,
+                paymentMethod: 'Instant Bank Pay',
               })
             }
           ).catch(function () {});
         } catch (ex) {}
       }
     })
-    .catch(function () {
-      showState('error');
-    });
+    .catch(function () { showState('error'); });
 
 }());
 </script>

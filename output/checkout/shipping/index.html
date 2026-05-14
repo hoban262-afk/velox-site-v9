@@ -1,10 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Delivery Details — Checkout — Velox Peptides</title>
-  <meta name="description" content="Enter your UK delivery address. Royal Mail Tracked 24, UK only.">
+  <meta name="description" content="Enter your delivery address. UK: Royal Mail Tracked 24. EU: Royal Mail International Tracked.">
+  <style>
+    .region-btns { display:flex; gap:8px; margin-bottom:20px; }
+    .region-btn {
+      flex:1; padding:10px 14px; background:#0d0d0d;
+      border:2px solid #1F2937; border-radius:6px;
+      color:#9CA3AF; font-size:13px; font-weight:600; cursor:pointer;
+      transition:border-color .15s,color .15s; text-align:center;
+    }
+    .region-btn:hover { border-color:#374151; color:#D1D5DB; }
+    .region-btn-active { border-color:#01D3A0 !important; color:#01D3A0 !important; }
+    .f-select { width:100%; background:#0d0d0d; border:1px solid #1F2937; border-radius:6px; color:#F9FAFB; font-size:14px; padding:10px 12px; appearance:none; -webkit-appearance:none; }
+    .f-select:focus { outline:none; border-color:#01D3A0; }
+    .eu-compliance-wrap { margin-top:12px; }
+  </style>
   <meta name="robots" content="noindex,nofollow">
   <link rel="canonical" href="https://veloxpeps.com/checkout/shipping/">
 
@@ -53,7 +67,7 @@
 
 <div class="ann-bar" role="note" aria-label="Site announcements">
   <div class="ann-track-wrap" aria-hidden="true">
-    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING ON ORDERS OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;COA ON EVERY ORDER&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
 
@@ -127,9 +141,16 @@
     <div class="co-grid">
       <div class="co-form-col">
         <h1 class="page-h1">Delivery details</h1>
-        <p class="page-lede">Royal Mail Tracked 24, UK addresses only. Dispatch within 24 hours of payment confirmation.</p>
+        <p class="page-lede">Choose your region below. UK orders dispatch within 24 hours via Royal Mail Tracked 24. EU orders ship via Royal Mail International Tracked.</p>
 
         <form id="shipping-form" class="co-form" novalidate>
+
+          <h2 class="sec-t">Shipping region</h2>
+          <div class="region-btns">
+            <button type="button" class="region-btn region-btn-active" id="region-uk">🇬🇧 United Kingdom</button>
+            <button type="button" class="region-btn" id="region-eu">🌍 EU &amp; Europe</button>
+          </div>
+
           <h2 class="sec-t">Contact</h2>
           <div class="f-grid-2">
             <div class="f-row"><label class="f-lbl" for="sh-fname">First name *</label><input class="f-inp" id="sh-fname" name="fname" required></div>
@@ -144,16 +165,51 @@
             <div class="f-row f-full"><label class="f-lbl" for="sh-addr2">Address line 2</label><input class="f-inp" id="sh-addr2" name="addr2"></div>
             <div class="f-row"><label class="f-lbl" for="sh-city">City *</label><input class="f-inp" id="sh-city" name="city" required></div>
             <div class="f-row"><label class="f-lbl" for="sh-post">Postcode *</label><input class="f-inp" id="sh-post" name="postcode" required></div>
-            <div class="f-row f-full"><label class="f-lbl" for="sh-country">Country</label><input class="f-inp" id="sh-country" name="country" value="United Kingdom" readonly></div>
+            <div id="uk-country-wrap" class="f-row f-full"><label class="f-lbl" for="sh-country">Country</label><input class="f-inp" id="sh-country" name="country" value="United Kingdom" readonly></div>
+            <div id="eu-country-wrap" class="f-row f-full" style="display:none"><label class="f-lbl" for="sh-eu-country">Country *</label>
+              <select class="f-select" id="sh-eu-country" name="eu_country">
+                <option value="">Select your country…</option>
+                <option>Austria</option>
+                <option>Belgium</option>
+                <option>Bulgaria</option>
+                <option>Croatia</option>
+                <option>Cyprus</option>
+                <option>Czech Republic</option>
+                <option>Denmark</option>
+                <option>Estonia</option>
+                <option>Finland</option>
+                <option>France</option>
+                <option>Germany</option>
+                <option>Greece</option>
+                <option>Hungary</option>
+                <option>Iceland</option>
+                <option>Ireland</option>
+                <option>Italy</option>
+                <option>Latvia</option>
+                <option>Lithuania</option>
+                <option>Luxembourg</option>
+                <option>Malta</option>
+                <option>Netherlands</option>
+                <option>Norway</option>
+                <option>Poland</option>
+                <option>Portugal</option>
+                <option>Romania</option>
+                <option>Slovakia</option>
+                <option>Slovenia</option>
+                <option>Spain</option>
+                <option>Sweden</option>
+                <option>Switzerland</option>
+              </select>
+            </div>
           </div>
 
           <h2 class="sec-t">Delivery method</h2>
           <div class="ship-opts">
             <label class="ship-opt">
-              <input type="radio" name="shipping" value="tracked48" checked>
+              <input type="radio" name="shipping" value="tracked" checked>
               <div class="ship-opt-main">
-                <div class="ship-opt-name">Royal Mail Tracked 24</div>
-                <div class="ship-opt-sub">1–2 working days, tracked. UK only.</div>
+                <div class="ship-opt-name" id="ship-opt-name">Royal Mail Tracked 24</div>
+                <div class="ship-opt-sub" id="ship-opt-sub">1–2 working days, tracked. UK only.</div>
               </div>
               <div class="ship-opt-price" id="ship-price">£3.80</div>
             </label>
@@ -163,6 +219,13 @@
             <input type="checkbox" name="ack" required>
             <span>I confirm this order is for <strong>in vitro research use only</strong> and I have read the <a href="/legal/research-use-policy/" target="_blank">Research Use Policy</a>.</span>
           </label>
+
+          <div id="eu-compliance-wrap" style="display:none" class="eu-compliance-wrap">
+            <label class="co-ack">
+              <input type="checkbox" name="eu-compliance" required>
+              <span>I confirm I am responsible for compliance with all local import regulations in my country. This product is for in vitro research use only and I accept full responsibility for its importation and lawful use.</span>
+            </label>
+          </div>
 
           <div class="co-err" id="co-err"></div>
 
@@ -176,7 +239,7 @@
         <div id="co-cart-items"></div>
         <div class="co-sum-rows">
           <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">£0.00</span></div>
-          <div class="co-sum-row"><span>Royal Mail Tracked 24</span><span id="co-shipping">£3.80</span></div>
+          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">£3.80</span></div>
           <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">£3.80</span></div>
         </div>
       </aside>
@@ -198,7 +261,7 @@
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-logo-wordmark">Velox Peptides</div>
-        <p class="ft-tag">UK research peptide supplier. HPLC-verified, CoA on every order, dispatched from Northern Ireland via Royal Mail Tracked 24.</p>
+        <p class="ft-tag">Research peptide supplier &mdash; shipping to UK &amp; EU. HPLC-verified, CoA on every order, dispatched from Northern Ireland.</p>
         <address class="ft-address">
           CRP Labs Ltd<br>
           Company no. NI738125<br>
