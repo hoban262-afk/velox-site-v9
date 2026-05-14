@@ -82,14 +82,11 @@ module.exports = async function handler(req, res) {
       billing_request_id: billingRequest.id,
     });
   } catch (e) {
-    // Log full error including any GoCardless API response body
+    // Log full error — GoCardless SDK uses `got`; response body is already parsed
     console.error('[create-payment] GoCardless error:', e.message);
     if (e.response) {
-      console.error('[create-payment] Status:', e.response.status);
-      try {
-        const body = await e.response.json().catch(() => e.response.text());
-        console.error('[create-payment] Response body:', JSON.stringify(body));
-      } catch (_) {}
+      console.error('[create-payment] Status:', e.response.statusCode);
+      console.error('[create-payment] Body:', JSON.stringify(e.response.body));
     }
     if (e.errors) {
       console.error('[create-payment] GoCardless errors:', JSON.stringify(e.errors));

@@ -334,8 +334,10 @@
             throw new Error(data.error || 'Failed to create payment');
           }
         })
-        .catch(function () {
-          if (errEl) errEl.textContent = 'Payment initialisation failed. Please try again or use bank transfer below.';
+        .catch(function (err) {
+          console.error('[checkout] create-payment error:', err && err.message ? err.message : err);
+          var msg = (err && err.message) ? err.message : 'Payment initialisation failed. Please try again or use bank transfer below.';
+          if (errEl) errEl.textContent = msg;
           gcPayBtn.disabled = false;
           gcPayBtn.textContent = 'Pay Now →';
         });
