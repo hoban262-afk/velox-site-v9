@@ -4,8 +4,10 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const {
-    amount_pence, customer_name, email, description, order_ref,
-    // Extended order data for webhook metadata
+    amount_pence, order_ref,
+    // Extended order data stored in sessionStorage — used by client-side
+    // payment-complete page to send emails; not sent to GoCardless.
+    customer_name, email, description,
     phone, addr1, addr2, city, postcode, country,
     order_items, subtotal, shipping, discount_code, discount_saving, total,
   } = req.body || {};
@@ -16,80 +18,61 @@ module.exports = async function handler(req, res) {
 
   const token = process.env.GOCARDLESS_ACCESS_TOKEN;
   if (!token) {
+    console.error('[create-payment] GOCARDLESS_ACCESS_TOKEN not set');
     return res.status(500).json({ error: 'Payment service not configured' });
   }
 
   const client = gocardless(token, Environments.Live);
 
-  // ── Build compact metadata for webhook use ──────────────────────────────────
-  // GoCardless metadata: max 3 keys, values up to 500 chars each.
-  // We pack customer and order data as compact JSON so the webhook can fire
-  // emails without needing a database.
-  const custJson = JSON.stringify({
-    n:  (customer_name || '').substring(0, 80),
-    e:  (email || '').substring(0, 80),
-    p:  (phone || '').substring(0, 20),
-    a1: (addr1 || '').substring(0, 60),
-    a2: (addr2 || '').substring(0, 40),
-    c:  (city || '').substring(0, 40),
-    pc: (postcode || '').substring(0, 10),
-    co: (country || 'United Kingdom').substring(0, 20),
-  });
-
-  // Truncate order_items if needed to stay under 500-char limit
-  const itemsRaw = (order_items || '').substring(0, 320);
-  const orderJson = JSON.stringify({
-    it:  itemsRaw,
-    sub: String(subtotal || '0.00'),
-    sh:  String(shipping || '0.00'),
-    dc:  (discount_code || '').substring(0, 20),
-    ds:  String(discount_saving || '0.00'),
-    tot: String(total || '0.00'),
-  });
-  // ───────────────────────────────────────────────────────────────────────────
+  // Amount must be a whole integer in pence (e.g. £34.99 → 3499)
+  const amountPence = Math.round(Number(amount_pence));
+  console.log(`[create-payment] Creating billing request: order=${order_ref} amount=${amountPence}p`);
 
   try {
-    // 1. Create billing request with payment details and order metadata
+    // ── Step 1: Create billing request ────────────────────────────────────────
+    // Minimal payload matching the GoCardless Instant Bank Pay API exactly.
+    // Only payment_request is required; extra fields cause "Invalid document structure".
     const billingRequest = await client.billingRequests.create({
       payment_request: {
-        description: description || `Velox Peptides order ${order_ref}`,
-        amount: Math.round(amount_pence),
-        currency: 'GBP',
-      },
-      prefilled_customer: {
-        given_name:  (customer_name || '').split(' ')[0] || undefined,
-        family_name: (customer_name || '').split(' ').slice(1).join(' ') || undefined,
-        email:       email || undefined,
-      },
-      metadata: {
-        order_ref: order_ref,
-        cust:      custJson.substring(0, 500),
-        order:     orderJson.substring(0, 500),
+        amount:      amountPence,
+        currency:    'GBP',
+        description: 'Velox Peptides Order',
       },
     });
 
-    // 2. Create billing request flow to get the authorisation URL
+    console.log(`[create-payment] Billing request created: ${billingRequest.id}`);
+
+    // ── Step 2: Create billing request flow ───────────────────────────────────
     const billingRequestFlow = await client.billingRequestFlows.create({
       redirect_uri: 'https://veloxpeps.com/checkout/payment-complete/',
-      auto_fulfil: false,
+      exit_uri:     'https://veloxpeps.com/checkout/payment/',
       links: {
         billing_request: billingRequest.id,
       },
     });
 
+    console.log(`[create-payment] Billing request flow created, auth_url=${billingRequestFlow.authorisation_url ? 'present' : 'MISSING'}`);
+
+    if (!billingRequestFlow.authorisation_url) {
+      console.error('[create-payment] No authorisation_url in flow response:', JSON.stringify(billingRequestFlow));
+      return res.status(500).json({ error: 'No authorisation URL returned from GoCardless' });
+    }
+
+    // ── Step 3: Return authorisation URL to frontend ──────────────────────────
     res.status(200).json({
       authorisation_url:  billingRequestFlow.authorisation_url,
       billing_request_id: billingRequest.id,
     });
+
   } catch (e) {
-    // Log full error — GoCardless SDK uses `got`; response body is already parsed
+    // GoCardless SDK uses `got` — response body is already parsed (not a stream)
     console.error('[create-payment] GoCardless error:', e.message);
     if (e.response) {
-      console.error('[create-payment] Status:', e.response.statusCode);
-      console.error('[create-payment] Body:', JSON.stringify(e.response.body));
+      console.error('[create-payment] HTTP status:', e.response.statusCode);
+      console.error('[create-payment] Response body:', JSON.stringify(e.response.body));
     }
-    if (e.errors) {
-      console.error('[create-payment] GoCardless errors:', JSON.stringify(e.errors));
+    if (e.errors && e.errors.length) {
+      console.error('[create-payment] Error details:', JSON.stringify(e.errors));
     }
     console.error('[create-payment] Stack:', e.stack);
     res.status(500).json({ error: e.message || 'Payment initialisation failed' });
