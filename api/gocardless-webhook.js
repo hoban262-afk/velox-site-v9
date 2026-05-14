@@ -1,6 +1,5 @@
 const crypto = require('crypto');
-const gocardless = require('gocardless-nodejs');
-const constants = require('gocardless-nodejs/constants');
+const { gocardless, Environments } = require('gocardless-nodejs');
 const { sendEmails } = require('./send-order');
 
 // Disable Vercel's body parser so we can read the raw body for signature verification.
@@ -90,7 +89,7 @@ async function handleFulfilment(event) {
 
   // Fetch the billing request from GoCardless to read stored metadata.
   const token  = process.env.GOCARDLESS_ACCESS_TOKEN;
-  const client = gocardless(token, constants.Environments.Live);
+  const client = gocardless(token, Environments.Live);
   const billingRequest = await client.billingRequests.find(billingRequestId);
 
   const meta = billingRequest.metadata || {};

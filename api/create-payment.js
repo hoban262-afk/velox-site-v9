@@ -1,5 +1,4 @@
-const gocardless = require('gocardless-nodejs');
-const constants = require('gocardless-nodejs/constants');
+const { gocardless, Environments } = require('gocardless-nodejs');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -20,7 +19,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Payment service not configured' });
   }
 
-  const client = gocardless(token, constants.Environments.Live);
+  const client = gocardless(token, Environments.Live);
 
   // ── Build compact metadata for webhook use ──────────────────────────────────
   // GoCardless metadata: max 3 keys, values up to 500 chars each.
@@ -73,8 +72,8 @@ module.exports = async function handler(req, res) {
     const billingRequestFlow = await client.billingRequestFlows.create({
       redirect_uri: 'https://veloxpeps.com/checkout/payment-complete/',
       auto_fulfil: false,
-      billing_request: {
-        id: billingRequest.id,
+      links: {
+        billing_request: billingRequest.id,
       },
     });
 
@@ -83,7 +82,19 @@ module.exports = async function handler(req, res) {
       billing_request_id: billingRequest.id,
     });
   } catch (e) {
-    console.error('GoCardless create-payment error:', e);
+    // Log full error including any GoCardless API response body
+    console.error('[create-payment] GoCardless error:', e.message);
+    if (e.response) {
+      console.error('[create-payment] Status:', e.response.status);
+      try {
+        const body = await e.response.json().catch(() => e.response.text());
+        console.error('[create-payment] Response body:', JSON.stringify(body));
+      } catch (_) {}
+    }
+    if (e.errors) {
+      console.error('[create-payment] GoCardless errors:', JSON.stringify(e.errors));
+    }
+    console.error('[create-payment] Stack:', e.stack);
     res.status(500).json({ error: e.message || 'Payment initialisation failed' });
   }
 };
