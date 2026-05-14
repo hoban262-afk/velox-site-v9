@@ -43,13 +43,30 @@ module.exports = async function handler(req, res) {
     console.log(`[create-payment] Billing request created: ${billingRequest.id}`);
 
     // ── Step 2: Create billing request flow ───────────────────────────────────
-    const billingRequestFlow = await client.billingRequestFlows.create({
+    // prefilled_customer on the flow (not the billing request) lets GoCardless
+    // identify the customer's bank and trigger native mobile app redirect.
+    const nameParts   = (customer_name || '').trim().split(/\s+/);
+    const givenName   = nameParts[0] || '';
+    const familyName  = nameParts.slice(1).join(' ');
+
+    const prefilledCustomer = {};
+    if (email)      prefilledCustomer.email       = email;
+    if (givenName)  prefilledCustomer.given_name  = givenName;
+    if (familyName) prefilledCustomer.family_name = familyName;
+
+    const flowPayload = {
       redirect_uri: 'https://veloxpeps.com/checkout/payment-complete/',
       exit_uri:     'https://veloxpeps.com/checkout/payment/',
       links: {
         billing_request: billingRequest.id,
       },
-    });
+    };
+
+    if (Object.keys(prefilledCustomer).length > 0) {
+      flowPayload.prefilled_customer = prefilledCustomer;
+    }
+
+    const billingRequestFlow = await client.billingRequestFlows.create(flowPayload);
 
     console.log(`[create-payment] Billing request flow created, auth_url=${billingRequestFlow.authorisation_url ? 'present' : 'MISSING'}`);
 
