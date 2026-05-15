@@ -9,23 +9,26 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Payment service not configured' });
   }
 
-  const { items, currency, order_ref } = req.body || {};
+  const { total, currency, order_ref } = req.body || {};
 
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    console.error('[create-psifi-payment] Missing or empty items array');
-    return res.status(400).json({ error: 'Missing basket items' });
+  if (total === undefined || total === null || isNaN(Number(total)) || Number(total) <= 0) {
+    console.error('[create-psifi-payment] Missing or invalid total:', total);
+    return res.status(400).json({ error: 'Missing or invalid basket total' });
   }
 
-  console.log(`[create-psifi-payment] Creating session — order=${order_ref} currency=${currency} items=${items.length}`);
-  items.forEach((item, i) => {
-    console.log(`[create-psifi-payment]   item[${i}]: name="${item.name}" price=${item.price} qty=${item.quantity}`);
-  });
+  // PsiFi expects price in pence (smallest unit) as an integer
+  const priceInPence = Math.round(Number(total) * 100);
+  console.log(`[create-psifi-payment] Creating session — order=${order_ref} currency=${currency} total=${total} pence=${priceInPence}`);
 
   try {
     const psifiPayload = {
-      items:       items,
-      currency:    (currency || 'GBP').toUpperCase(),
-      order_ref:   order_ref || '',
+      products: [
+        {
+          productId: '2-000001',
+          quantity:  1,
+          price:     priceInPence,
+        },
+      ],
       success_url: 'https://veloxpeps.com/checkout/payment-complete/?method=psifi',
       cancel_url:  'https://veloxpeps.com/checkout/payment-complete/?method=psifi&payment=cancelled',
     };

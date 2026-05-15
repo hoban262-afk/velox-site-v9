@@ -529,37 +529,11 @@
         try { sessionStorage.setItem('vp_checkout', JSON.stringify(psChk)); } catch (ex) {}
         try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
 
-        // Build PsiFi line items — unit price in smallest currency unit (pence/cents)
-        var psifiItems = cart.map(function (item) {
-          var unitPrice = payRegion === 'EU'
-            ? Math.round(item.price * EU_FX_RATE * 100)
-            : Math.round(item.price * 100);
-          return { name: item.name + ' ' + item.size, price: unitPrice, quantity: item.qty || 1 };
-        });
-
-        // Shipping line item
-        if (finalShipping > 0) {
-          psifiItems.push({
-            name:     payRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24',
-            price:    Math.round(finalShipping * 100),
-            quantity: 1,
-          });
-        }
-
-        // Discount as negative item
-        if (appliedDiscount && saving > 0) {
-          psifiItems.push({
-            name:     'Discount (' + appliedDiscount.code + ')',
-            price:    -Math.round(saving * 100),
-            quantity: 1,
-          });
-        }
-
         fetch('/api/create-psifi-payment', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            items:     psifiItems,
+            total:     finalTotal,  // full basket total in pounds/euros (e.g. 34.99)
             currency:  currency,
             order_ref: ref,
           }),
