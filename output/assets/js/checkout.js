@@ -564,17 +564,26 @@
             order_ref: ref,
           }),
         })
-        .then(function (resp) { return resp.json(); })
-        .then(function (data) {
-          if (data.checkout_url) {
-            window.location.href = data.checkout_url;
+        .then(function (resp) {
+          return resp.json().then(function (data) {
+            return { ok: resp.ok, status: resp.status, data: data };
+          });
+        })
+        .then(function (result) {
+          console.log('[checkout] create-psifi-payment response HTTP', result.status, JSON.stringify(result.data));
+          if (result.ok && result.data.checkout_url) {
+            window.location.href = result.data.checkout_url;
           } else {
-            throw new Error(data.error || 'Failed to create PsiFi payment session');
+            var errField = result.data.error;
+            var errMsg = typeof errField === 'string'
+              ? errField
+              : (errField ? JSON.stringify(errField) : null);
+            throw new Error(errMsg || ('PsiFi error HTTP ' + result.status));
           }
         })
         .catch(function (err) {
-          console.error('[checkout] create-psifi-payment error:', err && err.message ? err.message : err);
-          var msg = (err && err.message) ? err.message : 'Payment failed. Please try again or use bank transfer.';
+          var msg = (err && err.message) ? err.message : 'Payment failed — please try again or use bank transfer.';
+          console.error('[checkout] create-psifi-payment error:', msg);
           if (errEl) errEl.textContent = msg;
           psifiPayBtn.disabled = false;
           psifiPayBtn.textContent = 'Pay Now →';
