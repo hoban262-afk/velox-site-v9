@@ -32,17 +32,48 @@ module.exports = async function handler(req, res) {
 
   // Amount must be a whole integer in pence (e.g. £34.99 → 3499)
   const amountPence = Math.round(Number(amount_pence));
-  console.log(`[create-payment] Creating billing request: order=${order_ref} amount=${amountPence}p`);
+  console.log(`[create-payment] Creating billing request: order=${order_ref} amount=${amountPence}p currency=${currency}`);
 
   try {
     // ── Step 1: Create billing request ────────────────────────────────────────
-    // Minimal payload matching the GoCardless Instant Bank Pay API exactly.
-    // Only payment_request is required; extra fields cause "Invalid document structure".
+    // Compact metadata is stored so the GoCardless webhook can act as a backup
+    // email trigger if the browser-side redirect flow doesn't complete.
+    // GoCardless metadata: max 3 keys, values max 500 chars each.
+    const custMeta = JSON.stringify({
+      n:  (customer_name  || '').slice(0, 80),
+      e:  (email          || '').slice(0, 100),
+      p:  (phone          || '').slice(0, 25),
+      a1: (addr1          || '').slice(0, 100),
+      a2: (addr2          || '').slice(0, 60),
+      c:  (city           || '').slice(0, 50),
+      pc: (postcode       || '').slice(0, 12),
+      co: (country        || 'United Kingdom').slice(0, 30),
+    });
+
+    const orderMeta = JSON.stringify({
+      it:  (order_items     || '').slice(0, 300), // truncated to fit 500-char limit
+      sub: (subtotal        || '0.00').slice(0, 10),
+      sh:  (shipping        || '0.00').slice(0, 10),
+      dc:  (discount_code   || '').slice(0, 20),
+      ds:  (discount_saving || '0.00').slice(0, 10),
+      tot: (total           || '0.00').slice(0, 10),
+      cu:  currency,
+      re:  (region          || 'UK').slice(0, 2),
+      sm:  (shipping_method || 'Royal Mail Tracked 24').slice(0, 40),
+    });
+
+    console.log(`[create-payment] Metadata — cust(${custMeta.length}c) order(${orderMeta.length}c)`);
+
     const billingRequest = await client.billingRequests.create({
       payment_request: {
         amount:      amountPence,
         currency:    currency,   // 'GBP' or 'EUR'
         description: 'Velox Peptides Order',
+      },
+      metadata: {
+        order_ref: order_ref,
+        cust:      custMeta,
+        order:     orderMeta,
       },
     });
 

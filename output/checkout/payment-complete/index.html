@@ -387,12 +387,15 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  // Read billing_request_id from URL params or sessionStorage
-  var params = new URLSearchParams(window.location.search);
+  // ── Read billing_request_id from URL params (GoCardless redirect) or sessionStorage ──
+  var params           = new URLSearchParams(window.location.search);
   var billingRequestId = params.get('billing_request_id') || '';
-  var chk = getChk();
+  var chk              = getChk();
   if (!billingRequestId && chk.billing_request_id) {
     billingRequestId = chk.billing_request_id;
+    console.log('[payment-complete] billing_request_id from sessionStorage:', billingRequestId);
+  } else if (billingRequestId) {
+    console.log('[payment-complete] billing_request_id from URL params:', billingRequestId);
   }
 
   var stateLoading = document.getElementById('pc-loading');
@@ -416,161 +419,169 @@
   showState('loading');
 
   if (!billingRequestId) {
+    console.error('[payment-complete] No billing_request_id found — cannot verify payment');
     showState('error');
     return;
   }
 
-  fetch('/api/verify-payment?id=' + encodeURIComponent(billingRequestId))
+  // ── Derive region/currency/cart early (needed for both refresh and first-load paths) ──
+  var pcRegion       = chk.region   === 'EU' ? 'EU' : 'UK';
+  var pcCurrency     = chk.currency === 'EUR' ? 'EUR' : 'GBP';
+  var currSym        = pcCurrency === 'EUR' ? '€' : '£';
+  var shippingMethod = pcRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+
+  // Build cart from localStorage (live) or sessionStorage snapshot (after cart cleared)
+  var confirmedCart = [];
+  try {
+    var liveCart = JSON.parse(localStorage.getItem('vp_cart') || '[]');
+    confirmedCart = liveCart.length
+      ? liveCart
+      : (chk.cart_snapshot ? JSON.parse(chk.cart_snapshot) : []);
+  } catch (ex) {
+    console.warn('[payment-complete] Failed to parse cart:', ex.message);
+  }
+  console.log('[payment-complete] Cart items:', confirmedCart.length, '| region:', pcRegion, '| currency:', pcCurrency);
+
+  function buildProductsList() {
+    return confirmedCart.map(function (item) {
+      var price = pcRegion === 'EU'
+        ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+        : item.price * (item.qty || 1);
+      return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
+             ' — ' + currSym + price.toFixed(2);
+    }).join('\n');
+  }
+
+  function populateSuccessUI() {
+    var refEl    = document.getElementById('pc-ref');
+    var amtEl    = document.getElementById('pc-amount');
+    var subEl    = document.getElementById('pc-subtotal');
+    var shipEl   = document.getElementById('pc-shipping');
+    var discRow  = document.getElementById('pc-discount-row');
+    var discInfo = document.getElementById('pc-discount-info');
+    var emailEl  = document.getElementById('pc-email');
+    var shpLbl   = document.getElementById('pc-shipping-label');
+
+    if (refEl   && chk.orderRef)         refEl.textContent   = chk.orderRef;
+    if (amtEl   && chk.total)            amtEl.textContent   = fmt(chk.total, pcCurrency);
+    if (subEl   && chk.subtotal != null) subEl.textContent   = fmt(chk.subtotal, pcCurrency);
+    if (shipEl  && chk.shipping != null) shipEl.textContent  = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping, pcCurrency);
+    if (emailEl && chk.email)            emailEl.textContent = chk.email;
+    if (shpLbl)  shpLbl.textContent = shippingMethod;
+    if (chk.discount_code && discRow && discInfo) {
+      discRow.style.display = '';
+      discInfo.textContent  = chk.discount_code + ' (−' + fmt(chk.discount_saving || 0, pcCurrency) + ')';
+    }
+
+    // EU delivery timeline
+    if (pcRegion === 'EU') {
+      var tlItems = document.querySelectorAll('.co-tl-body');
+      tlItems.forEach(function (el) {
+        var strong = el.querySelector('strong');
+        var span   = el.querySelector('span');
+        if (strong && strong.textContent.indexOf('Dispatched') !== -1) {
+          if (span) span.textContent = 'Sent via Royal Mail International Tracked. You\'ll receive a dispatch email with your tracking number.';
+        }
+        if (strong && strong.textContent.indexOf('Delivered') !== -1) {
+          strong.textContent = 'Delivered in 3–5 working days';
+          if (span) span.textContent = 'Royal Mail International Tracked to your delivery address.';
+        }
+      });
+    }
+
+    // Render cart items
+    var sumEl = document.getElementById('pc-summary');
+    if (sumEl && confirmedCart.length) {
+      var html = '<ul class="co-cart-list">';
+      confirmedCart.forEach(function (item) {
+        var price = pcRegion === 'EU'
+          ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+          : item.price * (item.qty || 1);
+        html += '<li class="co-cart-row">' +
+          '<span class="co-cart-name">' + escHtml(item.name) +
+          ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
+          '<span class="co-cart-price">' + currSym + price.toFixed(2) + '</span>' +
+          '</li>';
+      });
+      html += '</ul>';
+      sumEl.innerHTML = html;
+    }
+  }
+
+  // ── Page-refresh protection: if already processed, show success from session data ──
+  // (verify-payment already fired and set this flag on first load)
+  var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
+  if (alreadyFired && chk.orderRef) {
+    console.log('[payment-complete] Already processed (vp_order_fired=1) — showing success from session data');
+    populateSuccessUI();
+    showState('success');
+    return;
+  }
+
+  // ── Build the full order payload to pass to verify-payment (server-side) ──
+  var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
+    .filter(Boolean).join(', ');
+  var productsList = buildProductsList();
+
+  var orderPayload = {
+    billing_request_id: billingRequestId,
+    order_number:       chk.orderRef  || '',
+    customer_name:      ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+    customer_email:     chk.email     || '',
+    customer_phone:     chk.phone     || '',
+    addr1:              chk.addr1     || '',
+    addr2:              chk.addr2     || '',
+    city:               chk.city      || '',
+    postcode:           chk.postcode  || '',
+    country:            chk.country   || 'United Kingdom',
+    shipping_address:   shippingAddr,
+    shipping_method:    shippingMethod,
+    order_items:        productsList,
+    order_subtotal:     (Number(chk.subtotal)       || 0).toFixed(2),
+    shipping_cost:      (Number(chk.shipping)        || 0).toFixed(2),
+    discount_code:      chk.discount_code             || '',
+    discount_saving:    (Number(chk.discount_saving) || 0).toFixed(2),
+    order_total:        (Number(chk.total)            || 0).toFixed(2),
+    currency:           pcCurrency,
+    region:             pcRegion,
+    payment_method:     'instant',
+  };
+
+  console.log('[payment-complete] Calling verify-payment — order:', chk.orderRef, '/ billing_request:', billingRequestId);
+  console.log('[payment-complete] Order total:', orderPayload.order_total, pcCurrency, '| email:', orderPayload.customer_email);
+
+  // ── POST to verify-payment — server verifies GC status + fires emails + Sheets ──
+  fetch('/api/verify-payment', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(orderPayload),
+  })
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      if (!data.success) { showState('error'); return; }
+      console.log('[payment-complete] verify-payment response:', JSON.stringify(data));
 
-      chk = getChk();
-      var pcRegion   = chk.region   === 'EU' ? 'EU' : 'UK';
-      var pcCurrency = chk.currency === 'EUR' ? 'EUR' : 'GBP';
-      var currSym    = pcCurrency === 'EUR' ? '€' : '£';
-      var shippingMethod = pcRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+      if (!data.success) {
+        console.error('[payment-complete] Payment not verified — status:', data.status, 'error:', data.error);
+        showState('error');
+        return;
+      }
 
-      // Build confirmedCart
-      var confirmedCart = [];
-      try {
-        var liveCart = JSON.parse(localStorage.getItem('vp_cart') || '[]');
-        confirmedCart = liveCart.length
-          ? liveCart
-          : (chk.cart_snapshot ? JSON.parse(chk.cart_snapshot) : []);
-      } catch (ex) {}
+      // Mark as processed so page refreshes don't re-trigger verify-payment
+      try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
 
       // Clear cart
       localStorage.removeItem('vp_cart');
       var countEl = document.getElementById('nav-cart-count');
       if (countEl) countEl.textContent = '0';
 
-      // Populate DOM
-      var refEl    = document.getElementById('pc-ref');
-      var amtEl    = document.getElementById('pc-amount');
-      var subEl    = document.getElementById('pc-subtotal');
-      var shipEl   = document.getElementById('pc-shipping');
-      var discRow  = document.getElementById('pc-discount-row');
-      var discInfo = document.getElementById('pc-discount-info');
-      var emailEl  = document.getElementById('pc-email');
-      var shpLbl   = document.getElementById('pc-shipping-label');
-      if (refEl   && chk.orderRef)          refEl.textContent   = chk.orderRef;
-      if (amtEl   && chk.total)             amtEl.textContent   = fmt(chk.total, pcCurrency);
-      if (subEl   && chk.subtotal  != null) subEl.textContent   = fmt(chk.subtotal, pcCurrency);
-      if (shipEl  && chk.shipping  != null) shipEl.textContent  = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping, pcCurrency);
-      if (emailEl && chk.email)             emailEl.textContent = chk.email;
-      if (shpLbl) shpLbl.textContent = shippingMethod;
-      if (chk.discount_code && discRow && discInfo) {
-        discRow.style.display = '';
-        discInfo.textContent  = chk.discount_code + ' (−' + fmt(chk.discount_saving || 0, pcCurrency) + ')';
-      }
-
-      // Update delivery timeline for EU
-      if (pcRegion === 'EU') {
-        var tlItems = document.querySelectorAll('.co-tl-body');
-        tlItems.forEach(function (el) {
-          var strong = el.querySelector('strong');
-          var span   = el.querySelector('span');
-          if (strong && strong.textContent.indexOf('Dispatched') !== -1) {
-            if (span) span.textContent = 'Sent via Royal Mail International Tracked. You\'ll receive a dispatch email with your tracking number.';
-          }
-          if (strong && strong.textContent.indexOf('Delivered') !== -1) {
-            strong.textContent = 'Delivered in 3–5 working days';
-            if (span) span.textContent = 'Royal Mail International Tracked to your delivery address.';
-          }
-        });
-      }
-
-      // Render cart items
-      var sumEl = document.getElementById('pc-summary');
-      if (sumEl && confirmedCart.length) {
-        var html = '<ul class="co-cart-list">';
-        confirmedCart.forEach(function (item) {
-          var priceInCurrency = pcRegion === 'EU'
-            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-            : item.price * (item.qty || 1);
-          html += '<li class="co-cart-row">' +
-            '<span class="co-cart-name">' + escHtml(item.name) +
-            ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-            '<span class="co-cart-price">' + currSym + priceInCurrency.toFixed(2) + '</span>' +
-            '</li>';
-        });
-        html += '</ul>';
-        sumEl.innerHTML = html;
-      }
-
+      populateSuccessUI();
       showState('success');
-
-      // Fire emails + Sheets — guard against duplicates on refresh
-      var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
-      if (!alreadyFired && chk.orderRef && chk.email) {
-        try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
-
-        var productsList = confirmedCart.map(function (item) {
-          var priceInCurrency = pcRegion === 'EU'
-            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-            : item.price * (item.qty || 1);
-          return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-                 ' — ' + currSym + priceInCurrency.toFixed(2);
-        }).join('\n');
-
-        var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
-          .filter(Boolean).join(', ');
-
-        fetch('/api/send-order', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            order_number:    chk.orderRef,
-            customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-            customer_email:  chk.email,
-            customer_phone:  chk.phone    || '',
-            addr1:           chk.addr1    || '',
-            addr2:           chk.addr2    || '',
-            city:            chk.city     || '',
-            postcode:        chk.postcode || '',
-            country:         chk.country  || 'United Kingdom',
-            shipping_address: shippingAddr,
-            shipping_method: shippingMethod,
-            order_items:     productsList,
-            order_subtotal:  (Number(chk.subtotal)       || 0).toFixed(2),
-            shipping_cost:   (Number(chk.shipping)        || 0).toFixed(2),
-            discount_code:   chk.discount_code             || '',
-            discount_saving: (Number(chk.discount_saving) || 0).toFixed(2),
-            order_total:     (Number(chk.total)            || 0).toFixed(2),
-            currency:        pcCurrency,
-            region:          pcRegion,
-            payment_method:  'instant',
-          })
-        }).catch(function () {});
-
-        try {
-          fetch(
-            'https://script.google.com/macros/s/AKfycbwC6RyBK2pMsU7crR7TXpbUtgKNN6305hNvePzFmkMtz3kpXWZShIgdFkT68AhHAb1ZOg/exec',
-            {
-              method:  'POST',
-              mode:    'no-cors',
-              headers: { 'Content-Type': 'text/plain' },
-              body:    JSON.stringify({
-                orderId:       chk.orderRef,
-                date:          new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
-                name:          ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-                email:         chk.email  || '',
-                phone:         chk.phone  || '',
-                address:       shippingAddr,
-                products:      productsList,
-                total:         currSym + (Number(chk.total) || 0).toFixed(2),
-                discountCode:  chk.discount_code || 'None',
-                region:        pcRegion,
-                currency:      pcCurrency,
-                paymentMethod: 'Instant Bank Pay',
-              })
-            }
-          ).catch(function () {});
-        } catch (ex) {}
-      }
+      console.log('[payment-complete] Order confirmed and displayed — emails handled server-side');
     })
-    .catch(function () { showState('error'); });
+    .catch(function (err) {
+      console.error('[payment-complete] verify-payment fetch failed:', err && err.message ? err.message : err);
+      showState('error');
+    });
 
 }());
 </script>

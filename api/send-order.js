@@ -376,8 +376,12 @@ ${mhraFooter()}
 /**
  * Fires the admin notification and the appropriate customer email.
  * Called by both the HTTP handler and the GoCardless webhook.
+ *
+ * @param {object} d          - Order data payload
+ * @param {string} [idempotencyKey] - Optional order reference used as Resend idempotency
+ *   key so duplicate calls (redirect + webhook) only send each email once.
  */
-async function sendEmails(d) {
+async function sendEmails(d, idempotencyKey) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const isInstant = d.payment_method === 'instant';
 
@@ -393,13 +397,20 @@ async function sendEmails(d) {
     })
     .join('');
 
+  // Build Resend send-options — idempotency key prevents duplicate emails when both
+  // the redirect handler (verify-payment) and the GoCardless webhook fire for the same order.
+  // Resend deduplicates within a 24-hour window using these keys.
+  const adminOpts    = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-admin`    } : {};
+  const customerOpts = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-customer` } : {};
+
+  console.log(`[send-order] Sending admin email for ${d.order_number}${idempotencyKey ? ` (idempotencyKey: ${idempotencyKey}-admin)` : ''}`);
   // Admin notification — always fires
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
     to: 'veloxpeps@gmail.com',
     subject: `New Order ${d.order_number} — ${d.currency === 'EUR' ? '€' : '£'}${d.order_total} — ${isInstant ? 'PAID' : 'PENDING'}`,
     html: buildAdminHtml(d, itemsHtml),
-  });
+  }, adminOpts);
 
   // Customer email — different template per payment method
   const customerSubject = isInstant
@@ -410,12 +421,15 @@ async function sendEmails(d) {
     ? buildCustomerInstantHtml(d, itemsHtml)
     : buildCustomerBankHtml(d, itemsHtml);
 
+  console.log(`[send-order] Sending customer email for ${d.order_number} → ${d.customer_email}${idempotencyKey ? ` (idempotencyKey: ${idempotencyKey}-customer)` : ''}`);
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
     to: d.customer_email,
     subject: customerSubject,
     html: customerHtml,
-  });
+  }, customerOpts);
+
+  console.log(`[send-order] Both emails sent for ${d.order_number}`);
 }
 
 /* ── sendDispatch() ─────────────────────────────────────────────────────────── */
