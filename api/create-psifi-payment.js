@@ -26,9 +26,11 @@ module.exports = async function handler(req, res) {
         {
           productId: 'PSIFI-6a066c6357c6c9cd94d343e2-000001',
           quantity:  1,
-          price:     priceInPence,
         },
       ],
+      amount:      priceInPence,
+      currency:    (currency || 'GBP').toUpperCase(),
+      description: 'Velox Peptides Order',
       success_url: 'https://veloxpeps.com/checkout/payment-complete/?method=psifi',
       cancel_url:  'https://veloxpeps.com/checkout/payment-complete/?method=psifi&payment=cancelled',
     };
