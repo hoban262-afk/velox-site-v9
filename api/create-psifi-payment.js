@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
     const psifiPayload = {
       products: [
         {
-          productId: '2-000001',
+          productId: 'PSIFI-6a066c6357c6c9cd94d343e2-000001',
           quantity:  1,
           price:     priceInPence,
         },
