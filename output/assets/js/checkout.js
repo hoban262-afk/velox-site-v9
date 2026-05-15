@@ -245,6 +245,31 @@
     var payRegion = currentRegion();
     renderCartSummary(cart, payRegion);
 
+    // ── Payment method tab switching ──────────────────────────────────────
+    var currentPayMethod = 'gc';
+
+    function switchPayMethod(method) {
+      currentPayMethod = method;
+      var tabGc        = document.getElementById('tab-gc');
+      var tabPsifi     = document.getElementById('tab-psifi');
+      var gcBlock      = document.getElementById('gc-method-block');
+      var psifiBlock   = document.getElementById('psifi-method-block');
+      var gcBtns       = document.getElementById('gc-buttons-block');
+      var psifiBtns    = document.getElementById('psifi-buttons-block');
+      var isGc = method === 'gc';
+      if (tabGc)      tabGc.classList.toggle('pay-method-tab-active', isGc);
+      if (tabPsifi)   tabPsifi.classList.toggle('pay-method-tab-active', !isGc);
+      if (gcBlock)    gcBlock.style.display    = isGc ? '' : 'none';
+      if (psifiBlock) psifiBlock.style.display = isGc ? 'none' : '';
+      if (gcBtns)     gcBtns.style.display     = isGc ? '' : 'none';
+      if (psifiBtns)  psifiBtns.style.display  = isGc ? 'none' : '';
+    }
+
+    var tabGcBtn    = document.getElementById('tab-gc');
+    var tabPsifiBtn = document.getElementById('tab-psifi');
+    if (tabGcBtn)    tabGcBtn.addEventListener('click',    function () { switchPayMethod('gc'); });
+    if (tabPsifiBtn) tabPsifiBtn.addEventListener('click', function () { switchPayMethod('psifi'); });
+
     // EU: check if GoCardless-supported country and adjust UI accordingly
     if (payRegion === 'EU') {
       var payChkData = {};
@@ -252,13 +277,10 @@
       var payCountry    = payChkData.country || '';
       var isGcEuCountry = GC_EU_COUNTRIES.indexOf(payCountry) >= 0;
 
-      var bankFallbackWrap  = document.getElementById('bank-fallback-wrap');
-      var payLede           = document.getElementById('pay-lede');
-      var euOnlyNotice      = document.getElementById('eu-only-notice');
-      var gcPayBtnEu        = document.getElementById('gc-pay-btn');
-      var payTrustBarEu     = document.getElementById('pay-trust-bar');
-      var payRedirectNoteEu = document.getElementById('pay-redirect-note');
-      var bankToggleEu      = document.getElementById('bank-toggle');
+      var bankFallbackWrap   = document.getElementById('bank-fallback-wrap');
+      var payLede            = document.getElementById('pay-lede');
+      var euOnlyNotice       = document.getElementById('eu-only-notice');
+      var bankToggleEu       = document.getElementById('bank-toggle');
       var bankDetailsPanelEu = document.getElementById('bank-details-panel');
 
       if (isGcEuCountry) {
@@ -267,10 +289,10 @@
         if (euOnlyNotice)     euOnlyNotice.style.display     = '';
         if (payLede) payLede.textContent = 'Pay instantly and securely via your existing bank account. EU payments are processed via GoCardless.';
       } else {
-        // Unsupported country — hide GC options, show bank transfer open with EU IBAN details
-        if (gcPayBtnEu)         gcPayBtnEu.style.display        = 'none';
-        if (payTrustBarEu)      payTrustBarEu.style.display      = 'none';
-        if (payRedirectNoteEu)  payRedirectNoteEu.style.display  = 'none';
+        // Unsupported country — hide GC tab, auto-select PsiFi, open bank transfer
+        switchPayMethod('psifi');
+        var tabGcEu = document.getElementById('tab-gc');
+        if (tabGcEu) tabGcEu.style.display = 'none';
         if (bankFallbackWrap)   bankFallbackWrap.style.display   = '';
         if (bankToggleEu)       bankToggleEu.style.display       = 'none';
         if (bankDetailsPanelEu) bankDetailsPanelEu.style.display = '';
@@ -462,6 +484,100 @@
           if (errEl) errEl.textContent = msg;
           gcPayBtn.disabled = false;
           gcPayBtn.textContent = 'Pay Now →';
+        });
+      });
+    }
+
+    // ── PsiFi Card / Apple Pay / Google Pay ──────────────────────────────
+    var psifiPayBtn = document.getElementById('psifi-pay-btn');
+    if (psifiPayBtn) {
+      psifiPayBtn.addEventListener('click', function () {
+        var errEl = document.getElementById('co-err');
+        var terms = paymentForm.querySelector('input[name="terms"]');
+        if (!terms || !terms.checked) {
+          if (errEl) errEl.textContent = 'Please accept the Terms & Conditions and Research Use Policy.';
+          return;
+        }
+        if (errEl) errEl.textContent = '';
+
+        psifiPayBtn.disabled = true;
+        psifiPayBtn.textContent = 'Processing…';
+
+        var ref        = 'VP-' + todayStr() + '-' + randChars(4);
+        var t          = cartTotals(cart, payRegion);
+        var savingGBP  = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
+        var saving     = savingInCurrency(savingGBP, payRegion);
+        var discountedSubtotal = Math.max(0, t.subtotal - saving);
+        var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
+        var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
+        var finalShipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
+        var finalTotal    = Math.round((discountedSubtotal + finalShipping) * 100) / 100;
+        var currency      = payRegion === 'EU' ? 'EUR' : 'GBP';
+
+        var psChk = {};
+        try { psChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+        psChk.orderRef        = ref;
+        psChk.subtotal        = t.subtotal;
+        psChk.shipping        = finalShipping;
+        psChk.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
+        psChk.discount_saving = saving;
+        psChk.total           = finalTotal;
+        psChk.cart_snapshot   = JSON.stringify(cart);
+        psChk.payment_method  = 'psifi';
+        psChk.currency        = currency;
+        psChk.region          = payRegion;
+        try { sessionStorage.setItem('vp_checkout', JSON.stringify(psChk)); } catch (ex) {}
+        try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
+
+        // Build PsiFi line items — unit price in smallest currency unit (pence/cents)
+        var psifiItems = cart.map(function (item) {
+          var unitPrice = payRegion === 'EU'
+            ? Math.round(item.price * EU_FX_RATE * 100)
+            : Math.round(item.price * 100);
+          return { name: item.name + ' ' + item.size, price: unitPrice, quantity: item.qty || 1 };
+        });
+
+        // Shipping line item
+        if (finalShipping > 0) {
+          psifiItems.push({
+            name:     payRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24',
+            price:    Math.round(finalShipping * 100),
+            quantity: 1,
+          });
+        }
+
+        // Discount as negative item
+        if (appliedDiscount && saving > 0) {
+          psifiItems.push({
+            name:     'Discount (' + appliedDiscount.code + ')',
+            price:    -Math.round(saving * 100),
+            quantity: 1,
+          });
+        }
+
+        fetch('/api/create-psifi-payment', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items:     psifiItems,
+            currency:  currency,
+            order_ref: ref,
+          }),
+        })
+        .then(function (resp) { return resp.json(); })
+        .then(function (data) {
+          if (data.checkout_url) {
+            window.location.href = data.checkout_url;
+          } else {
+            throw new Error(data.error || 'Failed to create PsiFi payment session');
+          }
+        })
+        .catch(function (err) {
+          console.error('[checkout] create-psifi-payment error:', err && err.message ? err.message : err);
+          var msg = (err && err.message) ? err.message : 'Payment failed. Please try again or use bank transfer.';
+          if (errEl) errEl.textContent = msg;
+          psifiPayBtn.disabled = false;
+          psifiPayBtn.textContent = 'Pay Now →';
         });
       });
     }

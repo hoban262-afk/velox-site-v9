@@ -180,9 +180,9 @@
       <div class="pc-confirm-ic">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <div class="pc-payment-badge">
+      <div class="pc-payment-badge" id="pc-payment-badge">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Payment confirmed via Instant Bank Pay
+        <span id="pc-payment-badge-text">Payment confirmed via Instant Bank Pay</span>
       </div>
       <h1 class="confirm-t">Payment Confirmed — Thank You</h1>
       <p class="confirm-sub">Your order has been received and is being prepared for dispatch. You'll receive a confirmation email at <strong class="pc-email-highlight" id="pc-email"></strong> shortly.</p>
@@ -235,7 +235,20 @@
       </div>
     </div>
 
-    <!-- Error / cancelled state -->
+    <!-- Cancelled state (PsiFi) -->
+    <div id="pc-cancelled" class="confirm-card" style="display:none;">
+      <div class="pc-error-ic">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h1 class="confirm-t" style="color:#F59E0B;">Payment cancelled</h1>
+      <p class="confirm-sub">You cancelled the payment — no charge has been made and your order has not been placed. You can try again or choose a different payment method.</p>
+      <div class="confirm-cta">
+        <a class="btn-p" href="/checkout/payment/">Try again →</a>
+        <a class="btn-o" href="/cart/">Back to order</a>
+      </div>
+    </div>
+
+    <!-- Error state -->
     <div id="pc-error" class="confirm-card" style="display:none;">
       <div class="pc-error-ic">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -387,10 +400,20 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  // ── Read billing_request_id from URL params (GoCardless redirect) or sessionStorage ──
-  var params           = new URLSearchParams(window.location.search);
+  // ── Read URL params ────────────────────────────────────────────────────────
+  var params    = new URLSearchParams(window.location.search);
+  var urlMethod = params.get('method')  || '';   // 'psifi' or '' (GoCardless)
+  var urlPay    = params.get('payment') || '';   // 'cancelled' (PsiFi cancel) or ''
   var billingRequestId = params.get('billing_request_id') || '';
-  var chk              = getChk();
+
+  // Clean URL immediately so refreshes don't re-read stale params
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
+  var chk = getChk();
+
+  // Fall back to sessionStorage for billingRequestId if not in URL
   if (!billingRequestId && chk.billing_request_id) {
     billingRequestId = chk.billing_request_id;
     console.log('[payment-complete] billing_request_id from sessionStorage:', billingRequestId);
@@ -398,14 +421,21 @@
     console.log('[payment-complete] billing_request_id from URL params:', billingRequestId);
   }
 
-  var stateLoading = document.getElementById('pc-loading');
-  var stateSuccess = document.getElementById('pc-success');
-  var stateError   = document.getElementById('pc-error');
+  // Determine payment method: prefer URL param, fall back to sessionStorage
+  var paymentMethod = urlMethod || chk.payment_method || 'instant';
+  var isPsifi = paymentMethod === 'psifi';
+
+  // ── State elements ─────────────────────────────────────────────────────────
+  var stateLoading   = document.getElementById('pc-loading');
+  var stateSuccess   = document.getElementById('pc-success');
+  var stateCancelled = document.getElementById('pc-cancelled');
+  var stateError     = document.getElementById('pc-error');
 
   function showState(which) {
-    if (stateLoading) stateLoading.style.display = which === 'loading' ? '' : 'none';
-    if (stateSuccess) stateSuccess.style.display = which === 'success' ? '' : 'none';
-    if (stateError)   stateError.style.display   = which === 'error'   ? '' : 'none';
+    if (stateLoading)   stateLoading.style.display   = which === 'loading'   ? '' : 'none';
+    if (stateSuccess)   stateSuccess.style.display   = which === 'success'   ? '' : 'none';
+    if (stateCancelled) stateCancelled.style.display = which === 'cancelled' ? '' : 'none';
+    if (stateError)     stateError.style.display     = which === 'error'     ? '' : 'none';
     if (which === 'success') {
       var steps = document.querySelectorAll('.co-step');
       steps.forEach(function (s) {
@@ -418,19 +448,13 @@
 
   showState('loading');
 
-  if (!billingRequestId) {
-    console.error('[payment-complete] No billing_request_id found — cannot verify payment');
-    showState('error');
-    return;
-  }
-
-  // ── Derive region/currency/cart early (needed for both refresh and first-load paths) ──
+  // ── Derive region/currency early ───────────────────────────────────────────
   var pcRegion       = chk.region   === 'EU' ? 'EU' : 'UK';
   var pcCurrency     = chk.currency === 'EUR' ? 'EUR' : 'GBP';
   var currSym        = pcCurrency === 'EUR' ? '€' : '£';
   var shippingMethod = pcRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
 
-  // Build cart from localStorage (live) or sessionStorage snapshot (after cart cleared)
+  // Build cart from localStorage (live) or sessionStorage snapshot
   var confirmedCart = [];
   try {
     var liveCart = JSON.parse(localStorage.getItem('vp_cart') || '[]');
@@ -440,7 +464,7 @@
   } catch (ex) {
     console.warn('[payment-complete] Failed to parse cart:', ex.message);
   }
-  console.log('[payment-complete] Cart items:', confirmedCart.length, '| region:', pcRegion, '| currency:', pcCurrency);
+  console.log('[payment-complete] Cart items:', confirmedCart.length, '| region:', pcRegion, '| currency:', pcCurrency, '| method:', paymentMethod);
 
   function buildProductsList() {
     return confirmedCart.map(function (item) {
@@ -453,14 +477,15 @@
   }
 
   function populateSuccessUI() {
-    var refEl    = document.getElementById('pc-ref');
-    var amtEl    = document.getElementById('pc-amount');
-    var subEl    = document.getElementById('pc-subtotal');
-    var shipEl   = document.getElementById('pc-shipping');
-    var discRow  = document.getElementById('pc-discount-row');
-    var discInfo = document.getElementById('pc-discount-info');
-    var emailEl  = document.getElementById('pc-email');
-    var shpLbl   = document.getElementById('pc-shipping-label');
+    var refEl      = document.getElementById('pc-ref');
+    var amtEl      = document.getElementById('pc-amount');
+    var subEl      = document.getElementById('pc-subtotal');
+    var shipEl     = document.getElementById('pc-shipping');
+    var discRow    = document.getElementById('pc-discount-row');
+    var discInfo   = document.getElementById('pc-discount-info');
+    var emailEl    = document.getElementById('pc-email');
+    var shpLbl     = document.getElementById('pc-shipping-label');
+    var badgeText  = document.getElementById('pc-payment-badge-text');
 
     if (refEl   && chk.orderRef)         refEl.textContent   = chk.orderRef;
     if (amtEl   && chk.total)            amtEl.textContent   = fmt(chk.total, pcCurrency);
@@ -468,6 +493,12 @@
     if (shipEl  && chk.shipping != null) shipEl.textContent  = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping, pcCurrency);
     if (emailEl && chk.email)            emailEl.textContent = chk.email;
     if (shpLbl)  shpLbl.textContent = shippingMethod;
+
+    // Update payment badge for PsiFi
+    if (badgeText && isPsifi) {
+      badgeText.textContent = 'Payment confirmed via Card / Apple Pay';
+    }
+
     if (chk.discount_code && discRow && discInfo) {
       discRow.style.display = '';
       discInfo.textContent  = chk.discount_code + ' (−' + fmt(chk.discount_saving || 0, pcCurrency) + ')';
@@ -508,8 +539,9 @@
     }
   }
 
-  // ── Page-refresh protection: if already processed, show success from session data ──
-  // (verify-payment already fired and set this flag on first load)
+  // ── GUARD 1: Already processed — show success immediately ─────────────────
+  // Must check this FIRST — PsiFi refreshes have no billing_request_id but
+  // vp_order_fired=1 means we already handled this payment successfully.
   var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
   if (alreadyFired && chk.orderRef) {
     console.log('[payment-complete] Already processed (vp_order_fired=1) — showing success from session data');
@@ -518,65 +550,104 @@
     return;
   }
 
-  // ── Build the full order payload to pass to verify-payment (server-side) ──
+  // ── GUARD 2: PsiFi cancel ─────────────────────────────────────────────────
+  if (isPsifi && urlPay === 'cancelled') {
+    console.log('[payment-complete] PsiFi payment cancelled by user');
+    showState('cancelled');
+    return;
+  }
+
+  // ── Build shared order payload ─────────────────────────────────────────────
   var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
     .filter(Boolean).join(', ');
   var productsList = buildProductsList();
 
   var orderPayload = {
-    billing_request_id: billingRequestId,
-    order_number:       chk.orderRef  || '',
-    customer_name:      ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-    customer_email:     chk.email     || '',
-    customer_phone:     chk.phone     || '',
-    addr1:              chk.addr1     || '',
-    addr2:              chk.addr2     || '',
-    city:               chk.city      || '',
-    postcode:           chk.postcode  || '',
-    country:            chk.country   || 'United Kingdom',
-    shipping_address:   shippingAddr,
-    shipping_method:    shippingMethod,
-    order_items:        productsList,
-    order_subtotal:     (Number(chk.subtotal)       || 0).toFixed(2),
-    shipping_cost:      (Number(chk.shipping)        || 0).toFixed(2),
-    discount_code:      chk.discount_code             || '',
-    discount_saving:    (Number(chk.discount_saving) || 0).toFixed(2),
-    order_total:        (Number(chk.total)            || 0).toFixed(2),
-    currency:           pcCurrency,
-    region:             pcRegion,
-    payment_method:     'instant',
+    order_number:    chk.orderRef  || '',
+    customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+    customer_email:  chk.email     || '',
+    customer_phone:  chk.phone     || '',
+    addr1:           chk.addr1     || '',
+    addr2:           chk.addr2     || '',
+    city:            chk.city      || '',
+    postcode:        chk.postcode  || '',
+    country:         chk.country   || 'United Kingdom',
+    shipping_address: shippingAddr,
+    shipping_method: shippingMethod,
+    order_items:     productsList,
+    order_subtotal:  (Number(chk.subtotal)       || 0).toFixed(2),
+    shipping_cost:   (Number(chk.shipping)        || 0).toFixed(2),
+    discount_code:   chk.discount_code             || '',
+    discount_saving: (Number(chk.discount_saving) || 0).toFixed(2),
+    order_total:     (Number(chk.total)            || 0).toFixed(2),
+    currency:        pcCurrency,
+    region:          pcRegion,
+    payment_method:  paymentMethod,
   };
 
+  function onSuccess() {
+    try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
+    localStorage.removeItem('vp_cart');
+    var countEl = document.getElementById('nav-cart-count');
+    if (countEl) countEl.textContent = '0';
+    populateSuccessUI();
+    showState('success');
+  }
+
+  // ── PsiFi success path ─────────────────────────────────────────────────────
+  if (isPsifi) {
+    console.log('[payment-complete] PsiFi success — calling confirm-order — order:', chk.orderRef);
+    console.log('[payment-complete] Order total:', orderPayload.order_total, pcCurrency, '| email:', orderPayload.customer_email);
+
+    fetch('/api/confirm-order', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(orderPayload),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        console.log('[payment-complete] confirm-order response:', JSON.stringify(data));
+        if (!data.success) {
+          console.error('[payment-complete] confirm-order returned failure:', data.error);
+          showState('error');
+          return;
+        }
+        console.log('[payment-complete] PsiFi order confirmed — emails + Sheets handled server-side');
+        onSuccess();
+      })
+      .catch(function (err) {
+        console.error('[payment-complete] confirm-order fetch failed:', err && err.message ? err.message : err);
+        showState('error');
+      });
+    return;
+  }
+
+  // ── GoCardless path ────────────────────────────────────────────────────────
+  if (!billingRequestId) {
+    console.error('[payment-complete] No billing_request_id — cannot verify GoCardless payment');
+    showState('error');
+    return;
+  }
+
+  var gcPayload = Object.assign({}, orderPayload, { billing_request_id: billingRequestId });
   console.log('[payment-complete] Calling verify-payment — order:', chk.orderRef, '/ billing_request:', billingRequestId);
   console.log('[payment-complete] Order total:', orderPayload.order_total, pcCurrency, '| email:', orderPayload.customer_email);
 
-  // ── POST to verify-payment — server verifies GC status + fires emails + Sheets ──
   fetch('/api/verify-payment', {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(orderPayload),
+    body:    JSON.stringify(gcPayload),
   })
     .then(function (r) { return r.json(); })
     .then(function (data) {
       console.log('[payment-complete] verify-payment response:', JSON.stringify(data));
-
       if (!data.success) {
         console.error('[payment-complete] Payment not verified — status:', data.status, 'error:', data.error);
         showState('error');
         return;
       }
-
-      // Mark as processed so page refreshes don't re-trigger verify-payment
-      try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
-
-      // Clear cart
-      localStorage.removeItem('vp_cart');
-      var countEl = document.getElementById('nav-cart-count');
-      if (countEl) countEl.textContent = '0';
-
-      populateSuccessUI();
-      showState('success');
-      console.log('[payment-complete] Order confirmed and displayed — emails handled server-side');
+      console.log('[payment-complete] GoCardless order confirmed — emails handled server-side');
+      onSuccess();
     })
     .catch(function (err) {
       console.error('[payment-complete] verify-payment fetch failed:', err && err.message ? err.message : err);

@@ -87,24 +87,26 @@ function emailFooter() {
   return `</table></td></tr></table></body></html>`;
 }
 
-/* ── 1. Customer email — GoCardless instant payment ────────────────────────── */
+/* ── 1. Customer email — instant payment (GoCardless or PsiFi) ─────────────── */
 function buildCustomerInstantHtml(d, itemsHtml) {
   const sym          = currencySymbol(d);
   const isEU         = d.region === 'EU';
+  const isPsifi      = d.payment_method === 'psifi';
   const shippingName = d.shipping_method || (isEU ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24');
   const deliveryTime = isEU ? '3&ndash;5 working days' : '1&ndash;2 working days';
+  const providerName = isPsifi ? 'Card / Apple Pay / Google Pay' : 'GoCardless Instant Bank Pay';
 
   return emailHeader('Order Confirmed') + `
 <tr><td align="center" style="padding:0 40px 8px">
   <table cellpadding="0" cellspacing="0" border="0"><tr><td style="background:rgba(1,211,160,.1);border:1px solid rgba(1,211,160,.25);border-radius:20px;padding:5px 14px">
-    <p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0">&#10003; Payment confirmed via GoCardless</p>
+    <p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0">&#10003; Payment confirmed via ${providerName}</p>
   </td></tr></table>
 </td></tr>
 <tr><td align="center" style="padding:0 40px 8px">
   <h1 style="margin:0;font-size:26px;font-weight:700;color:#fff">Order Confirmed — Thank You</h1>
 </td></tr>
 <tr><td align="center" style="padding:0 40px 24px">
-  <p style="margin:0;font-size:15px;color:#888;line-height:1.6">Hi ${d.customer_name}, your payment has been received via GoCardless Instant Bank Pay.<br>Your order is confirmed and is now being prepared for dispatch.</p>
+  <p style="margin:0;font-size:15px;color:#888;line-height:1.6">Hi ${d.customer_name}, your payment has been received via ${providerName}.<br>Your order is confirmed and is now being prepared for dispatch.</p>
 </td></tr>
 <tr><td style="padding:0 40px"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="${S.divider}">&nbsp;</td></tr></table></td></tr>
 
@@ -138,7 +140,7 @@ ${deliveryBlock(d)}
       <td width="30" valign="top" style="padding-top:1px"><span style="${S.stepDone}">&#10003;</span></td>
       <td style="padding-bottom:14px">
         <p style="margin:0;font-size:14px;color:#fff;font-weight:600">Payment confirmed</p>
-        <p style="margin:2px 0 0;font-size:12px;color:#888">Received via GoCardless Instant Bank Pay.</p>
+        <p style="margin:2px 0 0;font-size:12px;color:#888">Received via ${providerName}.</p>
       </td>
     </tr>
     <tr>
@@ -266,10 +268,13 @@ ${mhraFooter()}
 
 /* ── 3. Admin notification email ────────────────────────────────────────────── */
 function buildAdminHtml(d, itemsHtml) {
-  const isInstant = d.payment_method === 'instant';
-  const payBadge = isInstant
-    ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; GoCardless Instant Bank Pay &mdash; PAYMENT CONFIRMED</p></td>`
-    : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Manual Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
+  const isPsifi   = d.payment_method === 'psifi';
+  const isInstant = d.payment_method === 'instant' || isPsifi;
+  const payBadge = isPsifi
+    ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; PsiFi Card / Apple Pay / Google Pay &mdash; PAYMENT CONFIRMED</p></td>`
+    : isInstant
+      ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; GoCardless Instant Bank Pay &mdash; PAYMENT CONFIRMED</p></td>`
+      : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Manual Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
 
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>New Order</title></head>
 <body style="${S.body}">
@@ -383,7 +388,7 @@ ${mhraFooter()}
  */
 async function sendEmails(d, idempotencyKey) {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const isInstant = d.payment_method === 'instant';
+  const isInstant = d.payment_method === 'instant' || d.payment_method === 'psifi';
 
   // Parse "Product Name size x1 — £XX.XX" or "...— €XX.XX" lines into two-column rows
   const sym = d.currency === 'EUR' ? '&euro;' : '&pound;';

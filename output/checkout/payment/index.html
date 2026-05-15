@@ -75,10 +75,27 @@
     .co-support-note a:hover { text-decoration: underline; }
     @media (max-width: 480px) {
       #gc-pay-btn { font-size: 15px; padding: 14px 16px; }
+      #psifi-pay-btn { font-size: 15px; padding: 14px 16px; }
       .pay-trust-bar { flex-wrap: wrap; }
       .pay-trust-item { flex: 1 1 45%; border-right: none; border-bottom: 1px solid #1F2937; }
       .pay-trust-item:last-child { border-bottom: none; }
     }
+    /* ── Payment method tabs ── */
+    .pay-method-tabs {
+      display: flex; gap: 8px; margin-bottom: 16px;
+    }
+    .pay-method-tab {
+      flex: 1; padding: 10px 12px;
+      background: #0D1117; border: 1px solid #1F2937; border-radius: 6px;
+      color: #9CA3AF; font-size: 13px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: border-color .15s, color .15s;
+    }
+    .pay-method-tab:hover { border-color: #374151; color: #D1D5DB; }
+    .pay-method-tab-active { border-color: #01D3A0 !important; color: #01D3A0 !important; background: rgba(1,211,160,.06) !important; }
+    #psifi-pay-btn { background: #01D3A0; border-color: #01D3A0; color: #000; font-size: 16px; width: 100%; }
+    #psifi-pay-btn:hover:not(:disabled) { background: #00b889; border-color: #00b889; }
+    #psifi-pay-btn:disabled { opacity: .6; cursor: not-allowed; }
   </style>
 
   <!-- Open Graph -->
@@ -204,18 +221,48 @@
         <p class="page-lede" id="pay-lede">Pay instantly and securely via your existing bank account, or by UK bank transfer below.</p>
         <div id="eu-only-notice" style="display:none;margin-bottom:14px;padding:10px 14px;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.2);border-radius:6px;font-size:13px;color:#9CA3AF;">🌍 EU orders use GoCardless Instant Bank Pay. Bank transfer is not available for EU deliveries.</div>
 
-        <div class="pay-method pay-method-primary">
-          <div class="pay-method-hdr">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#01D3A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span>Instant Bank Pay</span>
-            <span class="pay-recommended">Recommended</span>
+        <!-- Payment method tabs -->
+        <div class="pay-method-tabs" id="pay-method-tabs">
+          <button type="button" class="pay-method-tab pay-method-tab-active" id="tab-gc">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Instant Bank Pay
+          </button>
+          <button type="button" class="pay-method-tab" id="tab-psifi">
+            💳 Card / Apple Pay
+          </button>
+        </div>
+
+        <!-- GoCardless method block -->
+        <div id="gc-method-block">
+          <div class="pay-method pay-method-primary">
+            <div class="pay-method-hdr">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#01D3A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>Instant Bank Pay</span>
+              <span class="pay-recommended">Recommended</span>
+            </div>
+            <p>Click Pay Now and you'll be taken to a secure GoCardless page. Select your bank, log in as normal, and approve the payment in seconds. No card details, no new accounts — just your existing banking app. Your order is confirmed the moment payment goes through.</p>
+            <ul class="pay-trust-points">
+              <li>🔒 Bank-level security — your details never touch our servers</li>
+              <li>✓ FCA authorised payment provider</li>
+              <li>⚡ Instant confirmation — order processed immediately after payment</li>
+            </ul>
           </div>
-          <p>Click Pay Now and you'll be taken to a secure GoCardless page. Select your bank, log in as normal, and approve the payment in seconds. No card details, no new accounts — just your existing banking app. Your order is confirmed the moment payment goes through.</p>
-          <ul class="pay-trust-points">
-            <li>🔒 Bank-level security — your details never touch our servers</li>
-            <li>✓ FCA authorised payment provider</li>
-            <li>⚡ Instant confirmation — order processed immediately after payment</li>
-          </ul>
+        </div>
+
+        <!-- PsiFi method block (hidden until tab selected) -->
+        <div id="psifi-method-block" style="display:none;">
+          <div class="pay-method pay-method-primary">
+            <div class="pay-method-hdr">
+              <span>💳</span>
+              <span>Card / Apple Pay / Google Pay</span>
+            </div>
+            <p>Pay securely with your credit or debit card, Apple Pay or Google Pay. You'll be redirected to our secure PsiFi payment page — your card details are entered there and never touch our servers.</p>
+            <ul class="pay-trust-points">
+              <li>🔒 PCI-DSS compliant secure payment processing</li>
+              <li>💳 Accepts all major credit and debit cards</li>
+              <li>⚡ Instant confirmation — order processed immediately after payment</li>
+            </ul>
+          </div>
         </div>
 
         <form id="payment-form" class="co-form">
@@ -239,14 +286,23 @@
 
           <div class="co-err" id="co-err"></div>
 
-          <div class="pay-trust-bar" id="pay-trust-bar">
-            <div class="pay-trust-item"><strong>GoCardless + FCA</strong>authorised provider</div>
-            <div class="pay-trust-item"><strong>256-bit encrypted</strong>bank-grade security</div>
-            <div class="pay-trust-item"><strong>No card details</strong>stored or required</div>
+          <!-- GoCardless buttons -->
+          <div id="gc-buttons-block">
+            <div class="pay-trust-bar" id="pay-trust-bar">
+              <div class="pay-trust-item"><strong>GoCardless + FCA</strong>authorised provider</div>
+              <div class="pay-trust-item"><strong>256-bit encrypted</strong>bank-grade security</div>
+              <div class="pay-trust-item"><strong>No card details</strong>stored or required</div>
+            </div>
+
+            <button type="button" id="gc-pay-btn" class="btn-p co-submit">Pay Now →</button>
+            <p class="pay-redirect-note" id="pay-redirect-note">You will be redirected to GoCardless's secure payment page. Once payment is approved you'll be returned here automatically.</p>
           </div>
 
-          <button type="button" id="gc-pay-btn" class="btn-p co-submit">Pay Now →</button>
-          <p class="pay-redirect-note" id="pay-redirect-note">You will be redirected to GoCardless's secure payment page. Once payment is approved you'll be returned here automatically.</p>
+          <!-- PsiFi buttons (hidden until tab selected) -->
+          <div id="psifi-buttons-block" style="display:none;">
+            <button type="button" id="psifi-pay-btn" class="btn-p co-submit">Pay Now →</button>
+            <p class="pay-redirect-note" id="psifi-redirect-note">You'll be redirected to our secure PsiFi payment page. Once payment is confirmed you'll be returned here automatically.</p>
+          </div>
 
           <div class="pay-bank-fallback" id="bank-fallback-wrap">
             <button type="button" id="bank-toggle" class="pay-bank-toggle">Prefer to pay by bank transfer? ↓</button>
