@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -33,8 +35,9 @@ module.exports = async function handler(req, res) {
     const response = await fetch('https://api.psifi.app/api/v2/checkout-sessions', {
       method:  'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key':    apiKey,
+        'Content-Type':    'application/json',
+        'x-api-key':       apiKey,
+        'Idempotency-Key': crypto.randomUUID(),
       },
       body: JSON.stringify(psifiPayload),
     });
