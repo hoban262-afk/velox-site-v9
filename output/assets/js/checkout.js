@@ -260,7 +260,6 @@
       var payRedirectNoteEu = document.getElementById('pay-redirect-note');
       var bankToggleEu      = document.getElementById('bank-toggle');
       var bankDetailsPanelEu = document.getElementById('bank-details-panel');
-      var euBankNote        = document.getElementById('eu-bank-note');
 
       if (isGcEuCountry) {
         // Supported country — GoCardless flow, hide bank transfer
@@ -268,14 +267,24 @@
         if (euOnlyNotice)     euOnlyNotice.style.display     = '';
         if (payLede) payLede.textContent = 'Pay instantly and securely via your existing bank account. EU payments are processed via GoCardless.';
       } else {
-        // Unsupported country — hide GC options, show bank transfer open with EUR note
+        // Unsupported country — hide GC options, show bank transfer open with EU IBAN details
         if (gcPayBtnEu)         gcPayBtnEu.style.display        = 'none';
         if (payTrustBarEu)      payTrustBarEu.style.display      = 'none';
         if (payRedirectNoteEu)  payRedirectNoteEu.style.display  = 'none';
         if (bankFallbackWrap)   bankFallbackWrap.style.display   = '';
         if (bankToggleEu)       bankToggleEu.style.display       = 'none';
         if (bankDetailsPanelEu) bankDetailsPanelEu.style.display = '';
-        if (euBankNote)         euBankNote.style.display         = '';
+
+        // Swap bank details to EU (IBAN/BIC)
+        var ukBankDetails  = document.getElementById('uk-bank-details');
+        var euBankDetails  = document.getElementById('eu-bank-details');
+        var bankMethodTitle = document.getElementById('bank-method-title');
+        var bankIntroP     = document.getElementById('bank-intro-p');
+        if (ukBankDetails)   ukBankDetails.style.display  = 'none';
+        if (euBankDetails)   euBankDetails.style.display  = '';
+        if (bankMethodTitle) bankMethodTitle.textContent  = 'International Bank Transfer — Zempler Bank';
+        if (bankIntroP)      bankIntroP.textContent       = 'Transfer directly to our account using the details below. Your order is reserved for 48 hours — we\'ll dispatch as soon as payment clears.';
+
         if (payLede) payLede.textContent = 'Instant Bank Pay is not yet available for your country. Please complete your order via manual bank transfer below — we ship to all EU countries.';
       }
     }
