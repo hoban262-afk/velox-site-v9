@@ -7,6 +7,7 @@
   var EU_SHIPPING_FLAT  = 9.99;
   var EU_FREE_THRESHOLD = 100;
   var EU_FX_RATE        = 1.18; // fixed GBP → EUR conversion rate
+  var GC_EU_COUNTRIES   = ['France', 'Germany', 'Ireland']; // GoCardless-supported EU countries
 
   // ── Core helpers ──────────────────────────────────────────────────────────
   function getCart() {
@@ -160,6 +161,7 @@
     var ukCountryWrap    = document.getElementById('uk-country-wrap');
     var euCountryWrap    = document.getElementById('eu-country-wrap');
     var euComplianceWrap = document.getElementById('eu-compliance-wrap');
+    var euRegionNote     = document.getElementById('eu-region-note');
     var shipOptName      = document.getElementById('ship-opt-name');
     var shipOptSub       = document.getElementById('ship-opt-sub');
     var shipPrice        = document.getElementById('ship-price');
@@ -171,6 +173,7 @@
       if (ukCountryWrap)    ukCountryWrap.style.display    = r === 'UK' ? '' : 'none';
       if (euCountryWrap)    euCountryWrap.style.display    = r === 'EU' ? '' : 'none';
       if (euComplianceWrap) euComplianceWrap.style.display = r === 'EU' ? '' : 'none';
+      if (euRegionNote)     euRegionNote.style.display     = r === 'EU' ? '' : 'none';
       if (shipOptName) shipOptName.textContent = r === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
       if (shipOptSub)  shipOptSub.textContent  = r === 'EU' ? '3–5 working days, tracked. EU & Europe.' : '1–2 working days, tracked. UK only.';
       var t = cartTotals(cart, r);
@@ -242,14 +245,39 @@
     var payRegion = currentRegion();
     renderCartSummary(cart, payRegion);
 
-    // EU: hide bank transfer, update lede
+    // EU: check if GoCardless-supported country and adjust UI accordingly
     if (payRegion === 'EU') {
-      var bankFallbackWrap = document.getElementById('bank-fallback-wrap');
-      var payLede          = document.getElementById('pay-lede');
-      var euOnlyNotice     = document.getElementById('eu-only-notice');
-      if (bankFallbackWrap) bankFallbackWrap.style.display = 'none';
-      if (euOnlyNotice)     euOnlyNotice.style.display     = '';
-      if (payLede) payLede.textContent = 'Pay instantly and securely via your existing bank account. EU payments are processed via GoCardless.';
+      var payChkData = {};
+      try { payChkData = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+      var payCountry    = payChkData.country || '';
+      var isGcEuCountry = GC_EU_COUNTRIES.indexOf(payCountry) >= 0;
+
+      var bankFallbackWrap  = document.getElementById('bank-fallback-wrap');
+      var payLede           = document.getElementById('pay-lede');
+      var euOnlyNotice      = document.getElementById('eu-only-notice');
+      var gcPayBtnEu        = document.getElementById('gc-pay-btn');
+      var payTrustBarEu     = document.getElementById('pay-trust-bar');
+      var payRedirectNoteEu = document.getElementById('pay-redirect-note');
+      var bankToggleEu      = document.getElementById('bank-toggle');
+      var bankDetailsPanelEu = document.getElementById('bank-details-panel');
+      var euBankNote        = document.getElementById('eu-bank-note');
+
+      if (isGcEuCountry) {
+        // Supported country — GoCardless flow, hide bank transfer
+        if (bankFallbackWrap) bankFallbackWrap.style.display = 'none';
+        if (euOnlyNotice)     euOnlyNotice.style.display     = '';
+        if (payLede) payLede.textContent = 'Pay instantly and securely via your existing bank account. EU payments are processed via GoCardless.';
+      } else {
+        // Unsupported country — hide GC options, show bank transfer open with EUR note
+        if (gcPayBtnEu)         gcPayBtnEu.style.display        = 'none';
+        if (payTrustBarEu)      payTrustBarEu.style.display      = 'none';
+        if (payRedirectNoteEu)  payRedirectNoteEu.style.display  = 'none';
+        if (bankFallbackWrap)   bankFallbackWrap.style.display   = '';
+        if (bankToggleEu)       bankToggleEu.style.display       = 'none';
+        if (bankDetailsPanelEu) bankDetailsPanelEu.style.display = '';
+        if (euBankNote)         euBankNote.style.display         = '';
+        if (payLede) payLede.textContent = 'Instant Bank Pay is not yet available for your country. Please complete your order via manual bank transfer below — we ship to all EU countries.';
+      }
     }
 
     // Show delivery address in sidebar

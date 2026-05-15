@@ -239,14 +239,14 @@
 
           <div class="co-err" id="co-err"></div>
 
-          <div class="pay-trust-bar">
+          <div class="pay-trust-bar" id="pay-trust-bar">
             <div class="pay-trust-item"><strong>GoCardless + FCA</strong>authorised provider</div>
             <div class="pay-trust-item"><strong>256-bit encrypted</strong>bank-grade security</div>
             <div class="pay-trust-item"><strong>No card details</strong>stored or required</div>
           </div>
 
           <button type="button" id="gc-pay-btn" class="btn-p co-submit">Pay Now →</button>
-          <p class="pay-redirect-note">You will be redirected to GoCardless's secure payment page. Once payment is approved you'll be returned here automatically.</p>
+          <p class="pay-redirect-note" id="pay-redirect-note">You will be redirected to GoCardless's secure payment page. Once payment is approved you'll be returned here automatically.</p>
 
           <div class="pay-bank-fallback" id="bank-fallback-wrap">
             <button type="button" id="bank-toggle" class="pay-bank-toggle">Prefer to pay by bank transfer? ↓</button>
@@ -264,6 +264,7 @@
                   <div><dt>Account number</dt><dd>14617029</dd></div>
                 </dl>
                 <p class="pay-bank-note-inline">Use your order reference as the payment reference. Faster Payments typically clear within 1–2 hours.</p>
+                <p class="pay-bank-note-inline" id="eu-bank-note" style="display:none;border-top:1px solid #1F2937;margin-top:12px;padding-top:12px;color:#FF6B00;">Transfer in EUR or GBP — contact us at <a href="mailto:veloxpeps@gmail.com" style="color:#FF6B00;">veloxpeps@gmail.com</a> to confirm your order.</p>
               </div>
               <button type="submit" class="btn-o co-submit">Place order (bank transfer) →</button>
             </div>

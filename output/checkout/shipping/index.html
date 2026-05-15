@@ -18,6 +18,16 @@
     .f-select { width:100%; background:#0d0d0d; border:1px solid #1F2937; border-radius:6px; color:#F9FAFB; font-size:14px; padding:10px 12px; appearance:none; -webkit-appearance:none; }
     .f-select:focus { outline:none; border-color:#01D3A0; }
     .eu-compliance-wrap { margin-top:12px; }
+    .eu-gc-notice {
+      margin-bottom:12px; padding:10px 14px;
+      background:#1a0f00; border:1px solid #FF6B00; border-radius:6px;
+      color:#FF6B00; font-size:13px; line-height:1.5;
+    }
+    #eu-region-note {
+      display:none; margin:-10px 0 16px;
+      padding:8px 12px; background:#1a0f00; border:1px solid #FF6B00;
+      border-radius:6px; color:#FF6B00; font-size:12px; line-height:1.5;
+    }
   </style>
   <meta name="robots" content="noindex,nofollow">
   <link rel="canonical" href="https://veloxpeps.com/checkout/shipping/">
@@ -150,6 +160,7 @@
             <button type="button" class="region-btn region-btn-active" id="region-uk">🇬🇧 United Kingdom</button>
             <button type="button" class="region-btn" id="region-eu">🌍 EU &amp; Europe</button>
           </div>
+          <div id="eu-region-note">⚠️ Instant Bank Pay currently available for Ireland, France and Germany only. All other EU countries — please use manual bank transfer.</div>
 
           <h2 class="sec-t">Contact</h2>
           <div class="f-grid-2">
@@ -166,14 +177,46 @@
             <div class="f-row"><label class="f-lbl" for="sh-city">City *</label><input class="f-inp" id="sh-city" name="city" required></div>
             <div class="f-row"><label class="f-lbl" for="sh-post">Postcode *</label><input class="f-inp" id="sh-post" name="postcode" required></div>
             <div id="uk-country-wrap" class="f-row f-full"><label class="f-lbl" for="sh-country">Country</label><input class="f-inp" id="sh-country" name="country" value="United Kingdom" readonly></div>
-            <div id="eu-country-wrap" class="f-row f-full" style="display:none"><label class="f-lbl" for="sh-eu-country">Country *</label>
+            <div id="eu-country-wrap" class="f-row f-full" style="display:none">
+              <div class="eu-gc-notice">⚠️ Instant Bank Pay is currently available for Ireland 🇮🇪, France 🇫🇷 and Germany 🇩🇪 only. If your country is not listed below, scroll down to pay by manual bank transfer — we ship to all EU countries.</div>
+              <label class="f-lbl" for="sh-eu-country">Country *</label>
               <select class="f-select" id="sh-eu-country" name="eu_country">
                 <option value="">Select your country…</option>
-                <option>France</option>
-                <option>Germany</option>
-                <option>Ireland</option>
+                <optgroup label="── Instant Bank Pay supported ──">
+                  <option>France</option>
+                  <option>Germany</option>
+                  <option>Ireland</option>
+                </optgroup>
+                <optgroup label="── Manual bank transfer only ──">
+                  <option>Austria</option>
+                  <option>Belgium</option>
+                  <option>Bulgaria</option>
+                  <option>Croatia</option>
+                  <option>Cyprus</option>
+                  <option>Czech Republic</option>
+                  <option>Denmark</option>
+                  <option>Estonia</option>
+                  <option>Finland</option>
+                  <option>Greece</option>
+                  <option>Hungary</option>
+                  <option>Iceland</option>
+                  <option>Italy</option>
+                  <option>Latvia</option>
+                  <option>Lithuania</option>
+                  <option>Luxembourg</option>
+                  <option>Malta</option>
+                  <option>Netherlands</option>
+                  <option>Norway</option>
+                  <option>Poland</option>
+                  <option>Portugal</option>
+                  <option>Romania</option>
+                  <option>Slovakia</option>
+                  <option>Slovenia</option>
+                  <option>Spain</option>
+                  <option>Sweden</option>
+                  <option>Switzerland</option>
+                </optgroup>
               </select>
-              <p style="margin:8px 0 0;font-size:12px;color:#9CA3AF;line-height:1.5;">Don't see your country? Email us at <a href="mailto:veloxpeps@gmail.com" style="color:#01D3A0;text-decoration:none;">veloxpeps@gmail.com</a> to arrange a manual bank transfer — we ship to all EU countries.</p>
             </div>
           </div>
 
