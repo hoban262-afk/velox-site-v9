@@ -124,51 +124,127 @@
 
 
   /* ─────────────────────────────────────────────────────────────────
-   *  3. STOCK URGENCY — product cards + order panel
+   *  3. STOCK URGENCY — per-variation, cards + detail page
    * ───────────────────────────────────────────────────────────────── */
   function initUrgency() {
-    var stock = {
-      'bpc-157': 8, 'tb-500': 6, 'semax': 11, 'selank': 9, 'dsip': 14,
-      'retatrutide': 4, 'tesamorelin': 7, 'mots-c': 12, 'nad-plus': 10,
-      'glutathione': 15, 'ghk-cu': 8, 'melanotan-ii': 6, 'cjc-1295': 9,
-      'kpv': 11, 'bpc157-tb500-mix': 5,
+
+    /* ── Stock data keyed by slug → variation size value ── */
+    var stockV = {
+      'bpc-157':           { '10mg': 8 },
+      'tb-500':            { '10mg': 6 },
+      'semax':             { '10mg': 11 },
+      'selank':            { '10mg': 9 },
+      'dsip':              { '5mg': 14, '10mg': 10 },
+      'retatrutide':       { '10mg': 4, '15mg': 8, '20mg': 7, '40mg Pen': 3 },
+      'tesamorelin':       { '15mg': 5 },
+      'mots-c':            { '10mg': 12 },
+      'nad-plus':          { '1000mg': 10 },
+      'glutathione':       { '1500mg': 9 },
+      'ghk-cu':            { '100mg': 8 },
+      'melanotan-ii':      { '10mg': 6 },
+      'cjc-1295':          { '10mg': 9 },
+      'kpv':               { '10mg': 11 },
+      'bpc157-tb500-mix':  { '20mg (10mg BPC-157 + 10mg TB-500)': 5 },
     };
 
-    function makeBadge(count) {
-      var low = count < 6;
-      var el  = document.createElement('div');
-      el.className = 'vp-stock-badge';
-      el.textContent = low
-        ? 'Only ' + count + ' left — low stock'
-        : 'Only ' + count + ' left';
-      el.style.cssText = 'font-size:11px;font-weight:600;margin-top:5px;letter-spacing:.02em;' +
-        'color:' + (low ? '#FF4444' : '#FF6B00') + ';';
-      return el;
+    /*
+     * Card default: the size shown on product cards (first/checked variation).
+     * Cards only have a link — they don't expose which size is selected.
+     */
+    var cardDefault = {
+      'bpc-157':           { size: '10mg',      count: 8  },
+      'tb-500':            { size: '10mg',      count: 6  },
+      'semax':             { size: '10mg',      count: 11 },
+      'selank':            { size: '10mg',      count: 9  },
+      'dsip':              { size: '5mg',       count: 14 },
+      'retatrutide':       { size: '10mg',      count: 4  },
+      'tesamorelin':       { size: '15mg',      count: 5  },
+      'mots-c':            { size: '10mg',      count: 12 },
+      'nad-plus':          { size: '1000mg',    count: 10 },
+      'glutathione':       { size: '1500mg',    count: 9  },
+      'ghk-cu':            { size: '100mg',     count: 8  },
+      'melanotan-ii':      { size: '10mg',      count: 6  },
+      'cjc-1295':          { size: '10mg',      count: 9  },
+      'kpv':               { size: '10mg',      count: 11 },
+      'bpc157-tb500-mix':  { size: '10mg blend',count: 5  },
+    };
+
+    /*
+     * Colour thresholds:
+     *   ≤5   → red    #FF4444   "Only X left — low stock"
+     *   6–10 → amber  #FF6B00   "Only X left"
+     *   ≥11  → grey   #6B7280   "X in stock"
+     */
+    function stockColor(count) {
+      if (count <= 5)  return '#FF4444';
+      if (count <= 10) return '#FF6B00';
+      return '#6B7280';
+    }
+    function stockText(count, includeSize) {
+      /* includeSize is a string label like "10mg" or falsy */
+      var prefix = includeSize ? includeSize + ' — ' : '';
+      if (count <= 5)  return prefix + 'Only ' + count + ' left — low stock';
+      if (count <= 10) return prefix + 'Only ' + count + ' left';
+      return prefix + count + ' in stock';
     }
 
-    /* product cards (.cc) anywhere on the page */
+    /* ── A. Product cards — inject badge using card default ── */
     document.querySelectorAll('.cc').forEach(function (card) {
       var a = card.querySelector('a[href]');
       if (!a) return;
       var m = (a.getAttribute('href') || '').match(/\/compounds\/([^/]+)\//);
-      if (!m || stock[m[1]] === undefined) return;
+      if (!m) return;
+      var def = cardDefault[m[1]];
+      if (!def) return;
       var ft = card.querySelector('.cc-ft');
-      if (ft) ft.appendChild(makeBadge(stock[m[1]]));
+      if (!ft) return;
+
+      var badge = document.createElement('div');
+      badge.className = 'vp-stock-badge';
+      badge.textContent = stockText(def.count, def.size);
+      badge.style.cssText = 'font-size:11px;font-weight:600;margin-top:5px;' +
+        'letter-spacing:.02em;color:' + stockColor(def.count) + ';';
+      ft.appendChild(badge);
     });
 
-    /* order panel on individual product pages */
+    /* ── B. Product detail page — dynamic per-variation indicator ── */
     var form = document.querySelector('form[data-compound]');
-    if (form) {
-      var slug = form.getAttribute('data-compound');
-      if (stock[slug] !== undefined) {
-        var btn = document.getElementById('add-to-order-btn');
-        if (btn) {
-          var b = makeBadge(stock[slug]);
-          b.style.marginTop = '8px';
-          btn.parentNode.insertBefore(b, btn.nextSibling);
-        }
+    if (!form) return;
+    var slug = form.getAttribute('data-compound');
+    var sizes = stockV[slug];
+    if (!sizes) return;
+
+    /* Create the status element and insert after .cp-sizes */
+    var cpSizes = form.querySelector('.cp-sizes');
+    if (!cpSizes) return;
+
+    var statusEl = document.createElement('div');
+    statusEl.id = 'vp-size-stock';
+    statusEl.style.cssText = 'font-size:12px;font-weight:600;margin-top:8px;' +
+      'margin-bottom:4px;letter-spacing:.02em;min-height:16px;';
+    cpSizes.parentNode.insertBefore(statusEl, cpSizes.nextSibling);
+
+    function updateStatus() {
+      var checked = form.querySelector('input[name="size"]:checked');
+      var val = checked ? checked.value : null;
+      var count = (val && sizes[val] !== undefined) ? sizes[val] : null;
+      if (count === null) {
+        statusEl.textContent = '';
+        return;
       }
+      statusEl.style.color = stockColor(count);
+      statusEl.textContent = stockText(count, false);
     }
+
+    /* Initial render + listen for changes */
+    updateStatus();
+    form.querySelectorAll('input[name="size"]').forEach(function (radio) {
+      radio.addEventListener('change', updateStatus);
+    });
+
+    /* Also remove any old flat badge that was inserted below the button */
+    var oldBadge = form.querySelector('.vp-stock-badge');
+    if (oldBadge) oldBadge.parentNode.removeChild(oldBadge);
   }
 
 
