@@ -39,6 +39,78 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="/assets/css/core.css">
 
+  <style>
+    /* ── Mobile hero: bigger headline, tighter layout ── */
+    @media (max-width: 767px) {
+      .hero { padding-bottom: 0; }
+      .hero-i { flex-direction: column; padding-top: 20px; padding-bottom: 0; gap: 0; }
+      .hero-content { padding-bottom: 16px; }
+      .h-ey { display: none; }
+      .h-stats-row { display: none; }
+      .h-sub { display: none; }
+      .h-compliance { display: none; }
+      .hero-panel { display: none !important; }
+      .h-h1 { font-size: clamp(3rem, 12vw, 4.5rem); line-height: 1.02; margin-bottom: 22px; }
+      .h-btns { flex-direction: column; gap: 10px; margin-bottom: 10px; }
+      .h-btns .btn-p,
+      .h-btns .btn-o { width: 100%; text-align: center; font-size: 15px; padding: 14px 20px; box-sizing: border-box; }
+    }
+
+    /* ── Hero trust bar ── */
+    .hero-trust-bar {
+      font-size: 11px; color: #6B7280; text-align: center;
+      letter-spacing: .05em; margin-top: 14px; line-height: 1.8;
+    }
+    .hero-trust-bar b { color: #01D3A0; font-weight: 600; }
+
+    /* ── Social proof strip ── */
+    .hero-social-proof {
+      font-size: 12px; color: #9CA3AF; text-align: center;
+      margin-top: 6px; letter-spacing: .04em;
+    }
+    @media (max-width: 767px) {
+      .hero-trust-bar, .hero-social-proof { display: block; }
+    }
+    @media (min-width: 768px) {
+      .hero-trust-bar, .hero-social-proof { display: none; }
+    }
+
+    /* ── Healing & Repair featured banner ── */
+    .hp-healing-banner {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      background: rgba(79,195,247,.07); border: 1px solid rgba(79,195,247,.22);
+      border-left: 4px solid #4FC3F7; border-radius: 6px;
+      padding: 11px 16px; margin-bottom: 20px;
+    }
+    .hp-healing-eyebrow {
+      font-size: 10px; font-weight: 700; color: #4FC3F7;
+      letter-spacing: .14em; text-transform: uppercase; font-family: monospace;
+      background: rgba(79,195,247,.15); padding: 3px 9px; border-radius: 3px;
+      white-space: nowrap;
+    }
+    .hp-healing-title {
+      font-size: 13px; font-weight: 700; color: #E5E7EB; flex: 1;
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    .hp-healing-link {
+      font-size: 12px; color: #4FC3F7; text-decoration: none;
+      white-space: nowrap; font-weight: 600;
+    }
+    .hp-healing-link:hover { text-decoration: underline; }
+
+    /* ── Category tiles: taller tap targets on mobile ── */
+    @media (max-width: 767px) {
+      .cat-tile { min-height: 60px; display: flex; align-items: center; justify-content: center; }
+    }
+
+    /* ── Highlight H&R tile in category grid ── */
+    .cat-tile-healing {
+      border-color: rgba(79,195,247,.35) !important;
+      background: rgba(79,195,247,.05) !important;
+    }
+    .cat-tile-healing .cat-tile-name { color: #4FC3F7 !important; }
+  </style>
+
   <!-- Homepage hash-redirect map (only on /) -->
   <script>
 (function(){
@@ -143,9 +215,13 @@
         certificate of analysis supplied with every order.
       </p>
       <div class="h-btns">
-        <a class="btn-p" href="/compounds/">Browse Compounds</a>
-        <a class="btn-o" href="/tools/reconstitution-calculator/">Reconstitution Calculator</a>
+        <a class="btn-p" href="/compounds/">SHOP RESEARCH COMPOUNDS &rarr;</a>
+        <a class="btn-o" href="/stacks/">VIEW STACKS &rarr;</a>
       </div>
+      <div class="hero-trust-bar">
+        <b>HPLC Verified</b> &middot; <b>CoA Supplied</b> &middot; <b>Royal Mail Tracked 24</b> &middot; <b>UK Dispatched</b>
+      </div>
+      <div class="hero-social-proof">15 Compounds &middot; 10 Research Stacks &middot; HPLC Tested Every Batch</div>
       <p class="h-compliance"><strong>For in vitro research use only.</strong> Not for human or veterinary consumption.</p>
     </div>
     <div class="hero-panel hp-block">
@@ -167,6 +243,88 @@
     </div>
   </div>
 </section>
+<section class="hp-sec hp-sec-healing">
+  <div class="sec-i">
+    <div class="hp-block">
+      <div class="hp-healing-banner">
+        <span class="hp-healing-eyebrow">MOST POPULAR</span>
+        <span class="hp-healing-title">Healing &amp; Repair Research Compounds</span>
+        <a class="hp-healing-link" href="/compounds/healing-and-repair/">View all &rarr;</a>
+      </div>
+      <div class="prod-grid prod-grid-4">
+        <article class="cc cc-healing">
+  <a class="cc-img-link" href="/compounds/bpc-157/" tabindex="-1" aria-hidden="true">
+    <div class="cc-img-wrap">
+      <img src="/assets/images/bpc157.png" alt="BPC-157" class="cc-img" loading="eager">
+      <span class="cc-img-name">BPC-157</span>
+    </div>
+  </a>
+  <div class="cc-body">
+    <div class="cc-hdr"><div class="cc-cat">Healing &amp; Repair</div></div>
+    <a class="cc-name-link" href="/compounds/bpc-157/"><h3 class="cc-name">BPC-157</h3></a>
+    <div class="cc-ft">
+      <div class="cc-price-block">
+        <span class="cc-was">&pound;39.99</span>
+        <span class="cc-price">&pound;29.99</span>
+      </div>
+    </div>
+  </div>
+</article><article class="cc cc-healing">
+  <a class="cc-img-link" href="/compounds/tb-500/" tabindex="-1" aria-hidden="true">
+    <div class="cc-img-wrap">
+      <img src="/assets/images/tb500.png" alt="TB-500" class="cc-img" loading="eager">
+      <span class="cc-img-name">TB-500</span>
+    </div>
+  </a>
+  <div class="cc-body">
+    <div class="cc-hdr"><div class="cc-cat">Healing &amp; Repair</div></div>
+    <a class="cc-name-link" href="/compounds/tb-500/"><h3 class="cc-name">TB-500</h3></a>
+    <div class="cc-ft">
+      <span class="cc-price">&pound;29.99</span>
+    </div>
+  </div>
+</article><article class="cc cc-healing">
+  <a class="cc-img-link" href="/compounds/kpv/" tabindex="-1" aria-hidden="true">
+    <div class="cc-img-wrap">
+      <img src="/assets/images/kpv10mg.png" alt="KPV" class="cc-img" loading="eager">
+      <span class="cc-img-name">KPV</span>
+    </div>
+  </a>
+  <div class="cc-body">
+    <div class="cc-hdr"><div class="cc-cat">Healing &amp; Repair</div></div>
+    <a class="cc-name-link" href="/compounds/kpv/"><h3 class="cc-name">KPV</h3></a>
+    <div class="cc-ft">
+      <div class="cc-price-block">
+        <span class="cc-was">&pound;34.99</span>
+        <span class="cc-price">&pound;24.99</span>
+      </div>
+    </div>
+  </div>
+</article><article class="cc cc-healing">
+  <a class="cc-img-link" href="/compounds/bpc157-tb500-mix/" tabindex="-1" aria-hidden="true">
+    <div class="cc-img-wrap">
+      <img src="/assets/images/bpc157tb500.png" alt="BPC-157 &amp; TB-500" class="cc-img" loading="lazy">
+      <span class="cc-img-name">BPC-157 &amp; TB-500</span>
+    </div>
+  </a>
+  <div class="cc-body">
+    <div class="cc-hdr"><div class="cc-cat">Healing &amp; Repair</div></div>
+    <a class="cc-name-link" href="/compounds/bpc157-tb500-mix/"><h3 class="cc-name">BPC-157 &amp; TB-500</h3></a>
+    <div class="cc-ft">
+      <div class="cc-price-block">
+        <span class="cc-was">&pound;59.99</span>
+        <span class="cc-price">&pound;49.99</span>
+      </div>
+    </div>
+  </div>
+</article>
+      </div>
+      <div class="hp-block-ft">
+        <a class="btn-o" href="/compounds/healing-and-repair/">View all healing &amp; repair compounds &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
 <section class="hp-sec hp-sec-featured">
   <div class="sec-i">
     <div class="hp-block hp-feat-block">
@@ -182,7 +340,7 @@
         <article class="cc cc-healing ">
   <a class="cc-img-link" href="/compounds/bpc157-tb500-mix/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/bpc157tb500.png" alt="BPC-157 &amp; TB-500" class="cc-img">
+      <img src="/assets/images/bpc157tb500.png" alt="BPC-157 &amp; TB-500" class="cc-img" loading="lazy">
       <span class="cc-img-name">BPC-157 &amp; TB-500</span>
     </div>
   </a>
@@ -203,7 +361,7 @@
 </article><article class="cc cc-metabolic ">
   <a class="cc-img-link" href="/compounds/retatrutide/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/retatrutide.png" alt="Retatrutide" class="cc-img">
+      <img src="/assets/images/retatrutide.png" alt="Retatrutide" class="cc-img" loading="lazy">
       <span class="cc-img-name">Retatrutide</span>
     </div>
   </a>
@@ -225,7 +383,7 @@
 </article><article class="cc cc-growth ">
   <a class="cc-img-link" href="/compounds/tesamorelin/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/tesamorelin.png" alt="Tesamorelin" class="cc-img">
+      <img src="/assets/images/tesamorelin.png" alt="Tesamorelin" class="cc-img" loading="lazy">
       <span class="cc-img-name">Tesamorelin</span>
     </div>
   </a>
@@ -247,7 +405,7 @@
 </article><article class="cc cc-metabolic ">
   <a class="cc-img-link" href="/compounds/nad-plus/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/nadplus.png" alt="NAD+" class="cc-img">
+      <img src="/assets/images/nadplus.png" alt="NAD+" class="cc-img" loading="lazy">
       <span class="cc-img-name">NAD+</span>
     </div>
   </a>
@@ -269,7 +427,7 @@
 </article><article class="cc cc-cognitive ">
   <a class="cc-img-link" href="/compounds/semax/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/semax.png" alt="Semax" class="cc-img">
+      <img src="/assets/images/semax.png" alt="Semax" class="cc-img" loading="lazy">
       <span class="cc-img-name">Semax</span>
     </div>
   </a>
@@ -288,7 +446,7 @@
 </article><article class="cc cc-cognitive ">
   <a class="cc-img-link" href="/compounds/selank/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/selank.png" alt="Selank" class="cc-img">
+      <img src="/assets/images/selank.png" alt="Selank" class="cc-img" loading="lazy">
       <span class="cc-img-name">Selank</span>
     </div>
   </a>
@@ -310,7 +468,7 @@
 </article><article class="cc cc-metabolic ">
   <a class="cc-img-link" href="/compounds/mots-c/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/motsc.png" alt="Mots-C" class="cc-img">
+      <img src="/assets/images/motsc.png" alt="Mots-C" class="cc-img" loading="lazy">
       <span class="cc-img-name">Mots-C</span>
     </div>
   </a>
@@ -329,7 +487,7 @@
 </article><article class="cc cc-antiageing ">
   <a class="cc-img-link" href="/compounds/ghk-cu/" tabindex="-1" aria-hidden="true">
     <div class="cc-img-wrap">
-      <img src="/assets/images/ghkcu.png" alt="GHK-Cu" class="cc-img">
+      <img src="/assets/images/ghkcu.png" alt="GHK-Cu" class="cc-img" loading="lazy">
       <span class="cc-img-name">GHK-Cu</span>
     </div>
   </a>
@@ -364,9 +522,9 @@
         <p class="sec-sub">Five categories covering the primary pathway clusters studied in preclinical peptide research.</p>
       </div>
       <div class="cat-grid">
-        <a class="cat-tile" href="/compounds/cognitive/">  <h3 class="cat-tile-name">Cognitive</h3>
+        <a class="cat-tile cat-tile-healing" href="/compounds/healing-and-repair/">  <h3 class="cat-tile-name">Healing &amp; Repair</h3>
+</a><a class="cat-tile" href="/compounds/cognitive/">  <h3 class="cat-tile-name">Cognitive</h3>
 </a><a class="cat-tile" href="/compounds/metabolic/">  <h3 class="cat-tile-name">Metabolic</h3>
-</a><a class="cat-tile" href="/compounds/healing-and-repair/">  <h3 class="cat-tile-name">Healing &amp; Repair</h3>
 </a><a class="cat-tile" href="/compounds/growth/">  <h3 class="cat-tile-name">Growth</h3>
 </a><a class="cat-tile" href="/compounds/anti-ageing/">  <h3 class="cat-tile-name">Anti-Ageing</h3>
 </a><a class="cat-tile" href="/stacks/">  <h3 class="cat-tile-name">Stacks</h3>
