@@ -109,6 +109,69 @@
       background: rgba(255,229,0,.04) !important;
     }
     .cat-tile-metabolic .cat-tile-name { color: #FFE500 !important; }
+
+    /* ── Order counter ── */
+    .hero-order-count {
+      font-size: 12px; color: #6B7280; margin-top: 12px; letter-spacing: .03em;
+    }
+    .hero-order-count strong { color: #01D3A0; font-weight: 700; font-size: 13px; }
+
+    /* ── Process timeline section ── */
+    .vp-timeline-sec { background: rgba(1,211,160,.02); border-top: 1px solid rgba(1,211,160,.08); }
+    .vp-timeline {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; margin-top: 28px; position: relative;
+    }
+    @media (max-width: 767px) { .vp-timeline { grid-template-columns: 1fr; } }
+    .vp-tl-step {
+      position: relative; display: flex; gap: 14px; align-items: flex-start;
+    }
+    @media (min-width: 768px) {
+      .vp-tl-step {
+        flex-direction: column; align-items: flex-start;
+        padding: 0 24px 0 0;
+        border-right: 1px solid rgba(1,211,160,.12);
+      }
+      .vp-tl-step:last-child { border-right: none; padding-right: 0; }
+    }
+    @media (max-width: 767px) {
+      .vp-tl-step {
+        padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.06);
+      }
+      .vp-tl-step:last-child { border-bottom: none; }
+    }
+    .vp-tl-num {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(1,211,160,.1); border: 1px solid rgba(1,211,160,.28);
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    @media (min-width: 768px) { .vp-tl-num { margin-bottom: 12px; } }
+    .vp-tl-title {
+      font-size: 12px; font-weight: 700; color: #E5E7EB;
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .vp-tl-desc { font-size: 12px; color: #6B7280; line-height: 1.6; }
+
+    /* ── First order FAQ ── */
+    .vp-hp-faq { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .vp-hp-faq-item {
+      background: rgba(255,255,255,.025); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 8px; overflow: hidden;
+    }
+    .vp-hp-faq-q {
+      padding: 14px 18px; font-size: 14px; font-weight: 600; color: #E5E7EB;
+      cursor: pointer; list-style: none; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    .vp-hp-faq-q::-webkit-details-marker { display: none; }
+    .vp-hp-faq-q::after {
+      content: '+'; color: #01D3A0; font-size: 20px; font-weight: 300;
+      flex-shrink: 0; margin-left: 12px; transition: transform .2s;
+    }
+    .vp-hp-faq-item[open] .vp-hp-faq-q::after { transform: rotate(45deg); }
+    .vp-hp-faq-a {
+      padding: 0 18px 14px; font-size: 13px; color: #9CA3AF; line-height: 1.7;
+    }
   </style>
 
   <!-- Homepage hash-redirect map (only on /) -->
@@ -208,6 +271,11 @@
           <span class="hsi-v">25</span>
           <span class="hsi-l">Products</span>
         </div>
+        <span class="hsi-div" aria-hidden="true"></span>
+        <div class="h-stat-item">
+          <span class="hsi-v vp-oc">168+</span>
+          <span class="hsi-l">Orders This Year</span>
+        </div>
       </div>
       <p class="h-sub">
         15 research compounds and 10 stacks across cognitive, metabolic,
@@ -222,6 +290,7 @@
         <b>HPLC Verified</b> &middot; <b>CoA Supplied</b> &middot; <b>Royal Mail Tracked 24</b> &middot; <b>UK Dispatched</b>
       </div>
       <div class="hero-social-proof">15 Compounds &middot; 10 Research Stacks &middot; HPLC Tested Every Batch</div>
+      <div class="hero-order-count">&#x1F4E6;&nbsp; <strong><span class="vp-oc">168+</span></strong> orders dispatched this year</div>
       <p class="h-compliance"><strong>For in vitro research use only.</strong> Not for human or veterinary consumption.</p>
     </div>
     <div class="hero-panel hp-block">
@@ -516,6 +585,48 @@
     </div>
   </div>
 </section>
+
+<section class="hp-sec vp-timeline-sec">
+  <div class="sec-i">
+    <div class="hp-block">
+      <div class="hp-block-hdr">
+        <h2 class="sec-t">What happens after you order?</h2>
+        <p class="sec-sub">Simple, fast, and fully tracked — from order confirmation to door.</p>
+      </div>
+      <div class="vp-timeline">
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x2713;</div>
+          <div>
+            <div class="vp-tl-title">Place your order</div>
+            <div class="vp-tl-desc">Select compounds, confirm research use, and choose your payment method at checkout.</div>
+          </div>
+        </div>
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x26A1;</div>
+          <div>
+            <div class="vp-tl-title">Payment confirmed</div>
+            <div class="vp-tl-desc">Instant bank pay via GoCardless, card&nbsp;/ Apple Pay via PsiFi, or manual bank transfer.</div>
+          </div>
+        </div>
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x1F4E6;</div>
+          <div>
+            <div class="vp-tl-title">Dispatched within 24 h</div>
+            <div class="vp-tl-desc">Orders placed before 2&nbsp;pm are dispatched same day with your batch CoA.</div>
+          </div>
+        </div>
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x1F69A;</div>
+          <div>
+            <div class="vp-tl-title">Delivered 1&ndash;2 days</div>
+            <div class="vp-tl-desc">Royal Mail Tracked&nbsp;24. Full tracking number provided by email on dispatch.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="hp-sec hp-sec-stacks">
   <div class="sec-i">
     <div class="hp-block hp-stacks-block">
@@ -612,6 +723,39 @@
     </div>
   </div>
 </section>
+
+<section class="hp-sec vp-hp-faq-sec">
+  <div class="sec-i">
+    <div class="hp-block">
+      <div class="hp-block-hdr">
+        <h2 class="sec-t">First order? Here&rsquo;s what to know</h2>
+        <p class="sec-sub">Common questions from researchers ordering for the first time.</p>
+      </div>
+      <div class="vp-hp-faq">
+        <details class="vp-hp-faq-item">
+          <summary class="vp-hp-faq-q">Is this legal?</summary>
+          <div class="vp-hp-faq-a">Yes. Research compounds are legal to purchase in the UK for in vitro research purposes. All products are sold strictly as research reagents for use by qualified researchers in laboratory settings. They are not medicinal products under the Human Medicines Regulations 2012. See our <a href="/legal/research-use-policy/">Research Use Policy</a> for full details.</div>
+        </details>
+        <details class="vp-hp-faq-item">
+          <summary class="vp-hp-faq-q">How does payment work?</summary>
+          <div class="vp-hp-faq-a">Three options at checkout: <strong>Instant Bank Pay</strong> via GoCardless (bank-to-bank, confirmed in seconds), <strong>Card / Apple Pay / Google Pay</strong> via PsiFi, or <strong>manual UK bank transfer</strong> to our Zempler Business account. Bank details are provided at checkout if you choose manual transfer. All options are fully secure.</div>
+        </details>
+        <details class="vp-hp-faq-item">
+          <summary class="vp-hp-faq-q">When will it arrive?</summary>
+          <div class="vp-hp-faq-a">Orders are dispatched within 24 hours — same day if placed before 2&nbsp;pm on a working day. Delivery is via <strong>Royal Mail Tracked 24</strong>, typically 1–2 working days from dispatch. You receive a tracking number by email as soon as your order is shipped.</div>
+        </details>
+        <details class="vp-hp-faq-item">
+          <summary class="vp-hp-faq-q">What&rsquo;s included with my order?</summary>
+          <div class="vp-hp-faq-a">Every order includes a <strong>batch-specific Certificate of Analysis</strong> documenting HPLC purity, mass spectrometry confirmation, and appearance results. The CoA is emailed to you with your order confirmation and is also available in our <a href="/about/coa-library/">CoA library</a>.</div>
+        </details>
+      </div>
+      <div style="margin-top:20px;">
+        <a href="/faq/" class="btn-o" style="font-size:13px;">View all FAQs &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="hp-sec hp-sec-comm">
   <div class="sec-i">
     <div class="hp-block hp-comm-block">
@@ -768,5 +912,6 @@
 
 <script src="/assets/js/core.js"></script>
 
+<script src="/assets/js/conversion.js" defer></script>
 </body>
 </html>
