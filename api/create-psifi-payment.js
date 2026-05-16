@@ -16,21 +16,19 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Missing or invalid basket total' });
   }
 
-  // PsiFi expects price in pence (smallest unit) as an integer
-  const priceInPence = Math.round(Number(total) * 100);
-  console.log(`[create-psifi-payment] Creating session — order=${order_ref} currency=${currency} total=${total} pence=${priceInPence}`);
+  // Product is priced at £0.01 (1p). Quantity = basket total in pence.
+  // e.g. £34.99 → quantity 3499
+  const quantityPence = Math.round(Number(total) * 100);
+  console.log(`[create-psifi-payment] Creating session — order=${order_ref} currency=${currency} total=${total} quantity(pence)=${quantityPence}`);
 
   try {
     const psifiPayload = {
       products: [
         {
           productId: 'PSIFI-6a066c6357c6c9cd94d343e2-000001',
-          quantity:  1,
+          quantity:  quantityPence,
         },
       ],
-      amount:      priceInPence,
-      currency:    (currency || 'GBP').toUpperCase(),
-      description: 'Velox Peptides Order',
       success_url: 'https://veloxpeps.com/checkout/payment-complete/?method=psifi',
       cancel_url:  'https://veloxpeps.com/checkout/payment-complete/?method=psifi&payment=cancelled',
     };
@@ -60,7 +58,6 @@ module.exports = async function handler(req, res) {
     }
 
     if (!response.ok) {
-      // Flatten whatever error shape PsiFi returns into a single readable string
       const errMsg = [data.message, data.error, data.detail, data.errors]
         .map(v => (typeof v === 'string' ? v : v ? JSON.stringify(v) : null))
         .filter(Boolean)
@@ -74,7 +71,7 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: 'PsiFi did not return a checkout URL. Response: ' + rawText.slice(0, 300) });
     }
 
-    console.log(`[create-psifi-payment] Session created successfully for order ${order_ref}: ${data.checkout_url}`);
+    console.log(`[create-psifi-payment] Session created for order ${order_ref}: ${data.checkout_url}`);
     return res.status(200).json({ checkout_url: data.checkout_url });
 
   } catch (e) {
