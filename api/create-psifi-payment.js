@@ -66,13 +66,13 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: errMsg });
     }
 
-    if (!data.checkout_url) {
-      console.error('[create-psifi-payment] PsiFi response missing checkout_url. Full response:', rawText);
+    if (!data.url) {
+      console.error('[create-psifi-payment] PsiFi response missing url. Full response:', rawText);
       return res.status(502).json({ error: 'PsiFi did not return a checkout URL. Response: ' + rawText.slice(0, 300) });
     }
 
-    console.log(`[create-psifi-payment] Session created for order ${order_ref}: ${data.checkout_url}`);
-    return res.status(200).json({ checkout_url: data.checkout_url });
+    console.log(`[create-psifi-payment] Session created for order ${order_ref}: ${data.url}`);
+    return res.status(200).json({ checkout_url: data.url });
 
   } catch (e) {
     console.error('[create-psifi-payment] Error:', e.message);
