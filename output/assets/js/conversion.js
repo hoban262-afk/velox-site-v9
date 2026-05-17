@@ -16,7 +16,7 @@
     );
     if (!els.length) return;
 
-    var BASE      = 168;
+    var BASE      = 1423;
     var BASE_MS   = new Date('2026-05-16T00:00:00Z').getTime();
     var todayMs   = new Date();
     todayMs.setUTCHours(0, 0, 0, 0);
