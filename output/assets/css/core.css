@@ -5524,3 +5524,54 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !im
   color: #01D3A0;
   font-weight: 600;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE POLISH — post-recent-changes (viewing indicator, product page,
+   payment page, iOS zoom fixes)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Viewing indicator: hide "updated live" label at 375px ──────────── */
+/*    Prevents the right-side text crowding the count at the narrowest sizes */
+@media (max-width: 375px) {
+  #vp-viewing-live { display: none !important; }
+  #vp-viewing { padding: 8px 12px !important; gap: 8px !important; }
+}
+
+/* ── 2. Stock indicator: centre-align to match order panel ─────────────── */
+#vp-size-stock { text-align: center; }
+
+/* ── 3. Compliance checkbox: comfortable line-height on mobile ─────────── */
+@media (max-width: 767px) {
+  .f-checkbox span { line-height: 1.55 !important; }
+  .cp-ack-text     { line-height: 1.55 !important; }
+}
+
+/* ── 4. Discount-code input: override the 13px !important rule so iOS     */
+/*    does not auto-zoom the keyboard on focus (requires 16px minimum)      */
+@media (max-width: 767px) {
+  .co-discount-inp { font-size: 16px !important; }
+}
+
+/* ── 5. Checkout pay buttons: belt-and-suspenders full-width + tap height  */
+@media (max-width: 767px) {
+  #gc-pay-btn, #psifi-pay-btn {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 52px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* ── 6. Checkout co-summary: ensure order summary never overflows ──────── */
+@media (max-width: 767px) {
+  .co-summary {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+  .co-sum-row {
+    font-size: 13px;
+  }
+}

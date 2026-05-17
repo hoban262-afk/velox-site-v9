@@ -73,12 +73,41 @@
     }
     .co-support-note a { color: #01D3A0; text-decoration: none; }
     .co-support-note a:hover { text-decoration: underline; }
+    /* ── Mobile: tabs, button, trust bar ──────────────────── */
+    @media (max-width: 767px) {
+      /* Tabs: equal-size, text on one line, no overflow */
+      .pay-method-tabs { gap: 6px; }
+      .pay-method-tab {
+        font-size: 12px;
+        padding: 10px 8px;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      /* Pay button: full width, generous tap target */
+      #gc-pay-btn {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 52px;
+        font-size: 16px;
+        padding: 14px 16px;
+      }
+    }
+    /* ── Trust bar: single column on mobile ───────────────── */
     @media (max-width: 480px) {
-      #gc-pay-btn { font-size: 15px; padding: 14px 16px; }
-      #psifi-pay-btn { font-size: 15px; padding: 14px 16px; }
-      .pay-trust-bar { flex-wrap: wrap; }
-      .pay-trust-item { flex: 1 1 45%; border-right: none; border-bottom: 1px solid #1F2937; }
+      .pay-trust-bar { flex-direction: column; border-radius: 6px; }
+      .pay-trust-item {
+        border-right: none;
+        border-bottom: 1px solid #1F2937;
+        text-align: center;
+        flex: 1 1 100%;
+        padding: 10px 12px;
+      }
       .pay-trust-item:last-child { border-bottom: none; }
+    }
+    /* ── Very small phones: shrink tab text further ────────── */
+    @media (max-width: 375px) {
+      .pay-method-tab { font-size: 11px; padding: 9px 6px; gap: 4px; }
+      .pay-method-tab svg { width: 12px; height: 12px; flex-shrink: 0; }
     }
     /* ── Payment method tabs ── */
     .pay-method-tabs {
