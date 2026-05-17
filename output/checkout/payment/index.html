@@ -259,19 +259,15 @@
           </div>
         </div>
 
-        <!-- PsiFi method block (hidden until tab selected) -->
+        <!-- Card / Apple Pay method block (tab visible, payments temporarily disabled) -->
         <div id="psifi-method-block" style="display:none;">
-          <div class="pay-method pay-method-primary">
+          <div class="pay-method" style="border-color:#374151;opacity:.9;">
             <div class="pay-method-hdr">
               <span>💳</span>
               <span>Card / Apple Pay / Google Pay</span>
             </div>
-            <p>Pay securely with your credit or debit card, Apple Pay or Google Pay. You'll be redirected to our secure PsiFi payment page — your card details are entered there and never touch our servers.</p>
-            <ul class="pay-trust-points">
-              <li>🔒 PCI-DSS compliant secure payment processing</li>
-              <li>💳 Accepts all major credit and debit cards</li>
-              <li>⚡ Instant confirmation — order processed immediately after payment</li>
-            </ul>
+            <p style="margin-bottom:10px;">Card, Apple Pay and Google Pay payments are temporarily unavailable while we negotiate lower processing fees for our customers. We expect to re-enable this option shortly.</p>
+            <p style="margin:0;color:#9CA3AF;font-size:13px;line-height:1.6;">In the meantime, <strong style="color:#01D3A0;">Instant Bank Pay via GoCardless</strong> is fast, secure and takes less than 30 seconds — no card details required.</p>
           </div>
         </div>
 
@@ -308,11 +304,8 @@
             <p class="pay-redirect-note" id="pay-redirect-note">You will be redirected to GoCardless's secure payment page. Once payment is approved you'll be returned here automatically.</p>
           </div>
 
-          <!-- PsiFi buttons (hidden until tab selected) -->
-          <div id="psifi-buttons-block" style="display:none;">
-            <button type="button" id="psifi-pay-btn" class="btn-p co-submit">Pay Now →</button>
-            <p class="pay-redirect-note" id="psifi-redirect-note">You'll be redirected to our secure PsiFi payment page. Once payment is confirmed you'll be returned here automatically.</p>
-          </div>
+          <!-- PsiFi buttons — hidden (card payments temporarily disabled) -->
+          <div id="psifi-buttons-block" style="display:none;"></div>
 
           <div class="pay-bank-fallback" id="bank-fallback-wrap">
             <button type="button" id="bank-toggle" class="pay-bank-toggle">Prefer to pay by bank transfer? ↓</button>
