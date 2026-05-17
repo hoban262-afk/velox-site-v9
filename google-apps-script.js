@@ -266,7 +266,6 @@ function setupOrders(ss) {
       .whenFormulaSatisfied(x[0]).setBackground(x[1]).setRanges([d]).build());
   });
   sh.setConditionalFormatRules(rules);
-  sh.setFrozenColumns(1);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
