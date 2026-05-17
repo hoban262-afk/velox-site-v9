@@ -1,0 +1,444 @@
+/* ═══════════════════════════════════════════════════════════════════
+ *  Velox Peptides — Premium Animations
+ *  All animations gated by prefers-reduced-motion: no-preference
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ── @property for animated conic gradients (Chrome/Edge/Safari 15.4+) ── */
+@property --vp-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --vp-trace {
+  syntax: '<angle>';
+  initial-value: -90deg;
+  inherits: false;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+ *  KEYFRAMES
+ * ───────────────────────────────────────────────────────────────── */
+@keyframes vp-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes vp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes vp-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes vp-slide-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes vp-slide-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes vp-border-rotate {
+  to { --vp-angle: 360deg; }
+}
+@keyframes vp-trace-spin {
+  from { --vp-trace: -90deg; }
+  to   { --vp-trace: 270deg; }
+}
+@keyframes vp-popular-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(1,211,160,.3); }
+  50%       { opacity: .85; box-shadow: 0 0 0 4px rgba(1,211,160,0); }
+}
+@keyframes vp-btn-shimmer {
+  0%          { transform: translateX(-100%); opacity: 0; }
+  1%          { opacity: 1; }
+  8%          { transform: translateX(300%); opacity: 1; }
+  9%, 100%    { transform: translateX(300%); opacity: 0; }
+}
+@keyframes vp-orb-1 {
+  0%, 100% { transform: translate(0, 0); }
+  33%      { transform: translate(40px, -30px); }
+  66%      { transform: translate(-25px, 20px); }
+}
+@keyframes vp-orb-2 {
+  0%, 100% { transform: translate(0, 0); }
+  33%      { transform: translate(-35px, 25px); }
+  66%      { transform: translate(30px, -20px); }
+}
+@keyframes vp-orb-3 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(20px, 30px); }
+}
+@keyframes vp-ken-burns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.04); }
+}
+@keyframes vp-shimmer-sweep {
+  0%    { background-position: -100% 0; }
+  100%  { background-position: 250% 0; }
+}
+@keyframes vp-progress-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .7; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+ *  REDUCED MOTION: show all content immediately, no animation
+ * ───────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .vp-ani,
+  .vp-hero-nav,
+  .vp-hero-headline,
+  .vp-hero-sub,
+  .vp-hero-cta,
+  .vp-hero-trust,
+  .vp-detail-img,
+  .vp-detail-title,
+  .vp-detail-order,
+  .vp-spec-item {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+ *  ALL ANIMATIONS — no-preference only
+ * ───────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ── PART 1: Hero section stagger ── */
+
+  .vp-hero-nav {
+    animation: vp-fade-in .6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .vp-hero-headline {
+    animation: vp-fade-up .8s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .vp-hero-sub {
+    animation: vp-fade-in .7s ease both;
+  }
+  .vp-hero-cta {
+    animation: vp-scale-in .6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .vp-hero-trust {
+    animation: vp-fade-up .5s ease both;
+  }
+
+  /* ── PART 2: Card scroll-in animations ── */
+
+  .vp-ani {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .vp-ani.vp-in-view {
+    animation: vp-fade-up .6s cubic-bezier(0.16,1,0.3,1) both;
+    will-change: transform, opacity;
+  }
+
+  /* Card hover: lift + shadow by category colour */
+  .cc {
+    transition: border-color .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1),
+                box-shadow .3s ease !important;
+  }
+  .cc:hover {
+    transform: translateY(-6px) !important;
+    border-color: rgba(1,211,160,.45) !important;
+  }
+  .cc-healing:hover    { box-shadow: 0 16px 48px rgba(1,211,160,.12); }
+  .cc-cognitive:hover  { box-shadow: 0 16px 48px rgba(167,139,250,.12); }
+  .cc-metabolic:hover  { box-shadow: 0 16px 48px rgba(245,200,66,.1); }
+  .cc-growth:hover     { box-shadow: 0 16px 48px rgba(74,159,224,.12); }
+  .cc-antiageing:hover { box-shadow: 0 16px 48px rgba(244,114,182,.12); }
+
+  /* Card image zoom on hover — requires overflow:hidden on .cc-img-wrap */
+  .cc-img-wrap {
+    overflow: hidden !important;
+  }
+  .cc-img {
+    transition: transform .5s cubic-bezier(0.16,1,0.3,1) !important;
+    transform-origin: center center;
+  }
+  .cc:hover .cc-img {
+    transform: scale(1.04) !important;
+  }
+
+  /* Top border shimmer on hover */
+  .cc::before {
+    transition: background .3s ease !important;
+  }
+  .cc:hover::before {
+    background: linear-gradient(90deg, #01D3A0, #4A9FE0, #A78BFA) !important;
+  }
+
+  /* Price brightens on hover */
+  .cc-price {
+    transition: opacity .25s ease;
+    opacity: .8;
+  }
+  .cc:hover .cc-price { opacity: 1; }
+  .cc-was {
+    transition: opacity .25s ease;
+    opacity: .55;
+  }
+  .cc:hover .cc-was { opacity: .75; }
+
+  /* ── PART 3: Featured cards — animated gradient border + badge ── */
+
+  .vp-featured {
+    overflow: visible !important;
+  }
+  .vp-featured::after {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: 11.5px;
+    background: conic-gradient(from var(--vp-angle, 0deg),
+      rgba(1,211,160,0) 0%,
+      rgba(1,211,160,.85) 20%,
+      rgba(74,159,224,.7) 40%,
+      rgba(167,139,250,.5) 60%,
+      rgba(1,211,160,.85) 80%,
+      rgba(1,211,160,0) 100%);
+    z-index: -1;
+    animation: vp-border-rotate 4s linear infinite;
+  }
+  .vp-featured:hover::after {
+    filter: brightness(1.3);
+  }
+
+  /* POPULAR badge */
+  .vp-popular-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background: rgba(1,211,160,.15);
+    border: 1px solid rgba(1,211,160,.45);
+    color: #01D3A0;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    animation: vp-popular-pulse 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  /* ── PART 4: Hero glow orbs ── */
+  .vp-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+  }
+  .vp-orb-1 { animation: vp-orb-1 80s ease-in-out infinite; }
+  .vp-orb-2 { animation: vp-orb-2 90s ease-in-out infinite; }
+  .vp-orb-3 { animation: vp-orb-3 70s ease-in-out infinite; }
+
+  /* On mobile — disable orbs entirely (JS also won't create them) */
+  @media (max-width: 767px) {
+    .vp-orb { display: none; }
+  }
+
+  /* ── PART 5: Announcement bar ── */
+  .ann-bar {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+  @keyframes ann-scroll-smooth {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── PART 6: Category cards ── */
+  .cat-tile {
+    transition: border-color .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1),
+                box-shadow .3s ease !important;
+  }
+  .cat-tile:hover {
+    transform: translateY(-5px) !important;
+    border-color: rgba(1,211,160,.5) !important;
+    box-shadow: 0 12px 36px rgba(1,211,160,.1);
+  }
+  .cat-tile-metabolic:hover {
+    border-color: rgba(255,229,0,.5) !important;
+    box-shadow: 0 12px 36px rgba(255,229,0,.08);
+  }
+  .cat-tile::before {
+    transition: background .25s ease !important;
+  }
+  .cat-tile:hover::before {
+    background: linear-gradient(90deg, #01D3A0, #4A9FE0) !important;
+  }
+  .cat-tile-name {
+    transition: letter-spacing .3s ease;
+  }
+  .cat-tile:hover .cat-tile-name {
+    letter-spacing: .04em;
+  }
+
+  /* ── PART 7: Product detail page animations ── */
+
+  .vp-detail-img {
+    animation: vp-scale-in .8s cubic-bezier(0.16,1,0.3,1) .1s both;
+  }
+  .vp-detail-title {
+    animation: vp-slide-left .7s cubic-bezier(0.16,1,0.3,1) .15s both;
+  }
+  .vp-detail-order {
+    animation: vp-slide-right .7s cubic-bezier(0.16,1,0.3,1) .15s both;
+  }
+
+  /* Spec items scroll in */
+  .vp-spec-item {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .vp-spec-item.vp-spec-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* "Add to Order" button shimmer every 8s */
+  .cp-order-btn {
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .cp-order-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: -80%;
+    width: 60%;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255,255,255,.28) 50%,
+      transparent 100%);
+    animation: vp-btn-shimmer 8s ease-in-out infinite 3s;
+    pointer-events: none;
+  }
+
+  /* ── PART 8: Stack cards ── */
+  .stack-card {
+    transition: border-color .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1),
+                box-shadow .3s ease !important;
+    overflow: visible !important;
+  }
+  .stack-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: rgba(1,211,160,.4) !important;
+    box-shadow: 0 14px 40px rgba(1,211,160,.1);
+  }
+
+  /* Ken Burns on stack images */
+  .sc-img-placeholder {
+    overflow: hidden !important;
+  }
+  .sc-prod-img {
+    transition: transform 4s ease-out !important;
+    transform-origin: center center;
+  }
+  .stack-card:hover .sc-prod-img {
+    transform: scale(1.04) !important;
+  }
+
+  /* Border trace on stack card hover */
+  .stack-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 11px;
+    background: conic-gradient(from var(--vp-trace, -90deg),
+      rgba(1,211,160,0) 0%,
+      rgba(1,211,160,.8) 12%,
+      rgba(74,159,224,.6) 18%,
+      rgba(1,211,160,0) 25%);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity .2s ease;
+    pointer-events: none;
+  }
+  .stack-card:hover::after {
+    opacity: 1;
+    animation: vp-trace-spin 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+
+  /* ── PART 9: Scroll progress bar ── */
+  #vp-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, #01D3A0, #4A9FE0);
+    z-index: 9999;
+    transition: width .08s linear;
+    pointer-events: none;
+    will-change: width;
+    box-shadow: 0 0 8px rgba(1,211,160,.5);
+  }
+
+  /* ── Touch: tap highlight removal ── */
+  .cc, .cat-tile, .stack-card, .btn-p, .btn-o,
+  .cp-order-btn, .nav-cart, .nav-logo,
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Mobile optimisations ── */
+  @media (max-width: 767px) {
+
+    /* Faster stagger on mobile */
+    .vp-ani.vp-in-view {
+      animation-duration: .35s;
+    }
+
+    /* Hero animates faster */
+    .vp-hero-headline { animation-duration: .45s; }
+    .vp-hero-sub      { animation-duration: .35s; }
+    .vp-hero-cta      { animation-duration: .35s; }
+
+    /* Reduce translateY for card scroll on mobile */
+    @keyframes vp-fade-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* No card hover lift on mobile (no hover events) */
+    .cc:hover        { transform: none !important; }
+    .cat-tile:hover  { transform: none !important; }
+    .stack-card:hover { transform: none !important; }
+
+    /* Tap feedback instead */
+    .cc:active        { transform: scale(0.98) !important; transition-duration: .1s !important; }
+    .cat-tile:active  { transform: scale(0.98) !important; transition-duration: .1s !important; }
+    .stack-card:active { transform: scale(0.98) !important; transition-duration: .1s !important; }
+    .btn-p:active, .btn-o:active { transform: scale(0.97) !important; transition-duration: .1s !important; }
+    .cp-order-btn:active { transform: scale(0.98) !important; }
+
+    /* Disable gradient border rotation on mobile (perf) */
+    .vp-featured::after { display: none; }
+
+    /* No letter-spacing expand on mobile */
+    .cat-tile:hover .cat-tile-name { letter-spacing: inherit; }
+
+    /* No stack Ken Burns on mobile */
+    .stack-card:hover .sc-prod-img { transform: none !important; }
+    .stack-card::after { display: none; }
+
+    /* Product detail: fade only, no slide */
+    .vp-detail-title, .vp-detail-order {
+      animation-name: vp-fade-in;
+    }
+
+    /* Progress bar 2px already, but ensure it shows */
+    #vp-progress { height: 2px; box-shadow: none; }
+
+    /* Shimmer less frequent on mobile (CSS can't change interval,
+       so we just let it run — JS reduces mobile shimmer) */
+  }
+
+} /* end prefers-reduced-motion: no-preference */
