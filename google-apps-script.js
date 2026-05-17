@@ -126,6 +126,111 @@ function doGet(e) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// MIGRATE — run migrateOrders() ONCE to copy old "Farts" tab → Orders tab
+// ════════════════════════════════════════════════════════════════════════════
+
+function migrateOrders() {
+  var ss       = SpreadsheetApp.getActiveSpreadsheet();
+  var src      = ss.getSheetByName('Farts');
+  var dst      = ss.getSheetByName(ORDERS_TAB);
+
+  if (!src) { SpreadsheetApp.getUi().alert('Source tab "Farts" not found.'); return; }
+  if (!dst) { SpreadsheetApp.getUi().alert('Orders tab not found — run setupVeloxWorkbook() first.'); return; }
+
+  var GBP = '£#,##0.00';
+
+  // ── Read existing Order IDs in destination (skip header row 1) ───────────
+  var dstLast   = dst.getLastRow();
+  var existingIds = {};
+  if (dstLast >= 2) {
+    dst.getRange(2, 1, dstLast - 1, 1).getValues().forEach(function(r) {
+      if (r[0]) existingIds[String(r[0]).trim()] = true;
+    });
+  }
+
+  // ── Read source rows (skip row 1 if it looks like a header) ─────────────
+  var srcLast = src.getLastRow();
+  if (srcLast < 2) { SpreadsheetApp.getUi().alert('No data rows found in "Farts" tab.'); return; }
+
+  var srcData = src.getRange(1, 1, srcLast, src.getLastColumn()).getValues();
+
+  // Detect header: if first cell contains "Order" or "ID" (case-insensitive) skip it
+  var startRow = 0;
+  var firstCell = String(srcData[0][0]).toLowerCase();
+  if (firstCell.indexOf('order') !== -1 || firstCell === 'id' || firstCell === 'order id') {
+    startRow = 1;
+  }
+
+  // ── Helper: strip currency symbols and parse as number ──────────────────
+  function toNum(v) {
+    return parseFloat(String(v || '0').replace(/[^0-9.-]/g, '')) || 0;
+  }
+
+  // ── Helper: ensure value is a Date object ────────────────────────────────
+  function toDate(v) {
+    if (!v) return new Date();
+    if (v instanceof Date) return v;
+    var d = new Date(v);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
+
+  // ── Old "Farts" column mapping (0-indexed) ───────────────────────────────
+  // A(0)=OrderID  B(1)=Date  C(2)=Name  D(3)=Email  E(4)=Phone
+  // F(5)=Address  G(6)=Products  H(7)=Total  I(8)=DiscountCode  J(9)=Status
+
+  var migrated = 0;
+  var skipped  = 0;
+
+  for (var i = startRow; i < srcData.length; i++) {
+    var r       = srcData[i];
+    var orderId = String(r[0] || '').trim();
+
+    if (!orderId) { skipped++; continue; }           // blank row
+    if (existingIds[orderId]) { skipped++; continue; } // already in Orders
+
+    // New Orders tab column layout (17 cols):
+    // A  B     C     D      E      F        G         H        I         J              K               L      M               N         O       P       Q
+    // ID Date  Name  Email  Phone  Address  Products  Subtotal Delivery  DiscountCode  DiscountAmount  Total  PaymentMethod   Currency  Region  Status  Notes
+
+    var newRow = [
+      orderId,            // A – Order ID
+      toDate(r[1]),       // B – Date
+      r[2] || '',         // C – Name
+      r[3] || '',         // D – Email
+      r[4] || '',         // E – Phone
+      r[5] || '',         // F – Address
+      r[6] || '',         // G – Products
+      '',                 // H – Subtotal (unknown, leave blank)
+      '',                 // I – Delivery (unknown, leave blank)
+      r[8] || '',         // J – Discount Code (old col I)
+      '',                 // K – Discount Amount (unknown, leave blank)
+      toNum(r[7]),        // L – Total (old col H, strip £)
+      '',                 // M – Payment Method (unknown)
+      'GBP',              // N – Currency
+      'UK',               // O – Region
+      r[9] || 'Paid',     // P – Status (old col J)
+      '',                 // Q – Notes
+    ];
+
+    dst.appendRow(newRow);
+
+    // Format date and currency cells on the newly-added row
+    var lr = dst.getLastRow();
+    dst.getRange(lr, 2).setNumberFormat('dd/mm/yyyy');  // B – Date
+    dst.getRange(lr, 12).setNumberFormat(GBP);          // L – Total
+
+    existingIds[orderId] = true; // prevent in-loop duplicates
+    migrated++;
+  }
+
+  SpreadsheetApp.getUi().alert(
+    'Migration complete!\n\n' +
+    '✓ Migrated: ' + migrated + ' orders\n' +
+    '⊘ Skipped (blank / already exist): ' + skipped
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // SETUP — run setupVeloxWorkbook() ONCE
 // ════════════════════════════════════════════════════════════════════════════
 
