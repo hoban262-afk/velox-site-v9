@@ -493,7 +493,7 @@ function setupCustomers(ss) {
     'Favourite Product','Discount Codes Used','Customer Tier','Days Since Last Order']);
 
   addDV(sh, 5, 3, 502, ['UK','EU']);
-  addDV(sh, 13, 3, 502, ['Bronze','Silver','Gold','Platinum']);
+  // Column 13 (Tier) is formula-driven — no dropdown needed
 
   for (var r = 3; r <= 502; r++) {
     sh.getRange(r,7).setNumberFormat(GBP);
