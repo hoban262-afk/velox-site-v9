@@ -2960,6 +2960,10 @@ a.eg-btn-p {
   letter-spacing: .1em !important;
   color: #01D3A0 !important;
   text-transform: uppercase !important;
+  background: rgba(1,211,160,.10) !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+  display: inline-block !important;
 }
 .cc-tag {
   font-size: 9px !important;
@@ -4345,7 +4349,7 @@ html { overflow-x: hidden !important; }
 /* ── 1. Nav: Stacks link teal highlight ─────────────────────────────────── */
 
 .nav-links a.nl-stacks {
-  color: #FF6B00 !important;
+  color: rgba(255,107,0,.75) !important;
   font-weight: 600 !important;
 }
 .nav-links a.nl-stacks:hover {
@@ -4354,7 +4358,7 @@ html { overflow-x: hidden !important; }
 
 /* Mobile menu: Stacks as top-level orange item */
 .mob-menu a.mob-nl-stacks {
-  color: #FF6B00 !important;
+  color: rgba(255,107,0,.75) !important;
   font-weight: 700 !important;
   padding-left: 0 !important;        /* full-width, not indented like sub-items */
   border-top: 1px solid rgba(255,107,0,.18) !important;
@@ -4398,7 +4402,7 @@ html { overflow-x: hidden !important; }
 /* ── 3. Homepage stacks section ─────────────────────────────────────────── */
 
 .hp-stacks-block {
-  border-top-color: #FF6B00 !important;
+  border-top-color: rgba(255,107,0,.75) !important;
 }
 
 .hp-stacks-inner {
@@ -4969,11 +4973,11 @@ body {
 .cat-tile-desc { display: none !important; }
 
 /* ── Category tiles — top border + name colour + action link colour ── */
-a.cat-tile[href*="/cognitive/"]      { border-top: 4px solid #9B6DFF !important; }
-a.cat-tile[href*="/metabolic/"]      { border-top: 4px solid #FFE500 !important; }
-a.cat-tile[href*="/healing-and-repair/"] { border-top: 4px solid #4FC3F7 !important; }
-a.cat-tile[href*="/growth/"]         { border-top: 4px solid #69D98C !important; }
-a.cat-tile[href*="/anti-ageing/"]    { border-top: 4px solid #FF6B9D !important; }
+a.cat-tile[href*="/cognitive/"]      { border-top: 4px solid rgba(155,109,255,.5) !important; }
+a.cat-tile[href*="/metabolic/"]      { border-top: 4px solid rgba(255,229,0,.5) !important; }
+a.cat-tile[href*="/healing-and-repair/"] { border-top: 4px solid rgba(79,195,247,.5) !important; }
+a.cat-tile[href*="/growth/"]         { border-top: 4px solid rgba(105,217,140,.5) !important; }
+a.cat-tile[href*="/anti-ageing/"]    { border-top: 4px solid rgba(255,107,157,.5) !important; }
 
 a.cat-tile[href*="/cognitive/"]      .cat-tile-name, a.cat-tile[href*="/cognitive/"]      .cat-tile-action { color: #9B6DFF !important; }
 a.cat-tile[href*="/metabolic/"]      .cat-tile-name, a.cat-tile[href*="/metabolic/"]      .cat-tile-action { color: #FFE500 !important; }
@@ -4982,30 +4986,30 @@ a.cat-tile[href*="/growth/"]         .cat-tile-name, a.cat-tile[href*="/growth/"
 a.cat-tile[href*="/anti-ageing/"]    .cat-tile-name, a.cat-tile[href*="/anti-ageing/"]    .cat-tile-action { color: #FF6B9D !important; }
 
 /* ── Product cards — top border, badge label colour, hover glow ── */
-.cc.cc-cognitive  { border-top-color: #9B6DFF !important; }
-.cc.cc-metabolic  { border-top-color: #FFE500 !important; }
-.cc.cc-healing    { border-top-color: #4FC3F7 !important; }
-.cc.cc-growth     { border-top-color: #69D98C !important; }
-.cc.cc-antiageing { border-top-color: #FF6B9D !important; }
+.cc.cc-cognitive  { border-top-color: rgba(155,109,255,.6) !important; }
+.cc.cc-metabolic  { border-top-color: rgba(255,229,0,.6) !important; }
+.cc.cc-healing    { border-top-color: rgba(79,195,247,.6) !important; }
+.cc.cc-growth     { border-top-color: rgba(105,217,140,.6) !important; }
+.cc.cc-antiageing { border-top-color: rgba(255,107,157,.6) !important; }
 
-.cc.cc-cognitive  .cc-cat { color: #9B6DFF !important; }
-.cc.cc-metabolic  .cc-cat { color: #FFE500 !important; }
-.cc.cc-healing    .cc-cat { color: #4FC3F7 !important; }
-.cc.cc-growth     .cc-cat { color: #69D98C !important; }
-.cc.cc-antiageing .cc-cat { color: #FF6B9D !important; }
+.cc.cc-cognitive  .cc-cat { color: #9B6DFF !important; background: rgba(155,109,255,.12) !important; }
+.cc.cc-metabolic  .cc-cat { color: #FFE500 !important; background: rgba(255,229,0,.12) !important; }
+.cc.cc-healing    .cc-cat { color: #4FC3F7 !important; background: rgba(79,195,247,.12) !important; }
+.cc.cc-growth     .cc-cat { color: #69D98C !important; background: rgba(105,217,140,.12) !important; }
+.cc.cc-antiageing .cc-cat { color: #FF6B9D !important; background: rgba(255,107,157,.12) !important; }
 
-.cc.cc-cognitive:hover  { border-color: #9B6DFF !important; box-shadow: 0 0 14px rgba(155,109,255,0.35), 0 4px 20px rgba(155,109,255,0.10) !important; }
-.cc.cc-metabolic:hover  { border-color: #FFE500 !important; box-shadow: 0 0 14px rgba(255,229,0,0.35),  0 4px 20px rgba(255,229,0,0.10)  !important; }
-.cc.cc-healing:hover    { border-color: #4FC3F7 !important; box-shadow: 0 0 14px rgba(79,195,247,0.35),  0 4px 20px rgba(79,195,247,0.10)  !important; }
-.cc.cc-growth:hover     { border-color: #69D98C !important; box-shadow: 0 0 14px rgba(105,217,140,0.35), 0 4px 20px rgba(105,217,140,0.10) !important; }
-.cc.cc-antiageing:hover { border-color: #FF6B9D !important; box-shadow: 0 0 14px rgba(255,107,157,0.35), 0 4px 20px rgba(255,107,157,0.10) !important; }
+.cc.cc-cognitive:hover  { border-color: rgba(155,109,255,.7) !important; box-shadow: 0 0 14px rgba(155,109,255,0.15), 0 4px 20px rgba(155,109,255,0.08) !important; }
+.cc.cc-metabolic:hover  { border-color: rgba(255,229,0,.7) !important; box-shadow: 0 0 14px rgba(255,229,0,0.15),  0 4px 20px rgba(255,229,0,0.08)  !important; }
+.cc.cc-healing:hover    { border-color: rgba(79,195,247,.7) !important; box-shadow: 0 0 14px rgba(79,195,247,0.15),  0 4px 20px rgba(79,195,247,0.08)  !important; }
+.cc.cc-growth:hover     { border-color: rgba(105,217,140,.7) !important; box-shadow: 0 0 14px rgba(105,217,140,0.15), 0 4px 20px rgba(105,217,140,0.08) !important; }
+.cc.cc-antiageing:hover { border-color: rgba(255,107,157,.7) !important; box-shadow: 0 0 14px rgba(255,107,157,0.15), 0 4px 20px rgba(255,107,157,0.08) !important; }
 
 /* ── Product detail pages — eyebrow text colour ── */
-body.page-cat-cognitive  .cp-eyebrow { color: #9B6DFF !important; }
-body.page-cat-metabolic  .cp-eyebrow { color: #FFE500 !important; }
-body.page-cat-healing    .cp-eyebrow { color: #4FC3F7 !important; }
-body.page-cat-growth     .cp-eyebrow { color: #69D98C !important; }
-body.page-cat-antiageing .cp-eyebrow { color: #FF6B9D !important; }
+body.page-cat-cognitive  .cp-eyebrow { color: rgba(155,109,255,.7) !important; }
+body.page-cat-metabolic  .cp-eyebrow { color: rgba(255,229,0,.7) !important; }
+body.page-cat-healing    .cp-eyebrow { color: rgba(79,195,247,.7) !important; }
+body.page-cat-growth     .cp-eyebrow { color: rgba(105,217,140,.7) !important; }
+body.page-cat-antiageing .cp-eyebrow { color: rgba(255,107,157,.7) !important; }
 
 /* ── Breadcrumb — category link colour on hub and detail pages ── */
 a.bc-link[href*="/compounds/cognitive/"]          { color: #9B6DFF !important; }
@@ -5029,18 +5033,18 @@ body.page-cat-antiageing .bc-current { color: #FF6B9D !important; }
 /* ── Stack tiles — top border ── */
 article.stack-card:has(a[href*="/stacks/cognitive/"]),
 article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]),
-article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]) { border-top: 4px solid #9B6DFF !important; }
+article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]) { border-top: 4px solid rgba(155,109,255,.6) !important; }
 
 article.stack-card:has(a[href*="/stacks/metabolic/"]),
-article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]) { border-top: 4px solid #FFE500 !important; }
+article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]) { border-top: 4px solid rgba(255,229,0,.6) !important; }
 
 article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]),
-article.stack-card:has(a[href*="/stacks/ultimate-repair/"]) { border-top: 4px solid #4FC3F7 !important; }
+article.stack-card:has(a[href*="/stacks/ultimate-repair/"]) { border-top: 4px solid rgba(79,195,247,.6) !important; }
 
-article.stack-card:has(a[href*="/stacks/gh-peptide/"]) { border-top: 4px solid #69D98C !important; }
+article.stack-card:has(a[href*="/stacks/gh-peptide/"]) { border-top: 4px solid rgba(105,217,140,.6) !important; }
 
 article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]),
-article.stack-card:has(a[href*="/stacks/anti-ageing/"]) { border-top: 4px solid #FF6B9D !important; }
+article.stack-card:has(a[href*="/stacks/anti-ageing/"]) { border-top: 4px solid rgba(255,107,157,.6) !important; }
 
 /* ── Stack tiles — eyebrow badge text colour ── */
 article.stack-card:has(a[href*="/stacks/cognitive/"]) .stack-card-eyebrow,
@@ -5077,18 +5081,18 @@ article.stack-card:has(a[href*="/stacks/anti-ageing/"]) .stack-card-action { col
 /* ── Stack tiles — hover glow ── */
 article.stack-card:has(a[href*="/stacks/cognitive/"]):hover,
 article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]):hover,
-article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]):hover { border-color: #9B6DFF !important; box-shadow: 0 0 14px rgba(155,109,255,0.35), 0 4px 20px rgba(155,109,255,0.10) !important; transform: translateY(-2px) !important; }
+article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]):hover { border-color: rgba(155,109,255,.7) !important; box-shadow: 0 0 14px rgba(155,109,255,0.15), 0 4px 20px rgba(155,109,255,0.08) !important; transform: translateY(-2px) !important; }
 
 article.stack-card:has(a[href*="/stacks/metabolic/"]):hover,
-article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]):hover { border-color: #FFE500 !important; box-shadow: 0 0 14px rgba(255,229,0,0.35), 0 4px 20px rgba(255,229,0,0.10) !important; transform: translateY(-2px) !important; }
+article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]):hover { border-color: rgba(255,229,0,.7) !important; box-shadow: 0 0 14px rgba(255,229,0,0.15), 0 4px 20px rgba(255,229,0,0.08) !important; transform: translateY(-2px) !important; }
 
 article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]):hover,
-article.stack-card:has(a[href*="/stacks/ultimate-repair/"]):hover { border-color: #4FC3F7 !important; box-shadow: 0 0 14px rgba(79,195,247,0.35), 0 4px 20px rgba(79,195,247,0.10) !important; transform: translateY(-2px) !important; }
+article.stack-card:has(a[href*="/stacks/ultimate-repair/"]):hover { border-color: rgba(79,195,247,.7) !important; box-shadow: 0 0 14px rgba(79,195,247,0.15), 0 4px 20px rgba(79,195,247,0.08) !important; transform: translateY(-2px) !important; }
 
-article.stack-card:has(a[href*="/stacks/gh-peptide/"]):hover { border-color: #69D98C !important; box-shadow: 0 0 14px rgba(105,217,140,0.35), 0 4px 20px rgba(105,217,140,0.10) !important; transform: translateY(-2px) !important; }
+article.stack-card:has(a[href*="/stacks/gh-peptide/"]):hover { border-color: rgba(105,217,140,.7) !important; box-shadow: 0 0 14px rgba(105,217,140,0.15), 0 4px 20px rgba(105,217,140,0.08) !important; transform: translateY(-2px) !important; }
 
 article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]):hover,
-article.stack-card:has(a[href*="/stacks/anti-ageing/"]):hover { border-color: #FF6B9D !important; box-shadow: 0 0 14px rgba(255,107,157,0.35), 0 4px 20px rgba(255,107,157,0.10) !important; transform: translateY(-2px) !important; }
+article.stack-card:has(a[href*="/stacks/anti-ageing/"]):hover { border-color: rgba(255,107,157,.7) !important; box-shadow: 0 0 14px rgba(255,107,157,0.15), 0 4px 20px rgba(255,107,157,0.08) !important; transform: translateY(-2px) !important; }
 
 /* ── Stack detail pages — section accents (stack-comp-link, order meta icons) ── */
 body.page-cat-cognitive  .stack-comp-link,
@@ -5111,7 +5115,7 @@ body.page-cat-antiageing .cpom-ic { color: #FF6B9D !important; }
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Stacks category tile (in cat-grid on homepage + catalogue) ── */
-a.cat-tile[href="/stacks/"]               { border-top: 4px solid #FF6B00 !important; }
+a.cat-tile[href="/stacks/"]               { border-top: 4px solid rgba(255,107,0,.5) !important; }
 a.cat-tile[href="/stacks/"] .cat-tile-eyebrow,
 a.cat-tile[href="/stacks/"] .cat-tile-count,
 a.cat-tile[href="/stacks/"] .cat-tile-name,
@@ -5128,7 +5132,7 @@ a.cat-tile[href="/stacks/"] .cat-tile-action { color: #FF6B00 !important; }
    These must appear after the per-category rules above to win via source order   */
 body.page-stacks-root .bc-current { color: #FF6B00 !important; }
 body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !important; }
-body.page-stacks-root article.stack-card:hover { border-color: #FF6B00 !important; box-shadow: 0 0 14px rgba(255,107,0,0.35), 0 4px 20px rgba(255,107,0,0.10) !important; transform: translateY(-2px) !important; }
+body.page-stacks-root article.stack-card:hover { border-color: rgba(255,107,0,.75) !important; box-shadow: 0 0 14px rgba(255,107,0,0.15), 0 4px 20px rgba(255,107,0,0.08) !important; transform: translateY(-2px) !important; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CAT-GRID 6-COLUMN LAYOUT
