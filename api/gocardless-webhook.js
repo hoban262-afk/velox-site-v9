@@ -191,8 +191,7 @@ async function handleFulfilment(event) {
   console.log(`[webhook] sendEmails completed for ${orderRef} (Resend will deduplicate if already sent by redirect handler)`);
 
   // ── Log to Google Sheets ───────────────────────────────────────────────────
-  // Note: if verify-payment already logged, this creates a second row marked "(webhook)".
-  // For a low-volume shop this is acceptable; a duplicate row is easy to spot.
+  // Note: if verify-payment already logged this order, the Apps Script deduplicates by orderId.
   const sheetsUrl = process.env.GOOGLE_SHEETS_URL;
   if (sheetsUrl) {
     const sym = currency === 'EUR' ? '€' : '£';
@@ -201,18 +200,22 @@ async function handleFulfilment(event) {
         method:  'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
-          orderId:       orderRef,
-          date:          new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
-          name:          customerName,
-          email:         customerEmail,
-          phone:         cust.p   || '',
-          address:       shippingAddr,
-          products:      order.it  || '',
-          total:         sym + (order.tot || '0.00'),
-          discountCode:  order.dc  || 'None',
-          region:        region,
-          currency:      currency,
-          paymentMethod: 'Instant Bank Pay (webhook)',
+          orderId:        orderRef,
+          date:           new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
+          name:           customerName,
+          email:          customerEmail,
+          phone:          cust.p    || '',
+          address:        shippingAddr,
+          products:       order.it  || '',
+          subtotal:       sym + (order.sub || '0.00'),
+          delivery:       sym + (order.sh  || '0.00'),
+          discountCode:   order.dc  || 'None',
+          discountAmount: sym + (order.ds  || '0.00'),
+          total:          sym + (order.tot || '0.00'),
+          paymentMethod:  'GoCardless Instant Bank Pay',
+          currency:       currency,
+          region:         region,
+          status:         'Paid',
         }),
       });
       console.log(`[webhook] Sheets log sent for ${orderRef}`);
