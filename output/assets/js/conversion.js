@@ -248,15 +248,36 @@
       var sc = document.createElement('style');
       sc.id = 'vp-viewing-css';
       sc.textContent = [
-        '@keyframes vp-pulse{0%,100%{opacity:1}50%{opacity:.2}}',
-        '@keyframes vp-fadein{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}',
-        '#vp-viewing{display:inline-flex;align-items:center;gap:8px;',
-          'background:#0d0d0d;border:1px solid #1a1a2e;border-left:3px solid #01D3A0;',
-          'border-radius:4px;padding:6px 12px;margin:8px 0 14px;',
-          'font-size:0.85rem;color:#fff;font-family:inherit;line-height:1;}',
-        '#vp-viewing.vp-fade{animation:vp-fadein .4s ease;}',
-        '#vp-viewing-dot{display:inline-block;width:8px;height:8px;background:#01D3A0;',
-          'border-radius:50%;animation:vp-pulse 2.5s ease-in-out infinite;flex-shrink:0;}',
+        '@keyframes vp-pulse{0%,100%{opacity:1}50%{opacity:.15}}',
+        '@keyframes vp-fadein{from{opacity:0}to{opacity:1}}',
+        '#vp-viewing{',
+          'display:flex;align-items:center;gap:10px;',
+          'width:100%;box-sizing:border-box;',
+          'background:rgba(1,211,160,0.08);',
+          'border-left:3px solid #01D3A0;',
+          'padding:10px 16px;',
+          'margin:10px 0 18px;',
+          'font-family:inherit;',
+        '}',
+        '#vp-viewing.vp-fade{animation:vp-fadein .35s ease;}',
+        '#vp-viewing-dot{',
+          'display:inline-block;width:8px;height:8px;',
+          'background:#01D3A0;border-radius:50%;',
+          'animation:vp-pulse 1.5s ease-in-out infinite;',
+          'flex-shrink:0;',
+        '}',
+        '#vp-viewing-count{',
+          'color:#fff;font-weight:600;font-size:0.95rem;',
+          'flex:1;line-height:1.3;',
+        '}',
+        '#vp-viewing-live{',
+          'font-size:0.75rem;color:#6B7280;',
+          'white-space:nowrap;flex-shrink:0;',
+        '}',
+        '@media(max-width:600px){',
+          '#vp-viewing{padding:9px 14px;}',
+          '#vp-viewing-count{font-size:0.875rem;}',
+        '}',
       ].join('');
       document.head.appendChild(sc);
     }
@@ -268,16 +289,17 @@
     el.id = 'vp-viewing';
     el.innerHTML =
       '<span id="vp-viewing-dot"></span>' +
-      '<span id="vp-viewing-count">' + getCount() + ' people viewing this now</span>';
+      '<span id="vp-viewing-count">' + getCount() + ' people viewing this now</span>' +
+      '<span id="vp-viewing-live">updated live</span>';
 
-    /* Insert directly after h1, before the disc-inline compliance box */
+    /* Insert directly after h1 */
     h1.parentNode.insertBefore(el, h1.nextSibling);
 
     setInterval(function () {
       var c = document.getElementById('vp-viewing-count');
       if (!c) return;
       c.textContent = getCount() + ' people viewing this now';
-      /* Trigger fade-in reflow */
+      /* Fade transition on update */
       el.classList.remove('vp-fade');
       void el.offsetWidth;
       el.classList.add('vp-fade');
