@@ -188,24 +188,8 @@
       return prefix + count + ' in stock';
     }
 
-    /* ── A. Product cards — inject badge using card default ── */
-    document.querySelectorAll('.cc').forEach(function (card) {
-      var a = card.querySelector('a[href]');
-      if (!a) return;
-      var m = (a.getAttribute('href') || '').match(/\/compounds\/([^/]+)\//);
-      if (!m) return;
-      var def = cardDefault[m[1]];
-      if (!def) return;
-      var ft = card.querySelector('.cc-ft');
-      if (!ft) return;
-
-      var badge = document.createElement('div');
-      badge.className = 'vp-stock-badge';
-      badge.textContent = stockText(def.count, def.size);
-      badge.style.cssText = 'font-size:11px;font-weight:600;margin-top:5px;' +
-        'letter-spacing:.02em;color:' + stockColor(def.count) + ';';
-      ft.appendChild(badge);
-    });
+    /* ── A. Product cards — stock numbers removed; LOW STOCK badge on Retatrutide
+            is handled separately by animations.js (vp-popular-badge) ── */
 
     /* ── B. Product detail page — dynamic per-variation indicator ── */
     var form = document.querySelector('form[data-compound]');
