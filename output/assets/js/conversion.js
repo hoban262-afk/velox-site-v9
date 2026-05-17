@@ -130,17 +130,17 @@
 
     /* ── Stock data keyed by slug → variation size value ── */
     var stockV = {
-      'bpc-157':           { '10mg': 3 },
+      'bpc-157':           { '10mg': 8 },
       'tb-500':            { '10mg': 6 },
       'semax':             { '10mg': 11 },
-      'selank':            { '10mg': 4 },
+      'selank':            { '10mg': 9 },
       'dsip':              { '5mg': 14, '10mg': 10 },
       'retatrutide':       { '10mg': 3, '15mg': 8, '20mg': 4, '40mg Pen': 3 },
-      'tesamorelin':       { '15mg': 3 },
+      'tesamorelin':       { '15mg': 5 },
       'mots-c':            { '10mg': 12 },
       'nad-plus':          { '1000mg': 10 },
       'glutathione':       { '1500mg': 9 },
-      'ghk-cu':            { '100mg': 4 },
+      'ghk-cu':            { '100mg': 8 },
       'melanotan-ii':      { '10mg': 6 },
       'cjc-1295':          { '10mg': 9 },
       'kpv':               { '10mg': 11 },
@@ -152,17 +152,17 @@
      * Cards only have a link — they don't expose which size is selected.
      */
     var cardDefault = {
-      'bpc-157':           { size: '10mg',      count: 3  },
+      'bpc-157':           { size: '10mg',      count: 8  },
       'tb-500':            { size: '10mg',      count: 6  },
       'semax':             { size: '10mg',      count: 11 },
-      'selank':            { size: '10mg',      count: 4  },
+      'selank':            { size: '10mg',      count: 9  },
       'dsip':              { size: '5mg',       count: 14 },
       'retatrutide':       { size: '10mg',      count: 3  },
-      'tesamorelin':       { size: '15mg',      count: 3  },
+      'tesamorelin':       { size: '15mg',      count: 5  },
       'mots-c':            { size: '10mg',      count: 12 },
       'nad-plus':          { size: '1000mg',    count: 10 },
       'glutathione':       { size: '1500mg',    count: 9  },
-      'ghk-cu':            { size: '100mg',     count: 4  },
+      'ghk-cu':            { size: '100mg',     count: 8  },
       'melanotan-ii':      { size: '10mg',      count: 6  },
       'cjc-1295':          { size: '10mg',      count: 9  },
       'kpv':               { size: '10mg',      count: 11 },
@@ -499,7 +499,7 @@
    *  LOW STOCK URGENCY BANNER — detail pages for the 5 popular products
    * ───────────────────────────────────────────────────────────────── */
   function initUrgencyBanner() {
-    var LOW_STOCK_SLUGS = ['retatrutide', 'bpc-157', 'selank', 'tesamorelin', 'ghk-cu'];
+    var LOW_STOCK_SLUGS = ['retatrutide'];
     var m = window.location.pathname.match(/\/compounds\/([^/]+)\//);
     if (!m || LOW_STOCK_SLUGS.indexOf(m[1]) === -1) return;
 

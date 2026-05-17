@@ -17,10 +17,6 @@
   /* Featured compound slugs (from href) and stack slug */
   var FEATURED_COMPOUNDS = [
     '/compounds/retatrutide/',
-    '/compounds/bpc-157/',
-    '/compounds/selank/',
-    '/compounds/tesamorelin/',
-    '/compounds/ghk-cu/',
   ];
   var FEATURED_STACK = '/stacks/cognitive-and-sleep/';
 
