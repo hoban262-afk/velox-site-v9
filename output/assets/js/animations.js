@@ -15,7 +15,13 @@
   var isStack   = document.body.classList.contains('page-stack');
 
   /* Featured compound slugs (from href) and stack slug */
-  var FEATURED_COMPOUNDS = ['/compounds/retatrutide/', '/compounds/bpc-157/', '/compounds/semax/'];
+  var FEATURED_COMPOUNDS = [
+    '/compounds/retatrutide/',
+    '/compounds/bpc-157/',
+    '/compounds/selank/',
+    '/compounds/tesamorelin/',
+    '/compounds/ghk-cu/',
+  ];
   var FEATURED_STACK = '/stacks/cognitive-and-sleep/';
 
   /* ─────────────────────────────────────────────────────────────────
@@ -86,7 +92,7 @@
    *  3. Featured card treatment
    * ───────────────────────────────────────────────────────────────── */
   function initFeaturedCards() {
-    /* Product cards */
+    /* Product cards — LOW STOCK badge + rotating border */
     document.querySelectorAll('.cc').forEach(function (card) {
       var link = card.querySelector('.cc-img-link, .cc-name-link, a[href]');
       if (!link) return;
@@ -94,27 +100,25 @@
       var featured = FEATURED_COMPOUNDS.some(function (f) { return href.indexOf(f) !== -1; });
       if (!featured) return;
       card.classList.add('vp-featured');
-      injectPopularBadge(card);
+      injectLowStockBadge(card);
     });
 
-    /* Stack cards */
+    /* Stack cards — rotating border only, no LOW STOCK badge */
     document.querySelectorAll('.stack-card').forEach(function (card) {
       var link = card.querySelector('.stack-card-link');
       if (!link) return;
       var href = link.getAttribute('href') || '';
       if (href.indexOf(FEATURED_STACK) !== -1) {
         card.classList.add('vp-featured');
-        injectPopularBadge(card);
       }
     });
   }
 
-  function injectPopularBadge(card) {
-    /* Don't add twice */
+  function injectLowStockBadge(card) {
     if (card.querySelector('.vp-popular-badge')) return;
     var badge = document.createElement('div');
     badge.className = 'vp-popular-badge';
-    badge.textContent = 'POPULAR';
+    badge.textContent = 'LOW STOCK';
     badge.setAttribute('aria-hidden', 'true');
     card.appendChild(badge);
   }

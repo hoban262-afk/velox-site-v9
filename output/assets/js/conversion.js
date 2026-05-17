@@ -130,17 +130,17 @@
 
     /* ── Stock data keyed by slug → variation size value ── */
     var stockV = {
-      'bpc-157':           { '10mg': 8 },
+      'bpc-157':           { '10mg': 3 },
       'tb-500':            { '10mg': 6 },
       'semax':             { '10mg': 11 },
-      'selank':            { '10mg': 9 },
+      'selank':            { '10mg': 4 },
       'dsip':              { '5mg': 14, '10mg': 10 },
-      'retatrutide':       { '10mg': 4, '15mg': 8, '20mg': 7, '40mg Pen': 3 },
-      'tesamorelin':       { '15mg': 5 },
+      'retatrutide':       { '10mg': 3, '15mg': 8, '20mg': 4, '40mg Pen': 3 },
+      'tesamorelin':       { '15mg': 3 },
       'mots-c':            { '10mg': 12 },
       'nad-plus':          { '1000mg': 10 },
       'glutathione':       { '1500mg': 9 },
-      'ghk-cu':            { '100mg': 8 },
+      'ghk-cu':            { '100mg': 4 },
       'melanotan-ii':      { '10mg': 6 },
       'cjc-1295':          { '10mg': 9 },
       'kpv':               { '10mg': 11 },
@@ -152,17 +152,17 @@
      * Cards only have a link — they don't expose which size is selected.
      */
     var cardDefault = {
-      'bpc-157':           { size: '10mg',      count: 8  },
+      'bpc-157':           { size: '10mg',      count: 3  },
       'tb-500':            { size: '10mg',      count: 6  },
       'semax':             { size: '10mg',      count: 11 },
-      'selank':            { size: '10mg',      count: 9  },
+      'selank':            { size: '10mg',      count: 4  },
       'dsip':              { size: '5mg',       count: 14 },
-      'retatrutide':       { size: '10mg',      count: 4  },
-      'tesamorelin':       { size: '15mg',      count: 5  },
+      'retatrutide':       { size: '10mg',      count: 3  },
+      'tesamorelin':       { size: '15mg',      count: 3  },
       'mots-c':            { size: '10mg',      count: 12 },
       'nad-plus':          { size: '1000mg',    count: 10 },
       'glutathione':       { size: '1500mg',    count: 9  },
-      'ghk-cu':            { size: '100mg',     count: 8  },
+      'ghk-cu':            { size: '100mg',     count: 4  },
       'melanotan-ii':      { size: '10mg',      count: 6  },
       'cjc-1295':          { size: '10mg',      count: 9  },
       'kpv':               { size: '10mg',      count: 11 },
@@ -240,6 +240,23 @@
     updateStatus();
     form.querySelectorAll('input[name="size"]').forEach(function (radio) {
       radio.addEventListener('change', updateStatus);
+    });
+
+    /* Inject per-row stock count into each size option (right-aligned) */
+    form.querySelectorAll('.cp-size-opt').forEach(function (label) {
+      var input = label.querySelector('input[name="size"]');
+      if (!input) return;
+      var count = sizes[input.value];
+      if (count === undefined) return;
+      if (label.querySelector('.vp-size-stock-count')) return; /* no dupes */
+      var span = document.createElement('span');
+      span.className = 'vp-size-stock-count';
+      span.textContent = count <= 5  ? 'Only ' + count + ' left' :
+                         count <= 10 ? count + ' left' :
+                         count + ' in stock';
+      span.style.cssText = 'font-size:11px;font-weight:600;white-space:nowrap;' +
+        'flex-shrink:0;color:' + stockColor(count) + ';margin-left:auto;padding-left:8px;';
+      label.appendChild(span);
     });
 
     /* Also remove any old flat badge that was inserted below the button */
@@ -479,6 +496,24 @@
 
 
   /* ─────────────────────────────────────────────────────────────────
+   *  LOW STOCK URGENCY BANNER — detail pages for the 5 popular products
+   * ───────────────────────────────────────────────────────────────── */
+  function initUrgencyBanner() {
+    var LOW_STOCK_SLUGS = ['retatrutide', 'bpc-157', 'selank', 'tesamorelin', 'ghk-cu'];
+    var m = window.location.pathname.match(/\/compounds\/([^/]+)\//);
+    if (!m || LOW_STOCK_SLUGS.indexOf(m[1]) === -1) return;
+
+    var h1 = document.querySelector('.cp-h1');
+    if (!h1) return;
+
+    var banner = document.createElement('div');
+    banner.className = 'vp-urgency-banner';
+    banner.innerHTML = '&#9888;&#65039; Low stock &mdash; order soon to avoid disappointment';
+    h1.parentNode.insertBefore(banner, h1.nextSibling);
+  }
+
+
+  /* ─────────────────────────────────────────────────────────────────
    *  9. CART BAC-WATER UPSELL — cart page only
    * ───────────────────────────────────────────────────────────────── */
   function initBacWaterUpsell() {
@@ -536,6 +571,7 @@
     initOrderCounter();
     initTicker();
     initUrgency();
+    initUrgencyBanner();
     initViewing();
     initLiveChat();
     initFRT();
