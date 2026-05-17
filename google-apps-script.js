@@ -164,6 +164,7 @@ function getOrCreate(ss, name) {
   if (!sh) sh = ss.insertSheet(name);
   sh.clear();
   sh.clearConditionalFormatRules();
+  sh.getRange(1, 1, sh.getMaxRows(), sh.getMaxColumns()).clearDataValidations();
   return sh;
 }
 
