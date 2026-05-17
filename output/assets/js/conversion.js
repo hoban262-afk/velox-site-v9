@@ -124,79 +124,66 @@
 
 
   /* ─────────────────────────────────────────────────────────────────
-   *  3. STOCK URGENCY — per-variation, cards + detail page
+   *  3. STOCK URGENCY — per-variation, detail page indicator
    * ───────────────────────────────────────────────────────────────── */
   function initUrgency() {
 
-    /* ── Stock data keyed by slug → variation size value ── */
-    var stockV = {
-      'bpc-157':           { '10mg': 8 },
-      'tb-500':            { '10mg': 6 },
-      'semax':             { '10mg': 11 },
-      'selank':            { '10mg': 9 },
-      'dsip':              { '5mg': 14, '10mg': 10 },
-      'retatrutide':       { '10mg': 3, '15mg': 8, '20mg': 4, '40mg Pen': 3 },
-      'tesamorelin':       { '15mg': 5 },
-      'mots-c':            { '10mg': 12 },
-      'nad-plus':          { '1000mg': 10 },
-      'glutathione':       { '1500mg': 9 },
-      'ghk-cu':            { '100mg': 8 },
-      'melanotan-ii':      { '10mg': 6 },
-      'cjc-1295':          { '10mg': 9 },
-      'kpv':               { '10mg': 11 },
-      'bpc157-tb500-mix':  { '20mg (10mg BPC-157 + 10mg TB-500)': 5 },
-    };
+    /* ── Date-seeded RNG: same result for everyone on the same day, changes daily ──
+     *  Seed = date (YYYYMMDD) + slug + size → unique per product+variant per day   */
+    function stockRng(slug, size) {
+      var d  = new Date();
+      var dn = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+      var str = dn + '|' + slug + '|' + size;
+      var h = 0;
+      for (var i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+      var x = Math.sin(Math.abs(h)) * 43758.5453;
+      return x - Math.floor(x);
+    }
 
-    /*
-     * Card default: the size shown on product cards (first/checked variation).
-     * Cards only have a link — they don't expose which size is selected.
-     */
-    var cardDefault = {
-      'bpc-157':           { size: '10mg',      count: 8  },
-      'tb-500':            { size: '10mg',      count: 6  },
-      'semax':             { size: '10mg',      count: 11 },
-      'selank':            { size: '10mg',      count: 9  },
-      'dsip':              { size: '5mg',       count: 14 },
-      'retatrutide':       { size: '10mg',      count: 3  },
-      'tesamorelin':       { size: '15mg',      count: 5  },
-      'mots-c':            { size: '10mg',      count: 12 },
-      'nad-plus':          { size: '1000mg',    count: 10 },
-      'glutathione':       { size: '1500mg',    count: 9  },
-      'ghk-cu':            { size: '100mg',     count: 8  },
-      'melanotan-ii':      { size: '10mg',      count: 6  },
-      'cjc-1295':          { size: '10mg',      count: 9  },
-      'kpv':               { size: '10mg',      count: 11 },
-      'bpc157-tb500-mix':  { size: '10mg blend',count: 5  },
+    /* Returns today's fluctuating stock count for a given slug + size */
+    function getStockCount(slug, size) {
+      var r = stockRng(slug, size);
+      if (slug === 'retatrutide') {
+        if (size === '10mg')     return Math.floor(r * 3) + 2;  /* 2–4  */
+        if (size === '15mg')     return Math.floor(r * 4) + 6;  /* 6–9  */
+        if (size === '20mg')     return Math.floor(r * 3) + 3;  /* 3–5  */
+        if (size === '40mg Pen') return Math.floor(r * 3) + 2;  /* 2–4  */
+      }
+      return Math.floor(r * 9) + 6;                             /* 6–14 */
+    }
+
+    /* Slugs that show a stock indicator on their detail page */
+    var trackedSlugs = {
+      'bpc-157': 1, 'tb-500': 1, 'semax': 1, 'selank': 1, 'dsip': 1,
+      'retatrutide': 1, 'tesamorelin': 1, 'mots-c': 1, 'nad-plus': 1,
+      'glutathione': 1, 'ghk-cu': 1, 'melanotan-ii': 1, 'cjc-1295': 1,
+      'kpv': 1, 'bpc157-tb500-mix': 1,
     };
 
     /*
      * Colour thresholds:
-     *   ≤5   → red    #FF4444   "Only X left — low stock"
-     *   6–10 → amber  #FF6B00   "Only X left"
-     *   ≥11  → grey   #6B7280   "X in stock"
+     *   ≤4  → red   #FF4444   "Only X left"
+     *   5–8 → amber #FF6B00   "Only X left"
+     *   9+  → grey  #6B7280   "X in stock"
      */
     function stockColor(count) {
-      if (count <= 5)  return '#FF4444';
-      if (count <= 10) return '#FF6B00';
+      if (count <= 4) return '#FF4444';
+      if (count <= 8) return '#FF6B00';
       return '#6B7280';
     }
-    function stockText(count, includeSize) {
-      /* includeSize is a string label like "10mg" or falsy */
-      var prefix = includeSize ? includeSize + ' — ' : '';
-      if (count <= 5)  return prefix + 'Only ' + count + ' left — low stock';
-      if (count <= 10) return prefix + 'Only ' + count + ' left';
-      return prefix + count + ' in stock';
+    function stockText(count) {
+      if (count <= 8) return 'Only ' + count + ' left';
+      return count + ' in stock';
     }
 
     /* ── A. Product cards — stock numbers removed; LOW STOCK badge on Retatrutide
             is handled separately by animations.js (vp-popular-badge) ── */
 
-    /* ── B. Product detail page — dynamic per-variation indicator ── */
+    /* ── B. Product detail page — dynamic per-variation indicator above ADD TO ORDER ── */
     var form = document.querySelector('form[data-compound]');
     if (!form) return;
     var slug = form.getAttribute('data-compound');
-    var sizes = stockV[slug];
-    if (!sizes) return;
+    if (!trackedSlugs[slug]) return;
 
     /* Create the status element and insert after .cp-sizes */
     var cpSizes = form.querySelector('.cp-sizes');
@@ -211,13 +198,10 @@
     function updateStatus() {
       var checked = form.querySelector('input[name="size"]:checked');
       var val = checked ? checked.value : null;
-      var count = (val && sizes[val] !== undefined) ? sizes[val] : null;
-      if (count === null) {
-        statusEl.textContent = '';
-        return;
-      }
+      if (!val) { statusEl.textContent = ''; return; }
+      var count = getStockCount(slug, val);
       statusEl.style.color = stockColor(count);
-      statusEl.textContent = stockText(count, false);
+      statusEl.textContent = stockText(count);
     }
 
     /* Initial render + listen for changes */
@@ -226,26 +210,14 @@
       radio.addEventListener('change', updateStatus);
     });
 
-    /* Inject per-row stock count into each size option (right-aligned) */
-    form.querySelectorAll('.cp-size-opt').forEach(function (label) {
-      var input = label.querySelector('input[name="size"]');
-      if (!input) return;
-      var count = sizes[input.value];
-      if (count === undefined) return;
-      if (label.querySelector('.vp-size-stock-count')) return; /* no dupes */
-      var span = document.createElement('span');
-      span.className = 'vp-size-stock-count';
-      span.textContent = count <= 5  ? 'Only ' + count + ' left' :
-                         count <= 10 ? count + ' left' :
-                         count + ' in stock';
-      span.style.cssText = 'font-size:11px;font-weight:600;white-space:nowrap;' +
-        'flex-shrink:0;color:' + stockColor(count) + ';margin-left:auto;padding-left:8px;';
-      label.appendChild(span);
-    });
-
-    /* Also remove any old flat badge that was inserted below the button */
+    /* Remove any old flat badge below the button */
     var oldBadge = form.querySelector('.vp-stock-badge');
     if (oldBadge) oldBadge.parentNode.removeChild(oldBadge);
+
+    /* Remove any per-row stock counts that may have been injected previously */
+    form.querySelectorAll('.vp-size-stock-count').forEach(function (el) {
+      el.parentNode.removeChild(el);
+    });
   }
 
 
@@ -261,17 +233,31 @@
       var x = Math.sin(seed + 1.7391) * 43758.5453;
       return x - Math.floor(x);
     }
+    /* Weighted toward 6–10 (65%), tails at 4–5 (15%) and 11–14 (20%) */
     function getCount() {
       var s   = slug.split('').reduce(function (a, c) { return a + c.charCodeAt(0); }, 0);
-      var win = Math.floor(Date.now() / 90000);   /* 90-second window */
-      return Math.floor(rng(s * 100 + win) * 9) + 3;   /* 3–11 */
+      var win = Math.floor(Date.now() / 90000);
+      var r   = rng(s * 100 + win);
+      if (r < 0.15) return Math.floor(r / 0.15 * 2) + 4;           /* 4–5  */
+      if (r < 0.80) return Math.floor((r - 0.15) / 0.65 * 5) + 6;  /* 6–10 */
+      return Math.floor((r - 0.80) / 0.20 * 4) + 11;               /* 11–14 */
     }
 
-    /* inject pulse-dot CSS once */
-    if (!document.getElementById('vp-pulse-css')) {
+    /* Inject CSS once */
+    if (!document.getElementById('vp-viewing-css')) {
       var sc = document.createElement('style');
-      sc.id = 'vp-pulse-css';
-      sc.textContent = '@keyframes vp-pulse{0%,100%{opacity:1}50%{opacity:.25}}';
+      sc.id = 'vp-viewing-css';
+      sc.textContent = [
+        '@keyframes vp-pulse{0%,100%{opacity:1}50%{opacity:.2}}',
+        '@keyframes vp-fadein{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}',
+        '#vp-viewing{display:inline-flex;align-items:center;gap:8px;',
+          'background:#0d0d0d;border:1px solid #1a1a2e;border-left:3px solid #01D3A0;',
+          'border-radius:4px;padding:6px 12px;margin:8px 0 14px;',
+          'font-size:0.85rem;color:#fff;font-family:inherit;line-height:1;}',
+        '#vp-viewing.vp-fade{animation:vp-fadein .4s ease;}',
+        '#vp-viewing-dot{display:inline-block;width:8px;height:8px;background:#01D3A0;',
+          'border-radius:50%;animation:vp-pulse 2.5s ease-in-out infinite;flex-shrink:0;}',
+      ].join('');
       document.head.appendChild(sc);
     }
 
@@ -280,17 +266,21 @@
 
     var el = document.createElement('div');
     el.id = 'vp-viewing';
-    el.style.cssText = 'font-size:12px;color:#01D3A0;opacity:.85;margin:-4px 0 14px;' +
-      'display:flex;align-items:center;gap:7px;';
-    el.innerHTML = '<span style="display:inline-block;width:7px;height:7px;background:#01D3A0;' +
-      'border-radius:50%;animation:vp-pulse 2s ease-in-out infinite;flex-shrink:0;"></span>' +
+    el.innerHTML =
+      '<span id="vp-viewing-dot"></span>' +
       '<span id="vp-viewing-count">' + getCount() + ' people viewing this now</span>';
 
+    /* Insert directly after h1, before the disc-inline compliance box */
     h1.parentNode.insertBefore(el, h1.nextSibling);
 
     setInterval(function () {
       var c = document.getElementById('vp-viewing-count');
-      if (c) c.textContent = getCount() + ' people viewing this now';
+      if (!c) return;
+      c.textContent = getCount() + ' people viewing this now';
+      /* Trigger fade-in reflow */
+      el.classList.remove('vp-fade');
+      void el.offsetWidth;
+      el.classList.add('vp-fade');
     }, 90000);
   }
 
