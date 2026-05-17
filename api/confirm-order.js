@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({
             orderId:        orderRef,
-            date:           new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
+            date:           new Date().toISOString(),
             name:           d.customer_name    || '',
             email:          d.customer_email   || '',
             phone:          d.customer_phone   || '',

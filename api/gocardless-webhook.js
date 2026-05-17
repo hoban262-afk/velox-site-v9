@@ -201,7 +201,7 @@ async function handleFulfilment(event) {
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
           orderId:        orderRef,
-          date:           new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
+          date:           new Date().toISOString(),
           name:           customerName,
           email:          customerEmail,
           phone:          cust.p    || '',
