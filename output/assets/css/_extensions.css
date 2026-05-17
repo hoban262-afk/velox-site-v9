@@ -181,8 +181,8 @@
 /* Stack cards */
 .stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
 .stack-grid-sec{padding:40px 0;}
-.stack-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden;transition:border-color .2s,transform .2s;}
-.stack-card:hover{border-color:rgba(1,211,160,.35);transform:translateY(-2px);}
+.stack-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden;transition:transform 0.2s ease,box-shadow 0.2s ease;}
+.stack-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
 .stack-card-link{display:flex;flex-direction:column;padding:20px;text-decoration:none;height:100%;}
 .stack-card-eyebrow{font-family:var(--mono);font-size:9px;color:var(--g);letter-spacing:.12em;margin-bottom:8px;}
 .stack-card-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:3px;}

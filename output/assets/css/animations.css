@@ -342,47 +342,11 @@
 
   /* ── PART 8: Stack cards ── */
   .stack-card {
-    transition: border-color .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1),
-                box-shadow .3s ease !important;
-    overflow: visible !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
   }
   .stack-card:hover {
-    transform: translateY(-5px) !important;
-    border-color: rgba(1,211,160,.4) !important;
-    box-shadow: 0 14px 40px rgba(1,211,160,.1);
-  }
-
-  /* Ken Burns on stack images */
-  .sc-img-placeholder {
-    overflow: hidden !important;
-  }
-  .sc-prod-img {
-    transition: transform 4s ease-out !important;
-    transform-origin: center center;
-  }
-  .stack-card:hover .sc-prod-img {
-    transform: scale(1.04) !important;
-  }
-
-  /* Border trace on stack card hover */
-  .stack-card::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 11px;
-    background: conic-gradient(from var(--vp-trace, -90deg),
-      rgba(1,211,160,0) 0%,
-      rgba(1,211,160,.8) 12%,
-      rgba(74,159,224,.6) 18%,
-      rgba(1,211,160,0) 25%);
-    z-index: -1;
-    opacity: 0;
-    transition: opacity .2s ease;
-    pointer-events: none;
-  }
-  .stack-card:hover::after {
-    opacity: 1;
-    animation: vp-trace-spin 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
   }
 
   /* ── PART 9: Scroll progress bar ── */
@@ -429,7 +393,7 @@
     /* No card hover lift on mobile (no hover events) */
     .cc:hover        { transform: none !important; }
     .cat-tile:hover  { transform: none !important; }
-    .stack-card:hover { transform: none !important; }
+    .stack-card:hover { transform: none !important; box-shadow: none !important; }
 
     /* Tap feedback instead */
     .cc:active        { transform: scale(0.98) !important; transition-duration: .1s !important; }
@@ -443,10 +407,6 @@
 
     /* No letter-spacing expand on mobile */
     .cat-tile:hover .cat-tile-name { letter-spacing: inherit; }
-
-    /* No stack Ken Burns on mobile */
-    .stack-card:hover .sc-prod-img { transform: none !important; }
-    .stack-card::after { display: none; }
 
     /* Product detail: fade only, no slide */
     .vp-detail-title, .vp-detail-order {

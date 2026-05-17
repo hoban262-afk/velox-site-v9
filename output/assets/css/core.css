@@ -5078,21 +5078,12 @@ article.stack-card:has(a[href*="/stacks/gh-peptide/"]) .stack-card-action { colo
 article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]) .stack-card-action,
 article.stack-card:has(a[href*="/stacks/anti-ageing/"]) .stack-card-action { color: #FF6B9D !important; }
 
-/* ── Stack tiles — hover glow ── */
-article.stack-card:has(a[href*="/stacks/cognitive/"]):hover,
-article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]):hover,
-article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]):hover { border-color: rgba(155,109,255,.7) !important; box-shadow: 0 0 14px rgba(155,109,255,0.15), 0 4px 20px rgba(155,109,255,0.08) !important; transform: translateY(-2px) !important; }
-
-article.stack-card:has(a[href*="/stacks/metabolic/"]):hover,
-article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]):hover { border-color: rgba(255,229,0,.7) !important; box-shadow: 0 0 14px rgba(255,229,0,0.15), 0 4px 20px rgba(255,229,0,0.08) !important; transform: translateY(-2px) !important; }
-
-article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]):hover,
-article.stack-card:has(a[href*="/stacks/ultimate-repair/"]):hover { border-color: rgba(79,195,247,.7) !important; box-shadow: 0 0 14px rgba(79,195,247,0.15), 0 4px 20px rgba(79,195,247,0.08) !important; transform: translateY(-2px) !important; }
-
-article.stack-card:has(a[href*="/stacks/gh-peptide/"]):hover { border-color: rgba(105,217,140,.7) !important; box-shadow: 0 0 14px rgba(105,217,140,0.15), 0 4px 20px rgba(105,217,140,0.08) !important; transform: translateY(-2px) !important; }
-
-article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]):hover,
-article.stack-card:has(a[href*="/stacks/anti-ageing/"]):hover { border-color: rgba(255,107,157,.7) !important; box-shadow: 0 0 14px rgba(255,107,157,0.15), 0 4px 20px rgba(255,107,157,0.08) !important; transform: translateY(-2px) !important; }
+/* ── Stack tiles — hover (clean lift only, no colour glow) ── */
+article.stack-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+  border-color: var(--brd) !important;
+}
 
 /* ── Stack detail pages — section accents (stack-comp-link, order meta icons) ── */
 body.page-cat-cognitive  .stack-comp-link,
@@ -5132,7 +5123,7 @@ a.cat-tile[href="/stacks/"] .cat-tile-action { color: #FF6B00 !important; }
    These must appear after the per-category rules above to win via source order   */
 body.page-stacks-root .bc-current { color: #FF6B00 !important; }
 body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !important; }
-body.page-stacks-root article.stack-card:hover { border-color: rgba(255,107,0,.75) !important; box-shadow: 0 0 14px rgba(255,107,0,0.15), 0 4px 20px rgba(255,107,0,0.08) !important; transform: translateY(-2px) !important; }
+/* stack-card hover handled by unified rule above */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CAT-GRID 6-COLUMN LAYOUT
