@@ -442,7 +442,7 @@ function setupProducts(ss) {
   sh.getRange(lastRow+2,1,1,19).merge()
     .setValue('* Units Sold MTD/YTD: enter manually or update when dispatching. Revenue MTD/YTD: also manual — product-level breakdown requires parsing the Products text column.')
     .setFontFamily('Arial').setFontSize(9).setFontColor('#666666').setFontStyle('italic');
-  sh.setFrozenRows(2); sh.setFrozenColumns(1);
+  sh.setFrozenRows(2);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -521,7 +521,7 @@ function setupCustomers(ss) {
   sh.getRange(504,1,1,14).merge()
     .setValue('TIER THRESHOLDS: Bronze £0-£99 | Silver £100-£299 | Gold £300-£499 | Platinum £500+')
     .setFontFamily('Arial').setFontSize(9).setFontColor('#666666').setFontStyle('italic');
-  sh.setFrozenRows(2); sh.setFrozenColumns(1);
+  sh.setFrozenRows(2);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -544,7 +544,7 @@ function setupFinancials(ss) {
   }
   sh.getRange(2,14).setValue('YTD Total').setBackground(C_TEAL).setFontColor(C_WHITE)
     .setFontWeight('bold').setFontFamily('Arial').setHorizontalAlignment('center');
-  sh.setRowHeight(2,25); sh.setFrozenRows(2); sh.setFrozenColumns(1);
+  sh.setRowHeight(2,25); sh.setFrozenRows(2);
 
   var cols = ['B','C','D','E','F','G','H','I','J','K','L','M'];
 
@@ -823,7 +823,7 @@ function setupStock(ss) {
     .whenFormulaSatisfied('=$C3<=$F3').setBackground(C_LRED).setFontColor('#9C0006')
     .setRanges([sh.getRange('C3:C'+lr)]).build());
   sh.setConditionalFormatRules(rules);
-  sh.setFrozenRows(2); sh.setFrozenColumns(2);
+  sh.setFrozenRows(2);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -855,7 +855,7 @@ function setupDelivery(ss) {
     .whenTextEqualTo('Yes').setBackground(C_LGRN).setFontColor('#375623')
     .setRanges([sh.getRange('L3:L502')]).build());
   sh.setConditionalFormatRules(rules);
-  sh.setFrozenRows(2); sh.setFrozenColumns(1);
+  sh.setFrozenRows(2);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
