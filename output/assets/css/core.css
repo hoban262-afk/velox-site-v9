@@ -86,9 +86,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:#080808;color:#fff;line
 .prod-count{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.08em;}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
 .pcard{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);display:flex;flex-direction:column;transition:border-color .2s,transform .2s;position:relative;overflow:hidden;}
-.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--brd);transition:background .2s;}
+.pcard::before{display:none!important;}
 .pcard:hover{border-color:rgba(0,212,160,.35);transform:translateY(-2px);}
-.pcard:hover::before,.pcard.best::before{background:linear-gradient(90deg,var(--g),var(--bl));}
+
 .pcard.best{border-color:rgba(0,212,160,.4);}
 .pcard.on-sale{border-color:rgba(var(--sale-rgb),.55);box-shadow:0 0 18px 2px rgba(var(--sale-rgb),.18),0 0 6px 0 rgba(var(--sale-rgb),.22);}
 .pcard.on-sale::before{background:linear-gradient(90deg,rgba(var(--sale-rgb),1),rgba(var(--sale-rgb),.5));}
@@ -1481,7 +1481,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 /* Compound card */
 .cc{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden;transition:border-color .2s,transform .2s;position:relative;}
-.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--brd);transition:background .2s;}
+.cc::before{display:none!important;}
 .cc:hover{border-color:rgba(1,211,160,.35);transform:translateY(-2px);}
 .cc:hover::before{background:linear-gradient(90deg,#01D3A0,#4A9FE0);}
 .cc-link{display:flex;flex-direction:column;padding:20px;text-decoration:none;height:100%;}
@@ -1501,7 +1501,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 /* Category tile */
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
 .cat-tile{display:flex;flex-direction:column;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);padding:24px;text-decoration:none;transition:border-color .2s,transform .2s;position:relative;overflow:hidden;}
-.cat-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--brd);transition:background .2s;}
+.cat-tile::before{display:none!important;}
 .cat-tile:hover{border-color:rgba(1,211,160,.35);transform:translateY(-2px);}
 .cat-tile:hover::before{background:linear-gradient(90deg,#01D3A0,#4A9FE0);}
 .cat-tile-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
@@ -2893,7 +2893,6 @@ a.eg-btn-p {
 .cc {
   background: #0d1014 !important;
   border: 1px solid #242730 !important;
-  border-top: 3px solid #01D3A0 !important;
   border-radius: 6px !important;
   overflow: hidden !important;
   display: flex !important;
@@ -4973,24 +4972,26 @@ body {
 .cat-tile-desc { display: none !important; }
 
 /* ── Category tiles — top border + name colour + action link colour ── */
-a.cat-tile[href*="/cognitive/"]      { border-top: 4px solid rgba(155,109,255,.5) !important; }
-a.cat-tile[href*="/metabolic/"]      { border-top: 4px solid rgba(255,229,0,.5) !important; }
-a.cat-tile[href*="/healing-and-repair/"] { border-top: 4px solid rgba(79,195,247,.5) !important; }
-a.cat-tile[href*="/growth/"]         { border-top: 4px solid rgba(105,217,140,.5) !important; }
-a.cat-tile[href*="/anti-ageing/"]    { border-top: 4px solid rgba(255,107,157,.5) !important; }
+a.cat-tile[href*="/cognitive/"]      { border: 1px solid rgba(155,109,255,.20) !important; }
+a.cat-tile[href*="/metabolic/"]      { border: 1px solid rgba(255,229,0,.20) !important; }
+a.cat-tile[href*="/healing-and-repair/"] { border: 1px solid rgba(79,195,247,.20) !important; }
+a.cat-tile[href*="/growth/"]         { border: 1px solid rgba(105,217,140,.20) !important; }
+a.cat-tile[href*="/anti-ageing/"]    { border: 1px solid rgba(255,107,157,.20) !important; }
 
-a.cat-tile[href*="/cognitive/"]      .cat-tile-name, a.cat-tile[href*="/cognitive/"]      .cat-tile-action { color: #9B6DFF !important; }
-a.cat-tile[href*="/metabolic/"]      .cat-tile-name, a.cat-tile[href*="/metabolic/"]      .cat-tile-action { color: #FFE500 !important; }
-a.cat-tile[href*="/healing-and-repair/"] .cat-tile-name, a.cat-tile[href*="/healing-and-repair/"] .cat-tile-action { color: #4FC3F7 !important; }
-a.cat-tile[href*="/growth/"]         .cat-tile-name, a.cat-tile[href*="/growth/"]         .cat-tile-action { color: #69D98C !important; }
-a.cat-tile[href*="/anti-ageing/"]    .cat-tile-name, a.cat-tile[href*="/anti-ageing/"]    .cat-tile-action { color: #FF6B9D !important; }
+a.cat-tile[href*="/cognitive/"]      .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(155,109,255,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href*="/metabolic/"]      .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(255,229,0,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href*="/healing-and-repair/"] .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(79,195,247,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href*="/growth/"]         .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(105,217,140,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href*="/anti-ageing/"]    .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(255,107,157,.65); display: inline-block; padding-bottom: 2px; }
+/* hover: border brightens to 40% opacity */
+a.cat-tile[href*="/cognitive/"]:hover      { border-color: rgba(155,109,255,.40) !important; }
+a.cat-tile[href*="/metabolic/"]:hover      { border-color: rgba(255,229,0,.40) !important; }
+a.cat-tile[href*="/healing-and-repair/"]:hover { border-color: rgba(79,195,247,.40) !important; }
+a.cat-tile[href*="/growth/"]:hover         { border-color: rgba(105,217,140,.40) !important; }
+a.cat-tile[href*="/anti-ageing/"]:hover    { border-color: rgba(255,107,157,.40) !important; }
 
 /* ── Product cards — top border, badge label colour, hover glow ── */
-.cc.cc-cognitive  { border-top-color: rgba(155,109,255,.6) !important; }
-.cc.cc-metabolic  { border-top-color: rgba(255,229,0,.6) !important; }
-.cc.cc-healing    { border-top-color: rgba(79,195,247,.6) !important; }
-.cc.cc-growth     { border-top-color: rgba(105,217,140,.6) !important; }
-.cc.cc-antiageing { border-top-color: rgba(255,107,157,.6) !important; }
+/* product card category border-top colours removed */
 
 .cc.cc-cognitive  .cc-cat { color: #9B6DFF !important; background: rgba(155,109,255,.12) !important; }
 .cc.cc-metabolic  .cc-cat { color: #FFE500 !important; background: rgba(255,229,0,.12) !important; }
@@ -5030,21 +5031,7 @@ body.page-cat-antiageing .bc-current { color: #FF6B9D !important; }
    Cognitive #9B6DFF · Metabolic #FFE500 · Healing #4FC3F7 · Growth #69D98C · Anti-Ageing #FF6B9D
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Stack tiles — top border ── */
-article.stack-card:has(a[href*="/stacks/cognitive/"]),
-article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]),
-article.stack-card:has(a[href*="/stacks/advanced-cognitive/"]) { border-top: 4px solid rgba(155,109,255,.6) !important; }
-
-article.stack-card:has(a[href*="/stacks/metabolic/"]),
-article.stack-card:has(a[href*="/stacks/gh-and-metabolic/"]) { border-top: 4px solid rgba(255,229,0,.6) !important; }
-
-article.stack-card:has(a[href*="/stacks/repair-and-metabolic/"]),
-article.stack-card:has(a[href*="/stacks/ultimate-repair/"]) { border-top: 4px solid rgba(79,195,247,.6) !important; }
-
-article.stack-card:has(a[href*="/stacks/gh-peptide/"]) { border-top: 4px solid rgba(105,217,140,.6) !important; }
-
-article.stack-card:has(a[href*="/stacks/skin-and-aesthetic/"]),
-article.stack-card:has(a[href*="/stacks/anti-ageing/"]) { border-top: 4px solid rgba(255,107,157,.6) !important; }
+/* stack card category border-top colours removed */
 
 /* ── Stack tiles — eyebrow badge text colour ── */
 article.stack-card:has(a[href*="/stacks/cognitive/"]) .stack-card-eyebrow,
@@ -5106,11 +5093,9 @@ body.page-cat-antiageing .cpom-ic { color: #FF6B9D !important; }
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Stacks category tile (in cat-grid on homepage + catalogue) ── */
-a.cat-tile[href="/stacks/"]               { border-top: 4px solid rgba(255,107,0,.5) !important; }
-a.cat-tile[href="/stacks/"] .cat-tile-eyebrow,
-a.cat-tile[href="/stacks/"] .cat-tile-count,
-a.cat-tile[href="/stacks/"] .cat-tile-name,
-a.cat-tile[href="/stacks/"] .cat-tile-action { color: #FF6B00 !important; }
+a.cat-tile[href="/stacks/"]               { border: 1px solid rgba(255,107,0,.20) !important; }
+a.cat-tile[href="/stacks/"]:hover             { border-color: rgba(255,107,0,.40) !important; }
+a.cat-tile[href="/stacks/"] .cat-tile-name   { color: #fff !important; border-bottom: 1px solid rgba(255,107,0,.65); display: inline-block; padding-bottom: 2px; }
 
 /* ── Homepage stacks section — eyebrow label + primary CTA button + outline CTA ── */
 .hp-sec-stacks .hp-block-eyebrow { color: #FF6B00 !important; }

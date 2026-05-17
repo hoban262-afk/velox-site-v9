@@ -164,14 +164,6 @@
     transform: scale(1.04) !important;
   }
 
-  /* Top border shimmer on hover */
-  .cc::before {
-    transition: background .3s ease !important;
-  }
-  .cc:hover::before {
-    background: linear-gradient(90deg, #01D3A0, #4A9FE0, #A78BFA) !important;
-  }
-
   /* Price brightens on hover */
   .cc-price {
     transition: opacity .25s ease;
@@ -274,30 +266,9 @@
 
   /* ── PART 6: Category cards ── */
   .cat-tile {
-    transition: border-color .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1),
-                box-shadow .3s ease !important;
+    transition: border-color .2s ease !important;
   }
-  .cat-tile:hover {
-    transform: translateY(-5px) !important;
-    border-color: rgba(1,211,160,.5) !important;
-    box-shadow: 0 12px 36px rgba(1,211,160,.1);
-  }
-  .cat-tile-metabolic:hover {
-    border-color: rgba(255,229,0,.5) !important;
-    box-shadow: 0 12px 36px rgba(255,229,0,.08);
-  }
-  .cat-tile::before {
-    transition: background .25s ease !important;
-  }
-  .cat-tile:hover::before {
-    background: linear-gradient(90deg, #01D3A0, #4A9FE0) !important;
-  }
-  .cat-tile-name {
-    transition: letter-spacing .3s ease;
-  }
-  .cat-tile:hover .cat-tile-name {
-    letter-spacing: .04em;
-  }
+  /* Category-specific hover border brightening handled by colour system in core.css */
 
   /* ── PART 7: Product detail page animations ── */
 
@@ -404,9 +375,6 @@
 
     /* Disable gradient border rotation on mobile (perf) */
     .vp-featured::after { display: none; }
-
-    /* No letter-spacing expand on mobile */
-    .cat-tile:hover .cat-tile-name { letter-spacing: inherit; }
 
     /* Product detail: fade only, no slide */
     .vp-detail-title, .vp-detail-order {
