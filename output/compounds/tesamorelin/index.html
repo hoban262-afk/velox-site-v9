@@ -66,7 +66,7 @@
     "url": "https://veloxpeps.com/compounds/tesamorelin/",
     "audience": {
       "@type": "Audience",
-      "audienceType": "Research professionals"
+      "audienceType": "Researchers and laboratory professionals"
     },
     "offers": {
       "@type": "Offer",
@@ -75,7 +75,42 @@
       "price": "99.99",
       "availability": "https://schema.org/InStock",
       "itemCondition": "https://schema.org/NewCondition",
-      "sku": "VP-TESAMORELIN-15mg"
+      "sku": "VP-TESAMORELIN-15mg",
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": "3.80",
+          "currency": "GBP"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "GB"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          },
+          "transitTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 1,
+            "maxValue": 2,
+            "unitCode": "DAY"
+          }
+        }
+      },
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "GB",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 14,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/FreeReturn"
+      }
     },
     "identifier": {
       "@type": "PropertyValue",
