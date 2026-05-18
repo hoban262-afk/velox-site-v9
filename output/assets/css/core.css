@@ -4993,24 +4993,24 @@ a.cat-tile[href*="/anti-ageing/"]:hover    { border-color: rgba(255,107,157,.40)
 /* ── Product cards — top border, badge label colour, hover glow ── */
 /* product card category border-top colours removed */
 
-.cc.cc-cognitive  .cc-cat { color: #9B6DFF !important; background: rgba(155,109,255,.12) !important; }
-.cc.cc-metabolic  .cc-cat { color: #FFE500 !important; background: rgba(255,229,0,.12) !important; }
-.cc.cc-healing    .cc-cat { color: #4FC3F7 !important; background: rgba(79,195,247,.12) !important; }
-.cc.cc-growth     .cc-cat { color: #69D98C !important; background: rgba(105,217,140,.12) !important; }
-.cc.cc-antiageing .cc-cat { color: #FF6B9D !important; background: rgba(255,107,157,.12) !important; }
+.cc.cc-neuropeptide  .cc-cat { color: #9B6DFF !important; background: rgba(155,109,255,.12) !important; }
+.cc.cc-incretin  .cc-cat { color: #FFE500 !important; background: rgba(255,229,0,.12) !important; }
+.cc.cc-angiogenic    .cc-cat { color: #4FC3F7 !important; background: rgba(79,195,247,.12) !important; }
+.cc.cc-somatotropic     .cc-cat { color: #69D98C !important; background: rgba(105,217,140,.12) !important; }
+.cc.cc-oxidative .cc-cat { color: #FF6B9D !important; background: rgba(255,107,157,.12) !important; }
 
-.cc.cc-cognitive:hover  { border-color: rgba(155,109,255,.7) !important; box-shadow: 0 0 14px rgba(155,109,255,0.15), 0 4px 20px rgba(155,109,255,0.08) !important; }
-.cc.cc-metabolic:hover  { border-color: rgba(255,229,0,.7) !important; box-shadow: 0 0 14px rgba(255,229,0,0.15),  0 4px 20px rgba(255,229,0,0.08)  !important; }
-.cc.cc-healing:hover    { border-color: rgba(79,195,247,.7) !important; box-shadow: 0 0 14px rgba(79,195,247,0.15),  0 4px 20px rgba(79,195,247,0.08)  !important; }
-.cc.cc-growth:hover     { border-color: rgba(105,217,140,.7) !important; box-shadow: 0 0 14px rgba(105,217,140,0.15), 0 4px 20px rgba(105,217,140,0.08) !important; }
-.cc.cc-antiageing:hover { border-color: rgba(255,107,157,.7) !important; box-shadow: 0 0 14px rgba(255,107,157,0.15), 0 4px 20px rgba(255,107,157,0.08) !important; }
+.cc.cc-neuropeptide:hover  { border-color: rgba(155,109,255,.7) !important; box-shadow: 0 0 14px rgba(155,109,255,0.15), 0 4px 20px rgba(155,109,255,0.08) !important; }
+.cc.cc-incretin:hover  { border-color: rgba(255,229,0,.7) !important; box-shadow: 0 0 14px rgba(255,229,0,0.15),  0 4px 20px rgba(255,229,0,0.08)  !important; }
+.cc.cc-angiogenic:hover    { border-color: rgba(79,195,247,.7) !important; box-shadow: 0 0 14px rgba(79,195,247,0.15),  0 4px 20px rgba(79,195,247,0.08)  !important; }
+.cc.cc-somatotropic:hover     { border-color: rgba(105,217,140,.7) !important; box-shadow: 0 0 14px rgba(105,217,140,0.15), 0 4px 20px rgba(105,217,140,0.08) !important; }
+.cc.cc-oxidative:hover { border-color: rgba(255,107,157,.7) !important; box-shadow: 0 0 14px rgba(255,107,157,0.15), 0 4px 20px rgba(255,107,157,0.08) !important; }
 
 /* ── Product detail pages — eyebrow text colour ── */
-body.page-cat-cognitive  .cp-eyebrow { color: rgba(155,109,255,.7) !important; }
-body.page-cat-metabolic  .cp-eyebrow { color: rgba(255,229,0,.7) !important; }
-body.page-cat-healing    .cp-eyebrow { color: rgba(79,195,247,.7) !important; }
-body.page-cat-growth     .cp-eyebrow { color: rgba(105,217,140,.7) !important; }
-body.page-cat-antiageing .cp-eyebrow { color: rgba(255,107,157,.7) !important; }
+body.page-cat-neuropeptide  .cp-eyebrow { color: rgba(155,109,255,.7) !important; }
+body.page-cat-incretin  .cp-eyebrow { color: rgba(255,229,0,.7) !important; }
+body.page-cat-angiogenic    .cp-eyebrow { color: rgba(79,195,247,.7) !important; }
+body.page-cat-somatotropic     .cp-eyebrow { color: rgba(105,217,140,.7) !important; }
+body.page-cat-oxidative .cp-eyebrow { color: rgba(255,107,157,.7) !important; }
 
 /* ── Breadcrumb — category link colour on hub and detail pages ── */
 a.bc-link[href*="/compounds/cognitive/"]          { color: #9B6DFF !important; }
@@ -5020,11 +5020,11 @@ a.bc-link[href*="/compounds/growth/"]             { color: #69D98C !important; }
 a.bc-link[href*="/compounds/anti-ageing/"]        { color: #FF6B9D !important; }
 
 /* Hub page current breadcrumb (the <span.bc-current>) */
-body.page-cat-cognitive  .bc-current { color: #9B6DFF !important; }
-body.page-cat-metabolic  .bc-current { color: #FFE500 !important; }
-body.page-cat-healing    .bc-current { color: #4FC3F7 !important; }
-body.page-cat-growth     .bc-current { color: #69D98C !important; }
-body.page-cat-antiageing .bc-current { color: #FF6B9D !important; }
+body.page-cat-neuropeptide  .bc-current { color: #9B6DFF !important; }
+body.page-cat-incretin  .bc-current { color: #FFE500 !important; }
+body.page-cat-angiogenic    .bc-current { color: #4FC3F7 !important; }
+body.page-cat-somatotropic     .bc-current { color: #69D98C !important; }
+body.page-cat-oxidative .bc-current { color: #FF6B9D !important; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    STACK CATEGORY COLOUR SYSTEM
@@ -5073,20 +5073,20 @@ article.stack-card:hover {
 }
 
 /* ── Stack detail pages — section accents (stack-comp-link, order meta icons) ── */
-body.page-cat-cognitive  .stack-comp-link,
-body.page-cat-cognitive  .cpom-ic { color: #9B6DFF !important; }
+body.page-cat-neuropeptide  .stack-comp-link,
+body.page-cat-neuropeptide  .cpom-ic { color: #9B6DFF !important; }
 
-body.page-cat-metabolic  .stack-comp-link,
-body.page-cat-metabolic  .cpom-ic { color: #FFE500 !important; }
+body.page-cat-incretin  .stack-comp-link,
+body.page-cat-incretin  .cpom-ic { color: #FFE500 !important; }
 
-body.page-cat-healing    .stack-comp-link,
-body.page-cat-healing    .cpom-ic { color: #4FC3F7 !important; }
+body.page-cat-angiogenic    .stack-comp-link,
+body.page-cat-angiogenic    .cpom-ic { color: #4FC3F7 !important; }
 
-body.page-cat-growth     .stack-comp-link,
-body.page-cat-growth     .cpom-ic { color: #69D98C !important; }
+body.page-cat-somatotropic     .stack-comp-link,
+body.page-cat-somatotropic     .cpom-ic { color: #69D98C !important; }
 
-body.page-cat-antiageing .stack-comp-link,
-body.page-cat-antiageing .cpom-ic { color: #FF6B9D !important; }
+body.page-cat-oxidative .stack-comp-link,
+body.page-cat-oxidative .cpom-ic { color: #FF6B9D !important; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    STACKS ORANGE CTA COLOUR SYSTEM  #FF6B00
@@ -5392,46 +5392,46 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !im
 }
 
 /* ── Cognitive — #9B6DFF ── */
-.cat-divider-cognitive::before {
+.cat-divider-neuropeptide::before {
   color: #9B6DFF;
 }
-.cat-divider-cognitive::after {
+.cat-divider-neuropeptide::after {
   background: rgba(155, 109, 255, 0.3);
   box-shadow: 0 0 8px 1px rgba(155, 109, 255, 0.35);
 }
 
 /* ── Metabolic — #FFE500 ── */
-.cat-divider-metabolic::before {
+.cat-divider-incretin::before {
   color: #FFE500;
 }
-.cat-divider-metabolic::after {
+.cat-divider-incretin::after {
   background: rgba(255, 229, 0, 0.3);
   box-shadow: 0 0 8px 1px rgba(255, 229, 0, 0.35);
 }
 
 /* ── Healing & Repair — #4FC3F7 ── */
-.cat-divider-healing::before {
+.cat-divider-angiogenic::before {
   color: #4FC3F7;
 }
-.cat-divider-healing::after {
+.cat-divider-angiogenic::after {
   background: rgba(79, 195, 247, 0.3);
   box-shadow: 0 0 8px 1px rgba(79, 195, 247, 0.35);
 }
 
 /* ── Growth — #69D98C ── */
-.cat-divider-growth::before {
+.cat-divider-somatotropic::before {
   color: #69D98C;
 }
-.cat-divider-growth::after {
+.cat-divider-somatotropic::after {
   background: rgba(105, 217, 140, 0.3);
   box-shadow: 0 0 8px 1px rgba(105, 217, 140, 0.35);
 }
 
 /* ── Anti-Ageing — #FF6B9D ── */
-.cat-divider-antiageing::before {
+.cat-divider-oxidative::before {
   color: #FF6B9D;
 }
-.cat-divider-antiageing::after {
+.cat-divider-oxidative::after {
   background: rgba(255, 107, 157, 0.3);
   box-shadow: 0 0 8px 1px rgba(255, 107, 157, 0.35);
 }
