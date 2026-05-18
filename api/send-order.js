@@ -271,10 +271,10 @@ function buildAdminHtml(d, itemsHtml) {
   const isPsifi   = d.payment_method === 'psifi';
   const isInstant = d.payment_method === 'instant' || isPsifi;
   const payBadge = isPsifi
-    ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; PsiFi Card / Apple Pay / Google Pay &mdash; PAYMENT CONFIRMED</p></td>`
+    ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Card / Apple Pay / Google Pay &mdash; PAYMENT CONFIRMED</p></td>`
     : isInstant
-      ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; GoCardless Instant Bank Pay &mdash; PAYMENT CONFIRMED</p></td>`
-      : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Manual Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
+      ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Instant Payment &mdash; PAYMENT CONFIRMED</p></td>`
+      : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
 
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>New Order</title></head>
 <body style="${S.body}">

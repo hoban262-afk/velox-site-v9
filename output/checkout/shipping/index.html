@@ -170,7 +170,7 @@
             <button type="button" class="region-btn region-btn-active" id="region-uk">🇬🇧 United Kingdom</button>
             <button type="button" class="region-btn" id="region-eu">🌍 EU &amp; Europe</button>
           </div>
-          <div id="eu-region-note">⚠️ Instant Bank Pay currently available for Ireland, France and Germany only. All other EU countries — please use manual bank transfer.</div>
+          <div id="eu-region-note">🌍 EU orders: bank transfer using IBAN/BIC details shown at the payment step.</div>
 
           <h2 class="sec-t">Contact</h2>
           <div class="f-grid-2">
@@ -188,16 +188,10 @@
             <div class="f-row"><label class="f-lbl" for="sh-post">Postcode *</label><input class="f-inp" id="sh-post" name="postcode" required></div>
             <div id="uk-country-wrap" class="f-row f-full"><label class="f-lbl" for="sh-country">Country</label><input class="f-inp" id="sh-country" name="country" value="United Kingdom" readonly></div>
             <div id="eu-country-wrap" class="f-row f-full" style="display:none">
-              <div class="eu-gc-notice">⚠️ Instant Bank Pay is currently available for Ireland 🇮🇪, France 🇫🇷 and Germany 🇩🇪 only. If your country is not listed below, scroll down to pay by manual bank transfer — we ship to all EU countries.</div>
               <label class="f-lbl" for="sh-eu-country">Country *</label>
               <select class="f-select" id="sh-eu-country" name="eu_country">
                 <option value="">Select your country…</option>
-                <optgroup label="── Instant Bank Pay supported ──">
-                  <option>France</option>
-                  <option>Germany</option>
-                  <option>Ireland</option>
-                </optgroup>
-                <optgroup label="── Manual bank transfer only ──">
+                <optgroup label="── EU countries ──">
                   <option>Austria</option>
                   <option>Belgium</option>
                   <option>Bulgaria</option>

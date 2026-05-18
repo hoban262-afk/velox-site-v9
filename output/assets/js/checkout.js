@@ -7,7 +7,7 @@
   var EU_SHIPPING_FLAT  = 9.99;
   var EU_FREE_THRESHOLD = 100;
   var EU_FX_RATE        = 1.18; // fixed GBP → EUR conversion rate
-  var GC_EU_COUNTRIES   = ['France', 'Germany', 'Ireland']; // GoCardless-supported EU countries
+  // var GC_EU_COUNTRIES = ['France', 'Germany', 'Ireland']; // GoCardless — disabled
 
   // ── Core helpers ──────────────────────────────────────────────────────────
   function getCart() {
@@ -245,70 +245,14 @@
     var payRegion = currentRegion();
     renderCartSummary(cart, payRegion);
 
-    // ── Payment method tab switching ──────────────────────────────────────
-    var currentPayMethod = 'gc';
-
-    function switchPayMethod(method) {
-      currentPayMethod = method;
-      var tabGc        = document.getElementById('tab-gc');
-      var tabPsifi     = document.getElementById('tab-psifi');
-      var gcBlock      = document.getElementById('gc-method-block');
-      var psifiBlock   = document.getElementById('psifi-method-block');
-      var gcBtns       = document.getElementById('gc-buttons-block');
-      var psifiBtns    = document.getElementById('psifi-buttons-block');
-      var isGc = method === 'gc';
-      if (tabGc)      tabGc.classList.toggle('pay-method-tab-active', isGc);
-      if (tabPsifi)   tabPsifi.classList.toggle('pay-method-tab-active', !isGc);
-      if (gcBlock)    gcBlock.style.display    = isGc ? '' : 'none';
-      if (psifiBlock) psifiBlock.style.display = isGc ? 'none' : '';
-      if (gcBtns)     gcBtns.style.display     = isGc ? '' : 'none';
-      if (psifiBtns)  psifiBtns.style.display  = isGc ? 'none' : '';
-    }
-
-    var tabGcBtn    = document.getElementById('tab-gc');
-    var tabPsifiBtn = document.getElementById('tab-psifi');
-    if (tabGcBtn)    tabGcBtn.addEventListener('click',    function () { switchPayMethod('gc'); });
-    if (tabPsifiBtn) tabPsifiBtn.addEventListener('click', function () { switchPayMethod('psifi'); });
-
-    // EU: check if GoCardless-supported country and adjust UI accordingly
+    // EU: show IBAN/BIC details instead of UK sort code / account number
     if (payRegion === 'EU') {
-      var payChkData = {};
-      try { payChkData = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
-      var payCountry    = payChkData.country || '';
-      var isGcEuCountry = GC_EU_COUNTRIES.indexOf(payCountry) >= 0;
-
-      var bankFallbackWrap   = document.getElementById('bank-fallback-wrap');
-      var payLede            = document.getElementById('pay-lede');
-      var euOnlyNotice       = document.getElementById('eu-only-notice');
-      var bankToggleEu       = document.getElementById('bank-toggle');
-      var bankDetailsPanelEu = document.getElementById('bank-details-panel');
-
-      if (isGcEuCountry) {
-        // Supported country — GoCardless flow, hide bank transfer
-        if (bankFallbackWrap) bankFallbackWrap.style.display = 'none';
-        if (euOnlyNotice)     euOnlyNotice.style.display     = '';
-        if (payLede) payLede.textContent = 'Pay instantly and securely via your existing bank account. EU payments are processed via GoCardless.';
-      } else {
-        // Unsupported country — hide GC tab, auto-select PsiFi, open bank transfer
-        switchPayMethod('psifi');
-        var tabGcEu = document.getElementById('tab-gc');
-        if (tabGcEu) tabGcEu.style.display = 'none';
-        if (bankFallbackWrap)   bankFallbackWrap.style.display   = '';
-        if (bankToggleEu)       bankToggleEu.style.display       = 'none';
-        if (bankDetailsPanelEu) bankDetailsPanelEu.style.display = '';
-
-        // Swap bank details to EU (IBAN/BIC)
-        var ukBankDetails  = document.getElementById('uk-bank-details');
-        var euBankDetails  = document.getElementById('eu-bank-details');
-        var bankMethodTitle = document.getElementById('bank-method-title');
-        var bankIntroP     = document.getElementById('bank-intro-p');
-        if (ukBankDetails)   ukBankDetails.style.display  = 'none';
-        if (euBankDetails)   euBankDetails.style.display  = '';
-        if (bankMethodTitle) bankMethodTitle.textContent  = 'International Bank Transfer — Zempler Bank';
-        if (bankIntroP)      bankIntroP.textContent       = 'Transfer directly to our account using the details below. Your order is reserved for 48 hours — we\'ll dispatch as soon as payment clears.';
-
-        if (payLede) payLede.textContent = 'Instant Bank Pay is not yet available for your country. Please complete your order via manual bank transfer below — we ship to all EU countries.';
-      }
+      var ukBankDetails   = document.getElementById('uk-bank-details');
+      var euBankDetails   = document.getElementById('eu-bank-details');
+      var bankMethodTitle = document.getElementById('bank-method-title');
+      if (ukBankDetails)   ukBankDetails.style.display  = 'none';
+      if (euBankDetails)   euBankDetails.style.display  = '';
+      if (bankMethodTitle) bankMethodTitle.textContent  = 'INTERNATIONAL BANK TRANSFER';
     }
 
     // Show delivery address in sidebar
@@ -336,17 +280,6 @@
     if (billSame && billFields) {
       billSame.addEventListener('change', function () {
         billFields.style.display = billSame.checked ? 'none' : '';
-      });
-    }
-
-    // Bank transfer panel toggle (UK only)
-    var bankToggle      = document.getElementById('bank-toggle');
-    var bankDetailsPanel = document.getElementById('bank-details-panel');
-    if (bankToggle && bankDetailsPanel) {
-      bankToggle.addEventListener('click', function () {
-        var open = bankDetailsPanel.style.display !== 'none';
-        bankDetailsPanel.style.display = open ? 'none' : '';
-        bankToggle.textContent = open ? 'Prefer to pay by bank transfer? ↓' : 'Hide bank transfer option ↑';
       });
     }
 
@@ -386,7 +319,8 @@
       });
     }
 
-    // ── GoCardless Instant Bank Pay ───────────────────────────────────────
+    // ── GoCardless Instant Bank Pay — DISABLED (kept for re-enable) ─────────
+    /* RE-ENABLE: uncomment the block below and restore gc-pay-btn in payment HTML
     var gcPayBtn = document.getElementById('gc-pay-btn');
     if (gcPayBtn) {
       gcPayBtn.addEventListener('click', function () {
@@ -487,8 +421,10 @@
         });
       });
     }
+    */ // END GoCardless disabled block
 
-    // ── PsiFi Card / Apple Pay / Google Pay ──────────────────────────────
+    // ── PsiFi Card / Apple Pay / Google Pay — DISABLED (kept for re-enable) ─
+    /* RE-ENABLE: uncomment and restore psifi-pay-btn in payment HTML
     var psifiPayBtn = document.getElementById('psifi-pay-btn');
     if (psifiPayBtn) {
       psifiPayBtn.addEventListener('click', function () {
@@ -564,8 +500,9 @@
         });
       });
     }
+    */ // END PsiFi disabled block
 
-    // ── Bank transfer form submit (UK / GBP only) ─────────────────────────
+    // ── Bank transfer form submit (UK + EU) ───────────────────────────────
     paymentForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var errEl = document.getElementById('co-err');
@@ -579,24 +516,28 @@
       var submitBtn = paymentForm.querySelector('button[type="submit"]');
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Processing…'; }
 
-      var ref       = 'VP-' + todayStr() + '-' + randChars(4);
-      var t         = cartTotals(cart, 'UK'); // bank transfer is UK/GBP only
-      var savingGBP = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-      var discountedSubtotal = Math.max(0, t.subtotal - savingGBP);
-      var finalShipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-      var finalTotal    = discountedSubtotal + finalShipping;
+      var ref        = 'VP-' + todayStr() + '-' + randChars(4);
+      var t          = cartTotals(cart, payRegion);
+      var savingGBP  = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
+      var saving     = savingInCurrency(savingGBP, payRegion);
+      var discountedSubtotal = Math.max(0, t.subtotal - saving);
+      var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
+      var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
+      var finalShipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
+      var finalTotal    = Math.round((discountedSubtotal + finalShipping) * 100) / 100;
 
       try {
         var existing = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
         existing.orderRef        = ref;
         existing.subtotal        = t.subtotal;
         existing.shipping        = finalShipping;
-        existing.discount_code   = appliedDiscount ? appliedDiscount.code : '';
-        existing.discount_saving = savingGBP;
+        existing.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
+        existing.discount_saving = saving;
         existing.total           = finalTotal;
         existing.cart_snapshot   = JSON.stringify(cart);
-        existing.currency        = 'GBP';
-        existing.region          = 'UK';
+        existing.currency        = payRegion === 'EU' ? 'EUR' : 'GBP';
+        existing.region          = payRegion;
+        existing.payment_method  = 'bank';
         sessionStorage.setItem('vp_checkout', JSON.stringify(existing));
       } catch (ex) {}
 

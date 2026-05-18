@@ -1,3 +1,5 @@
+/* DISABLED — GoCardless removed from UI. Re-enable by removing this wrapper comment.
+
 const crypto = require('crypto');
 const { gocardless, Environments } = require('gocardless-nodejs');
 const { sendEmails } = require('./send-order');
@@ -225,3 +227,6 @@ async function handleFulfilment(event) {
 
   console.log(`[webhook] Fulfilment handling complete for ${orderRef}`);
 }
+
+
+*/ // END DISABLED

@@ -1,3 +1,5 @@
+/* DISABLED — GoCardless removed from UI. Re-enable by removing this wrapper comment.
+
 const { gocardless, Environments } = require('gocardless-nodejs');
 
 module.exports = async function handler(req, res) {
@@ -132,3 +134,6 @@ module.exports = async function handler(req, res) {
     res.status(500).json({ error: e.message || 'Payment initialisation failed' });
   }
 };
+
+
+*/ // END DISABLED

@@ -15,7 +15,7 @@ const S = {
 };
 
 // ── Email HTML builder ────────────────────────────────────────────────────────
-function buildDispatchHtml(orderNumber, customerName, trackingNumber, address) {
+function buildDispatchHtml(orderNumber, customerName, trackingNumber, address, items, total) {
   const hasTracking = trackingNumber && trackingNumber.trim();
   const trackingUrl = hasTracking
     ? `https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(trackingNumber.trim())}`
@@ -102,6 +102,19 @@ function buildDispatchHtml(orderNumber, customerName, trackingNumber, address) {
     </table>
   </td></tr>
 
+  <!-- Track button -->
+  ${hasTracking ? `
+  <tr><td align="center" style="padding:4px 40px 24px">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <tr><td align="center" bgcolor="#01D3A0" style="background:#01D3A0;border-radius:4px;mso-padding-alt:0">
+        <a href="${trackingUrl}"
+           style="display:inline-block;padding:15px 36px;font-size:15px;font-weight:700;color:#030407;text-decoration:none;letter-spacing:.08em;font-family:Arial,Helvetica,sans-serif">
+          TRACK YOUR ORDER &rarr;
+        </a>
+      </td></tr>
+    </table>
+  </td></tr>` : ''}
+
   <!-- Delivery address -->
   ${address ? `
   <tr><td style="padding:0 40px 20px">
@@ -112,6 +125,30 @@ function buildDispatchHtml(orderNumber, customerName, trackingNumber, address) {
       <tr><td style="padding:14px 18px">
         <p style="margin:0 0 4px;font-size:13px;color:#fff;font-weight:600">${esc(customerName)}</p>
         <p style="margin:0;font-size:13px;color:#888;line-height:1.7">${esc(address).replace(/,\s*/g, '<br>')}</p>
+      </td></tr>
+    </table>
+  </td></tr>` : ''}
+
+  <!-- Order summary -->
+  ${items && items.length ? `
+  <tr><td style="padding:0 40px 20px">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.inner}">
+      <tr><td style="padding:10px 18px;border-bottom:1px solid #1a1a1a">
+        <span style="${S.lbl}">ORDER SUMMARY</span>
+      </td></tr>
+      <tr><td style="padding:14px 18px">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          ${items.map(item => `
+          <tr>
+            <td style="font-size:13px;color:#ccc;padding:4px 0">${esc(item.name)}</td>
+            <td align="right" style="font-size:13px;color:#fff;padding:4px 0;font-weight:600;white-space:nowrap">${esc(String(item.qty))} &times; ${esc(item.price)}</td>
+          </tr>`).join('')}
+          <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;margin-top:6px">&nbsp;</td></tr>
+          <tr>
+            <td style="font-size:13px;color:#888;padding:2px 0;font-weight:700">Total</td>
+            <td align="right" style="font-size:15px;color:#01D3A0;font-weight:700;padding:2px 0">${esc(total || '')}</td>
+          </tr>
+        </table>
       </td></tr>
     </table>
   </td></tr>` : ''}
@@ -190,6 +227,8 @@ module.exports = async function handler(req, res) {
   const customerName   = b.customerName   || b.customer_name   || '';
   const trackingNumber = b.trackingNumber || b.tracking_number || '';
   const address        = b.address        || '';
+  const items          = b.items          || [];   // [{name, qty, price}]
+  const total          = b.total          || '';
 
   if (!orderNumber || !customerEmail) {
     return res.status(400).json({ error: 'Missing required fields: orderNumber, customerEmail' });
@@ -208,7 +247,7 @@ module.exports = async function handler(req, res) {
       from:    'Velox Peptides <orders@veloxpeps.com>',
       to:      customerEmail,
       subject: 'Your Order Has Been Dispatched — Velox Peptides',
-      html:    buildDispatchHtml(orderNumber, customerName, trackingNumber, address),
+      html:    buildDispatchHtml(orderNumber, customerName, trackingNumber, address, items, total),
     });
 
     console.log(`[send-dispatch] Dispatch email sent for ${orderNumber} to ${customerEmail}`);

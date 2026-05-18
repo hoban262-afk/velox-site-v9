@@ -5552,9 +5552,9 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !im
   .co-discount-inp { font-size: 16px !important; }
 }
 
-/* ── 5. Checkout pay buttons: belt-and-suspenders full-width + tap height  */
+/* ── 5. Checkout confirm button: full-width + generous tap height  */
 @media (max-width: 767px) {
-  #gc-pay-btn, #psifi-pay-btn {
+  #bank-pay-btn {
     width: 100% !important;
     box-sizing: border-box !important;
     min-height: 52px !important;
