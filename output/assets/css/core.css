@@ -5575,3 +5575,100 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !im
     font-size: 13px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CART PAGE — reassurance strip + payment steps
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.cart-sum-reassurance {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: rgba(1,211,160,0.07);
+  border: 1px solid rgba(1,211,160,0.22);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #D1D5DB;
+}
+
+.cart-sum-reas-icon {
+  flex-shrink: 0;
+  font-size: 15px;
+  margin-top: 1px;
+}
+
+.cart-sum-reas-text strong {
+  color: #01D3A0;
+}
+
+.cart-sum-pay-steps {
+  margin: 8px 0 0 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+  color: #9CA3AF;
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRODUCT PANEL — HOW TO ORDER strip
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.cp-hto {
+  margin-top: 14px;
+  background: rgba(1,211,160,0.06);
+  border: 1px solid rgba(1,211,160,0.2);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.cp-hto-hdr {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #01D3A0;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+
+.cp-hto-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cp-hto-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #D1D5DB;
+  line-height: 1.45;
+}
+
+.cp-hto-step-num {
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.cp-hto-step-txt {
+  flex: 1;
+}
+
+.cp-hto-note {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(1,211,160,0.12);
+  font-size: 11px;
+  color: #6B7280;
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  .cp-hto { padding: 11px 12px; }
+  .cp-hto-step { font-size: 12px; }
+}

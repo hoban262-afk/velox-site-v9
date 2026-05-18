@@ -174,6 +174,66 @@
     .vp-hp-faq-a {
       padding: 0 18px 14px; font-size: 13px; color: #9CA3AF; line-height: 1.7;
     }
+
+    /* ── HOW TO ORDER section ── */
+    .vp-hto-sec {
+      background: rgba(1,211,160,0.04);
+      border-top: 1px solid rgba(1,211,160,0.1);
+      border-bottom: 1px solid rgba(1,211,160,0.1);
+    }
+    .vp-hto-inner {
+      max-width: 860px; margin: 0 auto; padding: 44px 24px;
+    }
+    .vp-hto-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      color: #01D3A0; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .vp-hto-title {
+      font-size: 22px; font-weight: 700; color: #F9FAFB; margin-bottom: 6px;
+    }
+    .vp-hto-sub {
+      font-size: 14px; color: #6B7280; margin-bottom: 32px; line-height: 1.6;
+    }
+    .vp-hto-steps {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    @media (max-width: 640px) {
+      .vp-hto-steps { grid-template-columns: 1fr; gap: 12px; }
+      .vp-hto-inner { padding: 32px 20px; }
+    }
+    .vp-hto-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 20px 18px; position: relative;
+    }
+    .vp-hto-card-num {
+      font-size: 28px; line-height: 1; margin-bottom: 10px;
+    }
+    .vp-hto-card-title {
+      font-size: 13px; font-weight: 700; color: #E5E7EB;
+      text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px;
+    }
+    .vp-hto-card-desc {
+      font-size: 13px; color: #9CA3AF; line-height: 1.6;
+    }
+    .vp-hto-arrow {
+      display: none;
+    }
+    @media (min-width: 641px) {
+      .vp-hto-steps { align-items: start; }
+    }
+    .vp-hto-no-card {
+      margin-top: 24px; display: flex; align-items: center; gap: 10px;
+      background: rgba(1,211,160,0.08); border: 1px solid rgba(1,211,160,0.22);
+      border-radius: 8px; padding: 12px 16px;
+    }
+    .vp-hto-no-card-icon { font-size: 18px; flex-shrink: 0; }
+    .vp-hto-no-card-text {
+      font-size: 13px; color: #D1D5DB; line-height: 1.5;
+    }
+    .vp-hto-no-card-text strong { color: #01D3A0; }
+    .vp-hto-cta {
+      margin-top: 24px; text-align: center;
+    }
   </style>
 
   <!-- Homepage hash-redirect map (only on /) -->
@@ -322,6 +382,38 @@
     </div>
   </div>
 </section>
+<section class="vp-hto-sec">
+  <div class="vp-hto-inner">
+    <div class="vp-hto-eyebrow">Simple 3-step process</div>
+    <h2 class="vp-hto-title">How to order from Velox Peptides</h2>
+    <p class="vp-hto-sub">No account needed. No card details. Just a straightforward bank transfer — here&rsquo;s exactly what happens.</p>
+    <div class="vp-hto-steps">
+      <div class="vp-hto-card">
+        <div class="vp-hto-card-num">1&#xFE0F;&#x20E3;</div>
+        <div class="vp-hto-card-title">Add to order</div>
+        <div class="vp-hto-card-desc">Browse compounds or stacks, select your vial size, and add to your order. Enter your delivery address at checkout.</div>
+      </div>
+      <div class="vp-hto-card">
+        <div class="vp-hto-card-num">2&#xFE0F;&#x20E3;</div>
+        <div class="vp-hto-card-title">We email bank details</div>
+        <div class="vp-hto-card-desc">Once you confirm your order we immediately email you our bank transfer details — no card required at any point.</div>
+      </div>
+      <div class="vp-hto-card">
+        <div class="vp-hto-card-num">3&#xFE0F;&#x20E3;</div>
+        <div class="vp-hto-card-title">Transfer &amp; we dispatch</div>
+        <div class="vp-hto-card-desc">Send the transfer from your bank app. We dispatch your order within 24&nbsp;hrs of payment clearing, with Royal Mail Tracked&nbsp;24.</div>
+      </div>
+    </div>
+    <div class="vp-hto-no-card">
+      <span class="vp-hto-no-card-icon">&#x1F512;</span>
+      <span class="vp-hto-no-card-text"><strong>No payment details needed at checkout</strong> &mdash; we email you everything after you confirm your order.</span>
+    </div>
+    <div class="vp-hto-cta">
+      <a class="btn-p" href="/compounds/">BROWSE COMPOUNDS &rarr;</a>
+    </div>
+  </div>
+</section>
+
 <section class="hp-sec hp-sec-featured">
   <div class="sec-i">
     <div class="hp-block hp-feat-block">
