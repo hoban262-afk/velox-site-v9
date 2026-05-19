@@ -13,7 +13,6 @@ module.exports = async function handler(req, res) {
   const terminalSecret = process.env.FENA_TERMINAL_SECRET;
 
   if (!terminalId || !terminalSecret) {
-    console.error('[create-fena-payment] Missing env vars');
     return res.status(500).json({ error: 'Payment service not configured' });
   }
 
@@ -36,7 +35,6 @@ module.exports = async function handler(req, res) {
       method:  'POST',
       headers: {
         Authorization: basicAuth,
-        Accept:        'application/json',
         ...form.getHeaders(),
       },
       body: form,
@@ -57,7 +55,6 @@ module.exports = async function handler(req, res) {
     const orderId    = data.id || data.orderId || data.order_id || data.paymentId;
 
     if (!paymentUrl) {
-      console.error('[create-fena-payment] No paymentUrl in response:', JSON.stringify(data));
       return res.status(502).json({ error: 'No payment URL returned by Fena', debug: data });
     }
 
