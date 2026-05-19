@@ -1,47 +1,299 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Payment — Checkout — Velox Peptides</title>
-  <meta name="description" content="Complete your order by secure bank transfer. Checkout for Velox Peptides research compounds.">
+  <meta name="description" content="Pay instantly by bank — UK FCA-authorised open banking. Fast, secure checkout for Velox Peptides research compounds.">
   <meta name="robots" content="noindex,nofollow">
   <link rel="canonical" href="https://veloxpeps.com/checkout/payment/">
   <style>
-    .pay-page-eyebrow {
-      font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-      color: #01D3A0; margin-bottom: 6px;
+    /* ── Fena hero card ───────────────────────────────────────────── */
+    .fena-hero-card {
+      border: 2px solid #01D3A0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #030f0b 0%, #020806 100%);
+      padding: 28px 28px 24px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
     }
-    .pay-method-primary { border-color: #01D3A0 !important; }
-    .pay-recommended {
+    .fena-hero-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 0%, rgba(1,211,160,.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .fena-rec-badge {
       display: inline-block;
       background: #01D3A0;
       color: #000;
-      font-size: 10px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 3px;
+      margin-bottom: 14px;
+    }
+    .fena-hero-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .fena-hero-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.01em;
+    }
+    .fena-hero-sub {
+      font-size: 13px;
+      color: #6B7280;
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    /* ── 4 steps ──────────────────────────────────────────────────── */
+    .fena-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 22px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid #1a2a24;
+      border-radius: 8px;
+      padding: 16px 12px;
+    }
+    .fena-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+    .fena-step-num {
+      width: 32px;
+      height: 32px;
+      background: #01D3A0;
+      color: #000;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fena-step-label {
+      font-size: 11px;
+      color: #9CA3AF;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+    .fena-step-sep {
+      font-size: 18px;
+      color: #374151;
+      padding: 0 4px;
+      flex-shrink: 0;
+      margin-bottom: 20px;
+    }
+
+    /* ── Trust statements ─────────────────────────────────────────── */
+    .fena-trust-list {
+      list-style: none;
+      margin: 0 0 20px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .fena-trust-list li {
+      font-size: 13px;
+      color: #D1D5DB;
+      line-height: 1.45;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .fena-trust-ic { flex-shrink: 0; }
+
+    /* ── Bank logos ───────────────────────────────────────────────── */
+    .fena-banks-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 22px;
+      align-items: center;
+    }
+    .fena-bank-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: #9CA3AF;
+      background: rgba(255,255,255,.05);
+      border: 1px solid #1F2937;
+      border-radius: 4px;
+      padding: 3px 9px;
+      letter-spacing: .02em;
+    }
+    .fena-bank-more {
+      color: #6B7280;
+      background: transparent;
+      border-color: transparent;
+      font-weight: 400;
+    }
+
+    /* ── PAY NOW button ───────────────────────────────────────────── */
+    .fena-btn-pay {
+      width: 100%;
+      min-height: 56px;
+      background: #01D3A0;
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .fena-btn-pay:hover:not(:disabled) { background: #00c090; }
+    .fena-btn-pay:active:not(:disabled) { transform: scale(.99); }
+    .fena-btn-pay:disabled { opacity: .6; cursor: not-allowed; }
+    .fena-btn-pay .fena-lock-ic { opacity: .7; flex-shrink: 0; }
+
+    .fena-powered {
+      text-align: center;
+      font-size: 11px;
+      color: #4B5563;
+      letter-spacing: .04em;
+      margin-bottom: 4px;
+    }
+    .fena-pay-err {
+      font-size: 13px;
+      color: #EF4444;
+      margin: 8px 0 0;
+      display: none;
+    }
+
+    /* ── WHY PAY BY BANK explainer ────────────────────────────────── */
+    .fena-why-box {
+      border: 1px solid #1F2937;
+      border-radius: 8px;
+      background: #0D1117;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .fena-why-box summary {
+      padding: 12px 16px;
+      font-size: 12px;
       font-weight: 700;
+      color: #9CA3AF;
       letter-spacing: .08em;
       text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 3px;
-      margin-left: 8px;
-      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .pay-trust-points {
-      list-style: none; margin: 14px 0 0; padding: 0;
-      display: flex; flex-direction: column; gap: 8px;
+    .fena-why-box summary::-webkit-details-marker { display: none; }
+    .fena-why-box summary::before {
+      content: '▶';
+      font-size: 9px;
+      color: #01D3A0;
+      transition: transform .2s;
     }
-    .pay-trust-points li { font-size: 13px; color: #D1D5DB; line-height: 1.45; }
-    .pay-bank-dl { margin: 14px 0 0; }
-    .pay-bank-dl dt { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 1px; }
-    .pay-bank-dl dd { font-size: 14px; color: #F9FAFB; font-weight: 600; margin: 0 0 10px; font-family: 'DM Mono', monospace; }
-    .pay-bank-note-inline { font-size: 12px; color: #9CA3AF; margin: 10px 0 0; line-height: 1.5; }
+    .fena-why-box[open] summary::before { transform: rotate(90deg); }
+    .fena-why-body {
+      padding: 0 16px 16px;
+      font-size: 13px;
+      color: #9CA3AF;
+      line-height: 1.7;
+    }
+    .fena-why-body p { margin: 0 0 8px; }
+    .fena-why-body p:last-child { margin: 0; }
+
+    /* ── Manual bank transfer fallback ───────────────────────────── */
+    .bank-fallback {
+      border: 1px solid #1F2937;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .bank-fallback summary {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6B7280;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .bank-fallback summary::-webkit-details-marker { display: none; }
+    .bank-fallback summary::before {
+      content: '▶';
+      font-size: 9px;
+      color: #374151;
+      transition: transform .2s;
+    }
+    .bank-fallback[open] summary::before { transform: rotate(90deg); }
+    .bank-fallback-body {
+      padding: 0 16px 16px;
+      border-top: 1px solid #1F2937;
+    }
+    .bank-note-amber {
+      background: #1a0d00;
+      border: 1px solid #92400e;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #F59E0B;
+      line-height: 1.6;
+      margin: 14px 0;
+    }
+    .pay-bank-dl { margin: 0; }
+    .pay-bank-dl dt { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: .06em; margin: 10px 0 2px; }
+    .pay-bank-dl dd { font-size: 14px; color: #F9FAFB; font-weight: 600; margin: 0; font-family: 'DM Mono', monospace; }
+    .pay-bank-dl dd.mono-teal { color: #01D3A0; font-size: 15px; letter-spacing: .06em; }
+    .bank-fallback-note { font-size: 12px; color: #6B7280; margin: 12px 0 0; line-height: 1.5; }
     #bank-pay-btn {
-      background: #01D3A0; border-color: #01D3A0; color: #000;
-      font-size: 16px; font-weight: 700; letter-spacing: .04em;
-      width: 100%; min-height: 52px;
+      width: 100%;
+      min-height: 48px;
+      margin-top: 18px;
+      background: transparent;
+      border: 1px solid #374151;
+      color: #9CA3AF;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
     }
-    #bank-pay-btn:hover:not(:disabled) { background: #00b889; border-color: #00b889; }
-    #bank-pay-btn:disabled { opacity: .6; cursor: not-allowed; }
+    #bank-pay-btn:hover:not(:disabled) { border-color: #6B7280; color: #D1D5DB; }
+    #bank-pay-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Terms + misc ─────────────────────────────────────────────── */
+    .co-ack { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px; cursor: pointer; }
+    .co-ack input { margin-top: 2px; flex-shrink: 0; accent-color: #01D3A0; }
+    .co-ack span { font-size: 13px; color: #9CA3AF; line-height: 1.5; }
+    .co-ack a { color: #01D3A0; text-decoration: none; }
+    .co-ack a:hover { text-decoration: underline; }
+    .co-err { font-size: 13px; color: #EF4444; margin: 6px 0 8px; }
+    .co-back { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #6B7280; text-decoration: none; }
+    .co-back:hover { color: #9CA3AF; }
     .co-support-note {
       margin-top: 14px; padding: 10px 12px;
       background: #0D1117; border: 1px solid #1F2937; border-radius: 6px;
@@ -49,8 +301,29 @@
     }
     .co-support-note a { color: #01D3A0; text-decoration: none; }
     .co-support-note a:hover { text-decoration: underline; }
-    @media (max-width: 767px) {
-      #bank-pay-btn { font-size: 15px; padding: 14px 16px; }
+    .pay-page-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: #01D3A0; margin-bottom: 6px;
+    }
+    .pay-bank-dl { margin: 14px 0 0; }
+
+    /* ── Mobile ───────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .fena-hero-card { padding: 20px 18px 18px; }
+      .fena-steps {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        padding: 14px 10px;
+      }
+      .fena-step-sep { display: none; }
+      .fena-step { flex: 0 0 calc(50% - 16px); }
+      .fena-hero-title { font-size: 20px; }
+      .fena-btn-pay { font-size: 16px; min-height: 56px; }
+      .fena-trust-list li { font-size: 13px; }
+      .fena-banks-row { gap: 5px; }
+      .fena-bank-pill { font-size: 10px; padding: 3px 7px; }
+    }
   </style>
 
   <!-- Open Graph -->
@@ -58,7 +331,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veloxpeps.com/checkout/payment/">
   <meta property="og:title" content="Payment — Checkout — Velox Peptides">
-  <meta property="og:description" content="Complete your order by secure bank transfer. Fast, direct payment.">
+  <meta property="og:description" content="Pay instantly by bank — UK FCA-authorised open banking. Fast, secure checkout.">
   <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -67,7 +340,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Payment — Checkout — Velox Peptides">
-  <meta name="twitter:description" content="Complete your order by secure bank transfer. Fast, direct payment.">
+  <meta name="twitter:description" content="Pay instantly by bank — UK FCA-authorised open banking. Fast, secure checkout.">
   <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
 
   <!-- Icons and manifest -->
@@ -87,13 +360,9 @@
   <link rel="stylesheet" href="/assets/css/core.css">
   <link rel="stylesheet" href="/assets/css/animations.css">
 
-  <!-- Homepage hash-redirect map (only on /) -->
-  
-
   <!-- JSON-LD -->
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "veloxpeps@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeps"]}</script>
 
-  
   <script defer src="/_vercel/insights/script.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-YFPX0Q1G50"></script>
@@ -182,73 +451,130 @@
     <div class="co-grid">
       <div class="co-form-col">
         <div class="pay-page-eyebrow">SECURE CHECKOUT</div>
-        <h1 class="page-h1">Secure Payment</h1>
-        <p class="page-lede">Fast, secure payment direct from your bank. No third-party processors involved.</p>
+        <h1 class="page-h1">Pay by Bank</h1>
+        <p class="page-lede" style="margin-bottom:22px;">Instant, secure bank payment via UK FCA-authorised open banking. No card details required — direct from your account.</p>
 
-        <!-- Bank transfer card — UK by default, EU details swapped in by JS -->
-        <div class="pay-method pay-method-primary" style="margin-bottom:8px;">
-          <div class="pay-method-hdr">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#01D3A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-            <span id="bank-method-title">PAY BY BANK TRANSFER</span>
-          </div>
-
-          <div id="uk-bank-details">
-            <dl class="pay-bank-dl">
-              <div><dt>Account name</dt><dd>CRP Labs Ltd</dd></div>
-              <div><dt>Bank</dt><dd>Zempler Bank</dd></div>
-              <div><dt>Sort code</dt><dd>08-71-99</dd></div>
-              <div><dt>Account number</dt><dd>14617029</dd></div>
-              <div><dt>Reference</dt><dd>Your order ID — shown in your confirmation email</dd></div>
-            </dl>
-            <p class="pay-bank-note-inline">Faster Payments typically clear within 1–2 hours.</p>
-          </div>
-
-          <div id="eu-bank-details" style="display:none">
-            <dl class="pay-bank-dl">
-              <div><dt>Account name</dt><dd>CRP Labs Ltd</dd></div>
-              <div><dt>Bank</dt><dd>Zempler Bank</dd></div>
-              <div><dt>IBAN</dt><dd>GB76APSF08719914617029</dd></div>
-              <div><dt>BIC/SWIFT</dt><dd>APSFGB2LXXX</dd></div>
-              <div><dt>Reference</dt><dd>Your order ID — shown in your confirmation email</dd></div>
-            </dl>
-            <p class="pay-bank-note-inline">International transfers typically clear within 1–3 working days. Please transfer in GBP where possible to avoid conversion fees.</p>
-          </div>
-
-          <ul class="pay-trust-points">
-            <li>🔒 Direct bank-to-bank transfer — no card details required</li>
-            <li>✓ Order confirmed once payment received</li>
-            <li>📦 Dispatched within 24 hours of payment</li>
-          </ul>
-        </div>
-
-        <p class="pay-bank-note-inline" style="margin-bottom:20px;">Your order will be reserved for 24 hours while we await payment. Please transfer the exact amount using your order ID as the reference.</p>
-
+        <!-- ── PAYMENT FORM ─────────────────────────────────────────── -->
         <form id="payment-form" class="co-form">
-          <h2 class="sec-t">Billing address</h2>
-          <label class="f-checkbox">
-            <input type="checkbox" id="bill-same" checked>
-            <span>Billing address is the same as delivery address</span>
-          </label>
-          <div id="bill-fields" style="display:none;">
-            <div class="f-grid-2">
-              <div class="f-row f-full"><label class="f-lbl" for="bill-addr1">Address line 1</label><input class="f-inp" id="bill-addr1" name="bill_addr1"></div>
-              <div class="f-row"><label class="f-lbl" for="bill-city">City</label><input class="f-inp" id="bill-city" name="bill_city"></div>
-              <div class="f-row"><label class="f-lbl" for="bill-post">Postcode</label><input class="f-inp" id="bill-post" name="bill_postcode"></div>
-            </div>
-          </div>
 
+          <!-- ── FENA PRIMARY CARD ─────────────────────────────────── -->
+          <div class="fena-hero-card">
+            <div class="fena-rec-badge">★ RECOMMENDED — FASTEST METHOD</div>
+
+            <div class="fena-hero-title-row">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#01D3A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+              <span class="fena-hero-title">Pay by Bank</span>
+            </div>
+            <p class="fena-hero-sub">Powered by Fena · UK FCA-authorised open banking · No card details needed</p>
+
+            <!-- 4-step flow -->
+            <div class="fena-steps" role="list" aria-label="How Pay by Bank works">
+              <div class="fena-step" role="listitem">
+                <div class="fena-step-num" aria-hidden="true">1</div>
+                <div class="fena-step-label">Click<br>Pay Now</div>
+              </div>
+              <div class="fena-step-sep" aria-hidden="true">›</div>
+              <div class="fena-step" role="listitem">
+                <div class="fena-step-num" aria-hidden="true">2</div>
+                <div class="fena-step-label">Choose<br>your bank</div>
+              </div>
+              <div class="fena-step-sep" aria-hidden="true">›</div>
+              <div class="fena-step" role="listitem">
+                <div class="fena-step-num" aria-hidden="true">3</div>
+                <div class="fena-step-label">Approve<br>in your app</div>
+              </div>
+              <div class="fena-step-sep" aria-hidden="true">›</div>
+              <div class="fena-step" role="listitem">
+                <div class="fena-step-num" aria-hidden="true">4</div>
+                <div class="fena-step-label">Order<br>confirmed</div>
+              </div>
+            </div>
+
+            <!-- Trust statements -->
+            <ul class="fena-trust-list">
+              <li><span class="fena-trust-ic" aria-hidden="true">🏛</span> FCA-authorised open banking &mdash; bank-grade security, regulated like your bank</li>
+              <li><span class="fena-trust-ic" aria-hidden="true">🔒</span> No card details entered or stored &mdash; ever</li>
+              <li><span class="fena-trust-ic" aria-hidden="true">⚡</span> Instant confirmation &mdash; order dispatched same business day</li>
+            </ul>
+
+            <!-- Bank logos -->
+            <div class="fena-banks-row" aria-label="Supported banks">
+              <span class="fena-bank-pill">Barclays</span>
+              <span class="fena-bank-pill">HSBC</span>
+              <span class="fena-bank-pill">Lloyds</span>
+              <span class="fena-bank-pill">NatWest</span>
+              <span class="fena-bank-pill">Santander</span>
+              <span class="fena-bank-pill">Starling</span>
+              <span class="fena-bank-pill">Monzo</span>
+              <span class="fena-bank-pill">Halifax</span>
+              <span class="fena-bank-pill">First Direct</span>
+              <span class="fena-bank-pill fena-bank-more">+200 more</span>
+            </div>
+
+            <!-- PAY NOW button -->
+            <button type="button" id="fena-pay-btn" class="fena-btn-pay" aria-label="Pay now via Fena open banking">
+              <svg class="fena-lock-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              PAY NOW &mdash; <span id="fena-total">&pound;&ndash;&ndash;</span>
+            </button>
+            <div id="fena-pay-err" class="fena-pay-err"></div>
+
+            <p class="fena-powered">Powered by Fena &middot; UK FCA Authorised &middot; Open Banking</p>
+          </div>
+          <!-- /fena-hero-card -->
+
+          <!-- ── WHY PAY BY BANK? ───────────────────────────────────── -->
+          <details class="fena-why-box">
+            <summary>Why pay by bank?</summary>
+            <div class="fena-why-body">
+              <p>Open banking lets you pay directly from your current account without entering any card details. Your bank authenticates the payment &mdash; the same way you'd approve any transaction in your banking app.</p>
+              <p>It's regulated by the FCA (the same body that regulates UK banks), so it carries the same protections as a standard bank transfer &mdash; with the speed and simplicity of a one-click payment.</p>
+              <p>Money goes directly to us. No card processors, no stored card data, no risk of card fraud.</p>
+            </div>
+          </details>
+
+          <!-- ── Terms & Conditions ─────────────────────────────────── -->
           <label class="co-ack">
             <input type="checkbox" name="terms" required>
             <span>I have read and accept the <a href="/legal/terms/" target="_blank">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank">Research Use Policy</a>.</span>
           </label>
 
+          <!-- ── Error display (used by checkout.js for bank path) ──── -->
           <div class="co-err" id="co-err"></div>
 
-          <button type="submit" id="bank-pay-btn" class="btn-p co-submit">CONFIRM ORDER →</button>
+          <!-- ── MANUAL BANK TRANSFER FALLBACK ─────────────────────── -->
+          <details class="bank-fallback">
+            <summary>Prefer to pay by manual bank transfer?</summary>
+            <div class="bank-fallback-body">
+              <div class="bank-note-amber">
+                <strong>⚠ Manual transfer — order on hold for 24 hours.</strong><br>
+                Your order will be reserved but NOT confirmed until we receive your payment. Please transfer the exact amount using your order ID as the reference.
+              </div>
 
-          <a href="/checkout/shipping/" class="co-back">← Back to delivery</a>
+              <dl class="pay-bank-dl">
+                <div><dt>Account name</dt><dd>CRP Labs Ltd</dd></div>
+                <div><dt>Bank</dt><dd>Zempler Bank</dd></div>
+                <div><dt>Sort code</dt><dd class="mono-teal">08-71-99</dd></div>
+                <div><dt>Account number</dt><dd class="mono-teal">14617029</dd></div>
+                <div><dt>Reference</dt><dd>Your order ID &mdash; shown in your confirmation email</dd></div>
+              </dl>
+              <p class="bank-fallback-note">For EU orders: IBAN GB76APSF08719914617029 &middot; BIC APSFGB2LXXX &middot; Please transfer in GBP where possible. Faster Payments typically clear within 1&ndash;2 hours.</p>
+
+              <button type="submit" id="bank-pay-btn">CONFIRM ORDER (MANUAL TRANSFER) &rarr;</button>
+            </div>
+          </details>
+
+          <a href="/checkout/shipping/" class="co-back">&larr; Back to delivery</a>
+
+          <!-- Hidden billing fields — checkout.js compatibility only -->
+          <div style="display:none" aria-hidden="true">
+            <input type="checkbox" id="bill-same" checked>
+            <div id="bill-fields"></div>
+          </div>
         </form>
+        <!-- /payment-form -->
+
       </div>
+      <!-- /co-form-col -->
 
       <aside class="co-summary">
         <div class="co-sum-hdr">Order summary</div>
@@ -264,13 +590,13 @@
         </div>
 
         <div class="co-sum-rows">
-          <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">£0.00</span></div>
-          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">£3.80</span></div>
+          <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">&pound;0.00</span></div>
+          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">&pound;3.80</span></div>
           <div class="co-sum-row co-discount-line" id="co-discount-line" style="display:none">
             <span>Discount (<span id="co-discount-label"></span>)</span>
-            <span id="co-discount-amount" class="co-discount-saving">−£0.00</span>
+            <span id="co-discount-amount" class="co-discount-saving">&minus;&pound;0.00</span>
           </div>
-          <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">£3.80</span></div>
+          <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">&pound;3.80</span></div>
         </div>
         <div class="co-deliver-to" id="co-deliver-to"></div>
         <div class="co-support-note">Questions? Email us at <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a></div>
@@ -397,6 +723,212 @@
 <script src="/assets/js/core.js"></script>
 <script src="/assets/js/discount-codes.js"></script>
 <script src="/assets/js/checkout.js"></script>
+
+<!-- ── Fena Pay by Bank — payment initiation ────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  var SHIPPING_FLAT   = 3.80;
+  var FREE_THRESHOLD  = 80;
+
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { return []; }
+  }
+  function getChk() {
+    try { return JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (e) { return {}; }
+  }
+  function cartTotals(cart) {
+    var sub = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
+    var ship = sub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    return { subtotal: sub, shipping: ship, total: sub + ship };
+  }
+  function randChars(n) {
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var out = '';
+    for (var i = 0; i < n; i++) out += chars.charAt(Math.floor(Math.random() * chars.length));
+    return out;
+  }
+  function todayStr() {
+    var d = new Date();
+    return '' + d.getFullYear() +
+      String(d.getMonth() + 1).padStart(2, '0') +
+      String(d.getDate()).padStart(2, '0');
+  }
+  function fmtPounds(n) {
+    return '£' + Number(n).toFixed(2);
+  }
+
+  // Re-compute applied discount from DOM state (checkout.js disables the input on apply)
+  function getAppliedDiscount(subtotal) {
+    var input = document.getElementById('discount-input');
+    if (!input || !input.disabled) return null;
+    var code = input.value.trim().toUpperCase();
+    if (!code || typeof DISCOUNT_CODES === 'undefined') return null;
+    for (var i = 0; i < DISCOUNT_CODES.length; i++) {
+      var dc = DISCOUNT_CODES[i];
+      if (dc.active && dc.code.toUpperCase() === code) {
+        var saving = dc.type === 'percentage'
+          ? Math.round(subtotal * dc.value) / 100
+          : Math.min(dc.value, subtotal);
+        return { code: dc.code, saving: Math.round(saving * 100) / 100 };
+      }
+    }
+    return null;
+  }
+
+  // Update the PAY NOW button total once the cart is rendered
+  function updateFenaTotal() {
+    var cart    = getCart();
+    var t       = cartTotals(cart);
+    var discount = getAppliedDiscount(t.subtotal);
+    var saving   = (discount && discount.saving) || 0;
+    var discSub  = Math.max(0, t.subtotal - saving);
+    var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    var total    = discSub + ship;
+    var el = document.getElementById('fena-total');
+    if (el) el.textContent = fmtPounds(total);
+  }
+
+  // Update button total on load and whenever discount changes
+  updateFenaTotal();
+  var discApplyBtn = document.getElementById('discount-apply');
+  if (discApplyBtn) {
+    discApplyBtn.addEventListener('click', function () {
+      // Give checkout.js time to update state first
+      setTimeout(updateFenaTotal, 50);
+    });
+  }
+
+  // ── Fena button click handler ──────────────────────────────────────────────
+  var fenaBtn = document.getElementById('fena-pay-btn');
+  var errEl   = document.getElementById('fena-pay-err');
+
+  function showErr(msg) {
+    if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+  }
+  function clearErr() {
+    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+  }
+
+  if (fenaBtn) {
+    fenaBtn.addEventListener('click', async function () {
+      clearErr();
+
+      // 1. Check terms checkbox
+      var form  = document.getElementById('payment-form');
+      var terms = form ? form.querySelector('input[name="terms"]') : null;
+      if (!terms || !terms.checked) {
+        showErr('Please accept the Terms & Conditions and Research Use Policy before paying.');
+        return;
+      }
+
+      // 2. Compute totals
+      var cart     = getCart();
+      if (!cart.length) {
+        showErr('Your order appears to be empty. Please return to the shop.');
+        return;
+      }
+      var t        = cartTotals(cart);
+      var discount = getAppliedDiscount(t.subtotal);
+      var saving   = (discount && discount.saving) || 0;
+      var discSub  = Math.max(0, t.subtotal - saving);
+      var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+      var total    = discSub + ship;
+      var totalPence = Math.round(total * 100);
+
+      // 3. Generate order reference
+      var ref = 'VP-' + todayStr() + '-' + randChars(4);
+
+      // 4. Build products list for email metadata
+      var chk = getChk();
+      var shippingMethod = 'Royal Mail Tracked 24';
+      var shippingAddr   = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
+        .filter(Boolean).join(', ');
+      var productsList = cart.map(function (item) {
+        return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
+          ' — £' + (item.price * (item.qty || 1)).toFixed(2);
+      }).join('\n');
+
+      // 5. Save order data to sessionStorage (mirrors checkout.js logic)
+      var session = Object.assign({}, chk, {
+        orderRef:        ref,
+        subtotal:        t.subtotal,
+        shipping:        ship,
+        discount_code:   discount ? discount.code : '',
+        discount_saving: saving,
+        total:           total,
+        cart_snapshot:   JSON.stringify(cart),
+        payment_method:  'fena',
+        currency:        'GBP',
+        region:          'UK',
+      });
+      try {
+        sessionStorage.setItem('vp_checkout', JSON.stringify(session));
+        sessionStorage.removeItem('vp_order_fired');
+      } catch (ex) {}
+
+      // 6. Build metadata for webhook fallback (sent to Fena, echoed back in webhook)
+      var metadata = {
+        customer_name:    ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+        customer_email:   chk.email    || '',
+        customer_phone:   chk.phone    || '',
+        fname:            chk.fname    || '',
+        lname:            chk.lname    || '',
+        addr1:            chk.addr1    || '',
+        addr2:            chk.addr2    || '',
+        city:             chk.city     || '',
+        postcode:         chk.postcode || '',
+        country:          chk.country  || 'United Kingdom',
+        shipping_address: shippingAddr,
+        shipping_method:  shippingMethod,
+        order_items:      productsList,
+        subtotal:         t.subtotal.toFixed(2),
+        shipping:         ship.toFixed(2),
+        discount_code:    discount ? discount.code : '',
+        discount_saving:  saving.toFixed(2),
+        total:            total.toFixed(2),
+        currency:         'GBP',
+        region:           'UK',
+      };
+
+      // 7. Disable button and call API
+      fenaBtn.disabled   = true;
+      fenaBtn.textContent = 'Opening secure payment…';
+
+      try {
+        var resp = await fetch('/api/create-fena-payment', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            amount_pence: totalPence,
+            reference:    ref,
+            description:  'Velox Peptides Research Order',
+            metadata:     metadata,
+          }),
+        });
+        var data = await resp.json();
+
+        if (!resp.ok || !data.paymentUrl) {
+          throw new Error(data.error || 'No payment URL returned');
+        }
+
+        // 8. Redirect to Fena hosted payment page
+        window.location.href = data.paymentUrl;
+
+      } catch (e) {
+        console.error('[fena-pay] Error:', e.message);
+        fenaBtn.disabled    = false;
+        fenaBtn.innerHTML   = '<svg class="fena-lock-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> PAY NOW &mdash; ' +
+          document.getElementById('fena-total').outerHTML;
+        showErr('Pay by Bank is temporarily unavailable. Please try again or use manual bank transfer below.');
+      }
+    });
+  }
+
+}());
+</script>
+
 <script src="/assets/js/conversion.js" defer></script>
 <script src="/assets/js/animations.js" defer></script>
 </body>

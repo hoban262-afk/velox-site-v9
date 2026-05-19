@@ -217,7 +217,7 @@
         <ol class="co-timeline">
           <li class="co-tl-item co-tl-done">
             <div class="co-tl-dot">✓</div>
-            <div class="co-tl-body"><strong>Payment confirmed</strong><span>Your order is confirmed. Bank transfer details have been sent to your email.</span></div>
+            <div class="co-tl-body"><strong>Payment confirmed</strong><span>Your payment has been received and your order is confirmed.</span></div>
           </li>
           <li class="co-tl-item co-tl-active">
             <div class="co-tl-dot">2</div>
@@ -411,10 +411,12 @@
   }
 
   // ── Read URL params ────────────────────────────────────────────────────────
-  var params    = new URLSearchParams(window.location.search);
-  var urlMethod = params.get('method')  || '';   // 'psifi' or '' (GoCardless)
-  var urlPay    = params.get('payment') || '';   // 'cancelled' (PsiFi cancel) or ''
+  var params           = new URLSearchParams(window.location.search);
+  var urlMethod        = params.get('method')  || '';   // 'fena', 'psifi', or ''
+  var urlPay           = params.get('payment') || '';   // 'cancelled'
   var billingRequestId = params.get('billing_request_id') || '';
+  // Fena appends ?orderId=xxx (or ?order_id=xxx) to the redirectUrl
+  var fenaOrderId      = params.get('orderId') || params.get('order_id') || '';
 
   // Clean URL immediately so refreshes don't re-read stale params
   if (window.history && window.history.replaceState) {
@@ -426,14 +428,12 @@
   // Fall back to sessionStorage for billingRequestId if not in URL
   if (!billingRequestId && chk.billing_request_id) {
     billingRequestId = chk.billing_request_id;
-    console.log('[payment-complete] billing_request_id from sessionStorage:', billingRequestId);
-  } else if (billingRequestId) {
-    console.log('[payment-complete] billing_request_id from URL params:', billingRequestId);
   }
 
   // Determine payment method: prefer URL param, fall back to sessionStorage
   var paymentMethod = urlMethod || chk.payment_method || 'instant';
-  var isPsifi = paymentMethod === 'psifi';
+  var isPsifi       = paymentMethod === 'psifi';
+  var isFena        = paymentMethod === 'fena';
 
   // ── State elements ─────────────────────────────────────────────────────────
   var stateLoading   = document.getElementById('pc-loading');
@@ -504,9 +504,11 @@
     if (emailEl && chk.email)            emailEl.textContent = chk.email;
     if (shpLbl)  shpLbl.textContent = shippingMethod;
 
-    // Update payment badge for PsiFi
-    if (badgeText && isPsifi) {
-      badgeText.textContent = 'Payment confirmed via Card / Apple Pay';
+    // Update payment badge based on method
+    if (badgeText) {
+      if (isFena)        badgeText.textContent = 'Payment confirmed via Fena Pay by Bank';
+      else if (isPsifi)  badgeText.textContent = 'Payment confirmed via Card / Apple Pay';
+      else               badgeText.textContent = 'Order confirmed — bank transfer details sent by email';
     }
 
     if (chk.discount_code && discRow && discInfo) {
@@ -550,8 +552,6 @@
   }
 
   // ── GUARD 1: Already processed — show success immediately ─────────────────
-  // Must check this FIRST — PsiFi refreshes have no billing_request_id but
-  // vp_order_fired=1 means we already handled this payment successfully.
   var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
   if (alreadyFired && chk.orderRef) {
     console.log('[payment-complete] Already processed (vp_order_fired=1) — showing success from session data');
@@ -560,9 +560,9 @@
     return;
   }
 
-  // ── GUARD 2: PsiFi cancel ─────────────────────────────────────────────────
-  if (isPsifi && urlPay === 'cancelled') {
-    console.log('[payment-complete] PsiFi payment cancelled by user');
+  // ── GUARD 2: Explicit cancel ───────────────────────────────────────────────
+  if (urlPay === 'cancelled') {
+    console.log('[payment-complete] Payment cancelled by user (method:', paymentMethod, ')');
     showState('cancelled');
     return;
   }
@@ -573,26 +573,26 @@
   var productsList = buildProductsList();
 
   var orderPayload = {
-    order_number:    chk.orderRef  || '',
-    customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-    customer_email:  chk.email     || '',
-    customer_phone:  chk.phone     || '',
-    addr1:           chk.addr1     || '',
-    addr2:           chk.addr2     || '',
-    city:            chk.city      || '',
-    postcode:        chk.postcode  || '',
-    country:         chk.country   || 'United Kingdom',
+    order_number:     chk.orderRef  || '',
+    customer_name:    ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+    customer_email:   chk.email     || '',
+    customer_phone:   chk.phone     || '',
+    addr1:            chk.addr1     || '',
+    addr2:            chk.addr2     || '',
+    city:             chk.city      || '',
+    postcode:         chk.postcode  || '',
+    country:          chk.country   || 'United Kingdom',
     shipping_address: shippingAddr,
-    shipping_method: shippingMethod,
-    order_items:     productsList,
-    order_subtotal:  (Number(chk.subtotal)       || 0).toFixed(2),
-    shipping_cost:   (Number(chk.shipping)        || 0).toFixed(2),
-    discount_code:   chk.discount_code             || '',
-    discount_saving: (Number(chk.discount_saving) || 0).toFixed(2),
-    order_total:     (Number(chk.total)            || 0).toFixed(2),
-    currency:        pcCurrency,
-    region:          pcRegion,
-    payment_method:  paymentMethod,
+    shipping_method:  shippingMethod,
+    order_items:      productsList,
+    order_subtotal:   (Number(chk.subtotal)       || 0).toFixed(2),
+    shipping_cost:    (Number(chk.shipping)        || 0).toFixed(2),
+    discount_code:    chk.discount_code             || '',
+    discount_saving:  (Number(chk.discount_saving) || 0).toFixed(2),
+    order_total:      (Number(chk.total)            || 0).toFixed(2),
+    currency:         pcCurrency,
+    region:           pcRegion,
+    payment_method:   paymentMethod,
   };
 
   function onSuccess() {
@@ -604,10 +604,38 @@
     showState('success');
   }
 
+  // ── Fena success path ──────────────────────────────────────────────────────
+  if (isFena) {
+    console.log('[payment-complete] Fena return — order:', chk.orderRef, '| fenaOrderId:', fenaOrderId);
+
+    var fenaPayload = Object.assign({}, orderPayload, { fena_order_id: fenaOrderId });
+
+    fetch('/api/confirm-fena-payment', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(fenaPayload),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        console.log('[payment-complete] confirm-fena-payment response:', JSON.stringify(data));
+        if (!data.success) {
+          console.error('[payment-complete] Fena payment not confirmed:', data.error, 'status:', data.status);
+          showState('error');
+          return;
+        }
+        console.log('[payment-complete] Fena order confirmed — emails + Sheets handled server-side');
+        onSuccess();
+      })
+      .catch(function (err) {
+        console.error('[payment-complete] confirm-fena-payment fetch failed:', err && err.message ? err.message : err);
+        showState('error');
+      });
+    return;
+  }
+
   // ── PsiFi success path ─────────────────────────────────────────────────────
   if (isPsifi) {
     console.log('[payment-complete] PsiFi success — calling confirm-order — order:', chk.orderRef);
-    console.log('[payment-complete] Order total:', orderPayload.order_total, pcCurrency, '| email:', orderPayload.customer_email);
 
     fetch('/api/confirm-order', {
       method:  'POST',
@@ -622,7 +650,6 @@
           showState('error');
           return;
         }
-        console.log('[payment-complete] PsiFi order confirmed — emails + Sheets handled server-side');
         onSuccess();
       })
       .catch(function (err) {
@@ -632,37 +659,16 @@
     return;
   }
 
-  // ── GoCardless path ────────────────────────────────────────────────────────
-  if (!billingRequestId) {
-    console.error('[payment-complete] No billing_request_id — cannot verify GoCardless payment');
+  // ── GoCardless path (disabled — kept for reference) ────────────────────────
+  if (billingRequestId) {
+    console.warn('[payment-complete] GoCardless billing_request_id present but GoCardless is disabled');
     showState('error');
     return;
   }
 
-  var gcPayload = Object.assign({}, orderPayload, { billing_request_id: billingRequestId });
-  console.log('[payment-complete] Calling verify-payment — order:', chk.orderRef, '/ billing_request:', billingRequestId);
-  console.log('[payment-complete] Order total:', orderPayload.order_total, pcCurrency, '| email:', orderPayload.customer_email);
-
-  fetch('/api/verify-payment', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(gcPayload),
-  })
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
-      console.log('[payment-complete] verify-payment response:', JSON.stringify(data));
-      if (!data.success) {
-        console.error('[payment-complete] Payment not verified — status:', data.status, 'error:', data.error);
-        showState('error');
-        return;
-      }
-      console.log('[payment-complete] GoCardless order confirmed — emails handled server-side');
-      onSuccess();
-    })
-    .catch(function (err) {
-      console.error('[payment-complete] verify-payment fetch failed:', err && err.message ? err.message : err);
-      showState('error');
-    });
+  // ── No recognised payment method ───────────────────────────────────────────
+  console.error('[payment-complete] Unknown payment method:', paymentMethod, '— showing error');
+  showState('error');
 
 }());
 </script>

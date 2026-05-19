@@ -87,14 +87,17 @@ function emailFooter() {
   return `</table></td></tr></table></body></html>`;
 }
 
-/* ── 1. Customer email — instant payment (GoCardless or PsiFi) ─────────────── */
+/* ── 1. Customer email — instant payment (Fena, PsiFi, or GoCardless) ─────── */
 function buildCustomerInstantHtml(d, itemsHtml) {
   const sym          = currencySymbol(d);
   const isEU         = d.region === 'EU';
   const isPsifi      = d.payment_method === 'psifi';
+  const isFena       = d.payment_method === 'fena';
   const shippingName = d.shipping_method || (isEU ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24');
   const deliveryTime = isEU ? '3&ndash;5 working days' : '1&ndash;2 working days';
-  const providerName = isPsifi ? 'Card / Apple Pay / Google Pay' : 'GoCardless Instant Bank Pay';
+  const providerName = isFena  ? 'Fena Pay by Bank'
+                     : isPsifi ? 'Card / Apple Pay / Google Pay'
+                     :           'GoCardless Instant Bank Pay';
 
   return emailHeader('Order Confirmed') + `
 <tr><td align="center" style="padding:0 40px 8px">
@@ -269,12 +272,15 @@ ${mhraFooter()}
 /* ── 3. Admin notification email ────────────────────────────────────────────── */
 function buildAdminHtml(d, itemsHtml) {
   const isPsifi   = d.payment_method === 'psifi';
-  const isInstant = d.payment_method === 'instant' || isPsifi;
-  const payBadge = isPsifi
-    ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Card / Apple Pay / Google Pay &mdash; PAYMENT CONFIRMED</p></td>`
-    : isInstant
-      ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Instant Payment &mdash; PAYMENT CONFIRMED</p></td>`
-      : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
+  const isFena    = d.payment_method === 'fena';
+  const isInstant = d.payment_method === 'instant' || isPsifi || isFena;
+  const payBadge = isFena
+    ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Fena Pay by Bank &mdash; PAYMENT CONFIRMED</p></td>`
+    : isPsifi
+      ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Card / Apple Pay / Google Pay &mdash; PAYMENT CONFIRMED</p></td>`
+      : isInstant
+        ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Instant Payment &mdash; PAYMENT CONFIRMED</p></td>`
+        : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
 
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>New Order</title></head>
 <body style="${S.body}">
@@ -388,7 +394,7 @@ ${mhraFooter()}
  */
 async function sendEmails(d, idempotencyKey) {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const isInstant = d.payment_method === 'instant' || d.payment_method === 'psifi';
+  const isInstant = d.payment_method === 'instant' || d.payment_method === 'psifi' || d.payment_method === 'fena';
 
   // Parse "Product Name size x1 — £XX.XX" or "...— €XX.XX" lines into two-column rows
   const sym = d.currency === 'EUR' ? '&euro;' : '&pound;';
