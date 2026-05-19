@@ -17,15 +17,13 @@ module.exports = async function handler(req, res) {
 
   const amountPounds = (amount_pence / 100).toFixed(2);
 
-  const body = {
-    amount:      amountPounds,
-    currency:    'GBP',
-    reference,
-    description: description || 'Velox Peptides Research Order',
-    redirectUrl: 'https://veloxpeps.com/checkout/payment-complete/?method=fena',
-    webhookUrl:  'https://veloxpeps.com/api/fena-webhook',
-    metadata:    metadata || {},
-  };
+  const form = new FormData();
+  form.append('amount',      amountPounds);
+  form.append('currency',    'GBP');
+  form.append('reference',   reference);
+  form.append('description', description || 'Velox Peptides Research Order');
+  form.append('redirectUrl', 'https://veloxpeps.com/checkout/payment-complete/?method=fena');
+  form.append('webhookUrl',  'https://veloxpeps.com/api/fena-webhook');
 
   const basicAuth = 'Basic ' + Buffer.from(`${terminalId}:${terminalSecret}`).toString('base64');
 
@@ -35,11 +33,10 @@ module.exports = async function handler(req, res) {
     const fenaRes = await fetch('https://toolkit.fena.co/api/v1/payments', {
       method:  'POST',
       headers: {
-        Authorization:  basicAuth,
-        'Content-Type': 'application/json',
-        Accept:         'application/json',
+        Authorization: basicAuth,
+        Accept:        'application/json',
       },
-      body: JSON.stringify(body),
+      body: form,
     });
 
     const rawText = await fenaRes.text();
