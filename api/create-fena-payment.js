@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
   console.log(`[create-fena-payment] Sending — ref: ${reference}, amount: £${amountPounds}`);
 
   try {
-    const fenaRes = await fetch('https://api.toolkit.fena.co/v1/order', {
+    const fenaRes = await fetch('https://toolkit.fena.co/api/v1/payments', {
       method:  'POST',
       headers: {
         Authorization:  basicAuth,
