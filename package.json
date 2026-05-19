@@ -2,6 +2,7 @@
   "name": "velox-peptides",
   "version": "1.0.0",
   "dependencies": {
+    "form-data": "^4.0.5",
     "gocardless-nodejs": "^8.1.0",
     "resend": "^3.0.0"
   }

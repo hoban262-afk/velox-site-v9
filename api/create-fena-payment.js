@@ -1,3 +1,5 @@
+const FormData = require('form-data');
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -35,6 +37,7 @@ module.exports = async function handler(req, res) {
       headers: {
         Authorization: basicAuth,
         Accept:        'application/json',
+        ...form.getHeaders(),
       },
       body: form,
     });
