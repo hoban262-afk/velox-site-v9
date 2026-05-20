@@ -1,10 +1,7 @@
-const fetch    = require('node-fetch');
-const FormData = require('form-data');
-
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { amount_pence, reference, description, metadata } = req.body || {};
+  const { amount_pence, reference, description } = req.body || {};
 
   if (!amount_pence || !reference) {
     return res.status(400).json({ error: 'Missing amount_pence or reference' });
@@ -18,27 +15,40 @@ module.exports = async function handler(req, res) {
   }
 
   const amountPounds = (amount_pence / 100).toFixed(2);
+  const boundary     = '----VeloxBoundary' + Date.now();
 
-  const form = new FormData();
-  form.append('amount',      amountPounds);
-  form.append('currency',    'GBP');
-  form.append('reference',   reference);
-  form.append('description', description || 'Velox Peptides Research Order');
-  form.append('redirectUrl', 'https://veloxpeps.com/checkout/payment-complete/?method=fena');
-  form.append('webhookUrl',  'https://veloxpeps.com/api/fena-webhook');
+  const fields = {
+    amount:      amountPounds,
+    currency:    'GBP',
+    reference,
+    description: description || 'Velox Peptides Research Order',
+    redirectUrl: 'https://veloxpeps.com/checkout/payment-complete/?method=fena',
+    webhookUrl:  'https://veloxpeps.com/api/fena-webhook',
+  };
 
+  let bodyStr = '';
+  for (const [key, value] of Object.entries(fields)) {
+    bodyStr += `--${boundary}\r\n`;
+    bodyStr += `Content-Disposition: form-data; name="${key}"\r\n\r\n`;
+    bodyStr += `${value}\r\n`;
+  }
+  bodyStr += `--${boundary}--\r\n`;
+
+  const bodyBuf  = Buffer.from(bodyStr, 'utf-8');
   const basicAuth = 'Basic ' + Buffer.from(`${terminalId}:${terminalSecret}`).toString('base64');
 
   console.log(`[create-fena-payment] Sending — ref: ${reference}, amount: £${amountPounds}`);
+  console.log(`[create-fena-payment] Body:\n${bodyStr}`);
 
   try {
     const fenaRes = await fetch('https://toolkit.fena.co/api/v1/payments', {
       method:  'POST',
       headers: {
-        Authorization: basicAuth,
-        ...form.getHeaders(),
+        Authorization:  basicAuth,
+        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+        'Content-Length': String(bodyBuf.length),
       },
-      body: form,
+      body: bodyBuf,
     });
 
     const rawText = await fenaRes.text();
