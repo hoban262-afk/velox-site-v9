@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
   console.log(`[create-fena-payment] Body:\n${bodyStr}`);
 
   try {
-    const fenaRes = await fetch('https://toolkit.fena.co/api/v1/payments', {
+    const fenaRes = await fetch('https://app.fena.co/api/payments', {
       method:  'POST',
       headers: {
         Authorization:  basicAuth,
