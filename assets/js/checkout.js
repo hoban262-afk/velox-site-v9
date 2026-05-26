@@ -1,27 +1,20 @@
 (function () {
   'use strict';
 
-  var SHIPPING_FLAT = 3.80;
+  var SHIPPING_FLAT  = 3.80;
   var FREE_THRESHOLD = 80;
 
   function getCart() {
-    try {
-      return JSON.parse(localStorage.getItem('vp_cart') || '[]');
-    } catch (e) {
-      return [];
-    }
+    try { return JSON.parse(localStorage.getItem('vp_cart') || '[]'); }
+    catch (e) { return []; }
   }
 
-  function fmt(n) {
-    return '£' + n.toFixed(2);
-  }
+  function fmt(n) { return '£' + n.toFixed(2); }
 
   function escHtml(s) {
     return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function cartTotals(cart) {
@@ -32,19 +25,13 @@
 
   // ── Discount code helpers ─────────────────────────────────────────────────
 
-  /**
-   * Look up a code in DISCOUNT_CODES (defined in discount-codes.js).
-   * Returns { code, type, value, saving } or null if invalid/inactive.
-   * Saving is computed against the order subtotal.
-   */
   function calcDiscount(subtotal, rawCode) {
     if (typeof DISCOUNT_CODES === 'undefined' || !rawCode) return null;
     var upper = rawCode.trim().toUpperCase();
     var match = null;
     for (var i = 0; i < DISCOUNT_CODES.length; i++) {
       if (DISCOUNT_CODES[i].active && DISCOUNT_CODES[i].code.toUpperCase() === upper) {
-        match = DISCOUNT_CODES[i];
-        break;
+        match = DISCOUNT_CODES[i]; break;
       }
     }
     if (!match) return null;
@@ -55,14 +42,9 @@
     return { code: match.code, type: match.type, value: match.value, saving: saving };
   }
 
-  /**
-   * Update the totals sidebar to reflect an applied discount.
-   * Pass null as `discount` to reset to undiscounted totals.
-   */
   function renderTotalsWithDiscount(cart, discount) {
     var t = cartTotals(cart);
     var saving = (discount && discount.saving) ? discount.saving : 0;
-    // Post-discount subtotal determines whether delivery is free
     var discountedSubtotal = Math.max(0, t.subtotal - saving);
     var shipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
     var discountedTotal = discountedSubtotal + shipping;
@@ -79,9 +61,9 @@
 
     if (discount && saving > 0) {
       if (discLine) discLine.style.display = '';
-      if (discLbl)  discLbl.textContent  = discount.code;
-      if (discAmt)  discAmt.textContent  = '−' + fmt(saving);
-      if (totEl)    totEl.textContent    = fmt(discountedTotal);
+      if (discLbl)  discLbl.textContent = discount.code;
+      if (discAmt)  discAmt.textContent = '−' + fmt(saving);
+      if (totEl)    totEl.textContent = fmt(discountedTotal);
     } else {
       if (discLine) discLine.style.display = 'none';
       if (totEl)    totEl.textContent = fmt(discountedTotal);
@@ -105,35 +87,32 @@
     el.innerHTML = html;
 
     var t = cartTotals(cart);
-    var subEl = document.getElementById('co-subtotal');
+    var subEl  = document.getElementById('co-subtotal');
     var shipEl = document.getElementById('co-shipping');
     var totEl  = document.getElementById('co-total');
-    if (subEl) subEl.textContent = fmt(t.subtotal);
+    if (subEl)  subEl.textContent  = fmt(t.subtotal);
     if (shipEl) shipEl.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping);
-    if (totEl) totEl.textContent = fmt(t.total);
+    if (totEl)  totEl.textContent  = fmt(t.total);
   }
 
   function randChars(n) {
     var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     var out = '';
-    for (var i = 0; i < n; i++) {
-      out += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    for (var i = 0; i < n; i++) out += chars.charAt(Math.floor(Math.random() * chars.length));
     return out;
   }
 
   function todayStr() {
     var d = new Date();
-    var y = d.getFullYear();
-    var m = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    return '' + y + m + day;
+    return '' + d.getFullYear() +
+      String(d.getMonth() + 1).padStart(2, '0') +
+      String(d.getDate()).padStart(2, '0');
   }
 
   var cart = getCart();
-  var appliedDiscount = null; // set when a valid code is applied on the payment page
+  var appliedDiscount = null;
 
-  // ── SHIPPING PAGE ────────────────────────────────────────────────────────
+  // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
   var shippingForm = document.getElementById('shipping-form');
   if (shippingForm) {
     renderCartSummary(cart);
@@ -168,20 +147,17 @@
         country:  'United Kingdom',
       };
 
-      try {
-        sessionStorage.setItem('vp_checkout', JSON.stringify(data));
-      } catch (ex) {}
-
+      try { sessionStorage.setItem('vp_checkout', JSON.stringify(data)); } catch (ex) {}
       window.location.href = '/checkout/payment/';
     });
   }
 
-  // ── PAYMENT PAGE ─────────────────────────────────────────────────────────
+  // ── PAYMENT PAGE ──────────────────────────────────────────────────────────
   var paymentForm = document.getElementById('payment-form');
   if (paymentForm) {
     renderCartSummary(cart);
 
-    // ── Discount code input ───────────────────────────────────────────────
+    // Discount code UI (optional — graceful if elements not in HTML)
     var discountInput = document.getElementById('discount-input');
     var discountApply = document.getElementById('discount-apply');
     var discountMsg   = document.getElementById('discount-msg');
@@ -214,9 +190,8 @@
         if (e.key === 'Enter') { e.preventDefault(); handleApply(); }
       });
     }
-    // ─────────────────────────────────────────────────────────────────────
 
-    // Show delivery address
+    // Show delivery address in sidebar
     var deliverEl = document.getElementById('co-deliver-to');
     if (deliverEl) {
       try {
@@ -235,8 +210,8 @@
       } catch (ex) {}
     }
 
-    // Billing same as delivery toggle
-    var billSame = document.getElementById('bill-same');
+    // Billing same/different toggle
+    var billSame   = document.getElementById('bill-same');
     var billFields = document.getElementById('bill-fields');
     if (billSame && billFields) {
       billSame.addEventListener('change', function () {
@@ -244,6 +219,7 @@
       });
     }
 
+    // ── Place Order submit ──────────────────────────────────────────────────
     paymentForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var errEl = document.getElementById('co-err');
@@ -254,129 +230,174 @@
       }
       if (errEl) errEl.textContent = '';
 
-      // Disable the submit button immediately — prevents double-click resubmission
       var submitBtn = paymentForm.querySelector('button[type="submit"]');
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Processing…'; }
 
       var ref = 'VP-' + todayStr() + '-' + randChars(4);
-      var t = cartTotals(cart);
-      var saving = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-      var discountedSubtotal = Math.max(0, t.subtotal - saving);
-      var finalShipping = discountedSubtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-      var finalTotal = discountedSubtotal + finalShipping;
+      var t   = cartTotals(cart);
+      var saving            = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
+      var discountedSub     = Math.max(0, t.subtotal - saving);
+      var finalShipping     = discountedSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+      var finalTotal        = discountedSub + finalShipping;
 
-      try {
-        var existing = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
-        existing.orderRef        = ref;
-        existing.subtotal        = t.subtotal;
-        existing.shipping        = finalShipping;
-        existing.discount_code   = appliedDiscount ? appliedDiscount.code : '';
-        existing.discount_saving = saving;
-        existing.total           = finalTotal;
-        // Snapshot the cart so the confirmation page can recover it even if
-        // localStorage has already been cleared (e.g. page refresh)
-        existing.cart_snapshot   = JSON.stringify(cart);
-        sessionStorage.setItem('vp_checkout', JSON.stringify(existing));
-      } catch (ex) {}
-
-      // Reset the fired flag so the confirmation page treats this as a fresh order
+      // Save full checkout data to sessionStorage (used by payment-complete page)
+      var chkData = {};
+      try { chkData = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
+      chkData.orderRef       = ref;
+      chkData.subtotal       = t.subtotal;
+      chkData.shipping       = finalShipping;
+      chkData.discount_code  = appliedDiscount ? appliedDiscount.code : '';
+      chkData.discount_saving = saving;
+      chkData.total          = finalTotal;
+      chkData.cart_snapshot  = JSON.stringify(cart);
+      try { sessionStorage.setItem('vp_checkout', JSON.stringify(chkData)); } catch (ex) {}
       try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
 
-      window.location.href = '/checkout/confirmation/';
+      var customerName = ((chkData.fname || '') + ' ' + (chkData.lname || '')).trim() || 'Customer';
+
+      // Async payment flow
+      (async function () {
+        var supabaseOrderId = null;
+
+        // 1 — Save pending order to Supabase
+        if (window._sb) {
+          try {
+            var itemsPayload = cart.map(function (item) {
+              return { name: item.name, slug: item.slug, size: item.size,
+                       qty: item.qty || 1, price: item.price };
+            });
+            var sbResult = await window._sb.from('orders').insert([{
+              customer_name:  customerName,
+              customer_email: chkData.email || '',
+              items:          itemsPayload,
+              total:          finalTotal,
+              payment_method: 'open_banking',
+              status:         'pending',
+            }]).select('id').single();
+            if (sbResult.data && sbResult.data.id) {
+              supabaseOrderId = sbResult.data.id;
+              // Persist the Supabase UUID so payment-complete can reference it
+              try {
+                chkData.supabaseOrderId = supabaseOrderId;
+                sessionStorage.setItem('vp_checkout', JSON.stringify(chkData));
+              } catch (ex) {}
+            }
+          } catch (sbErr) {
+            console.error('[checkout] Supabase save failed (continuing):', sbErr);
+          }
+        }
+
+        // 2 — Call edge function to get Fena payment URL
+        try {
+          var fenaRes = await fetch('/api/create-fena-payment', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId:       supabaseOrderId || ref,
+              amount:        finalTotal.toFixed(2),
+              reference:     ref,
+              customerEmail: chkData.email || '',
+            }),
+          });
+
+          var fenaData = await fenaRes.json();
+
+          if (fenaData.paymentUrl) {
+            // Save Fena payment ID if returned
+            if (fenaData.fenaPaymentId) {
+              try {
+                chkData.fenaPaymentId = fenaData.fenaPaymentId;
+                sessionStorage.setItem('vp_checkout', JSON.stringify(chkData));
+              } catch (ex) {}
+            }
+            // Redirect customer to Fena's bank selection page
+            window.location.href = fenaData.paymentUrl;
+            return;
+          }
+          console.warn('[checkout] Fena returned no paymentUrl — falling back to bank transfer:', fenaData);
+        } catch (fenaErr) {
+          console.error('[checkout] Fena call failed — falling back to bank transfer:', fenaErr);
+        }
+
+        // 3 — Fallback: classic bank transfer confirmation page
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Place order →'; }
+        window.location.href = '/checkout/confirmation/';
+      })();
     });
   }
 
-  // ── CONFIRMATION PAGE ─────────────────────────────────────────────────────
+  // ── CONFIRMATION PAGE (bank transfer fallback) ────────────────────────────
   var confirmSummary = document.getElementById('confirm-summary');
   if (confirmSummary) {
 
-    // Parse sessionStorage FIRST — we need cart_snapshot before deciding on confirmedCart
     var chk = {};
     try { chk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
 
-    // Build confirmedCart from localStorage. If the page was refreshed and
-    // localStorage was already cleared on the first visit, fall back to the
-    // cart_snapshot saved into sessionStorage at payment-form submit time.
     var confirmedCart = cart.slice();
     if (!confirmedCart.length && chk.cart_snapshot) {
       try { confirmedCart = JSON.parse(chk.cart_snapshot); } catch (ex) {}
     }
 
-    // Clear cart — order is placed
     localStorage.removeItem('vp_cart');
     var countEl = document.getElementById('nav-cart-count');
     if (countEl) countEl.textContent = '0';
 
-    // Build the products string once — used by both email and Sheets
-    // Format: "Semax 10mg x1 — £34.99, Selank 10mg x1 — £39.99"
     var productsList = confirmedCart.map(function (item) {
       return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
              ' — ' + fmt(item.price * (item.qty || 1));
     }).join('\n');
 
-    // Update DOM with order reference and total
     try {
       var refEl   = document.getElementById('confirm-ref');
       var ref2El  = document.getElementById('confirm-ref-2');
       var amtEl   = document.getElementById('confirm-amount');
       var subEl2  = document.getElementById('confirm-subtotal');
       var shipEl2 = document.getElementById('confirm-shipping');
-      if (refEl   && chk.orderRef)           refEl.textContent   = chk.orderRef;
-      if (ref2El  && chk.orderRef)           ref2El.textContent  = chk.orderRef;
-      if (amtEl   && chk.total)              amtEl.textContent   = fmt(Number(chk.total));
-      if (subEl2  && chk.subtotal != null)   subEl2.textContent  = fmt(Number(chk.subtotal));
-      if (shipEl2 && chk.shipping != null)   shipEl2.textContent = Number(chk.shipping) === 0 ? 'FREE' : fmt(Number(chk.shipping));
+      if (refEl   && chk.orderRef)         refEl.textContent  = chk.orderRef;
+      if (ref2El  && chk.orderRef)         ref2El.textContent = chk.orderRef;
+      if (amtEl   && chk.total)            amtEl.textContent  = fmt(Number(chk.total));
+      if (subEl2  && chk.subtotal != null) subEl2.textContent = fmt(Number(chk.subtotal));
+      if (shipEl2 && chk.shipping != null) shipEl2.textContent = Number(chk.shipping) === 0 ? 'FREE' : fmt(Number(chk.shipping));
 
-      // Show discount row in bank details if a code was used
       if (chk.discount_code) {
         var discRow  = document.getElementById('confirm-discount-row');
         var discInfo = document.getElementById('confirm-discount-info');
         if (discRow)  discRow.style.display = '';
-        if (discInfo) discInfo.textContent = chk.discount_code +
-          ' (−' + fmt(Number(chk.discount_saving || 0)) + ')';
+        if (discInfo) discInfo.textContent = chk.discount_code + ' (−' + fmt(Number(chk.discount_saving || 0)) + ')';
       }
     } catch (ex) {}
 
-    // Send order notification emails + log to Sheets (fire-and-forget)
-    // Guard: vp_order_fired is set to '1' the first time this runs.
-    // On any subsequent page load or refresh the flag is already present,
-    // so we skip the API calls entirely — preventing duplicate emails / sheet rows.
     var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
     if (!alreadyFired && chk.orderRef && chk.email) {
-      // Mark fired BEFORE the async calls — a refresh during the fetch cannot re-enter
       try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
 
       var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
         .filter(Boolean).join(', ');
 
-      // ── Resend order emails ──────────────────────────────────────────────
       fetch('/api/send-order', {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           order_number:     chk.orderRef,
           customer_name:    ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
           customer_email:   chk.email,
-          customer_phone:   chk.phone || '',
-          addr1:            chk.addr1    || '',
-          addr2:            chk.addr2    || '',
-          city:             chk.city     || '',
-          postcode:         chk.postcode || '',
-          country:          chk.country  || 'United Kingdom',
+          customer_phone:   chk.phone      || '',
+          addr1:            chk.addr1      || '',
+          addr2:            chk.addr2      || '',
+          city:             chk.city       || '',
+          postcode:         chk.postcode   || '',
+          country:          chk.country    || 'United Kingdom',
           shipping_address: shippingAddr,
           shipping_method:  'Royal Mail Tracked 24',
           order_items:      productsList,
-          order_subtotal:   (Number(chk.subtotal)       || 0).toFixed(2),
-          shipping_cost:    (Number(chk.shipping)        || 0).toFixed(2),
-          discount_code:    chk.discount_code             || '',
-          discount_saving:  (Number(chk.discount_saving) || 0).toFixed(2),
-          order_total:      (Number(chk.total)           || 0).toFixed(2),
-        })
-      }).catch(function () { /* silent — don't block the confirmation page */ });
+          order_subtotal:   (Number(chk.subtotal)        || 0).toFixed(2),
+          shipping_cost:    (Number(chk.shipping)         || 0).toFixed(2),
+          discount_code:    chk.discount_code              || '',
+          discount_saving:  (Number(chk.discount_saving)  || 0).toFixed(2),
+          order_total:      (Number(chk.total)            || 0).toFixed(2),
+        }),
+      }).catch(function () {});
 
-      // ── Google Sheets order logging ──────────────────────────────────────
-      // Uses no-cors + text/plain to avoid a CORS preflight on the GAS endpoint.
-      // The Apps Script receives e.postData.contents and parses the JSON itself.
       try {
         fetch(
           'https://script.google.com/macros/s/AKfycbwC6RyBK2pMsU7crR7TXpbUtgKNN6305hNvePzFmkMtz3kpXWZShIgdFkT68AhHAb1ZOg/exec',
@@ -384,7 +405,7 @@
             method:  'POST',
             mode:    'no-cors',
             headers: { 'Content-Type': 'text/plain' },
-            body:    JSON.stringify({
+            body: JSON.stringify({
               orderId:      chk.orderRef,
               date:         new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
               name:         ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
@@ -394,14 +415,12 @@
               products:     productsList,
               total:        '£' + (Number(chk.total) || 0).toFixed(2),
               discountCode: chk.discount_code || 'None',
-            })
+            }),
           }
-        ).catch(function () { /* silent */ });
-      } catch (ex) { /* silent — sheet logging must never surface to the customer */ }
-      // ────────────────────────────────────────────────────────────────────
-    } // end !alreadyFired guard
+        ).catch(function () {});
+      } catch (ex) {}
+    }
 
-    // Render order summary on the confirmation page
     renderCartSummary(confirmedCart.length ? confirmedCart : []);
   }
 

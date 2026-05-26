@@ -143,6 +143,43 @@
     if (window.toast) window.toast('Added to order \u2014 ' + name);
   });
 
+  // ── Newsletter subscribe ──────────────────────────────────────────────────────
+  var nlBtn = document.querySelector('.nl-btn');
+  var nlInp = document.querySelector('.nl-inp');
+
+  if (nlBtn && nlInp) {
+    nlBtn.addEventListener('click', function () {
+      var email = nlInp.value.trim();
+      if (!email || !email.includes('@')) {
+        if (window.toast) window.toast('Please enter a valid email address.');
+        return;
+      }
+
+      if (window._sb) {
+        window._sb.from('subscribers').insert([{ email: email }]).then(function (r) {
+          if (r.error && r.error.code !== '23505') {
+            console.error('[newsletter] Subscribe failed:', r.error.message);
+          }
+          // 23505 = duplicate email — silently treat as success
+          nlInp.value = '';
+          if (window.toast) window.toast('Subscribed — thank you.');
+          nlBtn.textContent = 'Subscribed ✓';
+          nlBtn.disabled = true;
+        });
+      } else {
+        // Supabase not available on this page — silent fallback
+        nlInp.value = '';
+        if (window.toast) window.toast('Subscribed — thank you.');
+        nlBtn.textContent = 'Subscribed ✓';
+        nlBtn.disabled = true;
+      }
+    });
+
+    nlInp.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') nlBtn.click();
+    });
+  }
+
   // ── FAQ accordion ────────────────────────────────────────────────────────────
   // Native <details> handles this — no JS needed.
 

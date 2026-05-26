@@ -1,144 +1,114 @@
 /**
- * POST /api/fena-webhook
+ * /api/fena-webhook — Vercel Edge Function
  *
- * Receives Fena payment event webhooks.
- * On a successful payment: fires order emails and logs to Google Sheets.
- * Resend idempotency keys prevent duplicate emails if the payment-complete page
- * also calls /api/confirm-fena-payment for the same order.
+ * Fena calls this endpoint when a payment event occurs.
+ * On success: marks the order as 'paid' in Supabase via the REST API.
  *
- * Fena retries webhooks on non-200 responses, so always return 200 for
- * acknowledged events (even if our downstream processing fails).
+ * Fena sends: POST  application/x-www-form-urlencoded  { token: "<jwt>" }
+ * (Some Fena versions send JSON — both are handled.)
+ *
+ * The order_id in the JWT payload is the Supabase UUID we passed as
+ * part of the redirect_url when creating the payment session.
+ *
+ * NOTE: Full JWT signature verification should be added once you confirm
+ * Fena's signing algorithm — see SETUP.md.
  */
-const crypto = require('crypto');
-const { sendEmails } = require('./send-order');
 
-// In-process dedup guard — Resend idempotency handles cross-cold-start dedup
-const processedOrders = new Set();
+export const config = { runtime: 'edge' };
 
-const SUCCESS_STATUSES = new Set(['CAPTURED', 'SUCCESS', 'COMPLETED', 'PAID']);
+const SUCCESS_STATUSES = new Set(['completed', 'success', 'paid', 'captured']);
 
-module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
-
-  const body    = req.body;
-  const rawBody = JSON.stringify(body);
-
-  // ── Signature verification ─────────────────────────────────────────────────
-  const terminalSecret = process.env.FENA_TERMINAL_SECRET;
-  const sigHeader      = req.headers['x-fena-signature'] ||
-                         req.headers['x-webhook-signature'] || '';
-
-  if (terminalSecret && sigHeader) {
-    try {
-      const sigHex = sigHeader.replace(/^sha256=/, '');
-      const expected = crypto.createHmac('sha256', terminalSecret).update(rawBody).digest('hex');
-      const sigBuf   = Buffer.from(sigHex, 'hex');
-      const expBuf   = Buffer.from(expected, 'hex');
-      if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
-        console.error('[fena-webhook] Signature mismatch — rejecting event');
-        return res.status(401).json({ error: 'Invalid signature' });
-      }
-    } catch (e) {
-      console.error('[fena-webhook] Signature error:', e.message);
-      return res.status(401).json({ error: 'Signature verification failed' });
-    }
-  } else if (!terminalSecret) {
-    console.warn('[fena-webhook] FENA_TERMINAL_SECRET not set — signature verification skipped');
+export default async function handler(req) {
+  if (req.method !== 'POST') {
+    return new Response('Method not allowed', { status: 405 });
   }
 
-  // ── Parse event ────────────────────────────────────────────────────────────
-  const status    = (body.status || body.payment_status || '').toUpperCase();
-  const reference = body.reference || body.orderId || body.order_id || body.id || '';
-  const fenaId    = body.id || body.orderId || '';
+  const SUPABASE_URL              = process.env.SUPABASE_URL;
+  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  console.log(`[fena-webhook] Event — status: ${status}, reference: ${reference}, fenaId: ${fenaId}`);
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('[fena-webhook] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    return new Response('Misconfigured', { status: 500 });
+  }
+
+  // ── Parse body ───────────────────────────────────────────────────────────────
+  let token;
+  try {
+    const ct = (req.headers.get('content-type') || '').toLowerCase();
+    if (ct.includes('application/x-www-form-urlencoded')) {
+      const params = new URLSearchParams(await req.text());
+      token = params.get('token');
+    } else {
+      const json = await req.json();
+      token = json.token || json.jwt;
+    }
+  } catch (err) {
+    console.error('[fena-webhook] Body parse error:', err.message);
+    return new Response('Bad request', { status: 400 });
+  }
+
+  if (!token) {
+    console.error('[fena-webhook] No token in request');
+    return new Response('Missing token', { status: 400 });
+  }
+
+  // ── Decode JWT payload ───────────────────────────────────────────────────────
+  let payload;
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) throw new Error('Malformed JWT');
+    const b64    = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
+    payload = JSON.parse(atob(padded));
+  } catch (err) {
+    console.error('[fena-webhook] JWT decode failed:', err.message);
+    return new Response('Invalid token', { status: 400 });
+  }
+
+  console.log('[fena-webhook] payload:', JSON.stringify(payload));
+
+  const status    = (payload.status || payload.payment_status || '').toLowerCase();
+  // order_id is the Supabase UUID we embedded in the redirect_url
+  const orderId   = payload.order_id || payload.metadata?.order_id || null;
+  const paymentId = payload.payment_id || payload.id || token.slice(0, 24);
 
   if (!SUCCESS_STATUSES.has(status)) {
-    console.log(`[fena-webhook] Non-success status "${status}" — acknowledged, not processed`);
-    return res.status(200).json({ received: true });
+    console.log(`[fena-webhook] status="${status}" is not a success event — acknowledging`);
+    return new Response('OK', { status: 200 });
   }
 
-  // ── Dedup ──────────────────────────────────────────────────────────────────
-  if (processedOrders.has(reference)) {
-    console.log(`[fena-webhook] Duplicate event for ${reference} — skipping`);
-    return res.status(200).json({ received: true, duplicate: true });
-  }
-  processedOrders.add(reference);
-
-  // ── Build order payload from metadata ─────────────────────────────────────
-  // Metadata is the order data we passed when creating the Fena payment session
-  const meta        = body.metadata || {};
-  const amountPence = body.amount   || 0;
-  const amountGBP   = (amountPence / 100).toFixed(2);
-
-  const customerName = meta.customer_name ||
-    (((meta.fname || '') + ' ' + (meta.lname || '')).trim()) || 'Customer';
-
-  const d = {
-    order_number:     reference,
-    customer_name:    customerName,
-    customer_email:   meta.customer_email  || meta.email || '',
-    customer_phone:   meta.customer_phone  || meta.phone || '',
-    addr1:            meta.addr1           || '',
-    addr2:            meta.addr2           || '',
-    city:             meta.city            || '',
-    postcode:         meta.postcode        || '',
-    country:          meta.country         || 'United Kingdom',
-    shipping_address: meta.shipping_address || '',
-    shipping_method:  meta.shipping_method  || 'Royal Mail Tracked 24',
-    order_items:      meta.order_items      || '',
-    order_subtotal:   meta.subtotal         ? Number(meta.subtotal).toFixed(2) : amountGBP,
-    shipping_cost:    meta.shipping         ? Number(meta.shipping).toFixed(2) : '0.00',
-    discount_code:    meta.discount_code    || '',
-    discount_saving:  meta.discount_saving  ? Number(meta.discount_saving).toFixed(2) : '0.00',
-    order_total:      meta.total            ? Number(meta.total).toFixed(2) : amountGBP,
-    currency:         meta.currency        || 'GBP',
-    region:           meta.region          || 'UK',
-    payment_method:   'fena',
-  };
-
-  if (!d.customer_email) {
-    console.warn(`[fena-webhook] No customer_email for ${reference} — admin email only`);
+  if (!orderId) {
+    console.warn('[fena-webhook] No order_id in payload — cannot update Supabase. Acknowledging.');
+    return new Response('OK', { status: 200 });
   }
 
-  // ── Fire emails ────────────────────────────────────────────────────────────
-  // Resend idempotency key = orderRef-admin / orderRef-customer.
-  // If /api/confirm-fena-payment already fired these, Resend deduplicates within 24 h.
+  // ── Update order in Supabase ─────────────────────────────────────────────────
   try {
-    await sendEmails(d, reference);
-    console.log(`[fena-webhook] Emails sent for ${reference}`);
-  } catch (e) {
-    console.error(`[fena-webhook] Email send failed for ${reference}:`, e.message);
-    // Don't return 500 — acknowledge receipt so Fena doesn't retry infinitely
-  }
+    const patchRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(orderId)}`,
+      {
+        method:  'PATCH',
+        headers: {
+          'apikey':        SUPABASE_SERVICE_ROLE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          'Content-Type':  'application/json',
+          'Prefer':        'return=minimal',
+        },
+        body: JSON.stringify({ status: 'paid', fena_payment_id: paymentId }),
+      }
+    );
 
-  // ── Google Sheets log ──────────────────────────────────────────────────────
-  const sheetsUrl = process.env.GOOGLE_SHEETS_URL;
-  if (sheetsUrl) {
-    try {
-      await fetch(sheetsUrl, {
-        method:  'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          orderId:       reference,
-          date:          new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
-          name:          d.customer_name,
-          email:         d.customer_email,
-          phone:         d.customer_phone,
-          address:       d.shipping_address,
-          products:      d.order_items,
-          total:         '£' + d.order_total,
-          discountCode:  d.discount_code || 'None',
-          region:        d.region,
-          currency:      d.currency,
-          paymentMethod: 'Fena Pay by Bank',
-        }),
-      });
-      console.log(`[fena-webhook] Sheets log sent for ${reference}`);
-    } catch (e) {
-      console.error(`[fena-webhook] Sheets logging failed for ${reference}:`, e.message);
+    if (!patchRes.ok) {
+      const errText = await patchRes.text();
+      console.error(`[fena-webhook] Supabase PATCH ${patchRes.status}: ${errText}`);
+      return new Response('DB error', { status: 500 });
     }
-  }
 
-  return res.status(200).json({ received: true, processed: true });
-};
+    console.log(`[fena-webhook] Order ${orderId} → paid (fenaId: ${paymentId})`);
+    return new Response('OK', { status: 200 });
+
+  } catch (err) {
+    console.error('[fena-webhook] Supabase fetch threw:', err.message);
+    return new Response('Internal error', { status: 500 });
+  }
+}
