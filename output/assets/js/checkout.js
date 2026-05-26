@@ -74,7 +74,8 @@
     var t = cartTotals(cart, r);
     var savingGBP = (discount && discount.saving) ? discount.saving : 0;
     var saving = savingInCurrency(savingGBP, r);
-    var discountedSubtotal = Math.max(0, t.subtotal - saving);
+    var ptsSaving = savingInCurrency(appliedPointsSavingGBP, r);
+    var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
     var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
     var flatRate   = r === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
     var shipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
@@ -146,6 +147,8 @@
 
   var cart = getCart();
   var appliedDiscount = null;
+  var appliedPoints = 0;            // loyalty points being redeemed this order
+  var appliedPointsSavingGBP = 0;   // their £ value (100 points = £1)
 
   // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
   var shippingForm = document.getElementById('shipping-form');
@@ -344,6 +347,47 @@
       discountInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') { e.preventDefault(); handleApply(); }
       });
+    }
+
+    // ── Loyalty points redemption (signed-in users with balance >= 500) ──────
+    if (window._sb) {
+      (async function () {
+        try {
+          var sess = await window._sb.auth.getSession();
+          if (!sess.data || !sess.data.session) return;
+          var pr = await window._sb.from('profiles').select('loyalty_points')
+            .eq('id', sess.data.session.user.id).single();
+          var balance = (pr.data && pr.data.loyalty_points) || 0;
+          if (balance < 500) return;
+
+          var anchor = document.getElementById('discount-msg') || document.getElementById('discount-input');
+          if (!anchor) return;
+          var box = document.createElement('div');
+          box.style.cssText = 'margin-top:14px;padding:14px;border:1px solid #1a1a1a;border-radius:8px;background:#0d0d0d';
+          box.innerHTML =
+            '<div style="font-size:11px;color:#01D3A0;font-weight:700;letter-spacing:.08em;margin-bottom:8px">LOYALTY POINTS</div>' +
+            '<div style="font-size:13px;color:#9ca3af;margin-bottom:10px">You have <strong style="color:#fff">' + balance + '</strong> points (worth £' + (balance / 100).toFixed(2) + '). Redeem in multiples of 100, minimum 500.</div>' +
+            '<div style="display:flex;gap:8px"><input id="pts-input" type="number" step="100" min="500" max="' + balance + '" placeholder="500" style="flex:1;background:#111;border:1px solid #1a1a1a;color:#fff;padding:9px 10px;border-radius:6px;font-size:14px">' +
+            '<button id="pts-apply" type="button" style="background:#01D3A0;color:#021;border:none;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer">Redeem</button></div>' +
+            '<div id="pts-msg" style="font-size:12px;margin-top:8px"></div>';
+          anchor.parentNode.insertBefore(box, anchor.nextSibling);
+
+          document.getElementById('pts-apply').addEventListener('click', function () {
+            var m = document.getElementById('pts-msg');
+            var pts = parseInt(document.getElementById('pts-input').value, 10);
+            if (!pts || pts < 500) { m.style.color = '#f87171'; m.textContent = 'Minimum redemption is 500 points.'; return; }
+            if (pts % 100 !== 0)   { m.style.color = '#f87171'; m.textContent = 'Points must be a multiple of 100.'; return; }
+            if (pts > balance)     { m.style.color = '#f87171'; m.textContent = 'You only have ' + balance + ' points.'; return; }
+            appliedPoints = pts;
+            appliedPointsSavingGBP = pts / 100;   // 100 points = £1
+            m.style.color = '#01D3A0';
+            m.textContent = '✓ Redeeming ' + pts + ' points (−' + fmt(savingInCurrency(appliedPointsSavingGBP, payRegion), payRegion) + ')';
+            document.getElementById('pts-input').disabled = true;
+            document.getElementById('pts-apply').disabled = true;
+            renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
+          });
+        } catch (e) { /* silent — never block checkout */ }
+      })();
     }
 
     // ── GoCardless Instant Bank Pay — DISABLED (kept for re-enable) ─────────
@@ -547,7 +591,8 @@
       var t          = cartTotals(cart, payRegion);
       var savingGBP  = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
       var saving     = savingInCurrency(savingGBP, payRegion);
-      var discountedSubtotal = Math.max(0, t.subtotal - saving);
+      var ptsSaving  = savingInCurrency(appliedPointsSavingGBP, payRegion);
+      var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
       var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
       var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
       var finalShipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
@@ -560,6 +605,7 @@
         existing.shipping        = finalShipping;
         existing.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
         existing.discount_saving = saving;
+        existing.points_redeemed = appliedPoints;
         existing.total           = finalTotal;
         existing.cart_snapshot   = JSON.stringify(cart);
         existing.currency        = payRegion === 'EU' ? 'EUR' : 'GBP';
