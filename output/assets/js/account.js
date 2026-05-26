@@ -152,7 +152,10 @@
   }
 
   function renderHeader() {
-    $('dash-hello').textContent = 'Hello' + (profile.name ? ', ' + profile.name.split(' ')[0] : '');
+    var first = (profile.name && profile.name.trim())
+      ? profile.name.trim().split(' ')[0]
+      : ((profile.email || '').split('@')[0] || '');
+    $('dash-hello').textContent = first ? ('Hello, ' + first) : 'Hello';
     var tier = profile.loyalty_tier || 'Bronze';
     var tb = $('tier-badge'); tb.textContent = tier; tb.className = 'tier-badge tier-' + tier;
   }
