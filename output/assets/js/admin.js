@@ -113,9 +113,61 @@
 
   function loadAllData() {
     loadOrders();
+    loadReviews();
     loadSubscribers();
     loadAffiliates();
   }
+
+  // ── REVIEWS ───────────────────────────────────────────────────────────────
+
+  function loadReviews() {
+    if (!window._sb) return;
+    window._sb.from('reviews')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(function (r) { renderReviews(r.data || []); });
+  }
+
+  function reviewStars(n) {
+    var out = '';
+    for (var i = 1; i <= 5; i++) out += (i <= n ? '★' : '☆');
+    return out;
+  }
+
+  function renderReviews(reviews) {
+    var el = document.getElementById('reviews-table-wrap');
+    if (!el) return;
+    if (!reviews.length) { el.innerHTML = '<p class="adm-empty">No reviews submitted yet.</p>'; return; }
+    el.innerHTML = '<table class="adm-table">' +
+      '<thead><tr><th>Date</th><th>Product</th><th>Rating</th><th>Reviewer</th><th>Review</th><th>Status</th><th>Action</th></tr></thead>' +
+      '<tbody>' + reviews.map(function (rv) {
+        return '<tr>' +
+          '<td style="color:var(--t2)">' + fmtDate(rv.created_at) + '</td>' +
+          '<td style="color:#fff">' + esc(rv.product_name || rv.product_slug) + '</td>' +
+          '<td style="color:#f5b301;white-space:nowrap">' + reviewStars(rv.rating) + '</td>' +
+          '<td style="color:var(--t2)">' + esc(rv.author_name) + '</td>' +
+          '<td style="color:var(--t2);max-width:280px">' +
+            (rv.title ? '<strong style="color:#fff">' + esc(rv.title) + '</strong><br>' : '') +
+            esc(rv.body || '') + '</td>' +
+          '<td>' + statusBadge(rv.status) + '</td>' +
+          '<td>' +
+            '<select class="status-select" onchange="updateReviewStatus(\'' + rv.id + '\', this.value)">' +
+              ['pending','approved','rejected'].map(function (s) {
+                return '<option value="' + s + '"' + (rv.status === s ? ' selected' : '') + '>' + s + '</option>';
+              }).join('') +
+            '</select>' +
+          '</td>' +
+        '</tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  window.updateReviewStatus = function (id, newStatus) {
+    if (!window._sb) return;
+    window._sb.from('reviews').update({ status: newStatus }).eq('id', id).then(function (r) {
+      if (r.error) console.error('[admin] Review update failed:', r.error.message);
+      else loadReviews();
+    });
+  };
 
   // ── ORDERS ────────────────────────────────────────────────────────────────
 
