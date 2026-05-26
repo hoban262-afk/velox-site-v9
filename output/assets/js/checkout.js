@@ -187,6 +187,33 @@
     // Set initial state
     applyRegion(activeRegion);
 
+    // Pre-fill from the signed-in user's profile (optional — guests unaffected)
+    if (window._sb) {
+      (async function () {
+        try {
+          var sess = await window._sb.auth.getSession();
+          if (!sess.data || !sess.data.session) return;
+          var uid = sess.data.session.user.id;
+          var pr = await window._sb.from('profiles')
+            .select('name,email,saved_addresses,default_address_id').eq('id', uid).single();
+          var p = pr.data; if (!p) return;
+          var nm = (p.name || '').trim().split(' ');
+          function setIfEmpty(id, val) { var el = document.getElementById(id); if (el && !el.value && val) el.value = val; }
+          setIfEmpty('sh-fname', nm[0] || '');
+          setIfEmpty('sh-lname', nm.slice(1).join(' ') || '');
+          setIfEmpty('sh-email', sess.data.session.user.email || '');
+          var addrs = p.saved_addresses || [];
+          var def = addrs.filter(function (a) { return a.id === p.default_address_id; })[0] || addrs[0];
+          if (def) {
+            setIfEmpty('sh-addr1', def.line1);
+            setIfEmpty('sh-addr2', def.line2);
+            setIfEmpty('sh-city',  def.city);
+            setIfEmpty('sh-post',  def.postcode);
+          }
+        } catch (e) { /* silent — never block guest checkout */ }
+      })();
+    }
+
     shippingForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var errEl = document.getElementById('co-err');
@@ -657,28 +684,53 @@
         ).catch(function () {});
       } catch (ex) {}
 
-      // ── Save order to Supabase (so it appears in /admin/) ────────────────
-      // Silent — never blocks the confirmation page. Requires supabase-client.js
-      // to be loaded on the confirmation page (see <head>).
+      // ── Save order to Supabase (so it appears in /admin/ + the user's account)
+      // Silent — never blocks the confirmation page. Links to the user's account
+      // when signed in (so loyalty points award once the order is marked paid).
       if (window._sb) {
-        try {
-          var sbItems = confirmedCart.map(function (item) {
-            return { name: item.name, slug: item.slug, size: item.size,
-                     qty: item.qty || 1, price: item.price };
-          });
-          window._sb.from('orders').insert([{
-            customer_name:  ((chk.fname || '') + ' ' + (chk.lname || '')).trim() || 'Customer',
-            customer_email: chk.email || '',
-            items:          sbItems,
-            total:          Number(chk.total) || 0,
-            payment_method: chk.payment_method || 'bank',
-            notes:          chk.orderRef || '',
-          }]).then(function (r) {
+        (async function () {
+          try {
+            var sbItems = confirmedCart.map(function (item) {
+              return { name: item.name, slug: item.slug, size: item.size,
+                       qty: item.qty || 1, price: item.price };
+            });
+            var uid = null;
+            try { var s = await window._sb.auth.getSession(); if (s.data && s.data.session) uid = s.data.session.user.id; } catch (e) {}
+            var r = await window._sb.from('orders').insert([{
+              customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim() || 'Customer',
+              customer_email:  chk.email || '',
+              items:           sbItems,
+              subtotal:        Number(chk.subtotal) || Number(chk.total) || 0,  // pre-discount, drives points
+              total:           Number(chk.total) || 0,
+              payment_method:  chk.payment_method || 'bank',
+              notes:           chk.orderRef || '',
+              user_id:         uid,
+              points_redeemed: Number(chk.points_redeemed) || 0,
+            }]);
             if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
-          });
-        } catch (sbErr) {
-          console.error('[checkout] Supabase save threw:', sbErr);
-        }
+          } catch (sbErr) {
+            console.error('[checkout] Supabase save threw:', sbErr);
+          }
+        })();
+      }
+
+      // ── Post-order: prompt guests to save their details (non-blocking) ────
+      if (window._sb) {
+        (async function () {
+          try {
+            var s = await window._sb.auth.getSession();
+            if (s.data && s.data.session) return;   // already signed in
+            var host = document.getElementById('confirm-summary');
+            if (!host) return;
+            var card = document.createElement('div');
+            card.style.cssText = 'margin-top:24px;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:10px;padding:20px 22px;text-align:left';
+            card.innerHTML =
+              '<div style="color:#fff;font-size:15px;font-weight:700;margin-bottom:6px">Save your details &amp; earn points</div>' +
+              '<p style="color:#9ca3af;font-size:13px;margin:0 0 14px">Create a free account to track this order, reorder in one click, and earn loyalty points on future purchases. This order will link to your account automatically.</p>' +
+              '<a href="/account/" style="display:inline-block;text-decoration:none;background:#01D3A0;color:#021;padding:10px 20px;border-radius:7px;font-weight:700;font-size:13px">Create account</a>';
+            host.parentNode.insertBefore(card, host.nextSibling);
+          } catch (e) {}
+        })();
       }
     }
 

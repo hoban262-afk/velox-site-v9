@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My Account — Velox Peptides</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#030407">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/core.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/supabase-client.js"></script>
+  <style>
+    .acc-wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+    .acc-loading{color:var(--t3,#6b7280);text-align:center;padding:80px 0;font-family:'DM Mono',monospace;font-size:13px}
+
+    /* Auth view */
+    .auth-box{max-width:420px;margin:40px auto;background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:12px;padding:34px 30px}
+    .auth-tabs{display:flex;gap:6px;margin-bottom:24px}
+    .auth-tab{flex:1;text-align:center;font-size:13px;font-weight:600;color:var(--t3,#6b7280);background:none;border:none;border-bottom:2px solid transparent;padding:8px;cursor:pointer}
+    .auth-tab.active{color:#fff;border-bottom-color:var(--g,#01D3A0)}
+    .auth-form{display:none}.auth-form.active{display:block}
+    .auth-form h1{font-size:20px;color:#fff;margin:0 0 6px}
+    .auth-form p.sub{font-size:13px;color:var(--t3,#6b7280);margin:0 0 20px}
+    .f-lbl{display:block;font-size:12px;color:var(--t2,#9ca3af);margin:0 0 5px;font-weight:500}
+    .f-inp{width:100%;box-sizing:border-box;margin-bottom:14px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:11px 12px;border-radius:7px;font:inherit;font-size:14px}
+    .btn-p{width:100%;background:var(--g,#01D3A0);color:#021;border:none;border-radius:7px;padding:12px;font-weight:700;font-size:14px;cursor:pointer}
+    .btn-p:disabled{opacity:.6;cursor:default}
+    .remember{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px;color:var(--t2,#9ca3af)}
+    .auth-link{background:none;border:none;color:var(--g,#01D3A0);font-size:12px;cursor:pointer;padding:0;margin-top:10px}
+    .auth-msg{font-size:13px;margin-top:12px;min-height:18px}
+    .auth-msg.ok{color:var(--g,#01D3A0)}.auth-msg.err{color:#f87171}
+
+    /* Dashboard */
+    .dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:12px}
+    .dash-hello{font-size:24px;font-weight:700;color:#fff}
+    .dash-signout{font-size:12px;color:var(--t3,#6b7280);background:none;border:1px solid var(--brd,#1a1a1a);border-radius:5px;padding:6px 14px;cursor:pointer}
+    .tier-badge{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+    .tier-Bronze{background:rgba(176,141,87,.15);color:#cd9b63;border:1px solid rgba(176,141,87,.3)}
+    .tier-Silver{background:rgba(176,184,196,.15);color:#c4ccd6;border:1px solid rgba(176,184,196,.3)}
+    .tier-Gold{background:rgba(245,179,1,.15);color:#f5b301;border:1px solid rgba(245,179,1,.3)}
+    .tier-Platinum{background:rgba(1,211,160,.15);color:#01D3A0;border:1px solid rgba(1,211,160,.3)}
+    .acc-tabs{display:flex;gap:4px;border-bottom:1px solid var(--brd,#1a1a1a);margin:24px 0 28px}
+    .acc-tab{font-size:13px;font-weight:500;color:var(--t3,#6b7280);background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;cursor:pointer;margin-bottom:-1px}
+    .acc-tab.active{color:#fff;border-bottom-color:var(--g,#01D3A0)}
+    .acc-panel{display:none}.acc-panel.active{display:block}
+    .pts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+    .pts-card{background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:20px}
+    .pts-label{font-size:10px;font-weight:700;color:var(--t3,#6b7280);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .pts-value{font-size:30px;font-weight:700;color:#fff}
+    .pts-sub{font-size:12px;color:var(--t3,#6b7280);margin-top:4px}
+    .prog{height:6px;background:var(--bg3,#111);border-radius:3px;overflow:hidden;margin-top:10px}
+    .prog-bar{height:100%;background:var(--g,#01D3A0)}
+    .card{background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:20px 22px;margin-bottom:18px}
+    .card h3{font-size:14px;color:#fff;margin:0 0 14px}
+    table.acc-tbl{width:100%;border-collapse:collapse;font-size:13px}
+    .acc-tbl th{text-align:left;color:var(--t3,#6b7280);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--brd,#1a1a1a)}
+    .acc-tbl td{padding:10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--t2,#9ca3af)}
+    .badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+    .b-paid{background:rgba(1,211,160,.12);color:#01D3A0}.b-dispatched{background:rgba(74,159,224,.12);color:#4a9fe0}
+    .b-pending{background:rgba(255,255,255,.06);color:#9ca3af}.b-cancelled{background:rgba(248,113,113,.12);color:#f87171}
+    .addr-card{border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:var(--t2,#9ca3af);position:relative}
+    .addr-card .addr-actions{position:absolute;top:12px;right:14px;display:flex;gap:10px}
+    .addr-card button{background:none;border:none;color:var(--g,#01D3A0);font-size:12px;cursor:pointer}
+    .addr-card button.del{color:#f87171}
+    .btn-o{background:none;border:1px solid var(--brd,#1a1a1a);color:#fff;border-radius:7px;padding:9px 16px;font-size:13px;cursor:pointer}
+    .danger{color:#f87171;border-color:rgba(248,113,113,.4)}
+    .acc-msg{font-size:13px;margin-top:8px;min-height:16px}.acc-msg.ok{color:var(--g)}.acc-msg.err{color:#f87171}
+    a.acc-back{color:var(--t3,#6b7280);font-size:13px;text-decoration:none}
+  </style>
+</head>
+<body style="background:#030407;margin:0">
+<div class="acc-wrap">
+  <a class="acc-back" href="/">&larr; Back to shop</a>
+
+  <!-- Loading -->
+  <div id="acc-loading" class="acc-loading">Loading your account&hellip;</div>
+
+  <!-- AUTH (logged out) -->
+  <div id="auth-view" style="display:none">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-f="login"    onclick="authTab('login')">Sign in</button>
+        <button class="auth-tab"        data-f="register" onclick="authTab('register')">Create account</button>
+      </div>
+
+      <form class="auth-form active" id="form-login" onsubmit="return false">
+        <h1>Welcome back</h1>
+        <p class="sub">Sign in to view orders, points and saved addresses.</p>
+        <label class="f-lbl" for="li-email">Email</label>
+        <input class="f-inp" id="li-email" type="email" autocomplete="email">
+        <label class="f-lbl" for="li-pw">Password</label>
+        <input class="f-inp" id="li-pw" type="password" autocomplete="current-password">
+        <label class="remember"><input type="checkbox" id="li-remember" checked> Remember me for 30 days</label>
+        <button class="btn-p" id="li-btn">Sign in</button>
+        <button class="auth-link" onclick="authTab('reset')" type="button">Forgot your password?</button>
+        <div class="auth-msg" id="auth-msg-login"></div>
+      </form>
+
+      <form class="auth-form" id="form-register" onsubmit="return false">
+        <h1>Create your account</h1>
+        <p class="sub">Optional — checkout always works without an account.</p>
+        <label class="f-lbl" for="rg-name">Name</label>
+        <input class="f-inp" id="rg-name" autocomplete="name">
+        <label class="f-lbl" for="rg-email">Email</label>
+        <input class="f-inp" id="rg-email" type="email" autocomplete="email">
+        <label class="f-lbl" for="rg-pw">Password (min 8 characters)</label>
+        <input class="f-inp" id="rg-pw" type="password" autocomplete="new-password">
+        <button class="btn-p" id="rg-btn">Create account</button>
+        <div class="auth-msg" id="auth-msg-register"></div>
+      </form>
+
+      <form class="auth-form" id="form-reset" onsubmit="return false">
+        <h1>Reset password</h1>
+        <p class="sub">We'll email you a secure reset link.</p>
+        <label class="f-lbl" for="rs-email">Email</label>
+        <input class="f-inp" id="rs-email" type="email" autocomplete="email">
+        <button class="btn-p" id="rs-btn">Send reset link</button>
+        <button class="auth-link" onclick="authTab('login')" type="button">Back to sign in</button>
+        <div class="auth-msg" id="auth-msg-reset"></div>
+      </form>
+
+      <form class="auth-form" id="form-newpw" onsubmit="return false">
+        <h1>Set a new password</h1>
+        <p class="sub">Enter a new password for your account.</p>
+        <label class="f-lbl" for="np-pw">New password (min 8 characters)</label>
+        <input class="f-inp" id="np-pw" type="password" autocomplete="new-password">
+        <button class="btn-p" id="np-btn">Update password</button>
+        <div class="auth-msg" id="auth-msg-newpw"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (logged in) -->
+  <div id="dash-view" style="display:none">
+    <div class="dash-top">
+      <div>
+        <div class="dash-hello" id="dash-hello">Your account</div>
+        <span class="tier-badge tier-Bronze" id="tier-badge">BRONZE</span>
+      </div>
+      <button class="dash-signout" id="dash-signout">Sign out</button>
+    </div>
+
+    <div class="acc-tabs">
+      <button class="acc-tab active" data-t="overview"  onclick="accTab('overview')">Overview</button>
+      <button class="acc-tab"        data-t="orders"    onclick="accTab('orders')">Orders</button>
+      <button class="acc-tab"        data-t="addresses" onclick="accTab('addresses')">Addresses</button>
+      <button class="acc-tab"        data-t="settings"  onclick="accTab('settings')">Settings</button>
+    </div>
+
+    <!-- Overview -->
+    <div class="acc-panel active" id="panel-overview">
+      <div class="pts-grid">
+        <div class="pts-card"><div class="pts-label">Points balance</div><div class="pts-value" id="ov-balance">0</div><div class="pts-sub">100 points = &pound;1</div></div>
+        <div class="pts-card"><div class="pts-label">Lifetime points</div><div class="pts-value" id="ov-lifetime">0</div><div class="pts-sub" id="ov-tier-sub">Bronze tier</div></div>
+        <div class="pts-card"><div class="pts-label" id="ov-next-label">To next tier</div><div class="pts-value" id="ov-next">—</div><div class="prog"><div class="prog-bar" id="ov-prog" style="width:0%"></div></div></div>
+      </div>
+      <div class="card">
+        <h3>Recent orders</h3>
+        <div id="ov-orders"><p style="color:var(--t3);font-size:13px">No orders yet.</p></div>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="acc-panel" id="panel-orders">
+      <div class="card"><h3>Order history</h3><div id="all-orders"><p style="color:var(--t3);font-size:13px">No orders yet.</p></div></div>
+    </div>
+
+    <!-- Addresses -->
+    <div class="acc-panel" id="panel-addresses">
+      <div class="card">
+        <h3>Saved addresses <span style="color:var(--t3);font-weight:400">(max 5)</span></h3>
+        <div id="addr-list"></div>
+        <div id="addr-form" style="display:none;margin-top:14px">
+          <input class="f-inp" id="ad-label" placeholder="Label (e.g. Lab, Home)">
+          <input class="f-inp" id="ad-line1" placeholder="Address line 1">
+          <input class="f-inp" id="ad-line2" placeholder="Address line 2 (optional)">
+          <input class="f-inp" id="ad-city" placeholder="City">
+          <input class="f-inp" id="ad-postcode" placeholder="Postcode">
+          <input class="f-inp" id="ad-country" placeholder="Country" value="United Kingdom">
+          <button class="btn-p" id="ad-save" style="width:auto;padding:10px 20px">Save address</button>
+          <button class="btn-o" id="ad-cancel" type="button">Cancel</button>
+        </div>
+        <button class="btn-o" id="addr-add-btn" style="margin-top:8px">+ Add address</button>
+        <div class="acc-msg" id="addr-msg"></div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="acc-panel" id="panel-settings">
+      <div class="card">
+        <h3>Profile</h3>
+        <label class="f-lbl" for="set-name">Name</label>
+        <input class="f-inp" id="set-name">
+        <label class="f-lbl" for="set-email">Email</label>
+        <input class="f-inp" id="set-email" type="email">
+        <button class="btn-p" id="set-save" style="width:auto;padding:10px 20px">Save changes</button>
+        <div class="acc-msg" id="set-msg"></div>
+      </div>
+      <div class="card">
+        <h3>Change password</h3>
+        <label class="f-lbl" for="set-pw">New password (min 8 characters)</label>
+        <input class="f-inp" id="set-pw" type="password" autocomplete="new-password">
+        <button class="btn-p" id="set-pw-btn" style="width:auto;padding:10px 20px">Update password</button>
+        <div class="acc-msg" id="set-pw-msg"></div>
+      </div>
+      <div class="card">
+        <h3 style="color:#f87171">Delete account</h3>
+        <p style="font-size:13px;color:var(--t3);margin:0 0 12px">This anonymises your personal data. Your past orders are retained for accounting. Confirm your password to proceed.</p>
+        <input class="f-inp" id="del-pw" type="password" placeholder="Your password" autocomplete="current-password">
+        <button class="btn-o danger" id="del-btn">Delete my account</button>
+        <div class="acc-msg" id="del-msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/assets/js/core.js"></script>
+<script src="/assets/js/account.js"></script>
+</body>
+</html>
