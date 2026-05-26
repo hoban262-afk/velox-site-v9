@@ -4614,35 +4614,43 @@ html { overflow-x: hidden !important; }
    Fix: give label a real flex-basis so when price block is wide it
    wraps to its own row rather than crushing the label.               */
 .cp-size-opt {
-  align-items: flex-start !important;
+  display: flex !important;
+  align-items: center !important;
   flex-wrap: wrap !important;
-  row-gap: 4px !important;
-  column-gap: 8px !important;
+  row-gap: 6px !important;
+  column-gap: 12px !important;
 }
 .cp-size-opt input[type="radio"] {
-  flex-shrink: 0 !important;
-  margin-top: 3px !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
 }
+/* The size label must NEVER break — keep "10mg" / "40mg Pen" on one line */
 .cp-size-l {
-  flex: 1 1 120px !important;
-  min-width: 0 !important;
-  font-size: 12px !important;
-  line-height: 1.5 !important;
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
   word-break: normal !important;
-  overflow-wrap: break-word !important;
+  overflow-wrap: normal !important;
+  min-width: 44px !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
 }
+/* Price block sits to the right and wraps internally (or to its own row) when tight */
 .cp-size-price-wrap {
-  flex-shrink: 0 !important;
-  flex-basis: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
   margin-left: auto !important;
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
 }
+/* The "Pre-loaded pen…" note always drops to its own full-width line */
+.cp-size-note { flex-basis: 100% !important; margin-top: 2px !important; }
 
-/* At ≤1100px panel gets narrower — move price to its own line */
+/* Narrower panels: let the price block left-align under the label cleanly */
 @media (max-width: 1100px) {
-  .cp-size-price-wrap {
-    flex-basis: 100% !important;
-    margin-left: 28px !important;
-  }
+  .cp-size-price-wrap { justify-content: flex-start !important; }
 }
 
 /* 2. Hero image not clipped at top
