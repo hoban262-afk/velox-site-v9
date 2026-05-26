@@ -18,11 +18,9 @@
 
 var DISCOUNT_CODES = [
   // ── Active codes ──────────────────────────────────────────────────────────
-  { code: "VELOX10",   type: "percentage", value: 10, active: true },
-  { code: "Anisha15%", type: "percentage", value: 15, active: true },
-  { code: "Tom40",     type: "percentage", value: 40, active: true },
-  { code: "Tom25",     type: "percentage", value: 25, active: true }
+  // (Old promo codes removed. Newsletter welcome codes — VELOX-XXXXXX — are
+  //  validated server-side via /api/newsletter/validate, not listed here.)
 
-  // ── Add more codes below in the same format ───────────────────────────────
+  // ── Add codes below in the same format ─────────────────────────────────────
   // { code: "EXAMPLE", type: "percentage", value: 15, active: true },
 ];
