@@ -1,6 +1,0 @@
-User-agent: *
-Disallow: /cart/
-Disallow: /checkout/
-Disallow: /coa/
-Disallow: /admin/
-Sitemap: https://veloxpeps.com/sitemap.xml
