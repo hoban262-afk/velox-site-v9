@@ -656,6 +656,30 @@
           }
         ).catch(function () {});
       } catch (ex) {}
+
+      // ── Save order to Supabase (so it appears in /admin/) ────────────────
+      // Silent — never blocks the confirmation page. Requires supabase-client.js
+      // to be loaded on the confirmation page (see <head>).
+      if (window._sb) {
+        try {
+          var sbItems = confirmedCart.map(function (item) {
+            return { name: item.name, slug: item.slug, size: item.size,
+                     qty: item.qty || 1, price: item.price };
+          });
+          window._sb.from('orders').insert([{
+            customer_name:  ((chk.fname || '') + ' ' + (chk.lname || '')).trim() || 'Customer',
+            customer_email: chk.email || '',
+            items:          sbItems,
+            total:          Number(chk.total) || 0,
+            payment_method: chk.payment_method || 'bank',
+            notes:          chk.orderRef || '',
+          }]).then(function (r) {
+            if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
+          });
+        } catch (sbErr) {
+          console.error('[checkout] Supabase save threw:', sbErr);
+        }
+      }
     }
 
     renderCartSummary(confirmedCart.length ? confirmedCart : [], confRegion);
