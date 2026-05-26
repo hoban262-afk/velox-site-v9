@@ -149,6 +149,7 @@
   var appliedDiscount = null;
   var appliedPoints = 0;            // loyalty points being redeemed this order
   var appliedPointsSavingGBP = 0;   // their £ value (100 points = £1)
+  var welcomeCodeApplied = null;    // VELOX-XXXXXX newsletter code applied (server-validated)
 
   // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
   var shippingForm = document.getElementById('shipping-form');
@@ -318,6 +319,15 @@
     var discountApply = document.getElementById('discount-apply');
     var discountMsg   = document.getElementById('discount-msg');
 
+    function applyDiscountResult(result) {
+      appliedDiscount = result;
+      var displaySaving = savingInCurrency(result.saving, payRegion);
+      discountMsg.innerHTML = '<span class="dc-ok">✓ Code applied — saving ' + fmt(displaySaving, payRegion) + '</span>';
+      discountInput.disabled = true;
+      if (discountApply) { discountApply.textContent = 'Applied'; discountApply.disabled = true; }
+      renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
+    }
+
     function handleApply() {
       if (!discountInput || !discountMsg) return;
       var code = discountInput.value.trim();
@@ -328,18 +338,40 @@
       // calcDiscount always works in GBP; convert saving to display currency
       var tGBP   = cartTotals(cart, 'UK');
       var result = calcDiscount(tGBP.subtotal, code);
-      if (result) {
-        appliedDiscount = result;
-        var displaySaving = savingInCurrency(result.saving, payRegion);
-        discountMsg.innerHTML = '<span class="dc-ok">✓ Code applied — saving ' + fmt(displaySaving, payRegion) + '</span>';
-        discountInput.disabled = true;
-        if (discountApply) { discountApply.textContent = 'Applied'; discountApply.disabled = true; }
-        renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
-      } else {
-        appliedDiscount = null;
-        discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
-        renderTotalsWithDiscount(cart, null, payRegion);
+      if (result) { applyDiscountResult(result); return; }
+
+      // Unique newsletter welcome code (VELOX-XXXXXX) — validate server-side
+      if (/^VELOX-/i.test(code)) {
+        var chkEmail = '';
+        try { chkEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+        discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
+        fetch('/api/newsletter/validate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code, email: chkEmail }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.valid) {
+            welcomeCodeApplied = code.toUpperCase();
+            var saving = Math.round(tGBP.subtotal * 20) / 100;  // 20% off, GBP
+            applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: 20, saving: saving });
+          } else {
+            welcomeCodeApplied = null; appliedDiscount = null;
+            var reasons = {
+              expired: 'This code has expired.', already_used: 'This code has already been used.',
+              email_mismatch: 'This code was issued to a different email address.',
+              not_found: 'Invalid discount code.', inactive: 'This code is no longer active.',
+            };
+            discountMsg.innerHTML = '<span class="dc-err">' + (reasons[d && d.reason] || 'Invalid discount code.') + '</span>';
+            renderTotalsWithDiscount(cart, null, payRegion);
+          }
+        }).catch(function () {
+          discountMsg.innerHTML = '<span class="dc-err">Could not validate code. Please try again.</span>';
+        });
+        return;
       }
+
+      appliedDiscount = null;
+      discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
+      renderTotalsWithDiscount(cart, null, payRegion);
     }
 
     if (discountApply) discountApply.addEventListener('click', handleApply);
@@ -606,6 +638,7 @@
         existing.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
         existing.discount_saving = saving;
         existing.points_redeemed = appliedPoints;
+        existing.welcome_code    = welcomeCodeApplied;
         existing.total           = finalTotal;
         existing.cart_snapshot   = JSON.stringify(cart);
         existing.currency        = payRegion === 'EU' ? 'EUR' : 'GBP';
@@ -752,6 +785,7 @@
               notes:           chk.orderRef || '',
               user_id:         uid,
               points_redeemed: Number(chk.points_redeemed) || 0,
+              welcome_code:    chk.welcome_code || null,
             }]);
             if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
           } catch (sbErr) {
