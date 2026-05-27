@@ -115,7 +115,7 @@ module.exports = async function handler(req, res) {
       var rows = await re.json().catch(function () { return null; });
       if (Array.isArray(rows) && rows.length) return res.status(200).json({ success: true, already: true, codeHint: 'VELOX-', message: "You're already on the list." });
       console.error('[newsletter/signup] insert failed', ins.status, insErr);
-      return res.status(500).json({ error: 'Could not create your code. Please try again.', _debug: { status: ins.status, body: (insErr || '').slice(0, 180) } });
+      return res.status(500).json({ error: 'Could not create your code. Please try again.' });
     }
 
     // Add to the general subscriber list too (ignore duplicates)
