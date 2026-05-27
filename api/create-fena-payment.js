@@ -1,22 +1,23 @@
 /**
  * /api/create-fena-payment — Vercel Edge Function
  *
- * Called by the browser checkout when the customer clicks "Place order".
- * Creates a Fena single immediate payment session server-side so that
- * FENA_CLIENT_ID and FENA_CLIENT_SECRET never appear in the browser.
+ * Creates a Fena single immediate payment and returns the hosted payment URL
+ * for the browser to redirect the customer to.
  *
- * POST body (JSON):
- *   { orderId, amount, reference, customerEmail }
+ * Endpoint + format taken from Fena's official SDK (github.com/fena-co/toolkit-php-sdk)
+ * and verified working against the live Fena API on 2026-05-27:
+ *   POST https://epos.api.prod-gcp.fena.co/open/payments/single/create-and-process
+ *   Headers: integration-id, secret-key (Content-Type: application/json)
+ *   Body:    { reference (<=12 chars), amount (2dp string), customerEmail,
+ *              customerName, items, customRedirectUrl }
+ *   Success: { created: true, result: { id, link, ... } }  ← result.link is the payment URL
  *
- * Returns:
- *   { paymentUrl, fenaPaymentId }  — on success
- *   { error }                      — on failure
- *
- * NOTE: Verify the Fena endpoint and response shape against their developer
- * portal before going live. See SETUP.md for testing instructions.
+ * Accepts the checkout payload { amount_pence | amount, reference, metadata, orderId }.
  */
 
 export const config = { runtime: 'edge' };
+
+const FENA_ENDPOINT = 'https://epos.api.prod-gcp.fena.co/open/payments/single/create-and-process';
 
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
@@ -29,102 +30,95 @@ export default async function handler(req) {
       },
     });
   }
-
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
-  }
+  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
 
   let body;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  try { body = await req.json(); }
+  catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } });
   }
 
-  const { orderId, amount, reference } = body;
+  const { orderId, reference, metadata } = body;
 
-  if (!orderId || !amount) {
-    return new Response(JSON.stringify({ error: 'Missing required fields: orderId, amount' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  // Amount: accept pence (from checkout) or a pounds value; Fena wants a 2-dp string
+  const amountStr = (body.amount_pence != null)
+    ? (Number(body.amount_pence) / 100).toFixed(2)
+    : (body.amount != null ? parseFloat(body.amount).toFixed(2) : null);
+
+  if (!amountStr || amountStr === 'NaN' || Number(amountStr) <= 0) {
+    return new Response(JSON.stringify({ error: 'Missing or invalid amount' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } });
   }
 
-  const FENA_CLIENT_ID     = process.env.FENA_CLIENT_ID;
-  const FENA_CLIENT_SECRET = process.env.FENA_CLIENT_SECRET;
-  const BASE_URL           = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloxpeps.com';
+  const ID       = process.env.FENA_CLIENT_ID;
+  const SECRET   = process.env.FENA_CLIENT_SECRET;
+  const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloxpeps.com';
 
-  if (!FENA_CLIENT_ID || !FENA_CLIENT_SECRET) {
+  if (!ID || !SECRET) {
     console.error('[create-fena-payment] Missing FENA_CLIENT_ID or FENA_CLIENT_SECRET');
-    return new Response(JSON.stringify({ error: 'Payment service not configured' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ error: 'Payment service not configured' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 
-  const paymentRef = reference || `VP-${String(orderId).slice(0, 8).toUpperCase()}`;
-  console.log(`[create-fena-payment] ref=${paymentRef} amount=£${amount}`);
+  // Fena requires the reference to be <= 12 chars, alphanumeric
+  const rawRef     = reference || ('VP' + Date.now().toString(36));
+  const paymentRef = (rawRef.replace(/[^A-Za-z0-9]/g, '').slice(0, 12)) || 'VP';
+
+  const meta        = metadata || {};
+  const redirectUrl = `${BASE_URL}/checkout/payment-complete/?order_id=${encodeURIComponent(orderId || '')}&ref=${encodeURIComponent(paymentRef)}`;
+
+  console.log(`[create-fena-payment] ref=${paymentRef} amount=£${amountStr}`);
 
   try {
-    const fenaRes = await fetch(
-      'https://app.fena.co/api/single-immediate-payment-initiation-requests',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'client_id':     FENA_CLIENT_ID,
-          'client_secret': FENA_CLIENT_SECRET,
-        },
-        body: JSON.stringify({
-          amount:       parseFloat(amount).toFixed(2),
-          reference:    paymentRef,
-          redirect_url: `${BASE_URL}/checkout/payment-complete/?order_id=${orderId}&ref=${encodeURIComponent(paymentRef)}`,
-          webhook_url:  `${BASE_URL}/api/fena-webhook`,
-        }),
-      }
-    );
+    const fenaRes = await fetch(FENA_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type':   'application/json',
+        'integration-id': ID,
+        'secret-key':     SECRET,
+      },
+      body: JSON.stringify({
+        reference:         paymentRef,
+        amount:            amountStr,
+        customerEmail:     meta.customer_email || body.customerEmail || '',
+        customerName:      meta.customer_name  || '',
+        items:             [],
+        customRedirectUrl: redirectUrl,
+      }),
+    });
 
     const rawText = await fenaRes.text();
-    console.log(`[create-fena-payment] Fena ${fenaRes.status}: ${rawText}`);
+    console.log(`[create-fena-payment] Fena ${fenaRes.status}: ${rawText.slice(0, 300)}`);
 
     let data = {};
     try { data = JSON.parse(rawText); } catch { data = { _raw: rawText }; }
 
-    if (!fenaRes.ok) {
+    if (!fenaRes.ok || !data.created) {
       return new Response(
-        JSON.stringify({ error: data.message || data.error || `Fena HTTP ${fenaRes.status}`, debug: data }),
+        JSON.stringify({ error: (data.message || data.error || `Fena HTTP ${fenaRes.status}`), debug: data }),
         { status: 502, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Fena may use different field names across API versions — try all known ones
-    const paymentUrl    = data.payment_url  || data.url        || data.link ||
-                          data.hostedPaymentUrl || data.checkout_url;
-    const fenaPaymentId = data.id           || data.payment_id || data.reference;
+    const paymentUrl    = data.result && data.result.link;
+    const fenaPaymentId = data.result && data.result.id;
 
     if (!paymentUrl) {
-      console.error('[create-fena-payment] No payment URL in response:', data);
-      return new Response(
-        JSON.stringify({ error: 'No payment URL returned by Fena', debug: data }),
-        { status: 502, headers: { 'Content-Type': 'application/json' } }
-      );
+      console.error('[create-fena-payment] No result.link in response:', rawText.slice(0, 300));
+      return new Response(JSON.stringify({ error: 'No payment URL returned by Fena', debug: data }),
+        { status: 502, headers: { 'Content-Type': 'application/json' } });
     }
 
     console.log(`[create-fena-payment] SUCCESS fenaId=${fenaPaymentId}`);
-
-    return new Response(JSON.stringify({ paymentUrl, fenaPaymentId }), {
+    return new Response(JSON.stringify({ paymentUrl, fenaPaymentId, orderId: orderId || null }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' },
     });
 
   } catch (err) {
     console.error('[create-fena-payment] fetch threw:', err.message);
-    return new Response(JSON.stringify({ error: 'Failed to reach Fena API', detail: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ error: 'Failed to reach Fena API', detail: err.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
