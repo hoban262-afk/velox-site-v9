@@ -79,7 +79,16 @@ module.exports = async function handler(req, res) {
     // Send in batches of 100 (Resend batch limit)
     for (var i = 0; i < emails.length; i += 100) {
       var chunk = emails.slice(i, i + 100).map(function (email) {
-        return { from: FROM, to: email, subject: subject, html: wrap(bodyHtml, email) };
+        var unsub = 'https://veloxpeps.com/api/newsletter/unsubscribe?token=' + encodeURIComponent(unsubToken(email));
+        return {
+          from: FROM, to: email, replyTo: 'veloxpeps@gmail.com', subject: subject,
+          html: wrap(bodyHtml, email),
+          text: (req.body.message || '').toString().trim() + '\n\n— Velox Peptides\nFor research use only. Not for human or veterinary consumption.\nUnsubscribe: ' + unsub,
+          headers: {
+            'List-Unsubscribe': '<' + unsub + '>',
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
+        };
       });
       try {
         var resp = await resend.batch.send(chunk);

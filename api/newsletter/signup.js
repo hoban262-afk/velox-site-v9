@@ -126,10 +126,25 @@ module.exports = async function handler(req, res) {
     if (process.env.RESEND_API_KEY) {
       try {
         var resend = new Resend(process.env.RESEND_API_KEY);
+        var unsub = 'https://veloxpeps.com/api/newsletter/unsubscribe?token=' + encodeURIComponent(unsubToken(email));
         await resend.emails.send({
           from: FROM, to: email,
+          replyTo: 'veloxpeps@gmail.com',
           subject: 'Your 20% off code is inside — Velox Peptides',
           html: welcomeEmailHtml(code, email),
+          // Plain-text alternative improves inbox placement (HTML-only scores worse)
+          text: 'Welcome to the Velox research community.\n\n' +
+                'Your one-time discount code for 20% off your first order:\n\n' +
+                '    ' + code + '\n\n' +
+                'Apply it at checkout. Valid for 30 days.\n\n' +
+                'Shop: https://veloxpeps.com/compounds/\n\n' +
+                'For research use only. Not for human or veterinary consumption.\n' +
+                'Unsubscribe: ' + unsub,
+          // List-Unsubscribe header — required by Gmail/Apple for good placement
+          headers: {
+            'List-Unsubscribe': '<' + unsub + '>',
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
         });
       } catch (e) { console.error('[newsletter/signup] email send failed:', e.message); }
     }
