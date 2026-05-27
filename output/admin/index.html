@@ -102,6 +102,7 @@
       <button class="admin-tab active" data-tab="overview"     onclick="switchTab('overview')">Overview</button>
       <button class="admin-tab"        data-tab="orders"       onclick="switchTab('orders')">Orders</button>
       <button class="admin-tab"        data-tab="reviews"      onclick="switchTab('reviews')">Reviews</button>
+      <button class="admin-tab"        data-tab="campaign"     onclick="switchTab('campaign')">Campaign</button>
       <button class="admin-tab"        data-tab="subscribers"  onclick="switchTab('subscribers')">Subscribers</button>
       <button class="admin-tab"        data-tab="affiliates"   onclick="switchTab('affiliates')">Affiliates</button>
     </div>
@@ -136,6 +137,29 @@
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">Product reviews — moderation</div></div>
         <div id="reviews-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
+    <!-- Campaign -->
+    <div class="admin-panel" id="panel-campaign">
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Email campaign</div>
+          <div style="font-size:12px;color:var(--t3,#6b7280)" id="camp-count">Loading recipients…</div>
+        </div>
+        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 16px;line-height:1.5">Sends a branded email to every subscriber who hasn't unsubscribed. Each email includes an unsubscribe link automatically. Plain text — leave a blank line between paragraphs.</p>
+        <label style="display:block;font-size:12px;color:var(--t2,#9ca3af);margin-bottom:5px">Subject</label>
+        <input class="f-inp" id="camp-subject" style="width:100%;box-sizing:border-box;margin-bottom:14px" value="New in the research library: BPC-157">
+        <label style="display:block;font-size:12px;color:var(--t2,#9ca3af);margin-bottom:5px">Message</label>
+        <textarea id="camp-message" style="width:100%;box-sizing:border-box;min-height:220px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:12px;border-radius:7px;font:inherit;font-size:14px;line-height:1.6;resize:vertical">We've just published a new entry in the Velox research library — a plain-language summary of the current preclinical research on BPC-157 (Body Protection Compound-157).
+
+It covers what the peptide is, the tissue-repair and angiogenesis pathways researchers have studied it in, how it's handled in the lab (reconstitution and storage), and the third-party HPLC verification behind every batch we supply.
+
+Read the full summary in the research library below. As always, batch documentation is available on request for every compound we stock.
+
+For in vitro research use only. Not for human or veterinary consumption.</textarea>
+        <div style="margin-top:14px"><button class="btn-p" id="camp-send" style="width:auto;padding:11px 24px">Send campaign</button></div>
+        <div class="acc-msg" id="camp-msg" style="font-size:13px;margin-top:10px"></div>
       </div>
     </div>
 

@@ -39,11 +39,15 @@ module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SERVICE) return res.status(500).send(page('Service unavailable. Please try again later.'));
 
   try {
-    await fetch(SUPABASE_URL + '/rest/v1/newsletter_codes?email=eq.' + encodeURIComponent(email), {
-      method: 'PATCH',
-      headers: { apikey: SERVICE, Authorization: 'Bearer ' + SERVICE, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({ unsubscribed_at: new Date().toISOString() }),
-    });
+    var ts = new Date().toISOString();
+    var hdrs = { apikey: SERVICE, Authorization: 'Bearer ' + SERVICE, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
+    // Mark unsubscribed in both stores (welcome-code holders + general subscribers)
+    await Promise.all([
+      fetch(SUPABASE_URL + '/rest/v1/newsletter_codes?email=eq.' + encodeURIComponent(email), {
+        method: 'PATCH', headers: hdrs, body: JSON.stringify({ unsubscribed_at: ts }) }),
+      fetch(SUPABASE_URL + '/rest/v1/subscribers?email=eq.' + encodeURIComponent(email), {
+        method: 'PATCH', headers: hdrs, body: JSON.stringify({ unsubscribed_at: ts }) }),
+    ]);
     return res.status(200).send(page("You've been unsubscribed. You won't receive further emails from us."));
   } catch (e) {
     console.error('[newsletter/unsubscribe]', e.message);

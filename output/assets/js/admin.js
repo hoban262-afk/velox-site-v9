@@ -114,8 +114,48 @@
   function loadAllData() {
     loadOrders();
     loadReviews();
+    loadCampaign();
     loadSubscribers();
     loadAffiliates();
+  }
+
+  // ── CAMPAIGN (email broadcast) ──────────────────────────────────────────────
+  function loadCampaign() {
+    if (!window._sb) return;
+    window._sb.from('subscribers').select('id', { count: 'exact', head: true }).is('unsubscribed_at', null)
+      .then(function (r) {
+        var el = document.getElementById('camp-count');
+        if (el) el.textContent = (r.count != null ? r.count : '—') + ' subscriber' + (r.count === 1 ? '' : 's');
+      });
+    var btn = document.getElementById('camp-send');
+    if (btn && !btn._wired) { btn._wired = true; btn.addEventListener('click', sendCampaign); }
+  }
+
+  async function sendCampaign() {
+    var msg = document.getElementById('camp-msg');
+    function setMsg(text, ok) { msg.textContent = text; msg.style.color = ok ? '#01D3A0' : '#f87171'; }
+    var subject = document.getElementById('camp-subject').value.trim();
+    var message = document.getElementById('camp-message').value.trim();
+    if (!subject || !message) { setMsg('Subject and message are required.', false); return; }
+    var countEl = document.getElementById('camp-count');
+    if (!window.confirm('Send this campaign to ' + (countEl ? countEl.textContent : 'all subscribers') + '?\n\nThis sends real emails and cannot be undone.')) return;
+
+    var btn = document.getElementById('camp-send');
+    btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Sending…';
+    msg.style.color = '#9ca3af'; msg.textContent = 'Sending…';
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/newsletter/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ subject: subject, message: message }),
+      });
+      var d = await r.json();
+      if (r.ok) setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' subscribers.', true);
+      else setMsg(d.error || 'Send failed.', false);
+    } catch (e) { setMsg('Send failed — please try again.', false); }
+    btn.disabled = false; btn.textContent = orig;
   }
 
   // ── REVIEWS ───────────────────────────────────────────────────────────────
