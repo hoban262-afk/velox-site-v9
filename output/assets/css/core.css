@@ -5680,3 +5680,118 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !im
   .cp-hto { padding: 11px 12px; }
   .cp-hto-step { font-size: 12px; }
 }
+
+/* ============================================================
+   MOBILE POLISH + TEXT-WRAP SAFETY
+   - Headlines never break ugly (text-wrap: balance)
+   - Long words wrap rather than overflow
+   - Button labels never split
+   - Mobile prominence for the new Research nav link
+   - Site-wide horizontal-overflow guard
+   ============================================================ */
+
+/* No horizontal scroll, ever */
+html, body { overflow-x: hidden !important; }
+
+/* Headlines wrap cleanly across breakpoints */
+h1, h2, h3, .h-h1, .page-h1, .rl-h1, .sec-t, .cc-name, .cp-name,
+.cat-tile-name, .hp-feat-title, .rl-card-title, .rl-h2, .rl-h3,
+.confirm-t, .nl-t, .hp-comm-title {
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: manual;
+}
+
+/* Body text never overflows containers (long URLs, IBANs, etc.) */
+p, li, dd, dt, .cc-desc, .cc-full, .cc-meta, .rl-card-excerpt,
+.card-body, address, .ft-tag, .h-sub, .vp-hto-card-desc {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Buttons never split their label across lines */
+.btn-p, .btn-o, .cc-atc, .nav-cart-label, .rl-sb-btn, .rl-sb-btn-o,
+.eg-btn, .cart-proceed, .cart-continue, .co-submit, .confirm-cta a,
+.vp-hto-cta a, .nl-btn, button[type="submit"] {
+  white-space: nowrap;
+}
+
+/* Product / research card titles: never crush down to one word per line */
+.cc-name, .cp-name, .rl-card-title, .cat-tile-name {
+  min-width: 0;
+}
+
+/* Flex containers: ensure children can shrink (prevents overflow + char-wrap) */
+.cc, .cc-body, .cc-ft, .cc-price-block, .rl-card, .rl-card-footer,
+.cp-hero, .cp-hero-main, .cart-summary, .co-summary, .pts-grid > * {
+  min-width: 0;
+}
+
+/* ── MOBILE-SPECIFIC POLISH (≤ 767px) ───────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Tighter horizontal padding for full-width feel without edge-crash */
+  .sec-i, .hero-i, .vp-hto-inner, .rl-outer, .acc-wrap { padding-left: 18px; padding-right: 18px; }
+
+  /* Headlines: slightly tighter line-height + balance for clean two-line layout */
+  h1, .h-h1, .page-h1, .rl-h1 { line-height: 1.08; text-wrap: balance; }
+  h2, .sec-t, .hp-feat-title  { line-height: 1.18; text-wrap: balance; }
+
+  /* Primary CTAs: full-width tap targets */
+  .btn-p, .btn-o { display: inline-block; min-height: 44px; padding-left: 22px; padding-right: 22px; }
+
+  /* Single-column safety on tight grids */
+  .prod-grid-4 { grid-template-columns: 1fr 1fr !important; }
+  @media (max-width: 480px) { .prod-grid-4 { grid-template-columns: 1fr !important; } }
+
+  /* Footer columns stack cleanly */
+  .ft-cols { grid-template-columns: 1fr 1fr; }
+
+  /* Cart proceed / continue: keep on one line, full width */
+  .cart-proceed, .cart-continue { width: 100%; box-sizing: border-box; text-align: center; }
+
+  /* Compliance + footer text wrap rather than overflow */
+  .cb-i, .ft-i, .ft-disc { overflow-wrap: break-word; }
+}
+
+/* ── RESEARCH NAV LINK PROMINENCE ──────────────────────────────────────── */
+/* Mobile menu: make it stand out (most customers come from mobile) */
+a.mob-nl[href="/research/"] {
+  color: #01D3A0 !important;
+  font-weight: 700;
+  position: relative;
+}
+a.mob-nl[href="/research/"]::after {
+  content: 'NEW';
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #021;
+  background: #01D3A0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Desktop: subtle teal hover lift, NEW pill */
+a.nl[href="/research/"] { position: relative; }
+a.nl[href="/research/"]::after {
+  content: 'NEW';
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #021;
+  background: #01D3A0;
+  padding: 1px 5px;
+  border-radius: 2px;
+  margin-left: 6px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
