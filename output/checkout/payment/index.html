@@ -966,9 +966,20 @@
             throw new Error(errMsg);
           }
 
-          // 9. Redirect to Fena hosted payment page
+          // 9. Branded "redirecting to your bank" interstitial → then redirect
           console.log('[fena-pay] Redirecting to Fena — ref:', ref, 'orderId:', data.orderId);
-          window.location.href = data.paymentUrl;
+          var _st = document.createElement('style');
+          _st.textContent = '@keyframes vp-rspin{to{transform:rotate(360deg)}}';
+          document.head.appendChild(_st);
+          var _ov = document.createElement('div');
+          _ov.style.cssText = 'position:fixed;inset:0;background:rgba(3,4,7,.96);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:Inter,Arial,sans-serif;text-align:center;padding:20px';
+          _ov.innerHTML =
+            '<div style="font-size:11px;color:#01D3A0;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:700">VELOX PEPTIDES &middot; SECURE PAYMENT</div>' +
+            '<div style="width:48px;height:48px;border:3px solid #1F2937;border-top-color:#01D3A0;border-radius:50%;animation:vp-rspin .8s linear infinite;margin-bottom:24px"></div>' +
+            '<div style="font-size:19px;font-weight:600;color:#fff;margin-bottom:8px">Redirecting you to your bank</div>' +
+            '<div style="font-size:13px;color:#9CA3AF;max-width:380px;line-height:1.65">Processed securely by Fena open banking. No card or bank details are stored on our site &mdash; you authorise the payment in your own banking app.</div>';
+          document.body.appendChild(_ov);
+          setTimeout(function () { window.location.href = data.paymentUrl; }, 350);
         })
         .catch(function (e) {
           clearTimeout(timeoutId);

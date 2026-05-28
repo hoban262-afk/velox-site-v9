@@ -66,7 +66,7 @@ export default async function handler(req) {
   const paymentRef = (rawRef.replace(/[^A-Za-z0-9]/g, '').slice(0, 12)) || 'VP';
 
   const meta        = metadata || {};
-  const redirectUrl = `${BASE_URL}/checkout/payment-complete/?order_id=${encodeURIComponent(orderId || '')}&ref=${encodeURIComponent(paymentRef)}`;
+  const redirectUrl = `${BASE_URL}/checkout/payment-complete/?order_id=${encodeURIComponent(orderId || '')}&ref=${encodeURIComponent(paymentRef)}&method=fena`;
 
   console.log(`[create-fena-payment] ref=${paymentRef} amount=£${amountStr}`);
 
