@@ -1,144 +1,150 @@
 /**
  * /api/fena-webhook — Vercel Edge Function
  *
- * Fena calls this endpoint when a payment event occurs.
- * On success: marks the order as 'paid' in Supabase via the REST API.
+ * Fena calls this when a payment event occurs. On a success event we mark the
+ * matching Supabase order 'paid' and fire Click & Drop + Xero. This is the
+ * browser-independent confirmation (the customer's return to the site is the
+ * other, faster path via confirm-fena-payment).
  *
- * Fena sends: POST  application/x-www-form-urlencoded  { token: "<jwt>" }
- * (Some Fena versions send JSON — both are handled.)
- *
- * The order_id in the JWT payload is the Supabase UUID we passed as
- * part of the redirect_url when creating the payment session.
- *
- * NOTE: Full JWT signature verification should be added once you confirm
- * Fena's signing algorithm — see SETUP.md.
+ * Fena's exact payload shape isn't documented for our account, so this handler
+ * is deliberately tolerant: it logs the RAW body (to confirm the real shape),
+ * then tries JSON, a signed JWT in a `token` field, and form-urlencoded. It
+ * matches the order by reference (= our 12-char paymentRef, stored in
+ * orders.notes by create-fena-payment) or by an order UUID if present.
  */
 
 export const config = { runtime: 'edge' };
 
-const SUCCESS_STATUSES = new Set(['completed', 'success', 'paid', 'captured']);
+const SUCCESS_STATUSES = new Set(['completed', 'success', 'paid', 'captured', 'settled', 'complete']);
+
+function decodeJwtPayload(token) {
+  try {
+    const parts = String(token).split('.');
+    if (parts.length !== 3) return null;
+    const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
+    return JSON.parse(atob(padded));
+  } catch { return null; }
+}
+
+// Pull the first present value across a list of candidate keys (top-level + nested).
+function pick(obj, keys) {
+  if (!obj || typeof obj !== 'object') return undefined;
+  for (const k of keys) {
+    if (obj[k] != null && obj[k] !== '') return obj[k];
+  }
+  for (const nest of ['payload', 'data', 'result', 'metadata', 'order', 'payment']) {
+    if (obj[nest] && typeof obj[nest] === 'object') {
+      const v = pick(obj[nest], keys);
+      if (v != null && v !== '') return v;
+    }
+  }
+  return undefined;
+}
 
 export default async function handler(req) {
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
-  }
+  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
 
   const SUPABASE_URL              = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('[fena-webhook] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    console.error('[fena-webhook] Missing Supabase env');
     return new Response('Misconfigured', { status: 500 });
   }
 
-  // ── Parse body ───────────────────────────────────────────────────────────────
-  let token;
+  // ── Read + log the raw body (so we can confirm Fena's real shape) ───────────
+  const ct  = (req.headers.get('content-type') || '').toLowerCase();
+  const raw = await req.text();
+  console.log(`[fena-webhook] content-type="${ct}" raw=${raw.slice(0, 600)}`);
+
+  // ── Parse into a single object, however Fena framed it ──────────────────────
+  let obj = {};
   try {
-    const ct = (req.headers.get('content-type') || '').toLowerCase();
     if (ct.includes('application/x-www-form-urlencoded')) {
-      const params = new URLSearchParams(await req.text());
-      token = params.get('token');
+      const params = new URLSearchParams(raw);
+      obj = Object.fromEntries(params.entries());
+      if (obj.token) obj = Object.assign(obj, decodeJwtPayload(obj.token) || {});
     } else {
-      const json = await req.json();
-      token = json.token || json.jwt;
+      obj = JSON.parse(raw || '{}');
+      const tok = obj.token || obj.jwt;
+      if (tok) obj = Object.assign(obj, decodeJwtPayload(tok) || {});
     }
-  } catch (err) {
-    console.error('[fena-webhook] Body parse error:', err.message);
-    return new Response('Bad request', { status: 400 });
+  } catch (e) {
+    console.error('[fena-webhook] parse failed:', e.message);
+    return new Response('OK', { status: 200 }); // ack so Fena doesn't retry-storm
   }
 
-  if (!token) {
-    console.error('[fena-webhook] No token in request');
-    return new Response('Missing token', { status: 400 });
-  }
+  const status    = String(pick(obj, ['status', 'paymentStatus', 'payment_status', 'state']) || '').toLowerCase();
+  const reference  = pick(obj, ['reference', 'merchantReference', 'paymentReference', 'orderReference', 'merchant_reference']);
+  const orderUuid = pick(obj, ['order_id', 'orderId']);
+  const paymentId = pick(obj, ['payment_id', 'paymentId', 'id']) || null;
 
-  // ── Decode JWT payload ───────────────────────────────────────────────────────
-  let payload;
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) throw new Error('Malformed JWT');
-    const b64    = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
-    payload = JSON.parse(atob(padded));
-  } catch (err) {
-    console.error('[fena-webhook] JWT decode failed:', err.message);
-    return new Response('Invalid token', { status: 400 });
-  }
-
-  console.log('[fena-webhook] payload:', JSON.stringify(payload));
-
-  const status    = (payload.status || payload.payment_status || '').toLowerCase();
-  // order_id is the Supabase UUID we embedded in the redirect_url
-  const orderId   = payload.order_id || payload.metadata?.order_id || null;
-  const paymentId = payload.payment_id || payload.id || token.slice(0, 24);
+  console.log(`[fena-webhook] parsed status="${status}" reference="${reference || ''}" orderUuid="${orderUuid || ''}"`);
 
   if (!SUCCESS_STATUSES.has(status)) {
-    console.log(`[fena-webhook] status="${status}" is not a success event — acknowledging`);
+    console.log(`[fena-webhook] status "${status}" not a success event — acknowledging`);
+    return new Response('OK', { status: 200 });
+  }
+  if (!reference && !orderUuid) {
+    console.warn('[fena-webhook] success event but no reference/order_id to match — acknowledging');
     return new Response('OK', { status: 200 });
   }
 
-  if (!orderId) {
-    console.warn('[fena-webhook] No order_id in payload — cannot update Supabase. Acknowledging.');
-    return new Response('OK', { status: 200 });
-  }
+  const sbHeaders = {
+    apikey: SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+    'Content-Type': 'application/json',
+  };
 
-  // ── Update order in Supabase ─────────────────────────────────────────────────
+  // ── Find the order (by UUID, else by reference stored in notes) ─────────────
+  let order = null;
   try {
-    const patchRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(orderId)}`,
-      {
-        method:  'PATCH',
-        headers: {
-          'apikey':        SUPABASE_SERVICE_ROLE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-          'Content-Type':  'application/json',
-          'Prefer':        'return=minimal',
-        },
-        body: JSON.stringify({ status: 'paid', fena_payment_id: paymentId }),
-      }
-    );
+    const filter = orderUuid
+      ? `id=eq.${encodeURIComponent(orderUuid)}`
+      : `notes=eq.${encodeURIComponent(reference)}`;
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?${filter}&select=id,status&order=created_at.desc&limit=1`, { headers: sbHeaders });
+    const rows = r.ok ? await r.json() : [];
+    order = Array.isArray(rows) ? rows[0] : null;
+  } catch (e) {
+    console.error('[fena-webhook] order lookup threw:', e.message);
+  }
 
-    if (!patchRes.ok) {
-      const errText = await patchRes.text();
-      console.error(`[fena-webhook] Supabase PATCH ${patchRes.status}: ${errText}`);
+  if (!order) {
+    console.warn(`[fena-webhook] no order found (ref=${reference} uuid=${orderUuid}) — acknowledging`);
+    return new Response('OK', { status: 200 });
+  }
+
+  // ── Mark paid (idempotent) ──────────────────────────────────────────────────
+  if (order.status !== 'paid' && order.status !== 'dispatched') {
+    try {
+      const patch = { status: 'paid' };
+      if (paymentId) patch.fena_payment_id = String(paymentId);
+      const pr = await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}`, {
+        method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' }, body: JSON.stringify(patch),
+      });
+      if (!pr.ok) {
+        console.error('[fena-webhook] PATCH failed:', pr.status, (await pr.text()).slice(0, 200));
+        return new Response('DB error', { status: 500 });
+      }
+      console.log(`[fena-webhook] Order ${order.id} → paid`);
+    } catch (e) {
+      console.error('[fena-webhook] PATCH threw:', e.message);
       return new Response('DB error', { status: 500 });
     }
-
-    console.log(`[fena-webhook] Order ${orderId} → paid (fenaId: ${paymentId})`);
-
-    // ── Fire-and-forget: create the Xero invoice (never blocks the payment ack) ──
-    // If Xero is unconfigured/down this is a no-op; a daily reconciliation cron
-    // re-syncs any paid order still missing xero_invoice_id, so it's self-healing.
-    const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
-    if (INTERNAL_SECRET) {
-      try {
-        await fetch('https://veloxpeps.com/api/xero/create-invoice', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
-          body: JSON.stringify({ order_id: orderId }),
-        });
-      } catch (e) {
-        console.error('[fena-webhook] Xero sync trigger failed (non-fatal):', e.message);
-      }
-
-      // ── Fire-and-forget: push the paid order into Royal Mail Click & Drop ──
-      // (idempotent — the push function skips orders already imported). If
-      // Click & Drop is unconfigured this is a harmless no-op.
-      try {
-        await fetch('https://veloxpeps.com/api/clickdrop/push', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
-          body: JSON.stringify({ order_id: orderId }),
-        });
-      } catch (e) {
-        console.error('[fena-webhook] Click & Drop push trigger failed (non-fatal):', e.message);
-      }
-    }
-
-    return new Response('OK', { status: 200 });
-
-  } catch (err) {
-    console.error('[fena-webhook] Supabase fetch threw:', err.message);
-    return new Response('Internal error', { status: 500 });
+  } else {
+    console.log(`[fena-webhook] Order ${order.id} already ${order.status} — skipping`);
   }
+
+  // ── Fire-and-forget: Click & Drop label + Xero invoice (idempotent) ─────────
+  const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
+  if (INTERNAL_SECRET) {
+    const trigger = (path) => fetch(`https://veloxpeps.com${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
+      body: JSON.stringify({ order_id: order.id }),
+    }).catch((e) => console.error(`[fena-webhook] ${path} trigger failed:`, e.message));
+    await Promise.allSettled([trigger('/api/clickdrop/push'), trigger('/api/xero/create-invoice')]);
+  }
+
+  return new Response('OK', { status: 200 });
 }

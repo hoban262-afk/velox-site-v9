@@ -404,7 +404,13 @@
   var EU_FX_RATE = 1.18;
 
   function getChk() {
-    try { return JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (e) { return {}; }
+    // sessionStorage is wiped when the mobile bank-app redirect returns in a
+    // fresh context, so fall back to the localStorage mirror written pre-redirect.
+    try {
+      var s = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
+      if (s && s.orderRef) return s;
+    } catch (e) {}
+    try { return JSON.parse(localStorage.getItem('vp_checkout') || '{}'); } catch (e) { return {}; }
   }
 
   function fmt(n, currency) {
@@ -422,8 +428,11 @@
   var urlMethod        = params.get('method')  || '';   // 'fena', 'psifi', or ''
   var urlPay           = params.get('payment') || '';   // 'cancelled'
   var billingRequestId = params.get('billing_request_id') || '';
-  // Fena appends ?orderId=xxx (or ?order_id=xxx) to the redirectUrl
-  var fenaOrderId      = params.get('orderId') || params.get('order_id') || '';
+  // create-fena-payment builds the return URL with the Supabase order UUID +
+  // the payment reference. These survive the redirect even when storage is wiped.
+  var urlOrderId       = params.get('order_id') || '';
+  var urlRef           = params.get('ref') || '';
+  var fenaOrderId      = params.get('orderId') || urlOrderId;
 
   // Clean URL immediately so refreshes don't re-read stale params
   if (window.history && window.history.replaceState) {
@@ -504,7 +513,7 @@
     var shpLbl     = document.getElementById('pc-shipping-label');
     var badgeText  = document.getElementById('pc-payment-badge-text');
 
-    if (refEl   && chk.orderRef)         refEl.textContent   = chk.orderRef;
+    if (refEl   && (chk.orderRef || urlRef)) refEl.textContent = chk.orderRef || urlRef;
     if (amtEl   && chk.total)            amtEl.textContent   = fmt(chk.total, pcCurrency);
     if (subEl   && chk.subtotal != null) subEl.textContent   = fmt(chk.subtotal, pcCurrency);
     if (shipEl  && chk.shipping != null) shipEl.textContent  = Number(chk.shipping) === 0 ? 'FREE' : fmt(chk.shipping, pcCurrency);
@@ -615,7 +624,13 @@
   if (isFena) {
     console.log('[payment-complete] Fena return — order:', chk.orderRef, '| fenaOrderId:', fenaOrderId);
 
-    var fenaPayload = Object.assign({}, orderPayload, { fena_order_id: fenaOrderId });
+    // Server resolves the order by order_id/ref (both from the URL) — these
+    // survive the mobile redirect even when sessionStorage does not.
+    var fenaPayload = Object.assign({}, orderPayload, {
+      fena_order_id: fenaOrderId,
+      order_id:      urlOrderId,
+      ref:           urlRef,
+    });
 
     fetch('/api/confirm-fena-payment', {
       method:  'POST',

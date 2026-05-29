@@ -903,7 +903,16 @@
       try {
         sessionStorage.setItem('vp_checkout', JSON.stringify(session));
         sessionStorage.removeItem('vp_order_fired');
+        // Mirror to localStorage: sessionStorage is wiped when the mobile
+        // bank-app redirect returns, localStorage survives the round-trip.
+        localStorage.setItem('vp_checkout', JSON.stringify(session));
       } catch (ex) {}
+
+      // Structured line items for the captured order (Click & Drop, Xero, account)
+      var structuredItems = cart.map(function (item) {
+        return { name: item.name, slug: item.slug, size: item.size,
+                 qty: item.qty || 1, price: item.price };
+      });
 
       // 6. Build metadata echoed back by Fena webhook
       var metadata = {
@@ -920,6 +929,7 @@
         shipping_address: shippingAddr,
         shipping_method:  'Royal Mail Tracked 24',
         order_items:      productsList,
+        items:            structuredItems,
         subtotal:         t.subtotal.toFixed(2),
         shipping:         ship.toFixed(2),
         discount_code:    discount ? discount.code : '',
