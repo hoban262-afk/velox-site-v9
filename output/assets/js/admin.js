@@ -338,6 +338,44 @@
         renderRecentOrders(ordersCache.slice(0, 5));
         updateStats(ordersCache);
       });
+    var cb = document.getElementById('ord-create');
+    if (cb && !cb._wired) { cb._wired = true; cb.addEventListener('click', createOrder); }
+  }
+
+  function ordVal(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+
+  async function createOrder() {
+    var m = document.getElementById('ord-create-msg');
+    function set(t, ok) { if (m) { m.textContent = t; m.style.color = ok ? '#01D3A0' : '#f87171'; } }
+    var name = ordVal('ord-name').trim();
+    var email = ordVal('ord-email').trim();
+    var sub = parseFloat(ordVal('ord-subtotal'));
+    var code = ordVal('ord-code').trim().toUpperCase();
+    var status = ordVal('ord-status') || 'pending';
+    if (!name || isNaN(sub) || sub < 0) { set('Enter a customer name and a valid subtotal.', false); return; }
+
+    var affiliate_id = null;
+    if (code) {
+      var ar = await window._sb.from('affiliates').select('id,status').eq('ref_code', code).maybeSingle();
+      if (!ar.data) { set('No affiliate found with code "' + code + '".', false); return; }
+      if (ar.data.status !== 'active') { set('That affiliate isn\'t active, so no commission would be earned.', false); return; }
+      affiliate_id = ar.data.id;
+    }
+
+    set('Creating…', true);
+    var row = {
+      customer_name: name, customer_email: email || null, items: [],
+      subtotal: sub, total: sub, status: status,
+      affiliate_id: affiliate_id, affiliate_code_used: code || null,
+    };
+    var r = await window._sb.from('orders').insert([row]);
+    if (r.error) { set(r.error.message, false); return; }
+    set('Order created' + (affiliate_id ? (' — commission generated for ' + code + '.') : '.'), true);
+    document.getElementById('ord-name').value = '';
+    document.getElementById('ord-email').value = '';
+    document.getElementById('ord-subtotal').value = '';
+    document.getElementById('ord-code').value = '';
+    loadOrders();
   }
 
   function renderOrders(orders) {
@@ -554,40 +592,80 @@
       });
   }
 
+  function affStatusBadge(s) {
+    var cls = { pending_approval:'s-pending', active:'s-paid', rejected:'s-cancelled', disabled:'s-cancelled' }[s] || 's-pending';
+    var label = { pending_approval:'pending approval', active:'active', rejected:'rejected', disabled:'disabled' }[s] || s;
+    return '<span class="status-badge ' + cls + '">' + esc(label) + '</span>';
+  }
+  function suggestCode(a) {
+    var base = (a.name || 'AFF').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+    return base || 'AFF';
+  }
+  function setAffMsg(id, t, ok) { var e = document.getElementById('aff-' + id + '-msg'); if (e) { e.textContent = t; e.style.color = ok ? '#01D3A0' : '#f87171'; } }
+
   function renderAffiliates(affs) {
     var el = document.getElementById('affiliates-table-wrap');
     if (!el) return;
     if (!affs.length) { el.innerHTML = '<p class="adm-empty">No affiliate applications yet.</p>'; return; }
-    el.innerHTML = '<table class="adm-table">' +
-      '<thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Ref Code</th><th>Discount</th><th>Status</th><th>Action</th></tr></thead>' +
-      '<tbody>' + affs.map(function (a) {
-        return '<tr>' +
-          '<td style="color:var(--t2)">' + fmtDate(a.created_at) + '</td>' +
-          '<td style="color:#fff">' + esc(a.name) + '</td>' +
-          '<td style="color:var(--t2)">' + esc(a.email) + '</td>' +
-          '<td><span style="font-family:monospace;color:var(--g)">' + esc(a.ref_code) + '</span></td>' +
-          '<td style="color:var(--t2)">' + a.discount_pct + '%</td>' +
-          '<td>' + statusBadge(a.status) + '</td>' +
-          '<td>' +
-            '<select class="status-select" onchange="updateAffiliateStatus(\'' + a.id + '\', this.value)">' +
-              ['pending','approved','rejected'].map(function (s) {
-                return '<option value="' + s + '"' + (a.status === s ? ' selected' : '') + '>' + s + '</option>';
-              }).join('') +
-            '</select>' +
-          '</td>' +
-        '</tr>';
-      }).join('') + '</tbody></table>';
+    el.innerHTML = affs.map(function (a) {
+      var rid = 'aff-' + a.id;
+      var commission = (a.commission_type === 'flat')
+        ? ('£' + Number(a.commission_rate || 0).toFixed(2) + ' flat')
+        : (Number(a.commission_rate || 0) + '% of subtotal');
+      var head =
+        '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">' +
+          '<div><span style="color:#fff;font-weight:700">' + esc(a.name) + '</span> ' + affStatusBadge(a.status) +
+            '<div style="color:var(--t3);font-size:12px">' + esc(a.email) +
+              (a.payout_details ? (' &middot; payout: ' + esc(a.payout_details)) : '') + '</div>' +
+            (a.promo_method ? ('<div style="color:var(--t3);font-size:12px">promo: ' + esc(a.promo_method) + '</div>') : '') +
+          '</div>' +
+          '<div style="color:var(--t2);font-size:12px;text-align:right">' + fmtDate(a.created_at) +
+            (a.ref_code ? ('<div style="font-family:monospace;color:var(--g);font-size:14px">' + esc(a.ref_code) + '</div>') : '') +
+            (a.status === 'active' ? ('<div style="color:var(--t2)">' + commission + '</div>') : '') +
+          '</div>' +
+        '</div>';
+      var codeInput = '<input id="' + rid + '-code" class="status-select" style="font-family:monospace;max-width:150px" value="' + esc(a.ref_code || suggestCode(a)) + '" placeholder="CODE">';
+      var typeSel = '<select id="' + rid + '-type" class="status-select">' +
+        '<option value="percentage"' + (a.commission_type !== 'flat' ? ' selected' : '') + '>% of subtotal</option>' +
+        '<option value="flat"' + (a.commission_type === 'flat' ? ' selected' : '') + '>£ flat</option></select>';
+      var rateInput = '<input id="' + rid + '-rate" class="status-select" style="max-width:90px" type="number" step="0.01" min="0" value="' + (a.commission_rate != null ? a.commission_rate : 10) + '">';
+      var controls = '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px">' + codeInput + typeSel + rateInput;
+      if (a.status === 'pending_approval') {
+        controls += '<button class="btn-p" style="width:auto;padding:8px 16px" onclick="affApprove(\'' + a.id + '\')">Approve</button>' +
+                    '<button class="status-select" style="cursor:pointer;color:#f87171" onclick="affSetStatus(\'' + a.id + '\',\'rejected\')">Reject</button>';
+      } else if (a.status === 'active') {
+        controls += '<button class="btn-p" style="width:auto;padding:8px 16px" onclick="affApprove(\'' + a.id + '\')">Save changes</button>' +
+                    '<button class="status-select" style="cursor:pointer" onclick="affSetStatus(\'' + a.id + '\',\'disabled\')">Disable</button>';
+      } else {
+        controls += '<button class="btn-p" style="width:auto;padding:8px 16px" onclick="affApprove(\'' + a.id + '\')">Re-activate</button>';
+      }
+      controls += '<span id="' + rid + '-msg" style="font-size:12px;color:#f87171"></span></div>';
+      return '<div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:16px 18px;margin-bottom:12px">' + head + controls + '</div>';
+    }).join('');
   }
 
-  window.updateAffiliateStatus = function (affId, newStatus) {
-    if (!window._sb) return;
+  // Approve / re-activate / save: assigns code + commission and sets status active.
+  window.affApprove = function (id) {
+    var code = ((document.getElementById('aff-' + id + '-code') || {}).value || '').trim().toUpperCase();
+    var type = (document.getElementById('aff-' + id + '-type') || {}).value || 'percentage';
+    var rate = parseFloat((document.getElementById('aff-' + id + '-rate') || {}).value);
+    if (!code) { setAffMsg(id, 'Enter a unique code first.'); return; }
+    if (isNaN(rate) || rate < 0) { setAffMsg(id, 'Enter a valid commission rate.'); return; }
+    setAffMsg(id, 'Saving…', true);
     window._sb.from('affiliates')
-      .update({ status: newStatus })
-      .eq('id', affId)
+      .update({ status: 'active', ref_code: code, commission_type: type, commission_rate: rate })
+      .eq('id', id)
       .then(function (r) {
-        if (r.error) console.error('[admin] Affiliate update failed:', r.error.message);
+        if (r.error) setAffMsg(id, /duplicate|unique/i.test(r.error.message) ? 'That code is already taken — pick another.' : r.error.message);
         else loadAffiliates();
       });
+  };
+  window.affSetStatus = function (id, status) {
+    if (status === 'rejected' && !window.confirm('Reject this affiliate application?')) return;
+    if (status === 'disabled' && !window.confirm('Disable this affiliate? They keep past commissions but earn nothing new and lose dashboard access.')) return;
+    window._sb.from('affiliates').update({ status: status }).eq('id', id).then(function (r) {
+      if (r.error) setAffMsg(id, r.error.message); else loadAffiliates();
+    });
   };
 
 }());

@@ -139,9 +139,24 @@
     <!-- Orders -->
     <div class="admin-panel" id="panel-orders">
       <div class="adm-section">
-        <div class="adm-sec-hdr">
-          <div class="adm-sec-title">All orders</div>
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Create order</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input id="ord-name" class="status-select" placeholder="Customer name" style="max-width:160px">
+          <input id="ord-email" class="status-select" placeholder="Customer email" style="max-width:180px">
+          <input id="ord-subtotal" class="status-select" type="number" step="0.01" min="0" placeholder="Subtotal £" style="max-width:120px">
+          <input id="ord-code" class="status-select" placeholder="Affiliate code (optional)" style="max-width:180px;font-family:monospace">
+          <select id="ord-status" class="status-select">
+            <option value="pending">pending</option>
+            <option value="paid">paid</option>
+            <option value="dispatched">dispatched</option>
+            <option value="cancelled">cancelled</option>
+          </select>
+          <button class="btn-p" id="ord-create" style="width:auto;padding:9px 18px">Create order</button>
         </div>
+        <div id="ord-create-msg" style="font-size:12px;margin-top:8px"></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">All orders</div></div>
         <div id="orders-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
     </div>
