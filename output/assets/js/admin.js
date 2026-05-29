@@ -391,12 +391,19 @@
 
   window.updateOrderStatus = function (orderId, newStatus) {
     if (!window._sb) return;
+
+    // Dispatching gets special handling: capture the Royal Mail tracking
+    // number and auto-send the dispatch email to the customer.
+    if (newStatus === 'dispatched') { dispatchOrder(orderId); return; }
+
     window._sb.from('orders')
       .update({ status: newStatus })
       .eq('id', orderId)
       .then(function (r) {
         if (r.error) {
           console.error('[admin] Status update failed:', r.error.message);
+          alert('Status update failed: ' + r.error.message);
+          renderOrders(ordersCache);
         } else {
           // Update local cache
           ordersCache.forEach(function (o) { if (o.id === orderId) o.status = newStatus; });
@@ -405,6 +412,91 @@
         }
       });
   };
+
+  // Mark an order dispatched: prompt for the Royal Mail tracking number,
+  // persist tracking/carrier/dispatched_at, then fire the dispatch email.
+  function dispatchOrder(orderId) {
+    var order = ordersCache.filter(function (o) { return o.id === orderId; })[0];
+    if (!order) return;
+
+    var tracking = window.prompt(
+      'Royal Mail tracking number for ' + order.customer_name + '\'s order:\n' +
+      '(leave blank to dispatch without tracking)',
+      order.tracking_number || ''
+    );
+
+    // Cancelled — abort and reset the dropdown to the saved status.
+    if (tracking === null) { renderOrders(ordersCache); return; }
+    tracking = tracking.trim();
+
+    window._sb.from('orders')
+      .update({
+        status:          'dispatched',
+        tracking_number: tracking || null,
+        carrier:         'Royal Mail Tracked 24',
+        dispatched_at:   new Date().toISOString()
+      })
+      .eq('id', orderId)
+      .then(function (r) {
+        if (r.error) {
+          console.error('[admin] Dispatch update failed:', r.error.message);
+          alert('Could not mark as dispatched: ' + r.error.message);
+          renderOrders(ordersCache);
+          return;
+        }
+        order.status = 'dispatched';
+        order.tracking_number = tracking || null;
+        renderOrders(ordersCache);
+        renderRecentOrders(ordersCache.slice(0, 5));
+        updateStats(ordersCache);
+        sendDispatchEmail(order, tracking);
+      });
+  }
+
+  // POST the order details to /api/send-dispatch (Resend dispatch template).
+  function sendDispatchEmail(order, tracking) {
+    var address = [order.ship_line1, order.ship_line2, order.ship_city, order.ship_postcode, order.ship_country]
+      .filter(function (p) { return p && String(p).trim(); })
+      .join(', ');
+
+    var items = (order.items || []).map(function (it) {
+      return {
+        name:  it.name + (it.size ? ' (' + it.size + ')' : ''),
+        qty:   it.qty || 1,
+        price: '£' + parseFloat(it.price || 0).toFixed(2)
+      };
+    });
+
+    var ref = order.notes || order.id.slice(0, 8).toUpperCase();
+
+    fetch('/api/send-dispatch', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        orderNumber:    ref,
+        customerEmail:  order.customer_email,
+        customerName:   order.customer_name,
+        trackingNumber: tracking,
+        address:        address,
+        items:          items,
+        total:          '£' + parseFloat(order.total || 0).toFixed(2)
+      })
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; })
+          .then(function (d) { return { ok: res.ok, data: d }; });
+      })
+      .then(function (out) {
+        if (out.ok) {
+          alert('Dispatch email sent to ' + order.customer_email + (tracking ? '\nTracking: ' + tracking : ''));
+        } else {
+          alert('Order marked dispatched, but the email failed: ' + ((out.data && out.data.error) || 'unknown error'));
+        }
+      })
+      .catch(function (e) {
+        alert('Order marked dispatched, but the email request failed: ' + e.message);
+      });
+  }
 
   function updateStats(orders) {
     var paid = orders.filter(function (o) { return o.status === 'paid' || o.status === 'dispatched'; });
