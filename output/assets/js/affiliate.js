@@ -41,7 +41,11 @@
     if (window.location.hash.indexOf('type=recovery') !== -1) { hide('acc-loading'); show('auth-view'); window.authTab('newpw'); return; }
     var r = await sb.auth.getSession();
     if (r.data && r.data.session) { await loadAffiliate(); }
-    else { hide('acc-loading'); show('auth-view'); }
+    else {
+      hide('acc-loading'); show('auth-view');
+      // arriving from the "Apply to join" CTA? open the application form.
+      if (/apply/i.test(window.location.search) || /apply/i.test(window.location.hash)) window.authTab('register');
+    }
   })();
 
   // ── Login ──
