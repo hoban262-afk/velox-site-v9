@@ -786,6 +786,14 @@
               user_id:         uid,
               points_redeemed: Number(chk.points_redeemed) || 0,
               welcome_code:    chk.welcome_code || null,
+              // Shipping address — needed for dispatch emails + Royal Mail Click & Drop
+              ship_name:       ((chk.fname || '') + ' ' + (chk.lname || '')).trim() || null,
+              ship_line1:      chk.addr1 || null,
+              ship_line2:      chk.addr2 || null,
+              ship_city:       chk.city || null,
+              ship_postcode:   chk.postcode || null,
+              ship_country:    chk.country || 'GB',
+              ship_phone:      chk.phone || null,
             }]);
             if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
           } catch (sbErr) {
