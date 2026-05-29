@@ -120,6 +120,19 @@ export default async function handler(req) {
       } catch (e) {
         console.error('[fena-webhook] Xero sync trigger failed (non-fatal):', e.message);
       }
+
+      // ── Fire-and-forget: push the paid order into Royal Mail Click & Drop ──
+      // (idempotent — the push function skips orders already imported). If
+      // Click & Drop is unconfigured this is a harmless no-op.
+      try {
+        await fetch('https://veloxpeps.com/api/clickdrop/push', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
+          body: JSON.stringify({ order_id: orderId }),
+        });
+      } catch (e) {
+        console.error('[fena-webhook] Click & Drop push trigger failed (non-fatal):', e.message);
+      }
     }
 
     return new Response('OK', { status: 200 });

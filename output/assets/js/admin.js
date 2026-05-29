@@ -119,6 +119,7 @@
     loadAffiliates();
     loadActions();
     loadXeroStatus();
+    loadClickDropStatus();
   }
 
   // ── APPROVAL INBOX (agent_actions) ──────────────────────────────────────────
@@ -230,6 +231,26 @@
     } catch (e) {
       if (btn) { btn.disabled = false; btn.textContent = 'Connect Xero'; }
       alert('Could not start Xero connection.');
+    }
+  }
+
+  async function loadClickDropStatus() {
+    var el = document.getElementById('clickdrop-status');
+    if (!el || !window._sb) return;
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/clickdrop/status', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json();
+      if (!d || d.configured === false) {
+        el.textContent = 'Not connected — add your Click & Drop API key in the site environment settings.';
+      } else if (d.connected) {
+        el.innerHTML = '<span style="color:#01D3A0">✓ Connected</span> · paid orders auto-import.';
+      } else {
+        el.innerHTML = '<span style="color:#f87171">Key set but not authorising</span> — check the API key value.';
+      }
+    } catch (e) {
+      el.textContent = 'Status unavailable.';
     }
   }
 
@@ -447,9 +468,38 @@
           ordersCache.forEach(function (o) { if (o.id === orderId) o.status = newStatus; });
           renderRecentOrders(ordersCache.slice(0, 5));
           updateStats(ordersCache);
+          // Marking paid → push the order into Royal Mail Click & Drop so a
+          // label is ready to print. Idempotent server-side (won't double-import).
+          if (newStatus === 'paid') pushToClickAndDrop(orderId);
         }
       });
   };
+
+  // Send one paid order to Click & Drop via /api/clickdrop/push (admin-authed).
+  async function pushToClickAndDrop(orderId) {
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) return;
+      var resp = await fetch('/api/clickdrop/push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ order_id: orderId }),
+      });
+      var d = await resp.json().catch(function () { return {}; });
+      if (!resp.ok || (d && d.ok === false)) {
+        console.warn('[admin] Click & Drop push:', (d && d.error) || resp.status);
+        // Not configured yet is expected before the API key is set — stay quiet then.
+        if (resp.status !== 500) alert('Click & Drop: ' + ((d && d.error) || 'could not create the label order.'));
+      } else if (d && d.skipped) {
+        console.log('[admin] Click & Drop: order already imported.');
+      } else {
+        console.log('[admin] Click & Drop: order created (' + (d && d.identifier) + ').');
+      }
+    } catch (e) {
+      console.warn('[admin] Click & Drop push threw:', e.message);
+    }
+  }
 
   // Mark an order dispatched: prompt for the Royal Mail tracking number,
   // persist tracking/carrier/dispatched_at, then fire the dispatch email.
