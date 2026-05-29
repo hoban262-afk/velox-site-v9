@@ -100,11 +100,13 @@
 
     <div class="admin-tabs">
       <button class="admin-tab active" data-tab="overview"     onclick="switchTab('overview')">Overview</button>
+      <button class="admin-tab"        data-tab="actions"      onclick="switchTab('actions')">Actions<span id="actions-badge" style="display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 7px;vertical-align:middle">0</span></button>
       <button class="admin-tab"        data-tab="orders"       onclick="switchTab('orders')">Orders</button>
       <button class="admin-tab"        data-tab="reviews"      onclick="switchTab('reviews')">Reviews</button>
       <button class="admin-tab"        data-tab="campaign"     onclick="switchTab('campaign')">Campaign</button>
       <button class="admin-tab"        data-tab="subscribers"  onclick="switchTab('subscribers')">Subscribers</button>
       <button class="admin-tab"        data-tab="affiliates"   onclick="switchTab('affiliates')">Affiliates</button>
+      <button class="admin-tab"        data-tab="settings"     onclick="switchTab('settings')">Settings</button>
     </div>
 
     <!-- Overview -->
@@ -119,6 +121,18 @@
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">Recent orders</div></div>
         <div id="recent-orders-list"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
+    <!-- Actions (approval inbox) -->
+    <div class="admin-panel" id="panel-actions">
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Approval inbox</div>
+          <div style="font-size:12px;color:var(--t3,#6b7280)" id="actions-count">Loading…</div>
+        </div>
+        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 16px;line-height:1.5">Drafts your automations and agents prepare — emails, content, reorder suggestions, reconciliation summaries. Nothing is sent or actioned until you approve it here.</p>
+        <div id="actions-list"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
     </div>
 
@@ -176,6 +190,21 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">Affiliate applications</div></div>
         <div id="affiliates-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
+    <!-- Settings / Integrations -->
+    <div class="admin-panel" id="panel-settings">
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Integrations</div></div>
+        <div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:3px">Xero accounting</div>
+            <div style="font-size:13px;color:var(--t3,#6b7280)" id="xero-status">Checking connection…</div>
+          </div>
+          <button class="btn-p" id="xero-connect-btn" style="width:auto;padding:10px 22px">Connect Xero</button>
+        </div>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:14px 0 0;line-height:1.5">Once connected, every paid order is automatically raised as a sales invoice in Xero and a daily reconciliation summary lands in your Approval inbox.</p>
       </div>
     </div>
 

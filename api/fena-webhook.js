@@ -105,6 +105,23 @@ export default async function handler(req) {
     }
 
     console.log(`[fena-webhook] Order ${orderId} → paid (fenaId: ${paymentId})`);
+
+    // ── Fire-and-forget: create the Xero invoice (never blocks the payment ack) ──
+    // If Xero is unconfigured/down this is a no-op; a daily reconciliation cron
+    // re-syncs any paid order still missing xero_invoice_id, so it's self-healing.
+    const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
+    if (INTERNAL_SECRET) {
+      try {
+        await fetch('https://veloxpeps.com/api/xero/create-invoice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
+          body: JSON.stringify({ order_id: orderId }),
+        });
+      } catch (e) {
+        console.error('[fena-webhook] Xero sync trigger failed (non-fatal):', e.message);
+      }
+    }
+
     return new Response('OK', { status: 200 });
 
   } catch (err) {

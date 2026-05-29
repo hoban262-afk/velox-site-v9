@@ -117,6 +117,120 @@
     loadCampaign();
     loadSubscribers();
     loadAffiliates();
+    loadActions();
+    loadXeroStatus();
+  }
+
+  // ── APPROVAL INBOX (agent_actions) ──────────────────────────────────────────
+  function loadActions() {
+    if (!window._sb) return;
+    window._sb.from('agent_actions')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .then(function (r) { renderActions(r.data || []); });
+  }
+
+  function actionTypeLabel(t) {
+    return ({
+      email_reply: 'Email reply', content_draft: 'Content draft', reorder: 'Reorder',
+      vat_summary: 'VAT summary', reconciliation: 'Reconciliation', anomaly: 'Anomaly', shipping: 'Shipping'
+    })[t] || t;
+  }
+
+  function renderActions(actions) {
+    var badge = document.getElementById('actions-badge');
+    var countEl = document.getElementById('actions-count');
+    if (badge) { badge.textContent = actions.length; badge.style.display = actions.length ? 'inline-block' : 'none'; }
+    if (countEl) countEl.textContent = actions.length + ' pending';
+    var el = document.getElementById('actions-list');
+    if (!el) return;
+    if (!actions.length) { el.innerHTML = '<p class="adm-empty">Nothing waiting for approval. 🎉</p>'; return; }
+    el.innerHTML = actions.map(function (a) {
+      var body = '';
+      try {
+        var p = a.payload || {};
+        body = p.body || p.message || p.text || (typeof p === 'string' ? p : JSON.stringify(p, null, 2));
+      } catch (e) { body = ''; }
+      return '<div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:16px 18px;margin-bottom:12px">' +
+        '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">' +
+          '<div style="font-size:14px;font-weight:700;color:#fff">' + esc(a.title) + '</div>' +
+          '<div style="font-size:11px;color:var(--g,#01D3A0);text-transform:uppercase;letter-spacing:.06em">' + esc(actionTypeLabel(a.type)) + ' · ' + esc(a.agent) + '</div>' +
+        '</div>' +
+        (a.summary ? '<div style="font-size:12px;color:var(--t3,#6b7280);margin-top:4px">' + esc(a.summary) + '</div>' : '') +
+        (body ? '<pre style="white-space:pre-wrap;word-break:break-word;font:inherit;font-size:13px;color:var(--t2,#9ca3af);background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:7px;padding:12px;margin:10px 0 0;max-height:240px;overflow:auto">' + esc(body) + '</pre>' : '') +
+        '<div style="margin-top:12px;display:flex;gap:8px">' +
+          '<button class="btn-p" style="width:auto;padding:8px 18px" onclick="actionApprove(\'' + a.id + '\')">Approve</button>' +
+          '<button class="status-select" style="cursor:pointer;padding:8px 16px" onclick="actionDismiss(\'' + a.id + '\')">Dismiss</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.actionApprove = function (id) {
+    if (!window._sb) return;
+    window._sb.from('agent_actions')
+      .update({ status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by: 'admin' })
+      .eq('id', id)
+      .then(function (r) {
+        if (r.error) { console.error('[admin] approve failed:', r.error.message); return; }
+        loadActions();
+      });
+  };
+
+  window.actionDismiss = function (id) {
+    if (!window._sb) return;
+    if (!window.confirm('Dismiss this item? It will be removed from the inbox.')) return;
+    window._sb.from('agent_actions')
+      .update({ status: 'dismissed', reviewed_at: new Date().toISOString(), reviewed_by: 'admin' })
+      .eq('id', id)
+      .then(function (r) {
+        if (r.error) { console.error('[admin] dismiss failed:', r.error.message); return; }
+        loadActions();
+      });
+  };
+
+  // ── XERO connection (Settings) ──────────────────────────────────────────────
+  async function loadXeroStatus() {
+    var statusEl = document.getElementById('xero-status');
+    var btn = document.getElementById('xero-connect-btn');
+    if (btn && !btn._wired) { btn._wired = true; btn.addEventListener('click', connectXero); }
+    // Reflect ?xero=connected|failed|invalid|denied from the OAuth redirect
+    var qp = new URLSearchParams(window.location.search).get('xero');
+    if (qp && statusEl) {
+      if (qp === 'connected') statusEl.innerHTML = '<span style="color:#01D3A0">✓ Just connected.</span>';
+      else statusEl.innerHTML = '<span style="color:#f87171">Connection ' + esc(qp) + '. Try again.</span>';
+    }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/xero/status', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json();
+      if (!statusEl) return;
+      if (d && d.connected) {
+        statusEl.innerHTML = '<span style="color:#01D3A0">✓ Connected</span>' + (d.org ? ' · ' + esc(d.org) : '');
+        if (btn) btn.textContent = 'Reconnect';
+      } else if (!qp) {
+        statusEl.textContent = d && d.configured === false ? 'Not configured — add Xero keys in Vercel.' : 'Not connected.';
+      }
+    } catch (e) { if (statusEl && !qp) statusEl.textContent = 'Status unavailable.'; }
+  }
+
+  async function connectXero() {
+    var btn = document.getElementById('xero-connect-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/xero/connect', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json();
+      if (r.ok && d.url) { window.location.href = d.url; return; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Connect Xero'; }
+      alert(d.error || 'Could not start Xero connection.');
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Connect Xero'; }
+      alert('Could not start Xero connection.');
+    }
   }
 
   // ── CAMPAIGN (email broadcast) ──────────────────────────────────────────────
