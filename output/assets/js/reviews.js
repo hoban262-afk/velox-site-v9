@@ -66,6 +66,7 @@
 
   var sec = document.createElement('section');
   sec.className = 'rv-sec';
+  sec.id = 'reviews';
   sec.innerHTML =
     '<div class="rv-hdr"><h2 class="rv-title">Researcher reviews</h2></div>' +
     '<div class="rv-avg" id="rv-avg"></div>' +
