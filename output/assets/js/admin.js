@@ -595,6 +595,15 @@
     if (ordEl)  ordEl.textContent  = orders.length;
     if (paidEl) paidEl.textContent = paid.length;
     if (revEl)  revEl.textContent  = '£' + revenue.toFixed(0);
+
+    // Recovered = orders that received a recovery email (recovery_stage > 0)
+    // and then went on to be paid/dispatched. Shows what the recovery flows earn.
+    var recovered = paid.filter(function (o) { return Number(o.recovery_stage || 0) > 0; });
+    var recoveredRev = recovered.reduce(function (s, o) { return s + parseFloat(o.total || 0); }, 0);
+    var recEl = document.getElementById('stat-recovered');
+    var recSub = document.getElementById('stat-recovered-sub');
+    if (recEl)  recEl.textContent  = '£' + recoveredRev.toFixed(0);
+    if (recSub) recSub.textContent = recovered.length + (recovered.length === 1 ? ' order' : ' orders');
   }
 
   // ── SUBSCRIBERS ───────────────────────────────────────────────────────────
