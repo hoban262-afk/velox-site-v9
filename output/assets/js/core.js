@@ -155,22 +155,33 @@
         return;
       }
 
-      if (window._sb) {
-        window._sb.from('subscribers').insert([{ email: email }]).then(function (r) {
-          if (r.error && r.error.code !== '23505') {
-            console.error('[newsletter] Subscribe failed:', r.error.message);
-          }
+      // Issue (or re-send) the 20%-off welcome code via the signup API — same
+      // path as the popup, so the inline form's "Send my code" promise is real.
+      nlBtn.disabled = true;
+      nlBtn.textContent = 'Sending…';
+      fetch('/api/newsletter/signup', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email }),
+      }).then(function (r) {
+        return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+      }).then(function (res) {
+        if (res.ok && res.d && res.d.success) {
+          try { localStorage.setItem('velox_subscribed', '1'); } catch (e) {}
           nlInp.value = '';
-          if (window.toast) window.toast('Subscribed — thank you.');
-          nlBtn.textContent = 'Subscribed ✓';
-          nlBtn.disabled = true;
-        });
-      } else {
-        nlInp.value = '';
-        if (window.toast) window.toast('Subscribed — thank you.');
-        nlBtn.textContent = 'Subscribed ✓';
-        nlBtn.disabled = true;
-      }
+          nlBtn.textContent = res.d.already ? 'Already sent ✓' : 'Code sent ✓';
+          if (window.toast) window.toast(res.d.already
+            ? "You're already subscribed — check your inbox for your code."
+            : 'Your 20% off code is on its way — check your inbox.');
+        } else {
+          nlBtn.disabled = false;
+          nlBtn.textContent = 'Send my code';
+          if (window.toast) window.toast((res.d && res.d.error) || 'Something went wrong. Please try again.');
+        }
+      }).catch(function () {
+        nlBtn.disabled = false;
+        nlBtn.textContent = 'Send my code';
+        if (window.toast) window.toast('Something went wrong. Please try again.');
+      });
     });
 
     nlInp.addEventListener('keydown', function (e) {

@@ -42,20 +42,70 @@
   <link rel="stylesheet" href="/assets/css/animations.css">
 
   <style>
-    /* ── Mobile hero: bigger headline, tighter layout ── */
+    /* ── Mobile hero: keep the trust stats + value prop visible ── */
     @media (max-width: 767px) {
       .hero { padding-bottom: 0; }
       .hero-i { flex-direction: column; padding-top: 20px; padding-bottom: 0; gap: 0; }
       .hero-content { padding-bottom: 16px; }
       .h-ey { display: none; }
-      .h-stats-row { display: none; }
-      .h-sub { display: none; }
-      .h-compliance { display: none; }
+      .h-stats-row {
+        display: grid !important; grid-template-columns: 1fr 1fr; gap: 1px;
+        background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.08);
+        border-radius: 10px; overflow: hidden; margin: 18px 0 18px;
+      }
+      .h-stats-row .h-stat-item {
+        background: #030407; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; padding: 12px 8px; gap: 2px;
+      }
+      .h-stats-row .hsi-div { display: none; }
+      .h-stats-row .hsi-v { font-size: 19px; font-weight: 800; color: #01D3A0; }
+      .h-stats-row .hsi-l { font-size: 10px; color: #9CA3AF; letter-spacing: .04em; text-align: center; }
+      .h-sub { display: block; font-size: 14px; margin-bottom: 20px; }
+      .h-compliance { display: block; }
       .hero-panel { display: none !important; }
-      .h-h1 { font-size: clamp(3rem, 12vw, 4.5rem); line-height: 1.02; margin-bottom: 22px; }
-      .h-btns { flex-direction: column; gap: 10px; margin-bottom: 10px; }
+      .h-h1 { font-size: clamp(2.6rem, 11vw, 4rem); line-height: 1.04; margin-bottom: 18px; }
+      .h-btns { flex-direction: column; gap: 10px; margin-bottom: 8px; }
       .h-btns .btn-p,
       .h-btns .btn-o { width: 100%; text-align: center; font-size: 15px; padding: 14px 20px; box-sizing: border-box; }
+      .h-dispatch { width: 100%; box-sizing: border-box; justify-content: center; }
+    }
+
+    /* ── Hero same-day dispatch countdown ── */
+    .h-dispatch {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+      font-size: 13px; color: #E5E7EB; background: rgba(1,211,160,.07);
+      border: 1px solid rgba(1,211,160,.25); border-radius: 999px;
+      padding: 7px 14px; letter-spacing: .02em;
+    }
+    .h-dispatch[hidden] { display: none; }
+    .h-dispatch-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #01D3A0;
+      animation: vpPulse 1.8s infinite;
+    }
+    .h-dispatch-txt b { color: #01D3A0; font-weight: 700; }
+    @keyframes vpPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(1,211,160,.5); }
+      70%  { box-shadow: 0 0 0 7px rgba(1,211,160,0); }
+      100% { box-shadow: 0 0 0 0 rgba(1,211,160,0); }
+    }
+
+    /* ── Sticky mobile shop bar ── */
+    .vp-sticky-shop { display: none; }
+    @media (max-width: 767px) {
+      .vp-sticky-shop {
+        display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 280;
+        gap: 10px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+        background: rgba(8,8,8,.97); backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255,255,255,.08);
+      }
+      .vp-sticky-shop a {
+        flex: 1; text-align: center; font-family: var(--mono, monospace);
+        font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+        padding: 14px; border-radius: 8px; text-decoration: none;
+      }
+      .vp-sticky-shop .ss-p { background: #01D3A0; color: #021; }
+      .vp-sticky-shop .ss-o { flex: 0 0 auto; padding: 14px 18px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.18); }
+      body.page-home { padding-bottom: 76px; }
     }
 
     /* ── Hero trust bar ── */
@@ -248,6 +298,7 @@
   <!-- JSON-LD -->
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "veloxpeps@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeps"]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "url": "https://veloxpeps.com", "name": "Velox Peptides", "description": "UK research peptide supplier. HPLC-verified, Royal Mail Tracked 24 UK dispatch."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is this legal?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Research compounds are legal to purchase in the UK for in vitro research purposes. All products are sold strictly as research reagents for use by qualified researchers in laboratory settings. They are not medicinal products under the Human Medicines Regulations 2012."}}, {"@type": "Question", "name": "How does payment work?", "acceptedAnswer": {"@type": "Answer", "text": "We accept Pay by Bank, an instant secure open-banking payment processed via Fena. You authorise the payment in your own banking app; no card details are stored on our site. Manual UK bank transfer is also available as a fallback. Orders are dispatched within 24 hours of cleared payment."}}, {"@type": "Question", "name": "When will it arrive?", "acceptedAnswer": {"@type": "Answer", "text": "Orders are dispatched within 24 hours, same day if placed before 2pm on a working day. Delivery is via Royal Mail Tracked 24, typically 1 to 2 working days from dispatch. You receive a tracking number by email as soon as your order is shipped."}}, {"@type": "Question", "name": "What is included with my order?", "acceptedAnswer": {"@type": "Answer", "text": "Every order includes a batch-specific Certificate of Analysis documenting HPLC purity, mass spectrometry confirmation, and appearance results. The CoA is emailed to you with your order confirmation and is also available in our CoA library."}}]}</script>
 
   
   <script defer src="/_vercel/insights/script.js"></script>
@@ -362,11 +413,13 @@
         <a class="btn-p" href="/compounds/">SHOP RESEARCH COMPOUNDS &rarr;</a>
         <a class="btn-o" href="/stacks/">VIEW STACKS &rarr;</a>
       </div>
-      <div class="hero-trust-bar">
-        <b>HPLC Verified</b> &middot; <b>CoA Supplied</b> &middot; <b>Royal Mail Tracked 24</b> &middot; <b>UK Dispatched</b>
+      <div class="h-dispatch" id="vp-dispatch-cd" hidden>
+        <span class="h-dispatch-dot" aria-hidden="true"></span>
+        <span class="h-dispatch-txt"></span>
       </div>
-      <div class="hero-social-proof">15 Compounds &middot; 10 Research Stacks &middot; HPLC Tested Every Batch</div>
-      <div class="hero-order-count">&#x1F4E6;&nbsp; <strong><span class="vp-oc">1,423+</span></strong> orders dispatched this year</div>
+      <div class="hero-trust-bar">
+        <b>HPLC Verified</b> &middot; <b>CoA Supplied</b> &middot; <b>Royal Mail Tracked 24</b> &middot; <b><span class="vp-oc">1,423+</span> orders shipped</b>
+      </div>
       <p class="h-compliance"><strong>For in vitro research use only.</strong> Not for human or veterinary consumption.</p>
     </div>
     <div class="hero-panel hp-block">
@@ -388,38 +441,6 @@
     </div>
   </div>
 </section>
-<section class="vp-hto-sec">
-  <div class="vp-hto-inner">
-    <div class="vp-hto-eyebrow">Simple 3-step process</div>
-    <h2 class="vp-hto-title">How to order from Velox Peptides</h2>
-    <p class="vp-hto-sub">No account needed. No card details required. Pay instantly with <strong>Pay by Bank</strong> &mdash; here&rsquo;s exactly what happens.</p>
-    <div class="vp-hto-steps">
-      <div class="vp-hto-card">
-        <div class="vp-hto-card-num">1&#xFE0F;&#x20E3;</div>
-        <div class="vp-hto-card-title">Add to order</div>
-        <div class="vp-hto-card-desc">Browse compounds or stacks, select your vial size, and add to your order. Enter your delivery address at checkout.</div>
-      </div>
-      <div class="vp-hto-card">
-        <div class="vp-hto-card-num">2&#xFE0F;&#x20E3;</div>
-        <div class="vp-hto-card-title">Pay instantly with Pay by Bank</div>
-        <div class="vp-hto-card-desc">At checkout, tap <strong>Pay Now</strong>. You&rsquo;re securely redirected to authorise the payment in your own banking app &mdash; no card details, no accounts, no chargebacks. <em>Manual UK bank transfer also available as a fallback.</em></div>
-      </div>
-      <div class="vp-hto-card">
-        <div class="vp-hto-card-num">3&#xFE0F;&#x20E3;</div>
-        <div class="vp-hto-card-title">We dispatch within 24&nbsp;hrs</div>
-        <div class="vp-hto-card-desc">Payment clears instantly. We dispatch your order within 24&nbsp;hrs via Royal Mail Tracked&nbsp;24, with your tracking number sent by email.</div>
-      </div>
-    </div>
-    <div class="vp-hto-no-card">
-      <span class="vp-hto-no-card-icon">&#x1F512;</span>
-      <span class="vp-hto-no-card-text"><strong>No card details. No account.</strong> Just open your banking app, approve the payment, done &mdash; secured by Fena open banking (FCA-regulated, same protections as a standard bank transfer).</span>
-    </div>
-    <div class="vp-hto-cta">
-      <a class="btn-p" href="/compounds/">BROWSE COMPOUNDS &rarr;</a>
-    </div>
-  </div>
-</section>
-
 <section class="hp-sec hp-sec-featured">
   <div class="sec-i">
     <div class="hp-block hp-feat-block">
@@ -609,6 +630,74 @@
     </div>
   </div>
 </section>
+<section class="hp-sec hp-sec-stds">
+  <div class="sec-i">
+    <div class="hp-block">
+      <div class="hp-block-hdr">
+        <h2 class="sec-t">Why researchers trust us</h2>
+        <p class="sec-sub">Every compound we supply meets the same uncompromising quality standard before it leaves our facility.</p>
+      </div>
+      <div class="stds-grid">
+        <div class="std-card hp-block">
+          <div class="std-ic">&#x1F52C;</div>
+          <div class="std-t">Independent HPLC Testing</div>
+          <p class="std-p">Every batch is tested by an ISO-accredited third-party laboratory. Results are non-negotiable — sub-standard batches are never dispatched.</p>
+        </div>
+        <div class="std-card hp-block">
+          <div class="std-ic">&#x2705;</div>
+          <div class="std-t">&ge;99% Purity Standard</div>
+          <p class="std-p">We only ship compounds that meet our minimum ≥99% HPLC purity threshold. Sub-standard batches are rejected and destroyed, no exceptions.</p>
+        </div>
+        <div class="std-card hp-block">
+          <div class="std-ic">&#x1F4C4;</div>
+          <div class="std-t">CoA With Every Order</div>
+          <p class="std-p">Every batch is third-party HPLC-verified. Batch documentation available on request.</p>
+        </div>
+        <div class="std-card hp-block">
+          <div class="std-ic">&#x1F4E6;</div>
+          <div class="std-t">48h UK Dispatch</div>
+          <p class="std-p">Orders placed before 2pm are dispatched the same working day via Royal Mail Tracked 24. Discreet, temperature-appropriate packaging throughout.</p>
+        </div>
+        <div class="std-card hp-block">
+          <div class="std-ic">&#x1F3E6;</div>
+          <div class="std-t">Pay by Bank &mdash; Instant</div>
+          <p class="std-p">Instant secure open-banking payment via Fena &mdash; you authorise in your own banking app. No card details touch our site, no third-party card processors, no chargebacks. Manual UK bank transfer is also available as a fallback.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="vp-hto-sec">
+  <div class="vp-hto-inner">
+    <div class="vp-hto-eyebrow">Simple 3-step process</div>
+    <h2 class="vp-hto-title">How to order from Velox Peptides</h2>
+    <p class="vp-hto-sub">No account needed. No card details required. Pay instantly with <strong>Pay by Bank</strong> &mdash; here&rsquo;s exactly what happens.</p>
+    <div class="vp-hto-steps">
+      <div class="vp-hto-card">
+        <div class="vp-hto-card-num">1&#xFE0F;&#x20E3;</div>
+        <div class="vp-hto-card-title">Add to order</div>
+        <div class="vp-hto-card-desc">Browse compounds or stacks, select your vial size, and add to your order. Enter your delivery address at checkout.</div>
+      </div>
+      <div class="vp-hto-card">
+        <div class="vp-hto-card-num">2&#xFE0F;&#x20E3;</div>
+        <div class="vp-hto-card-title">Pay instantly with Pay by Bank</div>
+        <div class="vp-hto-card-desc">At checkout, tap <strong>Pay Now</strong>. You&rsquo;re securely redirected to authorise the payment in your own banking app &mdash; no card details, no accounts, no chargebacks. <em>Manual UK bank transfer also available as a fallback.</em></div>
+      </div>
+      <div class="vp-hto-card">
+        <div class="vp-hto-card-num">3&#xFE0F;&#x20E3;</div>
+        <div class="vp-hto-card-title">We dispatch within 24&nbsp;hrs</div>
+        <div class="vp-hto-card-desc">Payment clears instantly. We dispatch your order within 24&nbsp;hrs via Royal Mail Tracked&nbsp;24, with your tracking number sent by email.</div>
+      </div>
+    </div>
+    <div class="vp-hto-no-card">
+      <span class="vp-hto-no-card-icon">&#x1F512;</span>
+      <span class="vp-hto-no-card-text"><strong>No card details. No account.</strong> Just open your banking app, approve the payment, done &mdash; secured by Fena open banking (FCA-regulated, same protections as a standard bank transfer).</span>
+    </div>
+    <div class="vp-hto-cta">
+      <a class="btn-p" href="/compounds/">BROWSE COMPOUNDS &rarr;</a>
+    </div>
+  </div>
+</section>
 <section class="hp-sec hp-sec-cats">
   <div class="sec-i">
     <div class="hp-block">
@@ -628,48 +717,6 @@
     </div>
   </div>
 </section>
-
-<section class="hp-sec vp-timeline-sec">
-  <div class="sec-i">
-    <div class="hp-block">
-      <div class="hp-block-hdr">
-        <h2 class="sec-t">What happens after you order?</h2>
-        <p class="sec-sub">Simple, fast, and fully tracked — from order confirmation to door.</p>
-      </div>
-      <div class="vp-timeline">
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x2713;</div>
-          <div>
-            <div class="vp-tl-title">Place your order</div>
-            <div class="vp-tl-desc">Select compounds, confirm research use, and choose your payment method at checkout.</div>
-          </div>
-        </div>
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x26A1;</div>
-          <div>
-            <div class="vp-tl-title">Payment confirmed</div>
-            <div class="vp-tl-desc">Secure bank transfer — fast, direct payment with no card details required.</div>
-          </div>
-        </div>
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x1F4E6;</div>
-          <div>
-            <div class="vp-tl-title">Dispatched within 24 h</div>
-            <div class="vp-tl-desc">Orders placed before 2&nbsp;pm are dispatched same day.</div>
-          </div>
-        </div>
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x1F69A;</div>
-          <div>
-            <div class="vp-tl-title">Delivered 1&ndash;2 days</div>
-            <div class="vp-tl-desc">Royal Mail Tracked&nbsp;24. Full tracking number provided by email on dispatch.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="hp-sec hp-sec-stacks">
   <div class="sec-i">
     <div class="hp-block hp-stacks-block">
@@ -713,60 +760,46 @@
     </div>
   </div>
 </section>
-<section class="hp-sec hp-sec-nl">
-  <div class="sec-i">
-    <div class="hp-block hp-nl-block">
-      <div class="nl-inner">
-        <div class="hp-block-eyebrow">RESEARCH BULLETIN</div>
-        <h2 class="nl-t">Stay ahead of the research</h2>
-        <p class="nl-sub">New compound arrivals, batch release notices, and plain-language research summaries delivered to your inbox. No marketing, no spam.</p>
-        <div class="nl-row">
-          <input class="nl-inp" type="email" placeholder="your@institution.ac.uk" aria-label="Email address">
-          <button class="nl-btn btn-p" type="button">Subscribe</button>
-        </div>
-        <p class="nl-disc">For researchers only. Unsubscribe at any time. We never share your address.</p>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="hp-sec hp-sec-stds">
+<section class="hp-sec vp-timeline-sec">
   <div class="sec-i">
     <div class="hp-block">
       <div class="hp-block-hdr">
-        <h2 class="sec-t">Why researchers trust us</h2>
-        <p class="sec-sub">Every compound we supply meets the same uncompromising quality standard before it leaves our facility.</p>
+        <h2 class="sec-t">What happens after you order?</h2>
+        <p class="sec-sub">Simple, fast, and fully tracked — from order confirmation to door.</p>
       </div>
-      <div class="stds-grid">
-        <div class="std-card hp-block">
-          <div class="std-ic">&#x1F52C;</div>
-          <div class="std-t">Independent HPLC Testing</div>
-          <p class="std-p">Every batch is tested by an ISO-accredited third-party laboratory. Results are non-negotiable — sub-standard batches are never dispatched.</p>
+      <div class="vp-timeline">
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x2713;</div>
+          <div>
+            <div class="vp-tl-title">Place your order</div>
+            <div class="vp-tl-desc">Select compounds, confirm research use, and choose your payment method at checkout.</div>
+          </div>
         </div>
-        <div class="std-card hp-block">
-          <div class="std-ic">&#x2705;</div>
-          <div class="std-t">&ge;99% Purity Standard</div>
-          <p class="std-p">We only ship compounds that meet our minimum ≥99% HPLC purity threshold. Sub-standard batches are rejected and destroyed, no exceptions.</p>
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x26A1;</div>
+          <div>
+            <div class="vp-tl-title">Payment confirmed</div>
+            <div class="vp-tl-desc">Secure bank transfer — fast, direct payment with no card details required.</div>
+          </div>
         </div>
-        <div class="std-card hp-block">
-          <div class="std-ic">&#x1F4C4;</div>
-          <div class="std-t">CoA With Every Order</div>
-          <p class="std-p">Every batch is third-party HPLC-verified. Batch documentation available on request.</p>
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x1F4E6;</div>
+          <div>
+            <div class="vp-tl-title">Dispatched within 24 h</div>
+            <div class="vp-tl-desc">Orders placed before 2&nbsp;pm are dispatched same day.</div>
+          </div>
         </div>
-        <div class="std-card hp-block">
-          <div class="std-ic">&#x1F4E6;</div>
-          <div class="std-t">48h UK Dispatch</div>
-          <p class="std-p">Orders placed before 2pm are dispatched the same working day via Royal Mail Tracked 24. Discreet, temperature-appropriate packaging throughout.</p>
-        </div>
-        <div class="std-card hp-block">
-          <div class="std-ic">&#x1F3E6;</div>
-          <div class="std-t">Pay by Bank &mdash; Instant</div>
-          <p class="std-p">Instant secure open-banking payment via Fena &mdash; you authorise in your own banking app. No card details touch our site, no third-party card processors, no chargebacks. Manual UK bank transfer is also available as a fallback.</p>
+        <div class="vp-tl-step">
+          <div class="vp-tl-num">&#x1F69A;</div>
+          <div>
+            <div class="vp-tl-title">Delivered 1&ndash;2 days</div>
+            <div class="vp-tl-desc">Royal Mail Tracked&nbsp;24. Full tracking number provided by email on dispatch.</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-
 <section class="hp-sec vp-hp-faq-sec">
   <div class="sec-i">
     <div class="hp-block">
@@ -798,7 +831,22 @@
     </div>
   </div>
 </section>
-
+<section class="hp-sec hp-sec-nl">
+  <div class="sec-i">
+    <div class="hp-block hp-nl-block">
+      <div class="nl-inner">
+        <div class="hp-block-eyebrow">RESEARCH BULLETIN</div>
+        <h2 class="nl-t">Get <em>20% off</em> your first order</h2>
+        <p class="nl-sub">Subscribe for new compound arrivals, batch release notices, and plain-language research summaries &mdash; and we&rsquo;ll email you a 20% off code for your first order. No marketing fluff, no spam.</p>
+        <div class="nl-row">
+          <input class="nl-inp" type="email" placeholder="your@institution.ac.uk" aria-label="Email address">
+          <button class="nl-btn btn-p" type="button">Send my code</button>
+        </div>
+        <p class="nl-disc">For researchers only. Unsubscribe at any time. We never share your address.</p>
+      </div>
+    </div>
+  </div>
+</section>
 <section class="hp-sec hp-sec-comm">
   <div class="sec-i">
     <div class="hp-block hp-comm-block">
@@ -954,6 +1002,12 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Sticky mobile shop bar -->
+<div class="vp-sticky-shop" aria-label="Quick shop">
+  <a class="ss-p" href="/compounds/">Shop compounds</a>
+  <a class="ss-o" href="/cart/" aria-label="View order">Order</a>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/js/supabase-client.js"></script>
 <script src="/assets/js/core.js"></script>
@@ -961,5 +1015,34 @@
 <script src="/assets/js/conversion.js" defer></script>
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/newsletter-popup.js"></script>
+
+<!-- Same-day dispatch countdown (factual: 2pm working-day cutoff, Europe/London) -->
+<script>
+(function () {
+  var el = document.getElementById('vp-dispatch-cd');
+  if (!el) return;
+  var txt = el.querySelector('.h-dispatch-txt');
+  function londonParts() {
+    var f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    var p = {}; f.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+    return p;
+  }
+  function render() {
+    var p = londonParts();
+    var weekend = (p.weekday === 'Sat' || p.weekday === 'Sun');
+    var secs = parseInt(p.hour, 10) * 3600 + parseInt(p.minute, 10) * 60 + parseInt(p.second, 10);
+    var cutoff = 14 * 3600; // 2pm working-day dispatch cutoff
+    if (!weekend && secs < cutoff) {
+      var left = cutoff - secs, hh = Math.floor(left / 3600), mm = Math.floor((left % 3600) / 60);
+      txt.innerHTML = 'Order within <b>' + hh + 'h ' + mm + 'm</b> for same-day dispatch';
+    } else {
+      txt.innerHTML = 'Order now &mdash; <b>dispatched next working day</b>';
+    }
+    el.hidden = false;
+  }
+  render();
+  setInterval(render, 30000);
+})();
+</script>
 </body>
 </html>
