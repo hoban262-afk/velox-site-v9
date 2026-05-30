@@ -82,24 +82,47 @@
       });
     });
 
-    // Totals
+    // Totals — with volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20%.
     var subtotal = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
-    var shipping = subtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-    var total = subtotal + shipping;
+    var totalQty = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
+    var rate = totalQty >= 4 ? 0.20 : (totalQty === 3 ? 0.15 : (totalQty === 2 ? 0.10 : 0));
+    var volSaving = Math.round(subtotal * rate * 100) / 100;
+    var discSub = Math.max(0, subtotal - volSaving);
+    var shipping = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    var total = discSub + shipping;
 
     if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
     if (shippingEl) shippingEl.textContent = shipping === 0 ? 'Free' : fmt(shipping);
     if (totalEl)    totalEl.textContent = fmt(total);
+    renderVolumeRow(volSaving, rate);
 
     // Update nav count
     var countEl = document.getElementById('nav-cart-count');
     if (countEl) {
-      var qty = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
-      countEl.textContent = String(qty);
+      countEl.textContent = String(totalQty);
     }
 
-    // Free-shipping progress nudge — shown above the cart items.
-    renderFreeShipNudge(subtotal);
+    // Free-shipping progress nudge — based on the discounted subtotal (matches checkout).
+    renderFreeShipNudge(discSub);
+  }
+
+  function renderVolumeRow(saving, rate) {
+    var totalRow = document.querySelector('.cart-sum-total');
+    if (!totalRow || !totalRow.parentNode) return;
+    var row = document.getElementById('vp-vol-row');
+    if (saving > 0) {
+      if (!row) {
+        row = document.createElement('div');
+        row.id = 'vp-vol-row';
+        row.className = 'cart-sum-row';
+        row.style.color = '#01D3A0';
+        totalRow.parentNode.insertBefore(row, totalRow);
+      }
+      row.innerHTML = '<span>Volume discount (' + Math.round(rate * 100) + '% off)</span>' +
+        '<span>−' + fmt(saving) + '</span>';
+    } else if (row) {
+      row.remove();
+    }
   }
 
   function renderFreeShipNudge(subtotal) {

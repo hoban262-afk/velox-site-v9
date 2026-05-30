@@ -69,11 +69,25 @@
     return savingGBP;
   }
 
+  // Volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20% (by total quantity).
+  function vpTotalQty(cart) { return cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0); }
+  function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.15 : (q === 2 ? 0.10 : 0)); }
+  // Larger of (code saving, volume saving) in GBP — they do not stack (max promo ≤ 20%).
+  function bestPromoGBP(cart, subtotalGBP, codeDiscount) {
+    var codeSaving = (codeDiscount && codeDiscount.saving) || 0;
+    var rate = vpVolumeRate(vpTotalQty(cart));
+    var volSaving = Math.round(subtotalGBP * rate * 100) / 100;
+    if (volSaving > codeSaving) {
+      return { saving: volSaving, label: 'Volume discount −' + Math.round(rate * 100) + '%', code: 'VOLUME-' + Math.round(rate * 100) };
+    }
+    return { saving: codeSaving, label: codeDiscount ? codeDiscount.code : '', code: codeDiscount ? codeDiscount.code : '' };
+  }
+
   function renderTotalsWithDiscount(cart, discount, region) {
     var r = (region !== undefined) ? region : currentRegion();
     var t = cartTotals(cart, r);
-    var savingGBP = (discount && discount.saving) ? discount.saving : 0;
-    var saving = savingInCurrency(savingGBP, r);
+    var promo = bestPromoGBP(cart, t.subtotalGBP, discount);
+    var saving = savingInCurrency(promo.saving, r);
     var ptsSaving = savingInCurrency(appliedPointsSavingGBP, r);
     var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
     var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
@@ -91,9 +105,9 @@
     if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
     if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
 
-    if (discount && saving > 0) {
+    if (saving > 0) {
       if (discLine) discLine.style.display = '';
-      if (discLbl)  discLbl.textContent  = discount.code;
+      if (discLbl)  discLbl.textContent  = promo.label;
       if (discAmt)  discAmt.textContent  = '−' + fmt(saving, r);
       if (totEl)    totEl.textContent    = fmt(discountedTotal, r);
     } else {
@@ -621,8 +635,8 @@
 
       var ref        = 'VP-' + todayStr() + '-' + randChars(4);
       var t          = cartTotals(cart, payRegion);
-      var savingGBP  = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-      var saving     = savingInCurrency(savingGBP, payRegion);
+      var promo      = bestPromoGBP(cart, t.subtotalGBP, appliedDiscount);
+      var saving     = savingInCurrency(promo.saving, payRegion);
       var ptsSaving  = savingInCurrency(appliedPointsSavingGBP, payRegion);
       var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
       var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
@@ -635,7 +649,7 @@
         existing.orderRef        = ref;
         existing.subtotal        = t.subtotal;
         existing.shipping        = finalShipping;
-        existing.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
+        existing.discount_code   = promo.code;
         existing.discount_saving = saving;
         existing.points_redeemed = appliedPoints;
         existing.welcome_code    = welcomeCodeApplied;
