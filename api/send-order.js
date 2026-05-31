@@ -75,7 +75,7 @@ function mhraFooter() {
 }
 
 function emailHeader(title) {
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head>
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><title>${title}</title><style>:root{color-scheme:dark;supported-color-schemes:dark}</style></head>
 <body style="${S.body}">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.wrap}"><tr><td align="center" style="${S.td}">
 <table width="600" cellpadding="0" cellspacing="0" border="0" style="${S.card}">

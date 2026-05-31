@@ -26,7 +26,10 @@ function buildDispatchHtml(orderNumber, customerName, trackingNumber, address, i
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
   <title>Your Order Has Been Dispatched</title>
+  <style>:root{color-scheme:dark;supported-color-schemes:dark}</style>
 </head>
 <body style="${S.body}">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.wrap}">

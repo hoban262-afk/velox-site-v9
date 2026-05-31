@@ -42,6 +42,7 @@ function welcomeEmailHtml(code, email) {
   var base = 'https://veloxpeps.com';
   var unsub = base + '/api/newsletter/unsubscribe?token=' + encodeURIComponent(unsubToken(email));
   return '' +
+  '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><style>:root{color-scheme:dark;supported-color-schemes:dark}</style></head><body style="margin:0;padding:0">' +
   '<div style="margin:0;padding:0;background:#030407;font-family:Arial,Helvetica,sans-serif">' +
     '<table width="100%" cellpadding="0" cellspacing="0" style="background:#030407"><tr><td style="padding:32px 16px">' +
     '<table align="center" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#0d1117;border:1px solid rgba(1,211,160,.2);border-radius:12px;overflow:hidden">' +
@@ -69,7 +70,8 @@ function welcomeEmailHtml(code, email) {
         '<a href="' + unsub + '" style="color:#6B7280;text-decoration:underline">Unsubscribe</a>.</p>' +
       '</td></tr>' +
     '</table></td></tr></table>' +
-  '</div>';
+  '</div>' +
+  '</body></html>';
 }
 
 module.exports = async function handler(req, res) {
