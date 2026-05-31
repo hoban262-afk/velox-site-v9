@@ -5777,21 +5777,25 @@ a.mob-nl[href="/research/"]::after {
   vertical-align: middle;
 }
 
-/* Desktop: subtle teal hover lift, NEW pill */
+/* Desktop: NEW pill after the Research link.
+   NOTE: ::after is already used by the nav hover-underline (.site-header .nl::after),
+   so the badge lives on ::before and is pushed after the text with flex `order`
+   (the nav link is display:inline-flex). This avoids the two effects colliding. */
 a.nl[href="/research/"] { position: relative; }
-a.nl[href="/research/"]::after {
+a.nl[href="/research/"]::before {
   content: 'NEW';
+  order: 1;
   display: inline-block;
+  align-self: center;
+  line-height: 1;
   font-family: 'DM Mono', monospace;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: .08em;
   color: #021;
   background: #01D3A0;
-  padding: 1px 5px;
+  padding: 2px 5px;
   border-radius: 2px;
   margin-left: 6px;
   vertical-align: middle;
-  position: relative;
-  top: -1px;
 }
