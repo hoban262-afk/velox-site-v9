@@ -5757,12 +5757,12 @@ p, li, dd, dt, .cc-desc, .cc-full, .cc-meta, .rl-card-excerpt,
 
 /* ── RESEARCH NAV LINK PROMINENCE ──────────────────────────────────────── */
 /* Mobile menu: make it stand out (most customers come from mobile) */
-a.mob-nl[href="/research/"] {
+a.mob-nl[href="/guides/"] {
   color: #01D3A0 !important;
   font-weight: 700;
   position: relative;
 }
-a.mob-nl[href="/research/"]::after {
+a.mob-nl[href="/guides/"]::after {
   content: 'NEW';
   display: inline-block;
   font-family: 'DM Mono', monospace;
@@ -5781,8 +5781,8 @@ a.mob-nl[href="/research/"]::after {
    NOTE: ::after is already used by the nav hover-underline (.site-header .nl::after),
    so the badge lives on ::before and is pushed after the text with flex `order`
    (the nav link is display:inline-flex). This avoids the two effects colliding. */
-a.nl[href="/research/"] { position: relative; }
-a.nl[href="/research/"]::before {
+a.nl[href="/guides/"] { position: relative; }
+a.nl[href="/guides/"]::before {
   content: 'NEW';
   order: 1;
   display: inline-block;

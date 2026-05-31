@@ -83,6 +83,16 @@
       "source": "/compounds/anti-ageing",
       "destination": "/compounds/antioxidant/",
       "permanent": true
+    },
+    {
+      "source": "/research/:path*",
+      "destination": "/guides/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/research",
+      "destination": "/guides",
+      "permanent": true
     }
   ]
 }
