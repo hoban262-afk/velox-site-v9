@@ -16,8 +16,8 @@
     );
     if (!els.length) return;
 
-    var BASE      = 1423;
-    var BASE_MS   = new Date('2026-05-16T00:00:00Z').getTime();
+    var BASE      = 5310;
+    var BASE_MS   = new Date('2026-05-31T00:00:00Z').getTime();
     var todayMs   = new Date();
     todayMs.setUTCHours(0, 0, 0, 0);
     var days = Math.max(0, Math.round((todayMs.getTime() - BASE_MS) / 86400000));
@@ -30,7 +30,7 @@
 
     var total = BASE;
     for (var i = 0; i < days; i++) {
-      total += Math.floor(seeded(i) * 7) + 12;   /* 12–18 new orders per day */
+      total += Math.floor(seeded(i) * 16) + 25;  /* 25–40 new orders per day */
     }
 
     /* count-up animation: from (total - 20) to total over 1.5 s */
