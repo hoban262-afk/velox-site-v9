@@ -284,6 +284,60 @@
     .vp-hto-cta {
       margin-top: 24px; text-align: center;
     }
+
+    /* ── Clickable batch-report panel link ── */
+    .hp-panel-link {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 20px;
+      font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .05em;
+      color: #00D4A0; text-decoration: none; text-transform: uppercase; font-weight: 500;
+    }
+    .hp-panel-link:hover { text-decoration: underline; }
+
+    /* ── Social-proof bar (under hero) ── */
+    .vp-spbar { background: #0b0b0b; border-top: 1px solid var(--brd, rgba(255,255,255,.07)); border-bottom: 1px solid var(--brd, rgba(255,255,255,.07)); }
+    .vp-spbar-i { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 26px; padding: 15px 24px; }
+    .vp-spbar-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #9CA3AF; letter-spacing: .01em; }
+    .vp-spbar-item svg { width: 16px; height: 16px; stroke: #00D4A0; fill: none; flex: 0 0 auto; }
+    .vp-spbar-item b { color: #fff; font-weight: 600; }
+
+    /* ── Anti-scam comparison block ── */
+    .vp-vs { max-width: 1080px; margin: 0 auto; padding: 64px 24px; }
+    .vp-vs-eyebrow { font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .15em; color: #00D4A0; text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+    .vp-vs-title { font-family: var(--disp, sans-serif); font-size: clamp(26px, 4.6vw, 40px); font-weight: 900; line-height: 1.04; text-transform: uppercase; text-align: center; margin: 0 auto 14px; max-width: 780px; }
+    .vp-vs-title em { color: #00D4A0; font-style: normal; }
+    .vp-vs-sub { font-size: 14px; color: #9CA3AF; text-align: center; max-width: 580px; margin: 0 auto 36px; line-height: 1.6; }
+    .vp-vs-table { border: 1px solid var(--brd, rgba(255,255,255,.07)); border-radius: 12px; overflow: hidden; background: #0b0b0b; }
+    .vp-vs-row { display: grid; grid-template-columns: 1.25fr 1fr 1.15fr; align-items: stretch; }
+    .vp-vs-row + .vp-vs-row { border-top: 1px solid var(--brd, rgba(255,255,255,.07)); }
+    .vp-vs-cell { padding: 15px 18px; font-size: 13px; line-height: 1.5; display: flex; align-items: center; gap: 9px; }
+    .vp-vs-cell.lab { color: #fff; font-weight: 600; }
+    .vp-vs-cell.them { color: #6B7280; border-left: 1px solid var(--brd, rgba(255,255,255,.07)); }
+    .vp-vs-cell.us { color: #E5E7EB; background: rgba(0,212,160,.05); border-left: 1px solid rgba(0,212,160,.2); font-weight: 500; }
+    .vp-vs-cell.us svg { width: 16px; height: 16px; stroke: #00D4A0; fill: none; flex: 0 0 auto; }
+    .vp-vs-cell.them svg { width: 15px; height: 15px; stroke: #6B7280; fill: none; flex: 0 0 auto; }
+    .vp-vs-head .vp-vs-cell { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; padding: 12px 18px; }
+    .vp-vs-head .us { color: #00D4A0; }
+    @media (max-width: 720px) {
+      .vp-vs-row { grid-template-columns: 1fr 1fr; }
+      .vp-vs-cell.lab { grid-column: 1 / -1; background: #111; border-bottom: 1px solid var(--brd, rgba(255,255,255,.07)); }
+      .vp-vs-head { display: none; }
+    }
+
+    /* ── AOV / free-shipping band ── */
+    .vp-aov { background: linear-gradient(180deg, rgba(0,212,160,.045), transparent); border-top: 1px solid rgba(0,212,160,.12); }
+    .vp-aov-i { max-width: 1080px; margin: 0 auto; padding: 50px 24px; text-align: center; }
+    .vp-aov-eyebrow { font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .15em; color: #00D4A0; text-transform: uppercase; margin-bottom: 12px; }
+    .vp-aov-title { font-family: var(--disp, sans-serif); font-size: clamp(24px, 4vw, 34px); font-weight: 900; text-transform: uppercase; line-height: 1.05; margin: 0 auto 26px; max-width: 700px; }
+    .vp-aov-title em { color: #00D4A0; font-style: normal; }
+    .vp-aov-tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 840px; margin: 0 auto; }
+    @media (max-width: 640px) { .vp-aov-tiers { grid-template-columns: 1fr 1fr; } }
+    .vp-aov-tier { background: #0f0f0f; border: 1px solid var(--brd, rgba(255,255,255,.07)); border-radius: 10px; padding: 18px 14px; }
+    .vp-aov-tier.hi { border-color: rgba(0,212,160,.35); background: rgba(0,212,160,.04); }
+    .vp-aov-tier-v { font-family: var(--disp, sans-serif); font-size: 30px; font-weight: 900; color: #00D4A0; line-height: 1; }
+    .vp-aov-tier-l { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: #9CA3AF; margin-top: 8px; line-height: 1.4; }
+    .vp-aov-note { font-size: 12.5px; color: #6B7280; margin-top: 20px; }
+    .vp-aov-note a { color: #00D4A0; text-decoration: none; }
+    .vp-aov-note a:hover { text-decoration: underline; }
   </style>
 
   <!-- Homepage hash-redirect map (only on /) -->
@@ -405,13 +459,13 @@
         </div>
       </div>
       <p class="h-sub">
-        15 research compounds and 10 research bundles across neuropeptide, incretin receptor,
-        angiogenic, somatotropic, and oxidative pathway research. Every batch third-party HPLC-tested,
-        batch documentation available on request.
+        Research-grade peptides for UK &amp; EU laboratories &mdash; 15 compounds and 10 research
+        bundles. Every batch independently HPLC-tested with a batch-specific Certificate of Analysis.
+        Dispatched from Northern Ireland within 24 hours. For in vitro research use only.
       </p>
       <div class="h-btns">
         <a class="btn-p" href="/compounds/">SHOP RESEARCH COMPOUNDS &rarr;</a>
-        <a class="btn-o" href="/stacks/">VIEW STACKS &rarr;</a>
+        <a class="btn-o" href="/about/coa-library/">VIEW BATCH REPORTS &rarr;</a>
       </div>
       <div class="h-dispatch" id="vp-dispatch-cd" hidden>
         <span class="h-dispatch-dot" aria-hidden="true"></span>
@@ -438,6 +492,68 @@
         <span class="hp-tag">LYOPHILISED</span>
         <span class="hp-tag">ISO ACCREDITED</span>
       </div>
+      <a class="hp-panel-link" href="/about/coa-library/">View all batch reports &amp; CoAs &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<div class="vp-spbar">
+  <div class="vp-spbar-i">
+    <span class="vp-spbar-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span><b>1,423+</b> orders shipped this year</span>
+    </span>
+    <span class="vp-spbar-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v6l-4 8a2 2 0 0 0 2 3h8a2 2 0 0 0 2-3l-4-8V2"/><line x1="8" y1="2" x2="16" y2="2"/></svg>
+      <span>Every batch <b>HPLC-verified</b> by a third-party lab</span>
+    </span>
+    <span class="vp-spbar-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+      <span>Registered UK company <b>(NI738125)</b></span>
+    </span>
+    <span class="vp-spbar-item">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span><b>Pay by Bank</b> &mdash; card details never stored</span>
+    </span>
+  </div>
+</div>
+
+<section class="hp-sec">
+  <div class="vp-vs">
+    <div class="vp-vs-eyebrow">Why Velox</div>
+    <h2 class="vp-vs-title">The research peptide market is full of fakes. <em>We're built to be the opposite.</em></h2>
+    <p class="vp-vs-sub">Anyone can claim &ldquo;99% purity.&rdquo; We document it &mdash; every batch, every order. Here's how we compare to a typical seller.</p>
+    <div class="vp-vs-table">
+      <div class="vp-vs-row vp-vs-head">
+        <div class="vp-vs-cell lab"></div>
+        <div class="vp-vs-cell them">Typical sellers</div>
+        <div class="vp-vs-cell us">Velox Peptides</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Testing</div>
+        <div class="vp-vs-cell them">Untested, or &ldquo;in-house&rdquo; claims you can't verify</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Independently HPLC-tested by a third-party lab</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Documentation</div>
+        <div class="vp-vs-cell them">No certificate, or one generic PDF reused for everything</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Batch-specific Certificate of Analysis with every order</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Who you're buying from</div>
+        <div class="vp-vs-cell them">Anonymous, no company details, no address</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>CRP Labs Ltd &mdash; registered UK company (NI738125)</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Payment</div>
+        <div class="vp-vs-cell them">Crypto-only, or card details to an unknown processor</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Pay by Bank via Fena (FCA-regulated) &mdash; no card details stored</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Dispatch</div>
+        <div class="vp-vs-cell them">&ldquo;Allow 2&ndash;4 weeks,&rdquo; untracked, sometimes never arrives</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Dispatched from the UK within 24h, Royal Mail Tracked 24</div>
+      </div>
     </div>
   </div>
 </section>
@@ -447,9 +563,9 @@
       <div class="hp-feat-hdr">
         <div class="hp-feat-accent-bar"></div>
         <div class="hp-feat-titles">
-          <div class="hp-block-eyebrow">RESEARCH CATALOGUE</div>
-          <h2 class="hp-feat-title">FEATURED RESEARCH COMPOUNDS</h2>
-          <p class="hp-feat-sub">Popular compounds trusted by researchers worldwide &mdash; every batch HPLC-verified</p>
+          <div class="hp-block-eyebrow">BEST SELLERS</div>
+          <h2 class="hp-feat-title">MOST-ORDERED RESEARCH COMPOUNDS</h2>
+          <p class="hp-feat-sub">Our most-ordered compounds &mdash; every batch third-party HPLC-verified before it ships.</p>
         </div>
       </div>
       <div class="prod-grid prod-grid-4">
@@ -717,6 +833,31 @@
     </div>
   </div>
 </section>
+<section class="vp-aov">
+  <div class="vp-aov-i">
+    <div class="vp-aov-eyebrow">Stock up &amp; save</div>
+    <h2 class="vp-aov-title">Free UK shipping over &pound;80 &mdash; <em>and the more you order, the less you pay</em></h2>
+    <div class="vp-aov-tiers">
+      <div class="vp-aov-tier hi">
+        <div class="vp-aov-tier-v">&pound;80</div>
+        <div class="vp-aov-tier-l">Free UK shipping</div>
+      </div>
+      <div class="vp-aov-tier">
+        <div class="vp-aov-tier-v">&minus;10%</div>
+        <div class="vp-aov-tier-l">2 vials</div>
+      </div>
+      <div class="vp-aov-tier">
+        <div class="vp-aov-tier-v">&minus;15%</div>
+        <div class="vp-aov-tier-l">3 vials</div>
+      </div>
+      <div class="vp-aov-tier">
+        <div class="vp-aov-tier-v">&minus;20%</div>
+        <div class="vp-aov-tier-l">4+ vials</div>
+      </div>
+    </div>
+    <p class="vp-aov-note">Volume discounts apply automatically at checkout. Or start with a curated <a href="/stacks/">research bundle</a> &mdash; multiple HPLC-verified compounds in one order.</p>
+  </div>
+</section>
 <section class="hp-sec hp-sec-stacks">
   <div class="sec-i">
     <div class="hp-block hp-stacks-block">
@@ -760,46 +901,7 @@
     </div>
   </div>
 </section>
-<section class="hp-sec vp-timeline-sec">
-  <div class="sec-i">
-    <div class="hp-block">
-      <div class="hp-block-hdr">
-        <h2 class="sec-t">What happens after you order?</h2>
-        <p class="sec-sub">Simple, fast, and fully tracked — from order confirmation to door.</p>
-      </div>
-      <div class="vp-timeline">
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x2713;</div>
-          <div>
-            <div class="vp-tl-title">Place your order</div>
-            <div class="vp-tl-desc">Select compounds, confirm research use, and choose your payment method at checkout.</div>
-          </div>
-        </div>
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x26A1;</div>
-          <div>
-            <div class="vp-tl-title">Payment confirmed</div>
-            <div class="vp-tl-desc">Secure bank transfer — fast, direct payment with no card details required.</div>
-          </div>
-        </div>
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x1F4E6;</div>
-          <div>
-            <div class="vp-tl-title">Dispatched within 24 h</div>
-            <div class="vp-tl-desc">Orders placed before 2&nbsp;pm are dispatched same day.</div>
-          </div>
-        </div>
-        <div class="vp-tl-step">
-          <div class="vp-tl-num">&#x1F69A;</div>
-          <div>
-            <div class="vp-tl-title">Delivered 1&ndash;2 days</div>
-            <div class="vp-tl-desc">Royal Mail Tracked&nbsp;24. Full tracking number provided by email on dispatch.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- "What happens after you order" timeline removed — merged into the 3-step "How to order" section to eliminate duplication. -->
 <section class="hp-sec vp-hp-faq-sec">
   <div class="sec-i">
     <div class="hp-block">
@@ -837,10 +939,10 @@
       <div class="nl-inner">
         <div class="hp-block-eyebrow">RESEARCH BULLETIN</div>
         <h2 class="nl-t">Get <em>20% off</em> your first order</h2>
-        <p class="nl-sub">Subscribe for new compound arrivals, batch release notices, and plain-language research summaries &mdash; and we&rsquo;ll email you a 20% off code for your first order. No marketing fluff, no spam.</p>
+        <p class="nl-sub">Join the Velox list for new compound arrivals, batch-release notices and plain-language research summaries &mdash; and we&rsquo;ll email a 20% off code for your first research order. No fluff, no spam.</p>
         <div class="nl-row">
           <input class="nl-inp" type="email" placeholder="your@institution.ac.uk" aria-label="Email address">
-          <button class="nl-btn btn-p" type="button">Send my code</button>
+          <button class="nl-btn btn-p" type="button">Send my 20% code</button>
         </div>
         <p class="nl-disc">For researchers only. Unsubscribe at any time. We never share your address.</p>
       </div>
