@@ -5799,3 +5799,38 @@ a.nl[href="/research/"]::before {
   margin-left: 6px;
   vertical-align: middle;
 }
+
+/* ── PRODUCT PAGE SIMPLIFICATION ─────────────────────────────────────────────
+   Calmer buy box + clean above-the-fold. Goal: the top of the page reads as
+   title · viewing · spec · price, with the wordy description/compliance pushed
+   below the fold (still in the DOM, so SEO is unchanged). Global = all PDPs. */
+
+/* Drop the contradictory per-size deal % badges — the strikethrough + sale
+   price already communicate each size's discount, without the 29/35/20% noise. */
+.cp-size-badge { display: none !important; }
+
+/* One scarcity cue only. Keep the per-variant "Only X left" indicator
+   (#vp-size-stock, injected into the buy box), drop the separate red banner. */
+.vp-urgency-banner { display: none !important; }
+
+/* Remove the bulky 3-step "How to order" block — payment method is already
+   covered in the order meta list below the button. */
+.cp-hto { display: none; }
+
+/* Calm the buy box: lose the neon top bar, soften the border and the size rows. */
+.cp-order::before { display: none; }
+.cp-order { background: #0b0d11; border-color: rgba(255,255,255,.08); }
+.cp-size-opt { background: #0e1116; border-color: rgba(255,255,255,.07); }
+.cp-size-was { color: #6B7280; }
+.cp-order-meta li { font-size: 10px; }
+/* vp-vol-note carries inline styles, so override with !important */
+.vp-vol-note { background: transparent !important; border: none !important;
+  padding: 0 0 6px !important; color: #9CA3AF !important; }
+
+/* Reorder the text column so the scannable spec table sits high (a buying
+   signal) and the description + compliance drop to the bottom — visible on
+   scroll. cp-hero-main is a flex column; eyebrow/title/viewing keep order 0. */
+.cp-hero-main { justify-content: flex-start; }
+.cp-hero-main .cp-spec { order: 1; margin-top: 8px; max-width: 520px; }
+.cp-hero-main .cp-lede { order: 2; margin-top: 18px; }
+.cp-hero-main .disc-inline { order: 3; margin-top: 14px; }
