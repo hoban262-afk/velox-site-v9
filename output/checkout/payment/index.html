@@ -788,16 +788,20 @@
     return null;
   }
 
-  // Volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20% (by total quantity).
-  function vpTotalQty(cart) { return cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0); }
+  // Volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20% (by quantity of DISCOUNTABLE
+  // vials). Pens are never discounted and never count toward the tier.
+  function vpIsPen(i) { return /pen/i.test(i.size || ''); }
+  function vpDiscountableGBP(cart) { return cart.reduce(function (s, i) { return s + (vpIsPen(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
+  function vpDiscountableQty(cart) { return cart.reduce(function (s, i) { return s + (vpIsPen(i) ? 0 : (i.qty || 1)); }, 0); }
   function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.15 : (q === 2 ? 0.10 : 0)); }
-  // Best promotional saving = the LARGER of (applied code, volume discount). They do not stack,
-  // so the promotional discount can never exceed 20% of subtotal.
-  function bestPromo(cart, subtotal) {
-    var code = getAppliedDiscount(subtotal);
+  // Best promotional saving = LARGER of (applied code, volume), on the discountable subtotal
+  // only. Code + volume do not stack, so promo ≤ 20% of the discountable subtotal.
+  function bestPromo(cart) {
+    var base = vpDiscountableGBP(cart);
+    var code = getAppliedDiscount(base);
     var codeSaving = (code && code.saving) || 0;
-    var rate = vpVolumeRate(vpTotalQty(cart));
-    var volSaving = Math.round(subtotal * rate * 100) / 100;
+    var rate = vpVolumeRate(vpDiscountableQty(cart));
+    var volSaving = Math.round(base * rate * 100) / 100;
     if (volSaving > codeSaving) {
       return { code: 'VOLUME-' + Math.round(rate * 100), saving: volSaving, label: 'Volume discount −' + Math.round(rate * 100) + '%', isVolume: true };
     }
@@ -808,7 +812,7 @@
   function updateFenaTotal() {
     var cart     = getCart();
     var t        = cartTotals(cart);
-    var promo    = bestPromo(cart, t.subtotal);
+    var promo    = bestPromo(cart);
     var saving   = promo.saving;
     var discSub  = Math.max(0, t.subtotal - saving);
     var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
@@ -884,7 +888,7 @@
         return;
       }
       var t        = cartTotals(cart);
-      var promo    = bestPromo(cart, t.subtotal);
+      var promo    = bestPromo(cart);
       var saving   = promo.saving;
       var discSub  = Math.max(0, t.subtotal - saving);
       var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;

@@ -69,82 +69,81 @@
     return savingGBP;
   }
 
-  // Volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20% (by total quantity).
-  function vpTotalQty(cart) { return cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0); }
+  // Volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20% (by quantity of DISCOUNTABLE
+  // vials). Pens are never discounted and never count toward the tier.
+  function isPen(i) { return /pen/i.test(i.size || ''); }
+  function discountableGBP(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
+  function discountableQty(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : (i.qty || 1)); }, 0); }
   function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.15 : (q === 2 ? 0.10 : 0)); }
-  // Larger of (code saving, volume saving) in GBP — they do not stack (max promo ≤ 20%).
-  function bestPromoGBP(cart, subtotalGBP, codeDiscount) {
+  // Promotional saving (GBP) = larger of (code, volume) on the discountable subtotal only.
+  // Code + volume never stack, so promo ≤ 20% of the discountable subtotal.
+  function bestPromoGBP(cart, codeDiscount) {
+    var base = discountableGBP(cart);
     var codeSaving = (codeDiscount && codeDiscount.saving) || 0;
-    var rate = vpVolumeRate(vpTotalQty(cart));
-    var volSaving = Math.round(subtotalGBP * rate * 100) / 100;
+    var rate = vpVolumeRate(discountableQty(cart));
+    var volSaving = Math.round(base * rate * 100) / 100;
     if (volSaving > codeSaving) {
       return { saving: volSaving, label: 'Volume discount −' + Math.round(rate * 100) + '%', code: 'VOLUME-' + Math.round(rate * 100) };
     }
     return { saving: codeSaving, label: codeDiscount ? codeDiscount.code : '', code: codeDiscount ? codeDiscount.code : '' };
   }
 
+  // Kept for existing callers — just re-renders the summary (which now applies discounts).
   function renderTotalsWithDiscount(cart, discount, region) {
+    renderCartSummary(cart, region);
+  }
+
+  function renderCartSummary(cart, region) {
     var r = (region !== undefined) ? region : currentRegion();
+    var el = document.getElementById('co-cart-items');
+    if (el) {
+      if (!cart.length) {
+        el.innerHTML = '<p style="color:#9CA3AF;font-size:13px;">No items in order.</p>';
+      } else {
+        var html = '<ul class="co-cart-list">';
+        cart.forEach(function (item) {
+          var priceInCurrency = r === 'EU'
+            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+            : item.price * (item.qty || 1);
+          html += '<li class="co-cart-row"><span class="co-cart-name">' + escHtml(item.name) +
+            ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
+            '<span class="co-cart-price">' + fmt(priceInCurrency, r) + '</span></li>';
+        });
+        html += '</ul>';
+        el.innerHTML = html;
+      }
+    }
+
+    // Totals — apply the active promotion (volume or code, whichever is larger) + points,
+    // so EVERY checkout stage shows the discounted total, not just the Pay Now button.
     var t = cartTotals(cart, r);
-    var promo = bestPromoGBP(cart, t.subtotalGBP, discount);
+    var promo = bestPromoGBP(cart, appliedDiscount);
     var saving = savingInCurrency(promo.saving, r);
     var ptsSaving = savingInCurrency(appliedPointsSavingGBP, r);
     var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
     var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
     var flatRate   = r === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
     var shipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
-    var discountedTotal = Math.round((discountedSubtotal + shipping) * 100) / 100;
+    var total = Math.round((discountedSubtotal + shipping) * 100) / 100;
 
-    var subEl    = document.getElementById('co-subtotal');
-    var shipEl   = document.getElementById('co-shipping');
-    var totEl    = document.getElementById('co-total');
-    var discLine = document.getElementById('co-discount-line');
-    var discLbl  = document.getElementById('co-discount-label');
-    var discAmt  = document.getElementById('co-discount-amount');
-
-    if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
-    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
-
-    if (saving > 0) {
-      if (discLine) discLine.style.display = '';
-      if (discLbl)  discLbl.textContent  = promo.label;
-      if (discAmt)  discAmt.textContent  = '−' + fmt(saving, r);
-      if (totEl)    totEl.textContent    = fmt(discountedTotal, r);
-    } else {
-      if (discLine) discLine.style.display = 'none';
-      if (totEl)    totEl.textContent = fmt(discountedTotal, r);
-    }
-  }
-
-  function renderCartSummary(cart, region) {
-    var r = (region !== undefined) ? region : currentRegion();
-    var el = document.getElementById('co-cart-items');
-    if (!el) return;
-    if (!cart.length) {
-      el.innerHTML = '<p style="color:#9CA3AF;font-size:13px;">No items in order.</p>';
-      return;
-    }
-    var html = '<ul class="co-cart-list">';
-    cart.forEach(function (item) {
-      var priceInCurrency = r === 'EU'
-        ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-        : item.price * (item.qty || 1);
-      html += '<li class="co-cart-row"><span class="co-cart-name">' + escHtml(item.name) +
-        ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-        '<span class="co-cart-price">' + fmt(priceInCurrency, r) + '</span></li>';
-    });
-    html += '</ul>';
-    el.innerHTML = html;
-
-    var t      = cartTotals(cart, r);
     var subEl  = document.getElementById('co-subtotal');
     var shipEl = document.getElementById('co-shipping');
     var totEl  = document.getElementById('co-total');
     var shpLbl = document.getElementById('co-shipping-label');
+    var discLine = document.getElementById('co-discount-line');
+    var discLbl  = document.getElementById('co-discount-label');
+    var discAmt  = document.getElementById('co-discount-amount');
     if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
-    if (shipEl) shipEl.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping, r);
-    if (totEl)  totEl.textContent  = fmt(t.total, r);
+    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
+    if (totEl)  totEl.textContent  = fmt(total, r);
     if (shpLbl) shpLbl.textContent = r === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+    if (saving > 0) {
+      if (discLine) discLine.style.display = '';
+      if (discLbl)  discLbl.textContent = promo.label;
+      if (discAmt)  discAmt.textContent = '−' + fmt(saving, r);
+    } else if (discLine) {
+      discLine.style.display = 'none';
+    }
   }
 
   function randChars(n) {
@@ -351,7 +350,7 @@
       }
       // calcDiscount always works in GBP; convert saving to display currency
       var tGBP   = cartTotals(cart, 'UK');
-      var result = calcDiscount(tGBP.subtotal, code);
+      var result = calcDiscount(discountableGBP(cart), code);
       if (result) { applyDiscountResult(result); return; }
 
       // Unique newsletter welcome code (VELOX-XXXXXX) — validate server-side
@@ -635,7 +634,7 @@
 
       var ref        = 'VP-' + todayStr() + '-' + randChars(4);
       var t          = cartTotals(cart, payRegion);
-      var promo      = bestPromoGBP(cart, t.subtotalGBP, appliedDiscount);
+      var promo      = bestPromoGBP(cart, appliedDiscount);
       var saving     = savingInCurrency(promo.saving, payRegion);
       var ptsSaving  = savingInCurrency(appliedPointsSavingGBP, payRegion);
       var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
