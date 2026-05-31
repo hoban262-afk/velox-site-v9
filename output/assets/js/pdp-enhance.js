@@ -22,8 +22,6 @@
   // ── Scoped styles ───────────────────────────────────────────────────────────
   var css = document.createElement('style');
   css.textContent = [
-    '.cp-size-permg{display:block;margin-top:4px;font-family:var(--mono,monospace);font-size:10.5px;letter-spacing:.03em;color:var(--t3,#6B7280)}',
-    '.cp-size-opt input:checked ~ .cp-size-price-wrap .cp-size-permg{color:var(--g,#01D3A0)}',
     '.vp-ship-nudge{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12.5px;color:#9CA3AF;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.22);border-radius:8px;padding:9px 12px;line-height:1.4}',
     '.vp-ship-nudge b{color:#01D3A0;font-weight:600}',
     '.vp-ship-nudge .vpn-bar{flex:0 0 60px;height:5px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}',
@@ -49,25 +47,7 @@
     return c.reduce(function (s, i) { return s + (parseFloat(i.price) || 0) * (i.qty || 1); }, 0);
   }
 
-  // ── (1) Per-mg value line on each size option ──────────────────────────────
-  form.querySelectorAll('.cp-size-opt').forEach(function (opt) {
-    var input = opt.querySelector('input[name="size"]');
-    var wrap = opt.querySelector('.cp-size-price-wrap');
-    if (!input || !wrap || opt.querySelector('.cp-size-permg')) return;
-    var price = parseFloat(input.getAttribute('data-price')) || 0;
-    var m = (input.value || '').match(/([\d.]+)\s*(mg|mcg)/i);
-    if (!price || !m) return;
-    var mg = parseFloat(m[1]);
-    if (m[2].toLowerCase() === 'mcg') mg = mg / 1000;
-    if (!mg) return;
-    var per = price / mg;
-    var span = document.createElement('span');
-    span.className = 'cp-size-permg';
-    span.textContent = (per >= 1 ? fmt(per) : '£' + per.toFixed(3)) + ' / mg';
-    wrap.appendChild(span);
-  });
-
-  // ── (2) Free-shipping nudge in the buy box ─────────────────────────────────
+  // ── (1) Free-shipping nudge in the buy box ─────────────────────────────────
   var btn = document.getElementById('add-to-order-btn');
   var nudge = document.createElement('div');
   nudge.className = 'vp-ship-nudge';
