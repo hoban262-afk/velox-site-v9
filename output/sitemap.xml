@@ -8,11 +8,11 @@
   <url><loc>https://veloxpeps.com/compounds/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
   <!-- Category hub pages (new research-compliant URLs) -->
-  <url><loc>https://veloxpeps.com/compounds/neuropeptide-research/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/incretin-receptor-research/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/angiogenic-tissue-research/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/somatotropic-research/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/oxidative-pathway-research/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/cognitive/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/metabolic/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/recovery/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/growth/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/antioxidant/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
   <!-- Individual compound pages -->
   <url><loc>https://veloxpeps.com/compounds/retatrutide/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
