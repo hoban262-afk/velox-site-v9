@@ -114,6 +114,7 @@
   function loadAllData() {
     loadOrders();
     loadPricing();
+    loadBundlesAdmin();
     loadReviews();
     loadCampaign();
     loadSubscribers();
@@ -797,6 +798,63 @@
       if (r.error) { if (msg) { msg.style.color = '#f87171'; msg.textContent = r.error.message; } return; }
       var sellsEl = document.getElementById('pv-' + id + '-sells');
       if (sellsEl) sellsEl.textContent = '£' + Number(sale != null ? sale : base).toFixed(2);
+      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Saved'; }
+    });
+  };
+
+  // ── BUNDLES (price auto-computes from components × discount) ─────────────────
+  function loadBundlesAdmin() {
+    if (!window._sb) return;
+    Promise.all([
+      window._sb.from('bundles').select('*').order('sort_order', { ascending: true }),
+      window._sb.from('bundle_components').select('*').order('sort_order', { ascending: true }),
+      window._sb.from('product_variants').select('slug,size,base_price')
+    ]).then(function (res) {
+      var err = res[0].error || res[1].error || res[2].error;
+      renderBundles(res[0].data || [], res[1].data || [], res[2].data || [], err);
+    });
+  }
+
+  function renderBundles(bundles, comps, variants, error) {
+    var el = document.getElementById('bundle-table-wrap');
+    if (!el) return;
+    if (error) { el.innerHTML = '<p class="adm-empty">Could not load bundles: ' + esc(error.message) + '</p>'; return; }
+    if (!bundles.length) { el.innerHTML = '<p class="adm-empty">No bundles yet — run the bundles seed.</p>'; return; }
+    var base = {};
+    variants.forEach(function (v) { base[v.slug + '|' + v.size] = Number(v.base_price); });
+    var byBundle = {};
+    comps.forEach(function (c) { (byBundle[c.bundle_slug] = byBundle[c.bundle_slug] || []).push(c); });
+    var html = '<table class="adm-table"><thead><tr><th>Bundle</th><th>Components</th><th>Sum £</th><th>Discount %</th><th>Sells at</th><th></th></tr></thead><tbody>';
+    bundles.forEach(function (b) {
+      var cs = byBundle[b.slug] || [];
+      var sum = cs.reduce(function (s, c) { var bp = base[c.product_slug + '|' + c.size]; return s + (bp != null ? bp * (c.qty || 1) : 0); }, 0);
+      sum = Math.round(sum * 100) / 100;
+      var price = Math.round(sum * (1 - Number(b.discount_pct) / 100) * 100) / 100;
+      var compList = cs.map(function (c) { return esc(c.product_slug) + ' ' + esc(c.size); }).join(', ');
+      html += '<tr>' +
+        '<td style="color:#fff">' + esc(b.name) + '</td>' +
+        '<td style="color:var(--t3,#6b7280);font-size:11px">' + compList + '</td>' +
+        '<td style="color:var(--t2,#9ca3af)">£' + sum.toFixed(2) + '</td>' +
+        '<td><input id="bn-' + b.id + '-disc" class="status-select" type="number" step="0.5" min="0" max="90" value="' + b.discount_pct + '" style="width:70px;text-align:right"></td>' +
+        '<td id="bn-' + b.id + '-sells" style="color:#01D3A0;font-weight:600">£' + price.toFixed(2) + '</td>' +
+        '<td style="white-space:nowrap"><button class="btn-p" style="width:auto;padding:5px 12px" onclick="saveBundle(\'' + b.id + '\',' + sum + ')">Save</button> ' +
+        '<span id="bn-' + b.id + '-msg" style="font-size:12px"></span></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  }
+
+  window.saveBundle = function (id, sum) {
+    var input = document.getElementById('bn-' + id + '-disc');
+    var msg = document.getElementById('bn-' + id + '-msg');
+    var d = parseFloat(input && input.value);
+    if (isNaN(d) || d < 0 || d > 90) { if (msg) { msg.style.color = '#f87171'; msg.textContent = '0–90 only.'; } return; }
+    if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Saving…'; }
+    window._sb.from('bundles').update({ discount_pct: d }).eq('id', id).then(function (r) {
+      if (r.error) { if (msg) { msg.style.color = '#f87171'; msg.textContent = r.error.message; } return; }
+      var sells = document.getElementById('bn-' + id + '-sells');
+      if (sells) sells.textContent = '£' + (Math.round(Number(sum) * (1 - d / 100) * 100) / 100).toFixed(2);
       if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Saved'; }
     });
   };
