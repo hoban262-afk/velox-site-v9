@@ -113,6 +113,7 @@
 
   function loadAllData() {
     loadOrders();
+    loadPricing();
     loadReviews();
     loadCampaign();
     loadSubscribers();
@@ -724,6 +725,79 @@
     if (status === 'disabled' && !window.confirm('Disable this affiliate? They keep past commissions but earn nothing new and lose dashboard access.')) return;
     window._sb.from('affiliates').update({ status: status }).eq('id', id).then(function (r) {
       if (r.error) setAffMsg(id, r.error.message); else loadAffiliates();
+    });
+  };
+
+  // ── PRICING (product_variants — single source of truth for every price) ─────
+  function loadPricing() {
+    if (!window._sb) return;
+    window._sb.from('product_variants')
+      .select('*')
+      .order('slug', { ascending: true })
+      .order('sort_order', { ascending: true })
+      .then(function (r) { renderPricing(r.data || [], r.error); });
+  }
+
+  function pvNumInput(id, field, val) {
+    return '<input id="pv-' + id + '-' + field + '" class="status-select" type="number" step="0.01" min="0" value="' +
+      (val == null ? '' : val) + '" style="width:72px;text-align:right">';
+  }
+  function pvCheck(id, field, val) {
+    return '<input id="pv-' + id + '-' + field + '" type="checkbox"' + (val ? ' checked' : '') + '>';
+  }
+
+  function renderPricing(rows, error) {
+    var el = document.getElementById('pricing-table-wrap');
+    if (!el) return;
+    if (error) { el.innerHTML = '<p class="adm-empty">Could not load prices: ' + esc(error.message) + '</p>'; return; }
+    if (!rows.length) { el.innerHTML = '<p class="adm-empty">No products yet — run the product_variants seed.</p>'; return; }
+    var html = '<table class="adm-table"><thead><tr>' +
+      '<th>Product</th><th>Size</th><th>Base £</th><th>Sale £</th><th>RRP £</th>' +
+      '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Sells at</th><th></th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function (v) {
+      var sells = (v.sale_price != null ? v.sale_price : v.base_price);
+      html += '<tr>' +
+        '<td style="color:#fff">' + esc(v.name) + '</td>' +
+        '<td style="color:var(--t2,#9ca3af)">' + esc(v.size) + '</td>' +
+        '<td>' + pvNumInput(v.id, 'base', v.base_price) + '</td>' +
+        '<td>' + pvNumInput(v.id, 'sale', v.sale_price) + '</td>' +
+        '<td>' + pvNumInput(v.id, 'compare', v.compare_at) + '</td>' +
+        '<td align="center">' + pvCheck(v.id, 'disc', v.discountable) + '</td>' +
+        '<td align="center">' + pvCheck(v.id, 'deal', v.deal_flag) + '</td>' +
+        '<td align="center">' + pvCheck(v.id, 'stock', v.in_stock) + '</td>' +
+        '<td align="center">' + pvCheck(v.id, 'low', v.low_stock) + '</td>' +
+        '<td id="pv-' + v.id + '-sells" style="color:#01D3A0;font-weight:600;white-space:nowrap">£' + Number(sells).toFixed(2) + '</td>' +
+        '<td style="white-space:nowrap"><button class="btn-p" style="width:auto;padding:5px 12px" onclick="savePricing(\'' + v.id + '\')">Save</button> ' +
+        '<span id="pv-' + v.id + '-msg" style="font-size:12px"></span></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  }
+
+  window.savePricing = function (id) {
+    function num(field) {
+      var raw = (document.getElementById('pv-' + id + '-' + field) || {}).value;
+      if (raw == null || String(raw).trim() === '') return null;
+      var n = parseFloat(raw);
+      return isNaN(n) ? null : Math.round(n * 100) / 100;
+    }
+    function chk(field) { return !!(document.getElementById('pv-' + id + '-' + field) || {}).checked; }
+    var msg = document.getElementById('pv-' + id + '-msg');
+    var base = num('base');
+    if (base == null || base <= 0) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Base price required.'; } return; }
+    var sale = num('sale');
+    if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Saving…'; }
+    window._sb.from('product_variants').update({
+      base_price: base, sale_price: sale, compare_at: num('compare'),
+      discountable: chk('disc'), deal_flag: chk('deal'),
+      in_stock: chk('stock'), low_stock: chk('low')
+    }).eq('id', id).then(function (r) {
+      if (r.error) { if (msg) { msg.style.color = '#f87171'; msg.textContent = r.error.message; } return; }
+      var sellsEl = document.getElementById('pv-' + id + '-sells');
+      if (sellsEl) sellsEl.textContent = '£' + Number(sale != null ? sale : base).toFixed(2);
+      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Saved'; }
     });
   };
 

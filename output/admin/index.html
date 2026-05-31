@@ -102,6 +102,7 @@
       <button class="admin-tab active" data-tab="overview"     onclick="switchTab('overview')">Overview</button>
       <button class="admin-tab"        data-tab="actions"      onclick="switchTab('actions')">Actions<span id="actions-badge" style="display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 7px;vertical-align:middle">0</span></button>
       <button class="admin-tab"        data-tab="orders"       onclick="switchTab('orders')">Orders</button>
+      <button class="admin-tab"        data-tab="pricing"      onclick="switchTab('pricing')">Pricing</button>
       <button class="admin-tab"        data-tab="reviews"      onclick="switchTab('reviews')">Reviews</button>
       <button class="admin-tab"        data-tab="campaign"     onclick="switchTab('campaign')">Campaign</button>
       <button class="admin-tab"        data-tab="subscribers"  onclick="switchTab('subscribers')">Subscribers</button>
@@ -159,6 +160,20 @@
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">All orders</div></div>
         <div id="orders-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="admin-panel" id="panel-pricing">
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Product pricing</div></div>
+        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 16px;line-height:1.5">
+          One source of truth for every price on the site. <strong style="color:#fff">Base</strong> = the normal selling price.
+          <strong style="color:#fff">Sale</strong> = an active deal (leave blank for none). <strong style="color:#fff">RRP</strong> = an optional higher "was" for a strikethrough.
+          Untick <strong style="color:#fff">Disc.</strong> to exclude an item from all deal/volume/code discounts (e.g. the pen).
+          Changes go live across the site on the next page load.
+        </p>
+        <div id="pricing-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
     </div>
 
