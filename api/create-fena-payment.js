@@ -78,6 +78,39 @@ export default async function handler(req) {
   const fullName = (meta.customer_name || `${meta.fname || ''} ${meta.lname || ''}`).trim() || 'Customer';
   let supabaseOrderId = orderId || '';
 
+  // ── Server-side price guard (source of truth = product_variants) ────────────
+  // Recompute the pre-discount subtotal from the DB. If the basket is priced
+  // BELOW source-of-truth, the client prices were tampered or badly stale —
+  // reject instead of charging a wrong amount. Fails OPEN (never blocks a sale)
+  // on a DB hiccup or an unknown variant, so legitimate orders are never lost.
+  // Legit discounts reduce the TOTAL, not the subtotal, so they don't trip this.
+  if (SB_URL && SB_SERVICE && Array.isArray(meta.items) && meta.items.length) {
+    try {
+      const vr = await fetch(`${SB_URL}/rest/v1/product_variants?select=slug,size,base_price,sale_price`, {
+        headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
+      });
+      if (vr.ok) {
+        const variants = await vr.json();
+        const priceMap = {};
+        variants.forEach((v) => { priceMap[`${v.slug}|${v.size}`] = (v.sale_price != null ? Number(v.sale_price) : Number(v.base_price)); });
+        let dbSubtotal = 0, allKnown = true;
+        for (const it of meta.items) {
+          const dbp = priceMap[`${it.slug || ''}|${it.size || ''}`];
+          if (dbp == null) { allKnown = false; break; }     // unknown variant → fail open
+          dbSubtotal += dbp * (Number(it.qty) || 1);
+        }
+        dbSubtotal = Math.round(dbSubtotal * 100) / 100;
+        if (allKnown && n(meta.subtotal) + 0.01 < dbSubtotal) {
+          console.warn(`[create-fena-payment] PRICE GUARD: client subtotal £${n(meta.subtotal)} below DB £${dbSubtotal} — rejecting`);
+          return new Response(JSON.stringify({ error: 'Your basket prices are out of date. Please refresh the page and try again.' }),
+            { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
+        }
+      }
+    } catch (e) {
+      console.error('[create-fena-payment] price guard threw (non-fatal):', e.message);
+    }
+  }
+
   if (SB_URL && SB_SERVICE) {
     try {
       const row = {
