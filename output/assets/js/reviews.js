@@ -56,7 +56,14 @@
     '.rv-rate .rv-star{font-size:26px;cursor:pointer;transition:color .1s}' +
     '.rv-form .f-inp,.rv-form textarea{width:100%;box-sizing:border-box;margin-bottom:12px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:10px 12px;border-radius:6px;font:inherit;font-size:14px}' +
     '.rv-form textarea{min-height:90px;resize:vertical}' +
-    '.rv-msg{font-size:13px;margin-top:8px}.rv-msg.ok{color:var(--g,#01D3A0)}.rv-msg.err{color:#f87171}';
+    '.rv-msg{font-size:13px;margin-top:8px}.rv-msg.ok{color:var(--g,#01D3A0)}.rv-msg.err{color:#f87171}' +
+    /* top-of-page rating summary (below the product image) */
+    '.cp-rating-summary{display:flex;align-items:center;gap:9px;margin:16px 0 0;text-decoration:none;font-family:var(--mono,monospace);font-size:13px;color:var(--t2,#9ca3af);transition:color .15s}' +
+    '.cp-rating-summary .rv-star{font-size:20px}' +
+    '.cp-rating-summary .crs-num{color:#fff;font-weight:700;font-size:15px}' +
+    '.cp-rating-summary .crs-text{letter-spacing:.02em}' +
+    '.cp-rating-summary .crs-text b{color:var(--g,#01D3A0);font-weight:600}' +
+    '.cp-rating-summary:hover .crs-text{color:#fff}';
   document.head.appendChild(css);
 
   // ── Build the section shell and insert before the compliance block ─────────
@@ -98,6 +105,19 @@
     });
   });
 
+  // ── Top-of-page rating summary (sits below the product image) ───────────────
+  function renderSummary(avg, count) {
+    var el = document.getElementById('cp-rating-summary');
+    if (!el) return;
+    if (!count) {
+      el.innerHTML = stars(0) + '<span class="crs-text">No reviews yet — <b>be the first</b></span>';
+    } else {
+      el.innerHTML = stars(avg) +
+        '<span class="crs-num">' + avg.toFixed(1) + '</span>' +
+        '<span class="crs-text">(' + count + ' review' + (count === 1 ? '' : 's') + ')</span>';
+    }
+  }
+
   // ── Render reviews + schema ─────────────────────────────────────────────────
   function render(reviews) {
     var listEl = document.getElementById('rv-list');
@@ -105,10 +125,12 @@
     if (!reviews || !reviews.length) {
       avgEl.innerHTML = '';
       listEl.innerHTML = '<p class="rv-empty">No reviews yet — be the first to review ' + esc(productName) + '.</p>';
+      renderSummary(0, 0);
       return;
     }
     var sum = reviews.reduce(function (s, r) { return s + r.rating; }, 0);
     var avg = sum / reviews.length;
+    renderSummary(avg, reviews.length);
 
     avgEl.innerHTML = '<span>' + stars(avg) + '</span>' +
       '<strong style="color:#fff">' + avg.toFixed(1) + '</strong> / 5 · ' +
