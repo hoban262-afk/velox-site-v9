@@ -128,6 +128,58 @@
     }
   }
 
+  // ── Split picker ──
+  function updateSplitDisplay(comm) {
+    var disc = 20 - comm;
+    var d = $('split-commission-display'); if (d) d.textContent = comm;
+    var cv = $('split-commission-val');   if (cv) cv.textContent = comm + '%';
+    var dv = $('split-discount-val');     if (dv) dv.textContent = disc + '%';
+  }
+
+  function renderSettings() {
+    var slider  = $('split-slider');
+    var saveBtn = $('split-save-btn');
+    var splitMsg = $('split-msg');
+    if (!slider) return;
+
+    var current = Number(affiliate.commission_pct) || 10;
+    slider.value = current;
+    updateSplitDisplay(current);
+
+    slider.addEventListener('input', function () {
+      updateSplitDisplay(Number(slider.value));
+    });
+
+    if (saveBtn && !saveBtn._wired) {
+      saveBtn._wired = true;
+      saveBtn.addEventListener('click', async function () {
+        var comm = Number(slider.value);
+        var disc = 20 - comm;
+        if (comm < 5 || comm > 15) {
+          splitMsg.textContent = 'Commission must be between 5% and 15%.';
+          splitMsg.className = 'auth-msg err'; return;
+        }
+        saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+        var r = await sb.from('affiliates').update({
+          commission_pct:  comm,
+          commission_rate: comm,  // keep legacy field in sync
+          discount_pct:    disc,
+        }).eq('id', affiliate.id);
+        saveBtn.disabled = false; saveBtn.textContent = 'Save split';
+        if (r.error) {
+          splitMsg.textContent = 'Could not save — please try again.';
+          splitMsg.className = 'auth-msg err';
+        } else {
+          affiliate.commission_pct = comm;
+          affiliate.discount_pct   = disc;
+          splitMsg.textContent = 'Saved! Customers now get ' + disc + '% off; you earn ' + comm + '%.';
+          splitMsg.className = 'auth-msg ok';
+          setTimeout(function () { splitMsg.textContent = ''; }, 5000);
+        }
+      });
+    }
+  }
+
   // ── Dashboard ──
   async function renderDashboard() {
     $('aff-code').textContent = affiliate.ref_code || affiliate.code || '—';
@@ -147,6 +199,8 @@
 
     var nr = await sb.from('notifications').select('*').eq('affiliate_id', affiliate.id).order('created_at',{ascending:false});
     renderNotifications(nr.data || []);
+
+    renderSettings();
 
     // filter buttons
     var flt = $('ord-filter');

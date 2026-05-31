@@ -163,6 +163,7 @@
   var appliedPoints = 0;            // loyalty points being redeemed this order
   var appliedPointsSavingGBP = 0;   // their £ value (100 points = £1)
   var welcomeCodeApplied = null;    // VELOX-XXXXXX newsletter code applied (server-validated)
+  var affiliateApplied = null;      // { id, code, discount_pct } — affiliate ref code applied
 
   // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
   var shippingForm = document.getElementById('shipping-form');
@@ -382,9 +383,24 @@
         return;
       }
 
-      appliedDiscount = null;
-      discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
-      renderTotalsWithDiscount(cart, null, payRegion);
+      // Try affiliate ref code — validate server-side (last fallback)
+      discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
+      fetch('/api/affiliate/validate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code }),
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.valid) {
+          affiliateApplied = { id: d.affiliate_id, code: code.toUpperCase(), discount_pct: d.discount_pct };
+          var saving = Math.round(discountableGBP(cart) * d.discount_pct) / 100;
+          applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: d.discount_pct, saving: saving });
+        } else {
+          affiliateApplied = null; appliedDiscount = null;
+          discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
+          renderTotalsWithDiscount(cart, null, payRegion);
+        }
+      }).catch(function () {
+        discountMsg.innerHTML = '<span class="dc-err">Could not validate code. Please try again.</span>';
+      });
     }
 
     if (discountApply) discountApply.addEventListener('click', handleApply);
@@ -470,13 +486,15 @@
         gcChk.orderRef        = ref;
         gcChk.subtotal        = t.subtotal;
         gcChk.shipping        = finalShipping;
-        gcChk.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
-        gcChk.discount_saving = saving; // stored in customer's currency
-        gcChk.total           = finalTotal;
-        gcChk.cart_snapshot   = JSON.stringify(cart);
-        gcChk.payment_method  = 'instant';
-        gcChk.currency        = currency;
-        gcChk.region          = payRegion;
+        gcChk.discount_code          = appliedDiscount ? appliedDiscount.code : '';
+        gcChk.discount_saving        = saving; // stored in customer's currency
+        gcChk.total                  = finalTotal;
+        gcChk.cart_snapshot          = JSON.stringify(cart);
+        gcChk.payment_method         = 'instant';
+        gcChk.currency               = currency;
+        gcChk.region                 = payRegion;
+        gcChk.affiliate_id           = affiliateApplied ? affiliateApplied.id   : null;
+        gcChk.affiliate_code_used    = affiliateApplied ? affiliateApplied.code : null;
         try { sessionStorage.setItem('vp_checkout', JSON.stringify(gcChk)); } catch (ex) {}
         try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
 
@@ -650,13 +668,15 @@
         existing.shipping        = finalShipping;
         existing.discount_code   = promo.code;
         existing.discount_saving = saving;
-        existing.points_redeemed = appliedPoints;
-        existing.welcome_code    = welcomeCodeApplied;
-        existing.total           = finalTotal;
-        existing.cart_snapshot   = JSON.stringify(cart);
-        existing.currency        = payRegion === 'EU' ? 'EUR' : 'GBP';
-        existing.region          = payRegion;
-        existing.payment_method  = 'bank';
+        existing.points_redeemed      = appliedPoints;
+        existing.welcome_code         = welcomeCodeApplied;
+        existing.total                = finalTotal;
+        existing.cart_snapshot        = JSON.stringify(cart);
+        existing.currency             = payRegion === 'EU' ? 'EUR' : 'GBP';
+        existing.region               = payRegion;
+        existing.payment_method       = 'bank';
+        existing.affiliate_id         = affiliateApplied ? affiliateApplied.id   : null;
+        existing.affiliate_code_used  = affiliateApplied ? affiliateApplied.code : null;
         sessionStorage.setItem('vp_checkout', JSON.stringify(existing));
       } catch (ex) {}
 
@@ -797,8 +817,10 @@
               payment_method:  chk.payment_method || 'bank',
               notes:           chk.orderRef || '',
               user_id:         uid,
-              points_redeemed: Number(chk.points_redeemed) || 0,
-              welcome_code:    chk.welcome_code || null,
+              points_redeemed:     Number(chk.points_redeemed) || 0,
+              welcome_code:        chk.welcome_code || null,
+              affiliate_id:        chk.affiliate_id || null,
+              affiliate_code_used: chk.affiliate_code_used || null,
               // Shipping address — needed for dispatch emails + Royal Mail Click & Drop
               ship_name:       ((chk.fname || '') + ' ' + (chk.lname || '')).trim() || null,
               ship_line1:      chk.addr1 || null,

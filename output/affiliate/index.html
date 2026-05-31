@@ -186,6 +186,7 @@
       <button class="acc-tab active" data-t="orders"        onclick="affTab('orders')">Orders</button>
       <button class="acc-tab"        data-t="payouts"       onclick="affTab('payouts')">Payouts</button>
       <button class="acc-tab"        data-t="notifications" onclick="affTab('notifications')">Notifications<span class="pill" id="notif-pill">0</span></button>
+      <button class="acc-tab"        data-t="settings"      onclick="affTab('settings')">Settings</button>
     </div>
 
     <div class="acc-panel active" id="panel-orders">
@@ -208,6 +209,37 @@
 
     <div class="acc-panel" id="panel-notifications">
       <div class="card"><h3>Notifications</h3><div id="notif-wrap"><p class="empty">No notifications yet.</p></div></div>
+    </div>
+
+    <div class="acc-panel" id="panel-settings">
+      <div class="card">
+        <h3>Customise your commission split</h3>
+        <p style="font-size:13px;color:var(--t2,#9ca3af);margin:0 0 22px;line-height:1.6">
+          You control how the 20% budget is split between your commission and the discount your customers get.
+          Each side must be at least 5%. Changes take effect immediately on new orders.
+        </p>
+        <label class="f-lbl" for="split-slider">Your commission: <strong id="split-commission-display" style="color:#fff">10</strong>%</label>
+        <input id="split-slider" type="range" min="5" max="15" step="1" value="10"
+          style="width:100%;height:6px;accent-color:#01D3A0;cursor:pointer;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3,#6b7280);margin-bottom:20px">
+          <span>5% commission / 15% customer discount</span>
+          <span>15% commission / 5% customer discount</span>
+        </div>
+        <div class="pts-grid" style="margin-bottom:22px">
+          <div class="pts-card">
+            <div class="pts-label">Your commission</div>
+            <div class="pts-value" id="split-commission-val" style="color:#01D3A0">10%</div>
+            <div class="pts-sub">You earn per referred order</div>
+          </div>
+          <div class="pts-card">
+            <div class="pts-label">Customer discount</div>
+            <div class="pts-value" id="split-discount-val">10%</div>
+            <div class="pts-sub">Off their order total with your code</div>
+          </div>
+        </div>
+        <button class="btn-p" id="split-save-btn" style="max-width:180px">Save split</button>
+        <div class="auth-msg" id="split-msg" style="margin-top:12px"></div>
+      </div>
     </div>
   </div>
 </div>
