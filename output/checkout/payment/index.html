@@ -788,12 +788,32 @@
     return null;
   }
 
+  // Volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20% (by quantity of DISCOUNTABLE
+  // vials). Pens are never discounted and never count toward the tier.
+  function vpIsPen(i) { return /pen/i.test(i.size || ''); }
+  function vpDiscountableGBP(cart) { return cart.reduce(function (s, i) { return s + (vpIsPen(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
+  function vpDiscountableQty(cart) { return cart.reduce(function (s, i) { return s + (vpIsPen(i) ? 0 : (i.qty || 1)); }, 0); }
+  function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.15 : (q === 2 ? 0.10 : 0)); }
+  // Best promotional saving = LARGER of (applied code, volume), on the discountable subtotal
+  // only. Code + volume do not stack, so promo ≤ 20% of the discountable subtotal.
+  function bestPromo(cart) {
+    var base = vpDiscountableGBP(cart);
+    var code = getAppliedDiscount(base);
+    var codeSaving = (code && code.saving) || 0;
+    var rate = vpVolumeRate(vpDiscountableQty(cart));
+    var volSaving = Math.round(base * rate * 100) / 100;
+    if (volSaving > codeSaving) {
+      return { code: 'VOLUME-' + Math.round(rate * 100), saving: volSaving, label: 'Volume discount −' + Math.round(rate * 100) + '%', isVolume: true };
+    }
+    return { code: code ? code.code : '', saving: codeSaving, label: code ? code.code : '', isVolume: false };
+  }
+
   // Update the PAY NOW button amount display
   function updateFenaTotal() {
     var cart     = getCart();
     var t        = cartTotals(cart);
-    var discount = getAppliedDiscount(t.subtotal);
-    var saving   = (discount && discount.saving) || 0;
+    var promo    = bestPromo(cart);
+    var saving   = promo.saving;
     var discSub  = Math.max(0, t.subtotal - saving);
     var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
     var el = document.getElementById('fena-total');
@@ -868,8 +888,8 @@
         return;
       }
       var t        = cartTotals(cart);
-      var discount = getAppliedDiscount(t.subtotal);
-      var saving   = (discount && discount.saving) || 0;
+      var promo    = bestPromo(cart);
+      var saving   = promo.saving;
       var discSub  = Math.max(0, t.subtotal - saving);
       var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
       var total    = discSub + ship;
@@ -892,7 +912,7 @@
         orderRef:        ref,
         subtotal:        t.subtotal,
         shipping:        ship,
-        discount_code:   discount ? discount.code : '',
+        discount_code:   promo.code,
         discount_saving: saving,
         total:           total,
         cart_snapshot:   JSON.stringify(cart),
@@ -932,7 +952,7 @@
         items:            structuredItems,
         subtotal:         t.subtotal.toFixed(2),
         shipping:         ship.toFixed(2),
-        discount_code:    discount ? discount.code : '',
+        discount_code:    promo.code,
         discount_saving:  saving.toFixed(2),
         total:            total.toFixed(2),
         currency:         'GBP',
