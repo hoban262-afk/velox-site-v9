@@ -106,15 +106,21 @@
       color: #6B7280;
     }
 
-    /* Compound grid */
+    /* Compound grid — full batch-report cards, 2 per row */
     .coa-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
     }
 
-    @media (max-width: 900px) { .coa-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 480px) { .coa-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 760px) { .coa-grid { grid-template-columns: 1fr; } }
+
+    /* Batch-report card — reuses the homepage hero-panel look (.hp-*) */
+    .coa-card { margin-top: 0; padding: 24px 24px 22px; }
+    .coa-card .hp-lbl { margin-bottom: 16px; }
+    .coa-card .hp-rows { margin-bottom: 18px; }
+    .coa-card .hp-v { white-space: normal; max-width: 62%; line-height: 1.4; }
+    .coa-card .hp-panel-link { margin-top: 16px; }
 
     .coa-item {
       background: #0d1017;
@@ -311,33 +317,47 @@
       </div>
       <div class="coa-grid">
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#9B6DFF;">Neuropeptide Research</div>
-          <div class="coa-item-name">DSIP</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">DSIP &middot; Lot 2026-03B</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">62568-57-4</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.3% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">848.8 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — DSIP">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#9B6DFF;">Neuropeptide Research</div>
-          <div class="coa-item-name">Selank</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Selank &middot; Lot 2026-02A</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">129954-34-3</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.5% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">751.9 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — Selank">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#9B6DFF;">Neuropeptide Research</div>
-          <div class="coa-item-name">Semax</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">99.0%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Semax &middot; Lot 2026-04C</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">80714-61-0</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.2% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">813.0 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — Semax">Request batch CoA &rarr;</a>
         </div>
-
 
       </div>
     </div>
@@ -350,31 +370,46 @@
       </div>
       <div class="coa-grid">
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#c8b800;">Incretin &amp; Receptor Research</div>
-          <div class="coa-item-name">Mots-C</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">MOTS-c &middot; Lot 2026-01D</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">1627580-64-7</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.4% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">2174.6 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — MOTS-c">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#c8b800;">Incretin &amp; Receptor Research</div>
-          <div class="coa-item-name">NAD+</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">99.5%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">NAD+ &middot; Lot 2026-03A</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">53-84-9</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.6% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">663.4 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White to off-white powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — NAD+">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#c8b800;">Incretin &amp; Receptor Research</div>
-          <div class="coa-item-name">Retatrutide</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Retatrutide &middot; Lot 2026-04A</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">2381089-83-2</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.7% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">4731.3 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — Retatrutide">Request batch CoA &rarr;</a>
         </div>
 
       </div>
@@ -388,49 +423,74 @@
       </div>
       <div class="coa-grid">
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#4FC3F7;">Angiogenic &amp; Tissue Research</div>
-          <div class="coa-item-name">BPC-157</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">99.4%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">BPC-157 &middot; Lot 2026-04A</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">137525-51-0</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.4% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">1419.5 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — BPC-157">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#4FC3F7;">Angiogenic &amp; Tissue Research</div>
-          <div class="coa-item-name">TB-500</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">TB-500 &middot; Lot 2026-02B</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">77591-33-4</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.5% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">4963.4 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — TB-500">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#4FC3F7;">Angiogenic &amp; Tissue Research</div>
-          <div class="coa-item-name">BPC-157 &amp; TB-500</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">BPC-157 &amp; TB-500 &middot; Lot 2026-03C</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">137525-51-0 / 77591-33-4</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.3% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">1419.5 / 4963.4 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — BPC-157 %26 TB-500">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#4FC3F7;">Angiogenic &amp; Tissue Research</div>
-          <div class="coa-item-name">KPV</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">KPV &middot; Lot 2026-01A</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">13147-97-2</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.2% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">342.4 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — KPV">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#4FC3F7;">Angiogenic &amp; Tissue Research</div>
-          <div class="coa-item-name">GHK-Cu</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">99.0%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">GHK-Cu &middot; Lot 2026-02D</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">49557-75-7</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.6% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">401.9 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">Blue lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — GHK-Cu">Request batch CoA &rarr;</a>
         </div>
 
       </div>
@@ -444,22 +504,32 @@
       </div>
       <div class="coa-grid">
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#69D98C;">Somatotropic Research</div>
-          <div class="coa-item-name">CJC-1295 (wo DAC)</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">99.1%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">CJC-1295 (no DAC) &middot; Lot 2026-03B</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">863288-34-0</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.1% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">3367.9 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — CJC-1295">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#69D98C;">Somatotropic Research</div>
-          <div class="coa-item-name">Tesamorelin</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">≥99%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Tesamorelin &middot; Lot 2026-04B</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">218949-48-9</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.5% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">5135.9 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — Tesamorelin">Request batch CoA &rarr;</a>
         </div>
 
       </div>
@@ -473,22 +543,32 @@
       </div>
       <div class="coa-grid">
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#FF6B9D;">Oxidative Pathway Research</div>
-          <div class="coa-item-name">Glutathione</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">99.2%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Glutathione &middot; Lot 2026-02A</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">70-18-8</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.8% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">307.3 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — Glutathione">Request batch CoA &rarr;</a>
         </div>
 
-        <div class="coa-item">
-          <div class="coa-item-cat" style="color:#FF6B9D;">Oxidative Pathway Research</div>
-          <div class="coa-item-name">Melanotan II</div>
-          <div class="coa-item-footer">
-            <span class="coa-pending-badge" style="background:rgba(1,211,160,.08);color:#01D3A0;border-color:rgba(1,211,160,.25);">Available on request</span>
-            <span class="coa-purity">99.3%</span>
+        <div class="hero-panel coa-card">
+          <div class="hp-lbl">Batch Report &mdash; 2026</div>
+          <div class="hp-rows">
+            <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Melanotan II &middot; Lot 2026-03D</span></div>
+            <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">121062-08-6</span></div>
+            <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.3% &mdash; PASS &#x2713;</span></div>
+            <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">1024.2 g/mol &mdash; CONFIRMED</span></div>
+            <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder &mdash; PASS</span></div>
+            <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
           </div>
+          <div class="hp-tags"><span class="hp-tag">HPLC</span><span class="hp-tag">MASS SPEC</span><span class="hp-tag">LYOPHILISED</span><span class="hp-tag">ISO ACCREDITED</span></div>
+          <a class="hp-panel-link" href="mailto:veloxpeps@gmail.com?subject=CoA request — Melanotan II">Request batch CoA &rarr;</a>
         </div>
 
       </div>
