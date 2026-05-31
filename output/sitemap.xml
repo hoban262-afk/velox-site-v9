@@ -51,7 +51,7 @@
 
   <!-- Research library -->
   <url><loc>https://veloxpeps.com/research/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/research/retatrutide/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://veloxpeps.com/research/retatrutide/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veloxpeps.com/research/peptide-reconstitution-guide/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veloxpeps.com/research/reading-a-certificate-of-analysis/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veloxpeps.com/research/melanotan-ii/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -65,12 +65,15 @@
   <url><loc>https://veloxpeps.com/research/tesamorelin/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veloxpeps.com/research/mots-c/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veloxpeps.com/research/tb-500/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://veloxpeps.com/research/bpc-157/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://veloxpeps.com/research/ghk-cu/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://veloxpeps.com/research/retatrutide-vs-tirzepatide-vs-semaglutide/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- Tools -->
   <url><loc>https://veloxpeps.com/tools/reconstitution-calculator/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
-  <!-- About, FAQ, Contact, Shipping -->
+  <!-- About, FAQ, Contact, Shipping, Affiliate -->
+  <url><loc>https://veloxpeps.com/affiliate-program/</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://veloxpeps.com/about/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://veloxpeps.com/about/quality-and-testing/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://veloxpeps.com/about/coa-library/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
