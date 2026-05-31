@@ -44,6 +44,7 @@
       baseBy[v.slug + '|' + v.size] = Number(v.base_price);
       if (!slugByName[(v.name || '').toLowerCase()]) slugByName[(v.name || '').toLowerCase()] = v.slug;
     });
+    PRICING_NAME_TO_SLUG = slugByName;
 
     Promise.all([
       fetch(SB_URL + '/rest/v1/bundles?select=*', { headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON } }).then(function (r) { return r.ok ? r.json() : []; }),
@@ -94,7 +95,6 @@
 
   // Bundle cards (sc-card on PDPs + stacks index): bundle price/was + component pills.
   function hydrateBundleCards(bundleMap, baseBy, slugByName) {
-    document.querySelectorAll('.sc-card, article.cc.cc-stack, .hp-stack-pill').forEach(function (card) { void card; });
     document.querySelectorAll('a[href*="/stacks/"]').forEach(function (link) {
       var m = (link.getAttribute('href') || '').match(/\/stacks\/([^\/?#]+)/);
       if (!m) return;
