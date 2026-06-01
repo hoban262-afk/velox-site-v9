@@ -365,8 +365,9 @@
         }).then(function (r) { return r.json(); }).then(function (d) {
           if (d && d.valid) {
             welcomeCodeApplied = code.toUpperCase();
-            var saving = Math.round(tGBP.subtotal * 20) / 100;  // 20% off, GBP
-            applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: 20, saving: saving });
+            var pct = Number(d.value) || 10;                       // % from server (single source of truth)
+            var saving = Math.round(tGBP.subtotal * pct) / 100;   // welcome code % off, GBP
+            applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: pct, saving: saving });
           } else {
             welcomeCodeApplied = null; appliedDiscount = null;
             var reasons = {

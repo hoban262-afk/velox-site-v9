@@ -3,7 +3,7 @@
  *
  * Body: { code, email }
  * Checks: exists, not unsubscribed, not expired, not already used, email matches.
- * Returns: { valid: true, type:'percentage', value:20 } | { valid:false, reason }
+ * Returns: { valid: true, type:'percentage', value:10 } | { valid:false, reason }
  *
  * (The code is only MARKED used when the order is completed/paid — handled by the
  * order status trigger via orders.welcome_code — so abandoned checkouts don't burn it.)
@@ -35,7 +35,7 @@ module.exports = async function handler(req, res) {
     if (new Date(rec.expires_at) < new Date())       return res.status(200).json({ valid: false, reason: 'expired' });
     if (email && rec.email.toLowerCase() !== email)  return res.status(200).json({ valid: false, reason: 'email_mismatch' });
 
-    return res.status(200).json({ valid: true, type: 'percentage', value: 20, code: code });
+    return res.status(200).json({ valid: true, type: 'percentage', value: 10, code: code });
   } catch (e) {
     console.error('[newsletter/validate]', e.message);
     return res.status(500).json({ valid: false, reason: 'error' });

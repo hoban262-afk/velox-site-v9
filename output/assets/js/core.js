@@ -155,8 +155,8 @@
         return;
       }
 
-      // Issue (or re-send) the 20%-off welcome code via the signup API — same
-      // path as the popup, so the inline form's "Send my code" promise is real.
+      // Issue (or re-send) the handbook + 10%-off welcome code via the signup API —
+      // same path as the popup, so the inline form's promise is real.
       nlBtn.disabled = true;
       nlBtn.textContent = 'Sending…';
       fetch('/api/newsletter/signup', {
@@ -170,8 +170,8 @@
           nlInp.value = '';
           nlBtn.textContent = res.d.already ? 'Already sent ✓' : 'Code sent ✓';
           if (window.toast) window.toast(res.d.already
-            ? "You're already subscribed — check your inbox for your code."
-            : 'Your 20% off code is on its way — check your inbox.');
+            ? "You're already subscribed — check your inbox for your handbook and code."
+            : 'Your handbook and 10% off code are on the way — check your inbox.');
         } else {
           nlBtn.disabled = false;
           nlBtn.textContent = 'Send my code';

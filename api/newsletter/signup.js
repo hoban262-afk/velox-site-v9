@@ -1,5 +1,5 @@
 /**
- * POST /api/newsletter/signup  — issue (or return) a unique 20%-off welcome code
+ * POST /api/newsletter/signup  — issue (or return) a unique 10%-off welcome code + handbook
  *
  * Body: { email }
  * - Validates email, IP rate-limits (20 new signups/IP/hour).
@@ -53,17 +53,24 @@ function welcomeEmailHtml(code, email) {
       '</td></tr>' +
       '<tr><td style="padding:16px 32px 0">' +
         '<h1 style="font-size:22px;color:#ffffff;margin:0 0 10px">Welcome to the Velox research community.</h1>' +
-        '<p style="font-size:14px;color:#9CA3AF;line-height:1.6;margin:0 0 24px">Here is your one-time discount code for <strong style="color:#fff">20% off your first order</strong>.</p>' +
+        '<p style="font-size:14px;color:#9CA3AF;line-height:1.6;margin:0 0 24px">Your free <strong style="color:#fff">Researcher&rsquo;s Handbook</strong> is below, along with a one-time code for <strong style="color:#fff">10% off your first order</strong>.</p>' +
       '</td></tr>' +
       '<tr><td style="padding:0 32px">' +
         '<div style="background:#030407;border:1px solid rgba(1,211,160,.35);border-radius:10px;padding:22px;text-align:center">' +
           '<div style="font-size:11px;color:#6B7280;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">YOUR CODE</div>' +
           '<div style="font-family:\'Courier New\',monospace;font-size:30px;font-weight:700;color:#01D3A0;letter-spacing:.08em">' + code + '</div>' +
         '</div>' +
-        '<p style="font-size:14px;color:#9CA3AF;line-height:1.6;margin:20px 0 4px">Apply it at checkout for 20% off your first order.</p>' +
+        '<p style="font-size:14px;color:#9CA3AF;line-height:1.6;margin:20px 0 4px">Apply it at checkout for 10% off your first order.</p>' +
         '<p style="font-size:13px;color:#6B7280;margin:0 0 24px">Valid for 30 days.</p>' +
       '</td></tr>' +
-      '<tr><td style="padding:0 32px 28px"><a href="' + base + '/compounds/" style="display:inline-block;background:#01D3A0;color:#021;text-decoration:none;font-weight:700;font-size:14px;padding:13px 28px;border-radius:8px">Shop now</a></td></tr>' +
+      '<tr><td style="padding:0 32px 8px">' +
+        '<div style="background:#030407;border:1px solid #1a1a1a;border-radius:10px;padding:18px 20px">' +
+          '<div style="font-size:13px;font-weight:700;color:#ffffff;margin-bottom:4px">Your free Researcher&rsquo;s Handbook</div>' +
+          '<div style="font-size:13px;color:#9CA3AF;line-height:1.6;margin-bottom:14px">A practical PDF reference: reconstitution, storage &amp; handling, and how to read a Certificate of Analysis.</div>' +
+          '<a href="' + base + '/assets/velox-researchers-handbook.pdf" style="display:inline-block;background:transparent;color:#01D3A0;border:1px solid rgba(1,211,160,.5);text-decoration:none;font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px">Download the handbook (PDF)</a>' +
+        '</div>' +
+      '</td></tr>' +
+      '<tr><td style="padding:16px 32px 28px"><a href="' + base + '/compounds/" style="display:inline-block;background:#01D3A0;color:#021;text-decoration:none;font-weight:700;font-size:14px;padding:13px 28px;border-radius:8px">Shop now</a></td></tr>' +
       '<tr><td style="border-top:1px solid #1a1a1a;padding:20px 32px">' +
         '<p style="font-size:11px;color:#6B7280;line-height:1.6;margin:0">For research use only. Not for human or veterinary consumption. ' +
         'You are receiving this because you subscribed at veloxpeps.com. ' +
@@ -132,13 +139,15 @@ module.exports = async function handler(req, res) {
         await resend.emails.send({
           from: FROM, to: email,
           replyTo: 'support@veloxpeps.com',
-          subject: 'Your 20% off code is inside — Velox Peptides',
+          subject: 'Your handbook + 10% off code — Velox Peptides',
           html: welcomeEmailHtml(code, email),
           // Plain-text alternative improves inbox placement (HTML-only scores worse)
           text: 'Welcome to the Velox research community.\n\n' +
-                'Your one-time discount code for 20% off your first order:\n\n' +
+                'Your one-time discount code for 10% off your first order:\n\n' +
                 '    ' + code + '\n\n' +
                 'Apply it at checkout. Valid for 30 days.\n\n' +
+                'Download your free Researcher\'s Handbook (PDF):\n' +
+                'https://veloxpeps.com/assets/velox-researchers-handbook.pdf\n\n' +
                 'Shop: https://veloxpeps.com/compounds/\n\n' +
                 'For research use only. Not for human or veterinary consumption.\n' +
                 'Unsubscribe: ' + unsub,

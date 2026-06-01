@@ -1,5 +1,5 @@
 /**
- * newsletter-popup.js — Velox Peptides 20%-off welcome popup
+ * newsletter-popup.js — Velox Peptides handbook + 10%-off welcome popup
  * Self-contained, vanilla JS, no dependencies. Loaded site-wide except
  * /checkout and /account. Fires 10s after first load, once per session.
  */
@@ -58,10 +58,10 @@
 
   function defaultBody() {
     return '' +
-      '<h2 class="vp-nl-h"><em>Unlock</em> 20% off your first order</h2>' +
-      '<p class="vp-nl-sub">Join the Velox research community. For research use only.</p>' +
+      '<h2 class="vp-nl-h"><em>Free</em> Researcher&rsquo;s Handbook + 10% off</h2>' +
+      '<p class="vp-nl-sub">Join the Velox research community &mdash; get our reconstitution, storage &amp; CoA handbook (PDF), plus a 10% code for your first order. For research use only.</p>' +
       '<input class="vp-nl-input" id="vp-nl-email" type="email" placeholder="Your email address" autocomplete="email">' +
-      '<button class="vp-nl-btn" id="vp-nl-submit">Send my code &rarr;</button>' +
+      '<button class="vp-nl-btn" id="vp-nl-submit">Email me the handbook &rarr;</button>' +
       '<div class="vp-nl-msg" id="vp-nl-msg"></div>' +
       '<p class="vp-nl-fine">One-time use. No spam. Unsubscribe any time.<br>For research use only. Not for human consumption.</p>';
   }
@@ -70,8 +70,8 @@
     return '' +
       '<h2 class="vp-nl-h">' + (already ? "You're on the list" : 'Check your inbox') + '</h2>' +
       '<p class="vp-nl-sub">' + (already
-        ? "You're already subscribed — check your inbox for your code."
-        : 'Your 20% off code is on its way. It starts with <span class="vp-nl-codehint">VELOX-</span>') +
+        ? "You're already subscribed — check your inbox for your handbook and code."
+        : 'Your handbook and 10% off code are on the way. The code starts with <span class="vp-nl-codehint">VELOX-</span>') +
       '</p>' +
       '<button class="vp-nl-btn" id="vp-nl-done">Got it</button>' +
       '<p class="vp-nl-fine">For research use only. Not for human consumption.</p>';
@@ -107,13 +107,13 @@
             try { localStorage.setItem('velox_subscribed', '1'); } catch (e) {}
             render(successBody(res.d.codeHint, res.d.already));
           } else {
-            submit.disabled = false; submit.innerHTML = 'Send my code &rarr;';
+            submit.disabled = false; submit.innerHTML = 'Email me the handbook &rarr;';
             msg.className = 'vp-nl-msg err';
             msg.textContent = (res.d && res.d.error) || 'Something went wrong. Try again.';
           }
         })
         .catch(function () {
-          submit.disabled = false; submit.innerHTML = 'Send my code &rarr;';
+          submit.disabled = false; submit.innerHTML = 'Email me the handbook &rarr;';
           msg.className = 'vp-nl-msg err'; msg.textContent = 'Something went wrong. Try again.';
         });
     }
