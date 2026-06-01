@@ -69,12 +69,12 @@
     return savingGBP;
   }
 
-  // Volume discount: 2 vials 10%, 3 vials 15%, 4+ vials 20% (by quantity of DISCOUNTABLE
+  // Volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 20% (by quantity of DISCOUNTABLE
   // vials). Pens are never discounted and never count toward the tier.
   function isPen(i) { return /pen/i.test(i.size || ''); }
   function discountableGBP(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
   function discountableQty(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : (i.qty || 1)); }, 0); }
-  function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.15 : (q === 2 ? 0.10 : 0)); }
+  function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.10 : (q === 2 ? 0.05 : 0)); }
   // Promotional saving (GBP) = larger of (code, volume) on the discountable subtotal only.
   // Code + volume never stack, so promo ≤ 20% of the discountable subtotal.
   function bestPromoGBP(cart, codeDiscount) {
