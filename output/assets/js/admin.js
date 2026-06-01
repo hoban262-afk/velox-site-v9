@@ -544,7 +544,7 @@
   }
 
   // POST the order details to /api/send-dispatch (Resend dispatch template).
-  function sendDispatchEmail(order, tracking) {
+  async function sendDispatchEmail(order, tracking) {
     var address = [order.ship_line1, order.ship_line2, order.ship_city, order.ship_postcode, order.ship_country]
       .filter(function (p) { return p && String(p).trim(); })
       .join(', ');
@@ -559,9 +559,14 @@
 
     var ref = order.notes || order.id.slice(0, 8).toUpperCase();
 
+    // send-dispatch is admin-gated — attach the signed-in admin's access token.
+    var s = await window._sb.auth.getSession();
+    var token = s && s.data && s.data.session && s.data.session.access_token;
+    if (!token) { alert('Your session expired — please sign in again to send the dispatch email.'); return; }
+
     fetch('/api/send-dispatch', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body:    JSON.stringify({
         orderNumber:    ref,
         customerEmail:  order.customer_email,

@@ -11,8 +11,24 @@
  * Safe to call repeatedly: award_order_points() only credits an order once,
  * only when its status is paid/dispatched, and only when it has a user_id.
  */
+// Accept either the cron bearer token or the internal task secret — same pattern
+// as recovery/run and clickdrop/[action]. award_order_points() is itself
+// idempotent and server-authoritative, but this endpoint adjusts a money-adjacent
+// balance, so it must not be callable by an anonymous internet client.
+function isAuthorized(req) {
+  const CRON_SECRET     = process.env.CRON_SECRET;
+  const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
+  const auth     = req.headers['authorization'] || '';
+  const internal = req.headers['x-internal-secret'] || '';
+  if (CRON_SECRET && auth === `Bearer ${CRON_SECRET}`) return true;
+  if (INTERNAL_SECRET && internal === INTERNAL_SECRET) return true;
+  return false;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  if (!isAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
 
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;

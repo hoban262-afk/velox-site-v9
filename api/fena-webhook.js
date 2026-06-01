@@ -45,6 +45,28 @@ function pick(obj, keys) {
 export default async function handler(req) {
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
 
+  // ── Shared-secret gate ──────────────────────────────────────────────────────
+  // This is a server-to-server endpoint, so a shared secret is a valid guard.
+  // Without it, anyone on the internet can POST {"status":"completed","reference":...}
+  // and flip an order to PAID (order refs leak in the redirect URL). Configure the
+  // Fena webhook URL as  https://veloxpeps.com/api/fena-webhook?key=<FENA_WEBHOOK_SECRET>
+  // (or send it as an x-webhook-secret header). When the env var is set we REQUIRE a
+  // match; when it is unset we fail OPEN + warn, so deploying this never breaks the
+  // live webhook before the secret is configured.
+  const WEBHOOK_SECRET = process.env.FENA_WEBHOOK_SECRET;
+  if (WEBHOOK_SECRET) {
+    let provided = req.headers.get('x-webhook-secret') || '';
+    if (!provided) {
+      try { provided = new URL(req.url).searchParams.get('key') || ''; } catch { /* ignore */ }
+    }
+    if (provided !== WEBHOOK_SECRET) {
+      console.warn('[fena-webhook] rejected: missing/invalid shared secret');
+      return new Response('Unauthorized', { status: 401 });
+    }
+  } else {
+    console.warn('[fena-webhook] FENA_WEBHOOK_SECRET not set — endpoint is UNAUTHENTICATED. Set it and append ?key=... to the Fena webhook URL.');
+  }
+
   const SUPABASE_URL              = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {

@@ -206,10 +206,43 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
+// ── Admin / internal auth ─────────────────────────────────────────────────────
+// send-dispatch sends a branded "dispatched" email to an address taken from the
+// REQUEST BODY (customerEmail). Left open, that's an email relay an attacker can
+// use to send convincing phishing from the veloxpeps.com domain. The only real
+// caller is the admin panel (admin.js), so we require either the internal task
+// secret OR a signed-in admin's Supabase access token.
+const KNOWN_ADMIN_EMAILS = new Set([
+  (process.env.ADMIN_EMAIL || '').toLowerCase(),
+  'support@veloxpeps.com',
+  'veloxpeps@gmail.com',
+].filter(Boolean));
+
+async function isAuthorized(req) {
+  const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
+  if (INTERNAL_SECRET && (req.headers['x-internal-secret'] || '') === INTERNAL_SECRET) return true;
+
+  const token = (req.headers['authorization'] || '').replace(/^Bearer\s+/i, '');
+  if (!token) return false;
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const ANON         = process.env.SUPABASE_ANON_KEY;
+  const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SUPABASE_URL) return false;
+  try {
+    const ures = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { Authorization: `Bearer ${token}`, apikey: ANON || SERVICE || '' },
+    });
+    if (!ures.ok) return false;
+    const user = await ures.json();
+    return !!user && KNOWN_ADMIN_EMAILS.has((user.email || '').toLowerCase());
+  } catch { return false; }
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 /**
  * POST /api/send-dispatch
  *
+ * Auth: internal task secret (x-internal-secret) OR an admin Supabase bearer token.
  * Accepts both camelCase (from Google Sheets) and snake_case variants.
  *
  * Fields:
@@ -221,6 +254,8 @@ function esc(s) {
  */
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  if (!(await isAuthorized(req))) return res.status(401).json({ error: 'Unauthorized' });
 
   const b = req.body || {};
 
