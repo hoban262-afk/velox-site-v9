@@ -346,7 +346,7 @@ function setupOrders(ss) {
   sh.getRange('A2').setNote('Paste orders from Google Sheets here. Column order matches live logging exactly. Data starts row 2.');
 
   addDV(sh, 16, 3, 1001, ['Pending Payment','Paid','Processing','Dispatched','Delivered','Cancelled','Refunded']);
-  addDV(sh, 13, 3, 1001, ['GoCardless Instant Bank Pay','PsiFi Card / Apple Pay / Google Pay','Bank Transfer']);
+  addDV(sh, 13, 3, 1001, ['Fena Pay by Bank','GoCardless Instant Bank Pay','Bank Transfer']);
   addDV(sh, 15, 3, 1001, ['UK','EU']);
   addDV(sh, 14, 3, 1001, ['GBP','EUR']);
 
@@ -782,7 +782,6 @@ function setupSubscriptions(ss) {
     ['Resend',        'Transactional email (orders@veloxpeps.com)', 0,    0,    'Monthly',       'Card','Tools',   'Active','Free tier — 100 emails/day'],
     ['GitHub',        'Code repository',                           0,    0,    'Monthly',       'Card','Tools',   'Active','Free plan'],
     ['GoCardless',    'Instant Bank Pay processing',                0,    0,    'Per transaction','',  'Payments','Active','1% + £0.20/txn — no monthly fee'],
-    ['PsiFi',         'Card / Apple Pay / Google Pay',             0,    0,    'Per transaction','',  'Payments','Active','Per-transaction fees only'],
     ['veloxpeps.com', 'Annual domain renewal',                     1.00, 12.00,'Annual',        'Card','Hosting', 'Active','~£12/year'],
   ];
 

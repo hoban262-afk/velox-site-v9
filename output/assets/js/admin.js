@@ -113,6 +113,7 @@
 
   function loadAllData() {
     loadOrders();
+    loadMargins();
     loadPricing();
     loadBundlesAdmin();
     loadReviews();
@@ -122,6 +123,253 @@
     loadActions();
     loadXeroStatus();
     loadClickDropStatus();
+  }
+
+  // ── MARGINS (profit dashboard) ──────────────────────────────────────────────
+  var MLINES = null, MOVERHEADS = [], mBound = false;
+
+  function mGbp(v) { return '£' + (Number(v) || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function mPct(v) { return (Number.isFinite(v) ? (v * 100).toFixed(1) : '0.0') + '%'; }
+  function mTag(m) {
+    var c = m >= 0.45 ? '#01D3A0' : m >= 0.25 ? '#e0a64a' : '#f87171';
+    return '<span style="font-weight:700;color:' + c + '">' + mPct(m) + '</span>';
+  }
+  function mNum(id, d) { var el = document.getElementById(id); var x = el ? parseFloat(el.value) : NaN; return Number.isFinite(x) ? x : d; }
+
+  async function loadMargins() {
+    if (!window._sb) return;
+    var skuWrap = document.getElementById('margins-sku-wrap');
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { if (skuWrap) skuWrap.innerHTML = '<div class="adm-empty">Sign in to view margins.</div>'; return; }
+      var r = await fetch('/api/admin/margins', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (skuWrap) skuWrap.innerHTML = '<div class="adm-empty">Could not load margins: ' + esc((d && d.error) || ('HTTP ' + r.status)) + '</div>'; return; }
+      MLINES = Array.isArray(d.lines) ? d.lines : [];
+      MOVERHEADS = Array.isArray(d.overheads) ? d.overheads : [];
+      var g = document.getElementById('margins-generated');
+      if (g && d.generated_at) g.textContent = 'Updated ' + fmtDate(d.generated_at);
+      renderInsight(d.insight);
+      if (!mBound) {
+        ['m_post', 'm_pack', 'm_fena', 'm_bank'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.addEventListener('input', renderMargins);
+        });
+        var addBtn = document.getElementById('oh-add');
+        if (addBtn) addBtn.addEventListener('click', addOverhead);
+        var insBtn = document.getElementById('insight-run');
+        if (insBtn) insBtn.addEventListener('click', runInsights);
+        mBound = true;
+      }
+      renderMargins();
+    } catch (e) {
+      if (skuWrap) skuWrap.innerHTML = '<div class="adm-empty">Could not load margins: ' + esc(e.message) + '</div>';
+    }
+  }
+
+  function mFee(method, total, fenaPct, bankFix) {
+    var m = (method || '').toLowerCase();
+    if (m.indexOf('bank') > -1) return bankFix;
+    return total * (fenaPct / 100); // fena / instant / card all routed through the card-processor rate
+  }
+
+  function renderMargins() {
+    if (!MLINES) return;
+    var post = mNum('m_post', 3.80), pack = mNum('m_pack', 2.50), fena = mNum('m_fena', 2.5), bank = mNum('m_bank', 0);
+
+    // group lines → orders
+    var om = {};
+    MLINES.forEach(function (l) {
+      if (!om[l.id]) om[l.id] = { id: l.id, created_at: l.created_at, method: l.payment_method, total: l.total, cogs: 0, units: 0 };
+      om[l.id].cogs += l.qty * (l.cost_price || 0);
+      om[l.id].units += l.qty;
+    });
+    var orders = Object.keys(om).map(function (k) {
+      var o = om[k];
+      o.fee = mFee(o.method, o.total, fena, bank);
+      o.contrib = o.total - o.cogs - post - pack - o.fee;
+      o.cm = o.total ? o.contrib / o.total : 0;
+      return o;
+    }).sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+
+    var T = { rev: 0, cogs: 0, fee: 0, units: 0, n: orders.length };
+    orders.forEach(function (o) { T.rev += o.total; T.cogs += o.cogs; T.fee += o.fee; T.units += o.units; });
+    var fixed = T.n * (post + pack);
+    var gross = T.rev - T.cogs, contrib = T.rev - T.cogs - fixed - T.fee;
+    var gm = T.rev ? gross / T.rev : 0, cm = T.rev ? contrib / T.rev : 0, aov = T.n ? T.rev / T.n : 0;
+
+    document.getElementById('margins-stats').innerHTML =
+      card('Revenue', mGbp(T.rev), T.n + ' paid orders') +
+      card('Gross profit', mGbp(gross), mPct(gm) + ' gross margin') +
+      card('Contribution', mGbp(contrib), mPct(cm) + ' after all costs') +
+      card('Avg order value', mGbp(aov), T.units + ' units sold') +
+      card('Product cost', mGbp(T.cogs), 'COGS') +
+      card('Postage+pack+fees', mGbp(fixed + T.fee), 'fixed + payment fees');
+
+    // ── Overheads + net profit ───────────────────────────────────────────────
+    var ohTotal = (MOVERHEADS || []).reduce(function (s, o) { return s + (Number(o.monthly_cost) || 0); }, 0);
+    var avgContrib = T.n ? contrib / T.n : 0;
+    var breakeven = avgContrib > 0 ? Math.ceil(ohTotal / avgContrib) : null;
+
+    // contribution from orders dated in the current calendar month
+    var now = new Date(), ym = now.getFullYear() + '-' + (now.getMonth() + 1);
+    var monthContrib = 0, monthOrders = 0;
+    orders.forEach(function (o) {
+      var d = new Date(o.created_at);
+      if (d.getFullYear() + '-' + (d.getMonth() + 1) === ym) { monthContrib += o.contrib; monthOrders++; }
+    });
+    var net = monthContrib - ohTotal;
+
+    document.getElementById('margins-net-stats').innerHTML =
+      card('Monthly overheads', mGbp(ohTotal), (MOVERHEADS || []).length + ' subscriptions') +
+      card('Net this month', mGbp(net), monthOrders + ' orders, contrib ' + mGbp(monthContrib)) +
+      card('Break-even', breakeven != null ? (breakeven + ' orders/mo') : '—', avgContrib > 0 ? ('at ' + mGbp(avgContrib) + ' avg contribution') : 'need more data');
+    var netNote = document.getElementById('margins-net-note');
+    if (netNote) netNote.textContent = 'Net = this calendar month’s contribution minus fixed overheads';
+
+    renderOverheadsList();
+
+    // missing cost warning
+    var miss = [];
+    MLINES.forEach(function (l) { if (l.cost_price == null) { var t = l.slug + ' ' + (l.size || ''); if (miss.indexOf(t) < 0) miss.push(t); } });
+    var warn = miss.length ? '<div class="adm-empty" style="color:#e0a64a">Missing cost for: ' + esc(miss.join(', ')) + ' — treated as £0, so those margins are overstated.</div>' : '';
+
+    // by sku
+    var sm = {};
+    MLINES.forEach(function (l) {
+      var k = l.slug + '|' + (l.size || '');
+      if (!sm[k]) sm[k] = { name: l.name, size: l.size, units: 0, rev: 0, cogs: 0 };
+      sm[k].units += l.qty; sm[k].rev += l.qty * l.price; sm[k].cogs += l.qty * (l.cost_price || 0);
+    });
+    var skus = Object.keys(sm).map(function (k) { var x = sm[k]; x.gp = x.rev - x.cogs; x.gmv = x.rev ? x.gp / x.rev : 0; return x; })
+      .sort(function (a, b) { return b.gp - a.gp; });
+    document.getElementById('margins-sku-wrap').innerHTML = warn +
+      '<table class="adm-table"><thead><tr><th>Product</th><th>Units</th><th>Revenue</th><th>Cost</th><th>Gross profit</th><th>Margin</th></tr></thead><tbody>' +
+      skus.map(function (x) {
+        return '<tr><td>' + esc(x.name) + ' <span style="color:var(--t3,#6b7280)">' + esc(x.size || '') + '</span></td><td>' + x.units + '</td><td>' + mGbp(x.rev) + '</td><td>' + mGbp(x.cogs) + '</td><td>' + mGbp(x.gp) + '</td><td>' + mTag(x.gmv) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+
+    // by order
+    document.getElementById('margins-order-wrap').innerHTML =
+      '<table class="adm-table"><thead><tr><th>Date</th><th>Method</th><th>Units</th><th>Revenue</th><th>COGS</th><th>Fee</th><th>Contribution</th><th>CM%</th></tr></thead><tbody>' +
+      orders.map(function (o) {
+        return '<tr><td>' + fmtDate(o.created_at) + '</td><td>' + esc(o.method || '') + '</td><td>' + o.units + '</td><td>' + mGbp(o.total) + '</td><td>' + mGbp(o.cogs) + '</td><td>' + mGbp(o.fee) + '</td><td>' + mGbp(o.contrib) + '</td><td>' + mTag(o.cm) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+
+    function card(l, v, sub) {
+      return '<div class="stat-card"><div class="stat-label">' + l + '</div><div class="stat-value">' + v + '</div><div class="stat-sub">' + (sub || '') + '</div></div>';
+    }
+  }
+
+  function renderOverheadsList() {
+    var wrap = document.getElementById('overheads-wrap');
+    if (!wrap) return;
+    if (!MOVERHEADS.length) { wrap.innerHTML = '<div class="adm-empty">No overheads yet — add your monthly subscriptions below.</div>'; return; }
+    wrap.innerHTML =
+      '<table class="adm-table"><thead><tr><th>Subscription</th><th>£/month</th><th></th></tr></thead><tbody>' +
+      MOVERHEADS.map(function (o) {
+        return '<tr>' +
+          '<td>' + esc(o.name) + (o.note ? ' <span style="color:var(--t3,#6b7280)">— ' + esc(o.note) + '</span>' : '') + '</td>' +
+          '<td><input class="status-select oh-edit" data-id="' + esc(o.id) + '" type="number" step="0.01" min="0" value="' + (Number(o.monthly_cost) || 0).toFixed(2) + '" style="width:90px"></td>' +
+          '<td style="text-align:right"><button class="oh-del" data-id="' + esc(o.id) + '" style="background:none;border:1px solid var(--brd,#1a1a1a);color:#f87171;border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer">Remove</button></td>' +
+          '</tr>';
+      }).join('') + '</tbody></table>';
+    wrap.querySelectorAll('.oh-edit').forEach(function (el) {
+      el.addEventListener('change', function () { saveOverhead({ id: el.dataset.id, monthly_cost: el.value, name: nameForId(el.dataset.id), active: true }); });
+    });
+    wrap.querySelectorAll('.oh-del').forEach(function (el) {
+      el.addEventListener('click', function () { if (confirm('Remove this overhead?')) postOverhead({ action: 'delete', id: el.dataset.id }); });
+    });
+  }
+  function nameForId(id) { var f = MOVERHEADS.filter(function (o) { return String(o.id) === String(id); })[0]; return f ? f.name : 'Overhead'; }
+
+  function addOverhead() {
+    var name = (document.getElementById('oh-name').value || '').trim();
+    var cost = parseFloat(document.getElementById('oh-cost').value);
+    if (!name || !Number.isFinite(cost) || cost < 0) { ohMsg('Enter a name and a £/month amount.'); return; }
+    saveOverhead({ name: name, monthly_cost: cost, active: true });
+    document.getElementById('oh-name').value = '';
+    document.getElementById('oh-cost').value = '';
+  }
+  function saveOverhead(o) { postOverhead({ action: 'upsert', id: o.id, name: o.name, monthly_cost: o.monthly_cost, active: o.active }); }
+
+  async function postOverhead(body) {
+    try {
+      ohMsg('Saving…');
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { ohMsg('Session expired — sign in again.'); return; }
+      var r = await fetch('/api/admin/overheads', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(body),
+      });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { ohMsg('Failed: ' + esc((d && d.error) || ('HTTP ' + r.status))); return; }
+      ohMsg('Saved.');
+      loadMargins();
+    } catch (e) { ohMsg('Failed: ' + esc(e.message)); }
+  }
+  function ohMsg(t) { var el = document.getElementById('oh-msg'); if (el) el.textContent = t; }
+
+  // ── AI insights ─────────────────────────────────────────────────────────────
+  function mdLite(src) {
+    var lines = String(src || '').split(/\r?\n/);
+    var html = '', inList = false;
+    function inline(t) {
+      return esc(t).replace(/\*\*([^*]+)\*\*/g, '<strong style="color:#fff">$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>');
+    }
+    lines.forEach(function (ln) {
+      var t = ln.trim();
+      if (/^###?\s+/.test(t)) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += '<div style="color:#01D3A0;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px">' + inline(t.replace(/^#+\s+/, '')) + '</div>';
+      } else if (/^[-*]\s+/.test(t)) {
+        if (!inList) { html += '<ul style="margin:0 0 8px;padding-left:18px">'; inList = true; }
+        html += '<li style="margin:3px 0">' + inline(t.replace(/^[-*]\s+/, '')) + '</li>';
+      } else if (!t) {
+        if (inList) { html += '</ul>'; inList = false; }
+      } else {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += '<p style="margin:0 0 8px">' + inline(t) + '</p>';
+      }
+    });
+    if (inList) html += '</ul>';
+    return html;
+  }
+
+  function renderInsight(ins) {
+    var body = document.getElementById('insight-body');
+    var dt = document.getElementById('insight-date');
+    if (!body) return;
+    if (ins && ins.content) {
+      body.innerHTML = mdLite(ins.content);
+      if (dt) dt.textContent = ins.generated_at ? ('Generated ' + fmtDate(ins.generated_at)) : '';
+    } else {
+      body.innerHTML = '<div class="adm-empty">No analysis yet. It runs automatically every Monday, or click “Analyse now”.</div>';
+      if (dt) dt.textContent = '';
+    }
+  }
+
+  async function runInsights() {
+    var btn = document.getElementById('insight-run');
+    var msg = document.getElementById('insight-msg');
+    if (btn) { btn.disabled = true; btn.textContent = 'Analysing…'; }
+    if (msg) msg.textContent = 'Generating a fresh analysis — this takes a few seconds…';
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { if (msg) msg.textContent = 'Session expired — sign in again.'; return; }
+      var r = await fetch('/api/admin/insights-run', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (msg) msg.textContent = 'Failed: ' + esc((d && d.error) || ('HTTP ' + r.status)); return; }
+      if (msg) msg.textContent = '';
+      renderInsight({ content: d.content, generated_at: new Date().toISOString() });
+    } catch (e) {
+      if (msg) msg.textContent = 'Failed: ' + esc(e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Analyse now'; }
+    }
   }
 
   // ── APPROVAL INBOX (agent_actions) ──────────────────────────────────────────

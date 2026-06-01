@@ -171,10 +171,18 @@
         };
       })
     };
-    var s = document.createElement('script');
-    s.type = 'application/ld+json';
-    s.textContent = JSON.stringify(ld);
-    document.head.appendChild(s);
+    // Only inject if the page doesn't already ship a server-side aggregateRating
+    // (avoids duplicate Product rating nodes for products with baked-in ratings).
+    var hasStaticRating = Array.prototype.some.call(
+      document.querySelectorAll('script[type="application/ld+json"]'),
+      function (el) { return el.textContent.indexOf('aggregateRating') > -1; }
+    );
+    if (!hasStaticRating) {
+      var s = document.createElement('script');
+      s.type = 'application/ld+json';
+      s.textContent = JSON.stringify(ld);
+      document.head.appendChild(s);
+    }
   }
 
   function load() {

@@ -102,6 +102,7 @@
       <button class="admin-tab active" data-tab="overview"     onclick="switchTab('overview')">Overview</button>
       <button class="admin-tab"        data-tab="actions"      onclick="switchTab('actions')">Actions<span id="actions-badge" style="display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 7px;vertical-align:middle">0</span></button>
       <button class="admin-tab"        data-tab="orders"       onclick="switchTab('orders')">Orders</button>
+      <button class="admin-tab"        data-tab="margins"      onclick="switchTab('margins')">Margins</button>
       <button class="admin-tab"        data-tab="pricing"      onclick="switchTab('pricing')">Pricing</button>
       <button class="admin-tab"        data-tab="reviews"      onclick="switchTab('reviews')">Reviews</button>
       <button class="admin-tab"        data-tab="campaign"     onclick="switchTab('campaign')">Campaign</button>
@@ -160,6 +161,59 @@
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">All orders</div></div>
         <div id="orders-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
+    <!-- Margins -->
+    <div class="admin-panel" id="panel-margins">
+      <div class="adm-section" style="border-color:rgba(1,211,160,.25)">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">AI insights — weekly digest</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:12px;color:var(--t3,#6b7280)" id="insight-date"></span>
+            <button class="btn-p" id="insight-run" style="width:auto;padding:7px 16px;font-size:12px">Analyse now</button>
+          </div>
+        </div>
+        <div id="insight-body" style="font-size:13.5px;color:var(--t2,#9ca3af);line-height:1.6"><div class="adm-empty">No analysis yet. It runs automatically every Monday, or click “Analyse now”.</div></div>
+        <div id="insight-msg" style="font-size:12px;color:var(--t3,#6b7280);margin-top:8px"></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Profit &amp; margins</div>
+          <div style="font-size:12px;color:var(--t3,#6b7280)" id="margins-generated"></div>
+        </div>
+        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 14px;line-height:1.5">
+          Contribution margin after product cost, postage, packaging and payment fees — computed live from paid &amp; dispatched orders. Product costs are read from a private table and never exposed to the public site. Adjust the assumptions below and every figure recalculates.
+        </p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px">
+          <label style="font-size:11px;color:var(--t3,#6b7280)">Postage £/order<br><input id="m_post" class="status-select" type="number" step="0.05" value="3.80" style="width:90px;margin-top:3px"></label>
+          <label style="font-size:11px;color:var(--t3,#6b7280)">Packaging £/order<br><input id="m_pack" class="status-select" type="number" step="0.05" value="2.50" style="width:90px;margin-top:3px"></label>
+          <label style="font-size:11px;color:var(--t3,#6b7280)">Fena fee %<br><input id="m_fena" class="status-select" type="number" step="0.1" value="2.5" style="width:80px;margin-top:3px"></label>
+          <label style="font-size:11px;color:var(--t3,#6b7280)">Bank fee £/order<br><input id="m_bank" class="status-select" type="number" step="0.01" value="0.00" style="width:80px;margin-top:3px"></label>
+        </div>
+        <div class="stat-grid" id="margins-stats"></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Monthly overheads &amp; net profit</div>
+          <div style="font-size:12px;color:var(--t3,#6b7280)" id="margins-net-note"></div>
+        </div>
+        <div class="stat-grid" id="margins-net-stats"></div>
+        <div id="overheads-wrap"><div class="adm-loading">Loading&hellip;</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px">
+          <input id="oh-name" class="status-select" placeholder="Subscription name" style="max-width:200px">
+          <input id="oh-cost" class="status-select" type="number" step="0.01" min="0" placeholder="£/month" style="max-width:110px">
+          <button class="btn-p" id="oh-add" style="width:auto;padding:8px 16px">Add overhead</button>
+          <span id="oh-msg" style="font-size:12px;color:var(--t3,#6b7280)"></span>
+        </div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">By product — what makes money</div></div>
+        <div id="margins-sku-wrap"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">By order</div></div>
+        <div id="margins-order-wrap"></div>
       </div>
     </div>
 

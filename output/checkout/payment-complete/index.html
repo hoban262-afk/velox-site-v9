@@ -253,7 +253,7 @@
       </div>
     </div>
 
-    <!-- Cancelled state (PsiFi) -->
+    <!-- Cancelled state -->
     <div id="pc-cancelled" class="confirm-card" style="display:none;">
       <div class="pc-error-ic">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -428,7 +428,7 @@
 
   // ── Read URL params ────────────────────────────────────────────────────────
   var params           = new URLSearchParams(window.location.search);
-  var urlMethod        = params.get('method')  || '';   // 'fena', 'psifi', or ''
+  var urlMethod        = params.get('method')  || '';   // 'fena' or ''
   var urlPay           = params.get('payment') || '';   // 'cancelled'
   var billingRequestId = params.get('billing_request_id') || '';
   // create-fena-payment builds the return URL with the Supabase order UUID +
@@ -451,7 +451,6 @@
 
   // Determine payment method: prefer URL param, fall back to sessionStorage
   var paymentMethod = urlMethod || chk.payment_method || 'instant';
-  var isPsifi       = paymentMethod === 'psifi';
   var isFena        = paymentMethod === 'fena';
 
   // ── State elements ─────────────────────────────────────────────────────────
@@ -505,6 +504,28 @@
     }).join('\n');
   }
 
+  // ── GA4 ecommerce: fire `purchase` once per order (deduped across reloads) ──
+  function firePurchase() {
+    try {
+      var ref = chk.orderRef || urlRef;
+      if (!ref || typeof gtag !== 'function') return;
+      var key = 'vp_ga_purchase:' + ref;
+      if (localStorage.getItem(key)) return;
+      var items = (confirmedCart || []).map(function (it) {
+        var unit = pcRegion === 'EU' ? Math.round(it.price * EU_FX_RATE * 100) / 100 : it.price;
+        return { item_id: it.slug || it.name, item_name: it.name, item_variant: it.size || '', price: unit, quantity: it.qty || 1 };
+      });
+      gtag('event', 'purchase', {
+        transaction_id: ref,
+        value: Number(chk.total) || 0,
+        currency: pcCurrency,
+        shipping: Number(chk.shipping) || 0,
+        items: items
+      });
+      localStorage.setItem(key, '1');
+    } catch (e) {}
+  }
+
   function populateSuccessUI() {
     var refEl      = document.getElementById('pc-ref');
     var amtEl      = document.getElementById('pc-amount');
@@ -526,7 +547,6 @@
     // Update payment badge based on method
     if (badgeText) {
       if (isFena)        badgeText.textContent = 'Payment confirmed via Fena Pay by Bank';
-      else if (isPsifi)  badgeText.textContent = 'Payment confirmed via Card / Apple Pay';
       else               badgeText.textContent = 'Order confirmed — bank transfer details sent by email';
     }
 
@@ -568,6 +588,8 @@
       html += '</ul>';
       sumEl.innerHTML = html;
     }
+
+    firePurchase();
   }
 
   // ── GUARD 1: Already processed — show success immediately ─────────────────
@@ -653,32 +675,6 @@
       })
       .catch(function (err) {
         console.error('[payment-complete] confirm-fena-payment fetch failed:', err && err.message ? err.message : err);
-        showState('error');
-      });
-    return;
-  }
-
-  // ── PsiFi success path ─────────────────────────────────────────────────────
-  if (isPsifi) {
-    console.log('[payment-complete] PsiFi success — calling confirm-order — order:', chk.orderRef);
-
-    fetch('/api/confirm-order', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(orderPayload),
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        console.log('[payment-complete] confirm-order response:', JSON.stringify(data));
-        if (!data.success) {
-          console.error('[payment-complete] confirm-order returned failure:', data.error);
-          showState('error');
-          return;
-        }
-        onSuccess();
-      })
-      .catch(function (err) {
-        console.error('[payment-complete] confirm-order fetch failed:', err && err.message ? err.message : err);
         showState('error');
       });
     return;
