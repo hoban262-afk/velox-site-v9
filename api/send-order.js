@@ -376,7 +376,7 @@ function buildDispatchHtml(d) {
 </td></tr>
 
 <tr><td style="padding:0 40px 24px">
-  <p style="margin:0 0 8px;font-size:12px;color:#888;line-height:1.6">Questions about your order? Reply to this email or contact us at <a href="mailto:veloxpeps@gmail.com" style="color:#01D3A0;text-decoration:none">veloxpeps@gmail.com</a> with your order reference.</p>
+  <p style="margin:0 0 8px;font-size:12px;color:#888;line-height:1.6">Questions about your order? Reply to this email or contact us at <a href="mailto:support@veloxpeps.com" style="color:#01D3A0;text-decoration:none">support@veloxpeps.com</a> with your order reference.</p>
 </td></tr>
 
 ${mhraFooter()}
@@ -418,7 +418,7 @@ async function sendEmails(d, idempotencyKey) {
   // Admin notification — always fires
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
-    to: 'veloxpeps@gmail.com',
+    to: 'support@veloxpeps.com',
     subject: `New Order ${d.order_number} — ${d.currency === 'EUR' ? '€' : '£'}${d.order_total} — ${isInstant ? 'PAID' : 'PENDING'}`,
     html: buildAdminHtml(d, itemsHtml),
   }, adminOpts);

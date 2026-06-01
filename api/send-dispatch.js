@@ -160,7 +160,7 @@ function buildDispatchHtml(orderNumber, customerName, trackingNumber, address, i
   <tr><td style="padding:0 40px 24px">
     <p style="margin:0;font-size:12px;color:#888;line-height:1.6">
       Questions about your order? Email us at
-      <a href="mailto:veloxpeps@gmail.com?subject=Order%20${encodeURIComponent(orderNumber)}" style="color:#01D3A0;text-decoration:none">veloxpeps@gmail.com</a>
+      <a href="mailto:support@veloxpeps.com?subject=Order%20${encodeURIComponent(orderNumber)}" style="color:#01D3A0;text-decoration:none">support@veloxpeps.com</a>
       with your order reference.
     </p>
   </td></tr>

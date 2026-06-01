@@ -12,7 +12,7 @@ const { Resend } = require('resend');
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ANON         = process.env.SUPABASE_ANON_KEY;
-const ADMIN_EMAIL  = 'veloxpeps@gmail.com';
+const ADMIN_EMAIL  = 'support@veloxpeps.com';
 const FROM         = 'Velox Peptides <orders@veloxpeps.com>';
 
 function esc(s) {
@@ -81,7 +81,7 @@ module.exports = async function handler(req, res) {
       var chunk = emails.slice(i, i + 100).map(function (email) {
         var unsub = 'https://veloxpeps.com/api/newsletter/unsubscribe?token=' + encodeURIComponent(unsubToken(email));
         return {
-          from: FROM, to: email, replyTo: 'veloxpeps@gmail.com', subject: subject,
+          from: FROM, to: email, replyTo: 'support@veloxpeps.com', subject: subject,
           html: wrap(bodyHtml, email),
           text: (req.body.message || '').toString().trim() + '\n\n— Velox Peptides\nFor research use only. Not for human or veterinary consumption.\nUnsubscribe: ' + unsub,
           headers: {

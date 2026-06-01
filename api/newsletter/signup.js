@@ -131,7 +131,7 @@ module.exports = async function handler(req, res) {
         var unsub = 'https://veloxpeps.com/api/newsletter/unsubscribe?token=' + encodeURIComponent(unsubToken(email));
         await resend.emails.send({
           from: FROM, to: email,
-          replyTo: 'veloxpeps@gmail.com',
+          replyTo: 'support@veloxpeps.com',
           subject: 'Your 20% off code is inside — Velox Peptides',
           html: welcomeEmailHtml(code, email),
           // Plain-text alternative improves inbox placement (HTML-only scores worse)

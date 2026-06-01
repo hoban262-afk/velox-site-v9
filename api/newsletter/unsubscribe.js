@@ -51,6 +51,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).send(page("You've been unsubscribed. You won't receive further emails from us."));
   } catch (e) {
     console.error('[newsletter/unsubscribe]', e.message);
-    return res.status(500).send(page('Something went wrong. Please contact veloxpeps@gmail.com.'));
+    return res.status(500).send(page('Something went wrong. Please contact support@veloxpeps.com.'));
   }
 };
