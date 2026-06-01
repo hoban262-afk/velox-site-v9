@@ -13,7 +13,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ANON         = process.env.SUPABASE_ANON_KEY;
 const ADMIN_EMAIL  = 'support@veloxpeps.com';
-const FROM         = 'Velox Peptides <orders@veloxpeps.com>';
+const FROM         = 'Velox Peptides <newsletter@veloxpeps.com>';
 
 function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

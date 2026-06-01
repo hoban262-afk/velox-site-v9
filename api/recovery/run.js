@@ -137,7 +137,7 @@ module.exports = async function handler(req, res) {
 
     try {
       await resend.emails.send({
-        from: 'Velox Peptides <orders@veloxpeps.com>',
+        from: 'Velox Peptides <newsletter@veloxpeps.com>',
         to: order.customer_email,
         subject: email.subject,
         html: email.html,

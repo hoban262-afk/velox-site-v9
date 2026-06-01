@@ -12,7 +12,7 @@ const { Resend } = require('resend');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const FROM         = 'Velox Peptides <orders@veloxpeps.com>';
+const FROM         = 'Velox Peptides <newsletter@veloxpeps.com>';
 const ALPHABET     = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous 0/O/1/I
 
 function genCode() {

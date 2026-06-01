@@ -120,7 +120,7 @@ module.exports = async function handler(req, res) {
     catch (e) { console.error('[reorder-run] build failed', order.id, e.message); summary.errors++; continue; }
 
     try {
-      await resend.emails.send({ from: 'Velox Peptides <orders@veloxpeps.com>', to: order.customer_email, subject: email.subject, html: email.html });
+      await resend.emails.send({ from: 'Velox Peptides <newsletter@veloxpeps.com>', to: order.customer_email, subject: email.subject, html: email.html });
       await stamp();
       summary.sent++;
       console.log(`[reorder-run] order ${order.id} -> ${order.customer_email}`);
