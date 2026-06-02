@@ -29,7 +29,16 @@
     '.vp-sr-badge.product{color:#00D4A0;border-color:rgba(0,212,160,.3)}',
     '.vp-sr-badge.bundle{color:#F5C842;border-color:rgba(245,200,66,.3)}',
     '.vp-sr-empty{padding:16px;color:#6B7280;font-size:13px;text-align:center}',
-    '.vp-sr-all{display:block;padding:11px 16px;text-align:center;font-family:var(--mono,monospace);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#00D4A0;text-decoration:none;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,212,160,.04)}'
+    '.vp-sr-all{display:block;padding:11px 16px;text-align:center;font-family:var(--mono,monospace);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#00D4A0;text-decoration:none;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,212,160,.04)}',
+    /* prominent hero variant */
+    '.vp-search-hero{max-width:none}',
+    '.vp-search-label{font-family:var(--mono,monospace);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00D4A0;margin-bottom:10px;display:flex;align-items:center;gap:8px}',
+    '.vp-search-label::before{content:"";width:18px;height:1px;background:#00D4A0}',
+    '.vp-search-hero .vp-search-input{font-size:16px;padding:17px 116px 17px 50px;border-color:rgba(0,212,160,.4);background:#0c0c0c}',
+    '.vp-search-hero .vp-search-box svg{left:18px;width:20px;height:20px;stroke:#00D4A0}',
+    '.vp-search-btn{position:absolute;right:6px;top:6px;bottom:6px;border:none;border-radius:8px;background:#00D4A0;color:#021;font-family:var(--mono,monospace);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:0 20px;cursor:pointer;transition:background .15s}',
+    '.vp-search-btn:hover{background:#00B888}',
+    '@media(max-width:560px){.vp-search-hero .vp-search-input{padding-right:96px}.vp-search-btn{padding:0 14px}}'
   ].join('');
   document.head.appendChild(css);
 
@@ -80,6 +89,13 @@
     if (!input || !box) return;
     var active = -1, current = [];
 
+    // Search button / Enter → open the top match (or the shop if none).
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (current.length) window.location.href = current[0].u;
+      else if (input.value.trim()) window.location.href = '/compounds/';
+    });
+
     function render(q) {
       if (!INDEX) { pending.push(function () { render(q); }); return; }
       current = search(q);
@@ -123,4 +139,16 @@
       if (!form.contains(e.target)) box.hidden = true;
     });
   });
+
+  // Header magnifier links here via /#search — scroll to + focus the bar.
+  function focusSearchFromHash() {
+    if (window.location.hash !== '#search') return;
+    var f = document.querySelector('.vp-search');
+    if (!f) return;
+    var inp = f.querySelector('.vp-search-input');
+    f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (inp) setTimeout(function () { inp.focus(); }, 350);
+  }
+  focusSearchFromHash();
+  window.addEventListener('hashchange', focusSearchFromHash);
 }());
