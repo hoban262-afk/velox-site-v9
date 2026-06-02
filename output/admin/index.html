@@ -71,6 +71,38 @@
     .status-select   { background:var(--bg3,#111); border:1px solid var(--brd,#1a1a1a); color:var(--t2,#9ca3af); padding:3px 6px; border-radius:3px; font-size:11px; cursor:pointer; }
 
     .adm-loading     { font-size:13px; color:var(--t3,#6b7280); padding:20px 0; text-align:center; }
+
+    /* ── Mobile ─────────────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .admin-topbar  { padding:12px 16px; }
+      .admin-topbar-brand { font-size:10px; }
+
+      /* Tab bar becomes a horizontal swipe strip instead of overflowing */
+      .admin-tabs    { padding:12px 12px 0; gap:2px; flex-wrap:nowrap; overflow-x:auto;
+                       -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+      .admin-tabs::-webkit-scrollbar { display:none; }
+      .admin-tab     { flex:0 0 auto; padding:9px 12px; white-space:nowrap; }
+
+      .admin-panel   { padding:20px 14px; }
+      .adm-section   { padding:16px 14px; }
+      .adm-sec-hdr   { flex-wrap:wrap; gap:8px; }
+
+      /* Stat cards: two per row (one on very small screens) */
+      .stat-grid     { grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
+      .stat-card     { padding:14px 14px; }
+      .stat-value    { font-size:22px; }
+
+      /* Wide data tables/lists swipe horizontally rather than breaking layout */
+      [id$="-wrap"], [id$="-list"], #recent-orders-list { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .adm-table     { min-width:520px; }
+
+      /* Inline form rows: fields fill the width so they're tappable */
+      #panel-orders .adm-section > div > .status-select { flex:1 1 100%; max-width:none !important; }
+      .btn-p[style*="width:auto"] { width:100% !important; }
+    }
+    @media (max-width: 380px) {
+      .stat-grid     { grid-template-columns:1fr; }
+    }
   </style>
 </head>
 <body style="margin:0;background:#030407;">
