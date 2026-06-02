@@ -40,6 +40,7 @@
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="/assets/css/core.css">
+  <script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/XqYUdD/klaviyo.js"></script>
   <link rel="stylesheet" href="/assets/css/animations.css">
 
   <!-- JSON-LD -->
@@ -511,20 +512,33 @@
   function firePurchase() {
     try {
       var ref = chk.orderRef || urlRef;
-      if (!ref || typeof gtag !== 'function') return;
-      var key = 'vp_ga_purchase:' + ref;
+      if (!ref) return;
+      var key = 'vp_purchase_fired:' + ref;
       if (localStorage.getItem(key)) return;
       var items = (confirmedCart || []).map(function (it) {
         var unit = pcRegion === 'EU' ? Math.round(it.price * EU_FX_RATE * 100) / 100 : it.price;
         return { item_id: it.slug || it.name, item_name: it.name, item_variant: it.size || '', price: unit, quantity: it.qty || 1 };
       });
-      gtag('event', 'purchase', {
-        transaction_id: ref,
-        value: Number(chk.total) || 0,
-        currency: pcCurrency,
-        shipping: Number(chk.shipping) || 0,
-        items: items
-      });
+      if (typeof gtag === 'function') {
+        gtag('event', 'purchase', {
+          transaction_id: ref,
+          value: Number(chk.total) || 0,
+          currency: pcCurrency,
+          shipping: Number(chk.shipping) || 0,
+          items: items
+        });
+      }
+      if (window.vpk) {
+        window.vpk.identify(chk.email, chk.fname ? { $first_name: chk.fname, $last_name: chk.lname || '' } : null);
+        window.vpk.track('Placed Order', {
+          $event_id: ref,
+          $value: Number(chk.total) || 0,
+          OrderId: ref,
+          Currency: pcCurrency,
+          ItemNames: (confirmedCart || []).map(function (i) { return i.name; }),
+          Items: items
+        });
+      }
       localStorage.setItem(key, '1');
     } catch (e) {}
   }
@@ -698,5 +712,6 @@
 </script>
 <script src="/assets/js/conversion.js" defer></script>
 <script src="/assets/js/animations.js" defer></script>
+  <script src="/assets/js/klaviyo-events.js" defer></script>
 </body>
 </html>
