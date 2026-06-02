@@ -131,6 +131,32 @@ module.exports = async function handler(req, res) {
     sb('subscribers', { method: 'POST', headers: { Prefer: 'resolution=ignore-duplicates' },
       body: JSON.stringify({ email: email, source: 'popup' }) }).catch(function () {});
 
+    // ── Sync to Klaviyo marketing list (no-op until KLAVIYO_PRIVATE_KEY is set) ──
+    if (process.env.KLAVIYO_PRIVATE_KEY) {
+      var klavListId = process.env.KLAVIYO_LIST_ID || 'TBrSfd';
+      fetch('https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Klaviyo-API-Key ' + process.env.KLAVIYO_PRIVATE_KEY,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          revision: '2024-10-15',
+        },
+        body: JSON.stringify({
+          data: {
+            type: 'profile-subscription-bulk-create-job',
+            attributes: {
+              profiles: { data: [{
+                type: 'profile',
+                attributes: { email: email, subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } } },
+              }] },
+            },
+            relationships: { list: { data: { type: 'list', id: klavListId } } },
+          },
+        }),
+      }).catch(function () {});
+    }
+
     // ── Send the welcome email ──────────────────────────────────────────────
     if (process.env.RESEND_API_KEY) {
       try {

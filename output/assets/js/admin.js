@@ -114,6 +114,7 @@
   function loadAllData() {
     loadOrders();
     loadMargins();
+    loadInterest();
     loadPricing();
     loadBundlesAdmin();
     loadReviews();
@@ -377,6 +378,84 @@
       if (msg) msg.textContent = 'Failed: ' + esc(e.message);
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Analyse now'; }
+    }
+  }
+
+  // ── INTEREST (coming-soon waitlist) ─────────────────────────────────────────
+  async function loadInterest() {
+    if (!window._sb) return;
+    var pw = document.getElementById('interest-products-wrap');
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { if (pw) pw.innerHTML = '<div class="adm-empty">Sign in to view.</div>'; return; }
+      var r = await fetch('/api/admin/interest', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (pw) pw.innerHTML = '<div class="adm-empty">Could not load: ' + esc((d && d.error) || ('HTTP ' + r.status)) + '</div>'; return; }
+      renderInterest(d);
+    } catch (e) {
+      if (pw) pw.innerHTML = '<div class="adm-empty">Could not load: ' + esc(e.message) + '</div>';
+    }
+  }
+
+  function renderInterest(d) {
+    var products = (d && d.products) || [];
+    var recent = (d && d.recent) || [];
+    var g = document.getElementById('interest-generated');
+    if (g && d.generated_at) g.textContent = 'Updated ' + fmtDate(d.generated_at);
+
+    var totalAll = products.reduce(function (s, p) { return s + p.total; }, 0);
+    var pendingAll = products.reduce(function (s, p) { return s + p.pending; }, 0);
+    document.getElementById('interest-stats').innerHTML =
+      '<div class="stat-card"><div class="stat-label">Total registrations</div><div class="stat-value">' + totalAll + '</div><div class="stat-sub">' + products.length + ' products</div></div>' +
+      '<div class="stat-card"><div class="stat-label">Awaiting notification</div><div class="stat-value">' + pendingAll + '</div><div class="stat-sub">not yet emailed</div></div>';
+
+    if (!products.length) {
+      document.getElementById('interest-products-wrap').innerHTML = '<div class="adm-empty">No registrations yet.</div>';
+    } else {
+      document.getElementById('interest-products-wrap').innerHTML =
+        '<table class="adm-table"><thead><tr><th>Product</th><th>Interested</th><th>Pending</th><th>Notified</th><th></th></tr></thead><tbody>' +
+        products.map(function (p) {
+          return '<tr><td>' + esc(p.name) + ' <span style="color:var(--t3,#6b7280)">' + esc(p.product_slug) + '</span></td>' +
+            '<td style="font-weight:700;color:#fff">' + p.total + '</td>' +
+            '<td>' + p.pending + '</td><td>' + p.notified + '</td>' +
+            '<td style="text-align:right">' + (p.pending > 0
+              ? '<button class="btn-p int-notify" data-slug="' + esc(p.product_slug) + '" data-name="' + esc(p.name) + '" style="width:auto;padding:6px 14px;font-size:11px">Notify ' + p.pending + '</button>'
+              : '<span style="color:var(--t3,#6b7280);font-size:11px">all notified</span>') + '</td></tr>';
+        }).join('') + '</tbody></table>';
+      document.querySelectorAll('.int-notify').forEach(function (b) {
+        b.addEventListener('click', function () { notifyInterest(b.dataset.slug, b.dataset.name, b); });
+      });
+    }
+
+    document.getElementById('interest-recent-wrap').innerHTML = recent.length
+      ? '<table class="adm-table"><thead><tr><th>Date</th><th>Product</th><th>Email</th><th>Status</th></tr></thead><tbody>' +
+        recent.map(function (x) {
+          return '<tr><td>' + fmtDate(x.created_at) + '</td><td>' + esc(x.product_slug) + '</td><td>' + esc(x.email) + '</td><td>' +
+            (x.notified_at ? '<span class="status-badge s-paid">notified</span>' : '<span class="status-badge s-pending">waiting</span>') + '</td></tr>';
+        }).join('') + '</tbody></table>'
+      : '<div class="adm-empty">No registrations yet.</div>';
+  }
+
+  async function notifyInterest(slug, name, btn) {
+    if (!confirm('Email everyone waiting for ' + name + ' that it is now available?')) return;
+    var msg = document.getElementById('interest-msg');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Sending notifications…'; }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/admin/interest', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ product_slug: slug }),
+      });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Failed: ' + esc((d && d.error) || ('HTTP ' + r.status)); } if (btn) { btn.disabled = false; btn.textContent = 'Notify'; } return; }
+      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = 'Sent ' + (d.sent || 0) + ' notification(s) for ' + name + '.'; }
+      loadInterest();
+    } catch (e) {
+      if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Failed: ' + esc(e.message); }
+      if (btn) { btn.disabled = false; btn.textContent = 'Notify'; }
     }
   }
 
