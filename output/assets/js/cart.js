@@ -82,14 +82,16 @@
       });
     });
 
-    // Totals — volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 20%.
-    // Pens are excluded: never discounted and never count toward the tier.
+    // Totals — volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 15%.
+    // Pens and BAC water are excluded: never discounted and never count toward the tier.
     function isPen(i) { return /pen/i.test(i.size || ''); }
+    function isBac(i) { return i.slug === 'bacteriostatic-water'; }
+    function isExcluded(i) { return isPen(i) || isBac(i); }
     var subtotal = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
     var totalQty = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
-    var discQty  = cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : (i.qty || 1)); }, 0);
-    var discBase = cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : i.price * (i.qty || 1)); }, 0);
-    var rate = discQty >= 4 ? 0.20 : (discQty === 3 ? 0.10 : (discQty === 2 ? 0.05 : 0));
+    var discQty  = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : (i.qty || 1)); }, 0);
+    var discBase = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : i.price * (i.qty || 1)); }, 0);
+    var rate = discQty >= 4 ? 0.15 : (discQty === 3 ? 0.10 : (discQty === 2 ? 0.05 : 0));
     var volSaving = Math.round(discBase * rate * 100) / 100;
     var discSub = Math.max(0, subtotal - volSaving);
     var shipping = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
