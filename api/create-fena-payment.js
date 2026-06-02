@@ -119,6 +119,8 @@ export default async function handler(req) {
         items:          Array.isArray(meta.items) ? meta.items : [],
         subtotal:       n(meta.subtotal) || n(amountStr),
         total:          n(meta.total)    || n(amountStr),
+        discount:       n(meta.discount_saving) || 0,
+        shipping:       n(meta.shipping)         || 0,
         status:         'pending',
         payment_method: 'fena',
         notes:          paymentRef,

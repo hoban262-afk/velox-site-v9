@@ -53,7 +53,7 @@ function feeFor(method, total) {
 
 async function buildMetrics() {
   const [oRes, cRes, ovRes] = await Promise.all([
-    sb('orders?status=in.(paid,dispatched,delivered)&select=id,created_at,payment_method,total,subtotal,items&order=created_at.asc'),
+    sb('orders?status=in.(paid,dispatched,delivered)&select=id,created_at,payment_method,total,subtotal,discount,shipping,items&order=created_at.asc'),
     sb('product_costs?select=slug,size,cost_price'),
     sb('business_overheads?active=eq.true&select=name,monthly_cost'),
   ]);
@@ -65,12 +65,18 @@ async function buildMetrics() {
   costs.forEach((c) => { costMap[`${c.slug}|${c.size || ''}`] = n(c.cost_price); });
 
   const sku = {};
-  let rev = 0, cogs = 0, units = 0, feeT = 0;
+  let rev = 0, cogs = 0, units = 0, feeT = 0, grossMerch = 0, discT = 0, shipT = 0;
   const months = {};
   const ordList = [];
   for (const o of orders) {
     let items = o.items; if (typeof items === 'string') { try { items = JSON.parse(items); } catch { items = []; } }
     if (!Array.isArray(items)) items = [];
+    const total = n(o.total);
+    const subtotal = n(o.subtotal);
+    const discount = n(o.discount);
+    const shipping = n(o.shipping);
+    // order-level discount factor (exact, from stored discount): scales list prices
+    const f = subtotal > 0 ? Math.max(0, (subtotal - discount) / subtotal) : 1;
     let oc = 0, ou = 0;
     for (const it of items) {
       const slug = it.slug || ''; const size = it.size || '';
@@ -79,12 +85,14 @@ async function buildMetrics() {
       oc += q * cp; ou += q;
       const k = `${slug} ${size}`.trim();
       sku[k] = sku[k] || { units: 0, rev: 0, cogs: 0 };
-      sku[k].units += q; sku[k].rev += q * price; sku[k].cogs += q * cp;
+      sku[k].units += q; sku[k].rev += q * price * f; sku[k].cogs += q * cp;
     }
-    const total = n(o.total);
     const fee = feeFor(o.payment_method, total);
     const contrib = total - oc - POSTAGE - PACKAGING - fee;
     rev += total; cogs += oc; units += ou; feeT += fee;
+    grossMerch += subtotal;
+    discT += discount;
+    shipT += shipping;
     const mk = String(o.created_at).slice(0, 7);
     months[mk] = months[mk] || { revenue: 0, contribution: 0, orders: 0 };
     months[mk].revenue += total; months[mk].contribution += contrib; months[mk].orders += 1;
@@ -102,7 +110,11 @@ async function buildMetrics() {
   return {
     period_through: new Date().toISOString().slice(0, 10),
     totals: {
-      orders: nOrders, units, revenue: +rev.toFixed(2), cogs: +cogs.toFixed(2),
+      orders: nOrders, units,
+      gross_merchandise: +grossMerch.toFixed(2),
+      discounts_given: +discT.toFixed(2),
+      shipping_charged: +shipT.toFixed(2),
+      revenue: +rev.toFixed(2), cogs: +cogs.toFixed(2),
       gross_profit: +(rev - cogs).toFixed(2),
       gross_margin_pct: rev ? +(100 * (rev - cogs) / rev).toFixed(1) : 0,
       postage_packaging: +fixed.toFixed(2), payment_fees: +feeT.toFixed(2),

@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const [oRes, cRes, ovRes, inRes] = await Promise.all([
-      sb('orders?status=in.(paid,dispatched,delivered)&select=id,created_at,payment_method,total,subtotal,items&order=created_at.asc'),
+      sb('orders?status=in.(paid,dispatched,delivered)&select=id,created_at,payment_method,total,subtotal,discount,shipping,items&order=created_at.asc'),
       sb('product_costs?select=slug,size,cost_price'),
       sb('business_overheads?active=eq.true&select=id,name,monthly_cost,note&order=monthly_cost.desc'),
       sb('margin_insights?select=content,generated_at,model&order=generated_at.desc&limit=1'),
@@ -79,6 +79,8 @@ module.exports = async function handler(req, res) {
           payment_method: o.payment_method || '',
           total: n(o.total),
           subtotal: n(o.subtotal),
+          discount: n(o.discount),
+          shipping: n(o.shipping),
           name: it.name || slug || 'Item',
           slug, size,
           qty: n(it.qty || it.quantity) || 1,

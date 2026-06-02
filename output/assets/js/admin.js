@@ -181,7 +181,7 @@
     // group lines → orders
     var om = {};
     MLINES.forEach(function (l) {
-      if (!om[l.id]) om[l.id] = { id: l.id, created_at: l.created_at, method: l.payment_method, total: l.total, cogs: 0, units: 0 };
+      if (!om[l.id]) om[l.id] = { id: l.id, created_at: l.created_at, method: l.payment_method, total: l.total, subtotal: l.subtotal, discount: l.discount || 0, shipping: l.shipping || 0, cogs: 0, units: 0 };
       om[l.id].cogs += l.qty * (l.cost_price || 0);
       om[l.id].units += l.qty;
     });
@@ -193,14 +193,20 @@
       return o;
     }).sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
 
-    var T = { rev: 0, cogs: 0, fee: 0, units: 0, n: orders.length };
-    orders.forEach(function (o) { T.rev += o.total; T.cogs += o.cogs; T.fee += o.fee; T.units += o.units; });
+    var T = { rev: 0, cogs: 0, fee: 0, units: 0, gross_merch: 0, disc: 0, ship: 0, n: orders.length };
+    orders.forEach(function (o) {
+      T.rev += o.total; T.cogs += o.cogs; T.fee += o.fee; T.units += o.units;
+      T.gross_merch += (o.subtotal || 0);
+      T.disc += (o.discount || 0);
+      T.ship += (o.shipping || 0);
+    });
     var fixed = T.n * (post + pack);
     var gross = T.rev - T.cogs, contrib = T.rev - T.cogs - fixed - T.fee;
     var gm = T.rev ? gross / T.rev : 0, cm = T.rev ? contrib / T.rev : 0, aov = T.n ? T.rev / T.n : 0;
 
     document.getElementById('margins-stats').innerHTML =
       card('Revenue', mGbp(T.rev), T.n + ' paid orders') +
+      card('Discounts given', mGbp(T.disc), T.gross_merch ? mPct(T.disc / T.gross_merch) + ' of list value' : '—') +
       card('Gross profit', mGbp(gross), mPct(gm) + ' gross margin') +
       card('Contribution', mGbp(contrib), mPct(cm) + ' after all costs') +
       card('Avg order value', mGbp(aov), T.units + ' units sold') +
@@ -240,7 +246,9 @@
     MLINES.forEach(function (l) {
       var k = l.slug + '|' + (l.size || '');
       if (!sm[k]) sm[k] = { name: l.name, size: l.size, units: 0, rev: 0, cogs: 0 };
-      sm[k].units += l.qty; sm[k].rev += l.qty * l.price; sm[k].cogs += l.qty * (l.cost_price || 0);
+      // discount-adjusted realised revenue: scale list price by the order's exact discount factor
+      var f = (l.subtotal > 0) ? Math.max(0, (l.subtotal - (l.discount || 0)) / l.subtotal) : 1;
+      sm[k].units += l.qty; sm[k].rev += l.qty * l.price * f; sm[k].cogs += l.qty * (l.cost_price || 0);
     });
     var skus = Object.keys(sm).map(function (k) { var x = sm[k]; x.gp = x.rev - x.cogs; x.gmv = x.rev ? x.gp / x.rev : 0; return x; })
       .sort(function (a, b) { return b.gp - a.gp; });

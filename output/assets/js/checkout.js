@@ -736,6 +736,8 @@
               items:           sbItems,
               subtotal:        Number(chk.subtotal) || Number(chk.total) || 0,  // pre-discount, drives points
               total:           Number(chk.total) || 0,
+              discount:        Number(chk.discount_saving) || 0,
+              shipping:        Number(chk.shipping) || 0,
               payment_method:  chk.payment_method || 'bank',
               notes:           chk.orderRef || '',
               user_id:         uid,
