@@ -533,6 +533,85 @@
   </div>
 </div>
 
+<style>
+  .dotd { padding: 10px 20px 0; }
+  .dotd-card { display:flex; gap:22px; align-items:center; max-width:1120px; margin:0 auto;
+    background:linear-gradient(135deg,#06140f,#0a0d12); border:1px solid rgba(1,211,160,.42);
+    border-radius:16px; padding:20px 24px; text-decoration:none; box-shadow:0 0 40px rgba(1,211,160,.09);
+    transition:transform .15s ease, box-shadow .2s ease; }
+  .dotd-card:hover { transform:translateY(-2px); box-shadow:0 0 54px rgba(1,211,160,.18); }
+  .dotd-imgwrap { flex:0 0 118px; width:118px; height:118px; border-radius:12px; background:#0d0d0d;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .dotd-imgwrap img { width:100%; height:100%; object-fit:contain; }
+  .dotd-body { flex:1; min-width:0; }
+  .dotd-eyebrow { font-family:'DM Mono',monospace; font-size:.72rem; font-weight:700; letter-spacing:.12em;
+    text-transform:uppercase; color:#01D3A0; margin-bottom:6px; }
+  .dotd-name { font-size:1.5rem; font-weight:800; color:#fff; line-height:1.15; }
+  .dotd-headline { font-size:.9rem; color:#9CA3AF; margin-top:4px; }
+  .dotd-price { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:12px 0 4px; }
+  .dotd-was { color:#6B7280; text-decoration:line-through; font-size:1rem; }
+  .dotd-now { color:#01D3A0; font-weight:900; font-size:1.7rem; }
+  .dotd-badge { background:#01D3A0; color:#021; font-weight:800; font-size:.72rem; padding:3px 10px; border-radius:20px; }
+  .dotd-count { font-family:'DM Mono',monospace; font-size:.8rem; color:#D1A400; margin-top:6px; }
+  .dotd-cta { display:inline-block; margin-top:14px; background:#01D3A0; color:#021; font-weight:800;
+    font-size:.85rem; padding:11px 22px; border-radius:8px; }
+  @media (max-width:600px){
+    .dotd-card{ flex-direction:column; align-items:flex-start; padding:18px; }
+    .dotd-imgwrap{ width:100%; height:150px; flex-basis:auto; }
+    .dotd-name{ font-size:1.3rem; } .dotd-now{ font-size:1.5rem; }
+    .dotd-cta{ width:100%; text-align:center; box-sizing:border-box; }
+  }
+</style>
+<section class="dotd" id="dotd-sec" hidden aria-label="Deal of the day">
+  <a class="dotd-card" id="dotd-link" href="#">
+    <div class="dotd-imgwrap"><img id="dotd-img" alt="" loading="lazy"></div>
+    <div class="dotd-body">
+      <div class="dotd-eyebrow">&#9733; Deal of the Day</div>
+      <div class="dotd-name" id="dotd-name"></div>
+      <div class="dotd-headline" id="dotd-headline"></div>
+      <div class="dotd-price">
+        <span class="dotd-was" id="dotd-was"></span>
+        <span class="dotd-now" id="dotd-now"></span>
+        <span class="dotd-badge" id="dotd-badge"></span>
+      </div>
+      <div class="dotd-count" id="dotd-count" hidden>Ends in <span id="dotd-timer"></span></div>
+      <span class="dotd-cta">Shop the deal &rarr;</span>
+    </div>
+  </a>
+</section>
+<script>
+(function () {
+  fetch('/api/deal').then(function (r) { return r.json(); }).then(function (d) {
+    var deal = d && d.deal; if (!deal) return;
+    var sec = document.getElementById('dotd-sec'); if (!sec) return;
+    document.getElementById('dotd-link').href = deal.url;
+    var img = document.getElementById('dotd-img');
+    img.onerror = function () { this.parentNode.style.display = 'none'; };
+    img.src = deal.image; img.alt = deal.name;
+    document.getElementById('dotd-name').textContent = deal.name + ' · ' + deal.size;
+    var hl = document.getElementById('dotd-headline');
+    if (deal.headline) { hl.textContent = deal.headline; } else { hl.style.display = 'none'; }
+    document.getElementById('dotd-was').textContent = '£' + Number(deal.base_price).toFixed(2);
+    document.getElementById('dotd-now').textContent = '£' + Number(deal.deal_price).toFixed(2);
+    document.getElementById('dotd-badge').textContent = Math.round(deal.discount_pct) + '% OFF';
+    sec.hidden = false;
+    if (deal.ends_at) {
+      var end = new Date(deal.ends_at).getTime();
+      var cEl = document.getElementById('dotd-count'), tEl = document.getElementById('dotd-timer');
+      cEl.hidden = false;
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      var iv;
+      var tick = function () {
+        var ms = end - Date.now();
+        if (ms <= 0) { sec.hidden = true; clearInterval(iv); return; }
+        var s = Math.floor(ms / 1000), dd = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
+        tEl.textContent = (dd > 0 ? dd + 'd ' : '') + pad(h) + ':' + pad(m) + ':' + pad(ss);
+      };
+      tick(); iv = setInterval(tick, 1000);
+    }
+  }).catch(function () {});
+})();
+</script>
 <section class="hp-sec">
   <div class="vp-vs">
     <div class="vp-vs-eyebrow">Why Velox</div>

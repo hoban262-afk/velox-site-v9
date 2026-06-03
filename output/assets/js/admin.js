@@ -102,7 +102,8 @@
   var TAB_TITLES = {
     overview: 'Overview', actions: 'Actions', orders: 'Orders', margins: 'Margins',
     interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
-    campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings'
+    campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings',
+    deal: 'Deal of the Day'
   };
   var BN_PRIMARY = { overview: 1, orders: 1, margins: 1, customers: 1 };
 
@@ -167,6 +168,7 @@
     loadXeroStatus();
     loadClickDropStatus();
     loadAnalytics();
+    loadDeal();
     registerSW();
     wirePush();
   }
@@ -579,6 +581,114 @@
       if (r.ok) pushStatus('Test sent to ' + (d.sent || 0) + ' device(s).', '#01D3A0');
       else pushStatus('Test failed: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171');
     } catch (e) { pushStatus('Test failed: ' + esc(e.message), '#f87171'); }
+  }
+
+  // ── DEAL OF THE DAY ─────────────────────────────────────────────────────────
+  var DEAL_VARIANTS = [];
+  var dealBound = false;
+
+  function toLocalDT(dt) {
+    var p = function (n) { return String(n).padStart(2, '0'); };
+    return dt.getFullYear() + '-' + p(dt.getMonth() + 1) + '-' + p(dt.getDate()) + 'T' + p(dt.getHours()) + ':' + p(dt.getMinutes());
+  }
+
+  async function loadDeal() {
+    if (!window._sb) return;
+    try {
+      var pv = await window._sb.from('product_variants').select('slug,size,name,base_price').order('name', { ascending: true });
+      DEAL_VARIANTS = pv.data || [];
+    } catch (e) { DEAL_VARIANTS = []; }
+    var sel = document.getElementById('deal-product');
+    if (sel) {
+      sel.innerHTML = '<option value="">— choose a product —</option>' + DEAL_VARIANTS.map(function (v) {
+        return '<option value="' + esc(v.slug) + '|' + esc(v.size) + '">' + esc(v.name) + ' · ' + esc(v.size) + ' (£' + Number(v.base_price).toFixed(2) + ')</option>';
+      }).join('');
+    }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/admin/deal', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      var deal = d && d.deal;
+      var st = document.getElementById('deal-status');
+      if (deal) {
+        if (sel) sel.value = deal.slug + '|' + deal.size;
+        var pctEl = document.getElementById('deal-pct'); if (pctEl) pctEl.value = deal.discount_pct;
+        var hEl = document.getElementById('deal-headline'); if (hEl) hEl.value = deal.headline || '';
+        var aEl = document.getElementById('deal-active'); if (aEl) aEl.checked = deal.active !== false;
+        var apEl = document.getElementById('deal-apply'); if (apEl) apEl.checked = deal.applied === true;
+        var eEl = document.getElementById('deal-ends'); if (eEl && deal.ends_at) eEl.value = toLocalDT(new Date(deal.ends_at));
+        if (st) st.textContent = 'Live: ' + deal.slug + ' · ' + deal.discount_pct + '% off' + (deal.applied ? ' · real price live' : '');
+      } else if (st) { st.textContent = 'No deal running'; }
+    } catch (e) {}
+    if (!dealBound) {
+      dealBound = true;
+      ['deal-product', 'deal-pct'].forEach(function (id) { var el = document.getElementById(id); if (el) el.addEventListener('input', renderDealPreview); });
+      var sv = document.getElementById('deal-save'); if (sv) sv.addEventListener('click', saveDeal);
+      var cl = document.getElementById('deal-clear'); if (cl) cl.addEventListener('click', clearDeal);
+    }
+    renderDealPreview();
+  }
+
+  function renderDealPreview() {
+    var prev = document.getElementById('deal-preview'); if (!prev) return;
+    var sel = document.getElementById('deal-product');
+    var pct = parseFloat((document.getElementById('deal-pct') || {}).value);
+    var key = sel ? sel.value : '';
+    if (!key || !(pct > 0)) { prev.innerHTML = 'Pick a product and a discount to preview the homepage block.'; return; }
+    var parts = key.split('|');
+    var v = DEAL_VARIANTS.filter(function (x) { return x.slug === parts[0] && x.size === parts[1]; })[0];
+    if (!v) { prev.innerHTML = ''; return; }
+    var base = Number(v.base_price); var dp = Math.round(base * (1 - pct / 100) * 100) / 100;
+    prev.innerHTML = '<div style="background:var(--bg3,#0a0d12);border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:14px 16px">' +
+      '<div style="font-size:12px;color:#01D3A0;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Homepage preview</div>' +
+      '<div style="font-size:15px;color:#fff;font-weight:700">' + esc(v.name) + ' · ' + esc(v.size) + '</div>' +
+      '<div style="margin-top:4px"><span style="color:var(--t3,#6b7280);text-decoration:line-through">£' + base.toFixed(2) + '</span>' +
+      '<span style="color:#01D3A0;font-weight:800;font-size:18px;margin-left:8px">£' + dp.toFixed(2) + '</span>' +
+      '<span style="background:#01D3A0;color:#021;font-weight:800;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:8px">' + Math.round(pct) + '% OFF</span></div></div>';
+  }
+
+  async function saveDeal() {
+    var msg = document.getElementById('deal-msg');
+    var sel = document.getElementById('deal-product');
+    var key = sel ? sel.value : '';
+    var pct = parseFloat((document.getElementById('deal-pct') || {}).value);
+    if (!key) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Pick a product.'; } return; }
+    if (!(pct > 0 && pct <= 95)) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Discount must be 1–95%.'; } return; }
+    var parts = key.split('|');
+    var endsVal = (document.getElementById('deal-ends') || {}).value;
+    var body = {
+      slug: parts[0], size: parts[1], discount_pct: pct,
+      headline: (document.getElementById('deal-headline') || {}).value || '',
+      ends_at: endsVal ? new Date(endsVal).toISOString() : null,
+      active: !!(document.getElementById('deal-active') || {}).checked,
+      apply: !!(document.getElementById('deal-apply') || {}).checked,
+    };
+    if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Saving…'; }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/admin/deal', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = (d && d.error) || ('HTTP ' + r.status); } return; }
+      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Deal is live on the homepage.'; }
+      if (window.showToast) showToast('Deal of the Day updated', 'ok');
+      var st = document.getElementById('deal-status'); if (st) st.textContent = 'Live: ' + parts[0] + ' · ' + pct + '% off';
+    } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
+  }
+
+  async function clearDeal() {
+    if (!confirm('Remove the Deal of the Day from the homepage?')) return;
+    var msg = document.getElementById('deal-msg');
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/admin/deal', { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+      if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Clear failed'; } return; }
+      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = 'Deal cleared.'; }
+      var st = document.getElementById('deal-status'); if (st) st.textContent = 'No deal running';
+      if (window.showToast) showToast('Deal cleared', 'ok');
+    } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
   }
 
   // ── APPROVAL INBOX (agent_actions) ──────────────────────────────────────────
