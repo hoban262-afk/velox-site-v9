@@ -124,6 +124,8 @@
     loadActions();
     loadXeroStatus();
     loadClickDropStatus();
+    registerSW();
+    wirePush();
   }
 
   // ── MARGINS (profit dashboard) ──────────────────────────────────────────────
@@ -459,6 +461,83 @@
     }
   }
 
+  // ── PUSH / PWA (order alerts on this device) ────────────────────────────────
+  var VAPID_PUBLIC = 'BB2LHMCFOvkgS5qsI8tsrOcHD_4aI8rc5l-GBVduJ5o-SjsI61Ck2iUqtLrVmdRzU1gC9TubyBlEsmedPyL1VFA';
+  var pushBound = false;
+
+  function registerSW() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/admin/sw.js', { scope: '/admin/' }).catch(function (e) { console.warn('SW reg failed', e && e.message); });
+    }
+  }
+  function urlB64ToUint8(base64) {
+    var pad = '='.repeat((4 - base64.length % 4) % 4);
+    var b64 = (base64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+    var raw = atob(b64); var arr = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    return arr;
+  }
+  function pushStatus(t, color) { var el = document.getElementById('push-status'); if (el) { el.textContent = t; el.style.color = color || 'var(--t3,#6b7280)'; } }
+
+  async function wirePush() {
+    if (pushBound) return; pushBound = true;
+    var enableBtn = document.getElementById('push-enable');
+    var testBtn = document.getElementById('push-test');
+    if (enableBtn) enableBtn.addEventListener('click', enablePush);
+    if (testBtn) testBtn.addEventListener('click', testPush);
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      pushStatus('This browser doesn’t support push. On iPhone: add to Home Screen first (iOS 16.4+), then open it and try again.');
+      if (enableBtn) enableBtn.disabled = true; return;
+    }
+    try {
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if (sub && Notification.permission === 'granted') {
+        pushStatus('✓ Alerts on for this device.', '#01D3A0');
+        if (enableBtn) enableBtn.textContent = 'Re-enable';
+        if (testBtn) testBtn.style.display = '';
+      }
+    } catch (e) {}
+  }
+
+  async function enablePush() {
+    var btn = document.getElementById('push-enable');
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) { pushStatus('Push not supported on this browser/device.'); return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Enabling…'; }
+    try {
+      var perm = await Notification.requestPermission();
+      if (perm !== 'granted') { pushStatus('Notification permission denied — enable it in browser settings.', '#f87171'); if (btn) { btn.disabled = false; btn.textContent = 'Enable order alerts'; } return; }
+      var reg = await navigator.serviceWorker.register('/admin/sw.js', { scope: '/admin/' });
+      await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(VAPID_PUBLIC) });
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/admin/push-subscribe', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ subscription: sub.toJSON(), label: navigator.userAgent.slice(0, 60) }),
+      });
+      if (!r.ok) { var d = await r.json().catch(function () { return {}; }); pushStatus('Could not save: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171'); if (btn) { btn.disabled = false; btn.textContent = 'Enable order alerts'; } return; }
+      pushStatus('✓ Alerts on for this device.', '#01D3A0');
+      if (btn) { btn.disabled = false; btn.textContent = 'Re-enable'; }
+      var testBtn = document.getElementById('push-test'); if (testBtn) testBtn.style.display = '';
+    } catch (e) {
+      pushStatus('Failed: ' + esc(e.message), '#f87171');
+      if (btn) { btn.disabled = false; btn.textContent = 'Enable order alerts'; }
+    }
+  }
+
+  async function testPush() {
+    pushStatus('Sending test…');
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/admin/push-test', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (r.ok) pushStatus('Test sent to ' + (d.sent || 0) + ' device(s).', '#01D3A0');
+      else pushStatus('Test failed: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171');
+    } catch (e) { pushStatus('Test failed: ' + esc(e.message), '#f87171'); }
+  }
+
   // ── APPROVAL INBOX (agent_actions) ──────────────────────────────────────────
   function loadActions() {
     if (!window._sb) return;
@@ -698,6 +777,8 @@
       });
     var cb = document.getElementById('ord-create');
     if (cb && !cb._wired) { cb._wired = true; cb.addEventListener('click', createOrder); }
+    var ex = document.getElementById('orders-export');
+    if (ex && !ex._wired) { ex._wired = true; ex.addEventListener('click', exportOrdersCSV); }
   }
 
   function ordVal(id) { var e = document.getElementById(id); return e ? e.value : ''; }
@@ -736,6 +817,49 @@
     loadOrders();
   }
 
+  function orderItems(o) {
+    var items = o.items;
+    if (typeof items === 'string') { try { items = JSON.parse(items); } catch (e) { items = []; } }
+    return Array.isArray(items) ? items : [];
+  }
+  function itemCount(o) { return orderItems(o).reduce(function (s, it) { return s + (Number(it.qty || it.quantity) || 1); }, 0); }
+
+  function orderDetailsHtml(o) {
+    var items = orderItems(o);
+    var rows = items.length ? items.map(function (it) {
+      var qty = Number(it.qty || it.quantity) || 1;
+      var price = Number(it.price) || 0;
+      return '<tr><td style="padding:5px 10px;color:#e5e7eb">' + esc(it.name || it.slug || 'Item') +
+        (it.size ? ' <span style="color:var(--t3,#6b7280)">' + esc(it.size) + '</span>' : '') + '</td>' +
+        '<td style="padding:5px 10px;text-align:right;color:var(--t2,#9ca3af)">×' + qty + '</td>' +
+        '<td style="padding:5px 10px;text-align:right;color:var(--t2,#9ca3af)">£' + price.toFixed(2) + '</td>' +
+        '<td style="padding:5px 10px;text-align:right;color:#fff">£' + (price * qty).toFixed(2) + '</td></tr>';
+    }).join('') : '<tr><td colspan="4" style="padding:6px 10px;color:var(--t3,#6b7280)">No line items recorded.</td></tr>';
+    var addr = [o.ship_line1, o.ship_line2, o.ship_city, o.ship_postcode, o.ship_country].filter(Boolean).join(', ');
+    var money = function (v) { return '£' + (Number(v) || 0).toFixed(2); };
+    var meta = '<div style="display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--t2,#9ca3af);margin-top:10px">' +
+      '<div><span style="color:var(--t3,#6b7280)">Subtotal</span> ' + money(o.subtotal) + '</div>' +
+      '<div><span style="color:var(--t3,#6b7280)">Discount</span> −' + money(o.discount) + '</div>' +
+      '<div><span style="color:var(--t3,#6b7280)">Shipping</span> ' + money(o.shipping) + '</div>' +
+      '<div><span style="color:var(--t3,#6b7280)">Total</span> <strong style="color:#01D3A0">' + money(o.total) + '</strong></div>' +
+      '<div><span style="color:var(--t3,#6b7280)">Method</span> ' + esc(o.payment_method || '—') + '</div></div>';
+    return '<div style="background:var(--bg3,#0a0d12);border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:14px 16px">' +
+      '<table style="width:100%;border-collapse:collapse;font-size:12.5px"><thead><tr>' +
+        '<th style="text-align:left;padding:4px 10px;color:var(--t3,#6b7280);font-weight:500;font-size:11px">Item</th>' +
+        '<th style="text-align:right;padding:4px 10px;color:var(--t3,#6b7280);font-weight:500;font-size:11px">Qty</th>' +
+        '<th style="text-align:right;padding:4px 10px;color:var(--t3,#6b7280);font-weight:500;font-size:11px">Unit</th>' +
+        '<th style="text-align:right;padding:4px 10px;color:var(--t3,#6b7280);font-weight:500;font-size:11px">Line</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>' + meta +
+      (addr ? '<div style="margin-top:10px;font-size:12px;color:var(--t2,#9ca3af)"><span style="color:var(--t3,#6b7280)">Deliver to:</span> ' + esc(addr) +
+              (o.ship_phone ? ' · ' + esc(o.ship_phone) : '') + '</div>' : '') +
+      '</div>';
+  }
+
+  window.toggleOrderDetails = function (id) {
+    var row = document.getElementById('ord-det-' + id);
+    if (row) row.style.display = (row.style.display === 'none' || !row.style.display) ? '' : 'none';
+  };
+
   function renderOrders(orders) {
     var el = document.getElementById('orders-table-wrap');
     if (!el) return;
@@ -745,27 +869,57 @@
     }
     el.innerHTML = '<table class="adm-table">' +
       '<thead><tr>' +
-        '<th>Date</th><th>Reference</th><th>Customer</th>' +
+        '<th></th><th>Date</th><th>Reference</th><th>Customer</th><th>Items</th>' +
         '<th>Total</th><th>Status</th><th>Action</th>' +
       '</tr></thead>' +
       '<tbody>' + orders.map(function (o) {
         var ref = o.notes || o.id.slice(0, 8).toUpperCase();
-        return '<tr>' +
+        return '<tr style="cursor:pointer" onclick="toggleOrderDetails(\'' + o.id + '\')">' +
+          '<td style="color:var(--g,#01D3A0);width:14px">▸</td>' +
           '<td style="color:var(--t2)">' + fmtDate(o.created_at) + '</td>' +
           '<td><span style="font-family:monospace;font-size:11px;color:var(--t2)">' + esc(ref) + '</span></td>' +
           '<td><div style="color:#fff;font-size:13px;">' + esc(o.customer_name) + '</div>' +
             '<div style="color:var(--t3);font-size:11px;">' + esc(o.customer_email) + '</div></td>' +
+          '<td style="color:var(--t2);font-size:12px">' + itemCount(o) + '</td>' +
           '<td style="color:var(--g);font-weight:600;">£' + parseFloat(o.total || 0).toFixed(2) + '</td>' +
           '<td>' + statusBadge(o.status) + '</td>' +
-          '<td>' +
+          '<td onclick="event.stopPropagation()">' +
             '<select class="status-select" onchange="updateOrderStatus(\'' + o.id + '\', this.value)">' +
               ['pending','paid','dispatched','cancelled'].map(function (s) {
                 return '<option value="' + s + '"' + (o.status === s ? ' selected' : '') + '>' + s + '</option>';
               }).join('') +
             '</select>' +
           '</td>' +
-        '</tr>';
+        '</tr>' +
+        '<tr id="ord-det-' + o.id + '" style="display:none"><td colspan="8" style="padding:0 12px 14px">' + orderDetailsHtml(o) + '</td></tr>';
       }).join('') + '</tbody></table>';
+  }
+
+  function exportOrdersCSV() {
+    var orders = ordersCache || [];
+    if (!orders.length) { alert('No orders to export.'); return; }
+    var cols = ['Date','Reference','Customer','Email','Phone','Items','Subtotal','Discount','Shipping','Total','Status','Payment','Address'];
+    function q(v) { v = (v == null ? '' : String(v)); return '"' + v.replace(/"/g, '""') + '"'; }
+    var lines = [cols.join(',')];
+    orders.forEach(function (o) {
+      var ref = o.notes || o.id.slice(0, 8).toUpperCase();
+      var items = orderItems(o).map(function (it) {
+        return (it.name || it.slug || 'Item') + (it.size ? ' ' + it.size : '') + ' x' + (Number(it.qty || it.quantity) || 1);
+      }).join('; ');
+      var addr = [o.ship_line1, o.ship_line2, o.ship_city, o.ship_postcode, o.ship_country].filter(Boolean).join(', ');
+      lines.push([
+        q(new Date(o.created_at).toISOString()), q(ref), q(o.customer_name), q(o.customer_email), q(o.ship_phone),
+        q(items), q(Number(o.subtotal || 0).toFixed(2)), q(Number(o.discount || 0).toFixed(2)),
+        q(Number(o.shipping || 0).toFixed(2)), q(Number(o.total || 0).toFixed(2)),
+        q(o.status), q(o.payment_method), q(addr),
+      ].join(','));
+    });
+    var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'velox-orders-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
   function renderRecentOrders(orders) {

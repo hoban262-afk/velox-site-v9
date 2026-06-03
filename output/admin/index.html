@@ -9,6 +9,14 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#030407">
 
+  <!-- PWA: installable store app -->
+  <link rel="manifest" href="/admin/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/images/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Velox Admin">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -193,7 +201,11 @@
         <div id="ord-create-msg" style="font-size:12px;margin-top:8px"></div>
       </div>
       <div class="adm-section">
-        <div class="adm-sec-hdr"><div class="adm-sec-title">All orders</div></div>
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">All orders</div>
+          <button class="btn-p" id="orders-export" style="width:auto;padding:7px 16px;font-size:12px">Export CSV</button>
+        </div>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 14px">Click any order to see its contents, discount, shipping and delivery address.</p>
         <div id="orders-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
     </div>
@@ -342,6 +354,17 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
 
     <!-- Settings / Integrations -->
     <div class="admin-panel" id="panel-settings">
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Order alerts on this device</div></div>
+        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 14px;line-height:1.5">
+          Install this admin as an app (browser menu → <strong style="color:#fff">Add to Home Screen</strong>) and turn on push notifications to get an instant alert on your phone for every new order — no need to keep it open. Do this on each device you and Luke want alerted.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn-p" id="push-enable" style="width:auto;padding:10px 20px">Enable order alerts</button>
+          <button class="status-select" id="push-test" style="cursor:pointer;padding:9px 16px;display:none">Send test</button>
+          <span id="push-status" style="font-size:12px;color:var(--t3,#6b7280)"></span>
+        </div>
+      </div>
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">Integrations</div></div>
         <div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">

@@ -1,4 +1,6 @@
 const { Resend } = require('resend');
+const { sendWhatsApp } = require('../lib/notify-whatsapp');
+const { sendPush } = require('../lib/notify-push');
 
 const LOGO = 'https://veloxpeps.com/assets/images/veloxpeps2.png';
 
@@ -409,13 +411,36 @@ async function sendEmails(d, idempotencyKey) {
   const customerOpts = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-customer` } : {};
 
   console.log(`[send-order] Sending admin email for ${d.order_number}${idempotencyKey ? ` (idempotencyKey: ${idempotencyKey}-admin)` : ''}`);
-  // Admin notification — always fires
+  // Admin notification — always fires. Goes to the monitored order-alert inbox(es).
+  // Override via ORDER_ALERT_EMAILS (comma-separated) in the project env.
+  const ORDER_ALERTS = (process.env.ORDER_ALERT_EMAILS || 'support@veloxpeps.com')
+    .split(',').map((s) => s.trim()).filter(Boolean);
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
-    to: 'support@veloxpeps.com',
+    to: ORDER_ALERTS,
+    replyTo: 'support@veloxpeps.com',
     subject: `New Order ${d.order_number} — ${d.currency === 'EUR' ? '€' : '£'}${d.order_total} — ${isInstant ? 'PAID' : 'PENDING'}`,
     html: buildAdminHtml(d, itemsHtml),
   }, adminOpts);
+
+  // WhatsApp alert to the team (owner + Luke) — best-effort, never blocks the order.
+  try {
+    const sym = d.currency === 'EUR' ? '€' : '£';
+    const itemsLine = String(d.order_items || '').split('\n').map((x) => x.trim()).filter(Boolean).join('; ').slice(0, 350);
+    await sendWhatsApp(
+      `🟢 New order ${d.order_number}\n${sym}${d.order_total} · ${isInstant ? 'PAID' : 'PENDING'}\n${d.customer_name || ''}` +
+      (itemsLine ? `\n${itemsLine}` : ''));
+  } catch (e) { console.error('[send-order] whatsapp failed:', e.message); }
+
+  // Web push to installed admin devices (the "cha-ching") — best-effort.
+  try {
+    const sym = d.currency === 'EUR' ? '€' : '£';
+    await sendPush({
+      title: `New order — ${sym}${d.order_total}`,
+      body: `${d.order_number} · ${isInstant ? 'PAID' : 'PENDING'} · ${d.customer_name || 'Customer'}`,
+      url: '/admin/',
+    });
+  } catch (e) { console.error('[send-order] push failed:', e.message); }
 
   // Customer email — different template per payment method
   const customerSubject = isInstant

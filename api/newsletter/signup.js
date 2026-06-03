@@ -9,6 +9,7 @@
  */
 const crypto = require('crypto');
 const { Resend } = require('resend');
+const { sendWhatsApp } = require('../../lib/notify-whatsapp');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -185,6 +186,10 @@ module.exports = async function handler(req, res) {
         });
       } catch (e) { console.error('[newsletter/signup] email send failed:', e.message); }
     }
+
+    // WhatsApp alert to the team (owner + Luke) — best-effort.
+    try { await sendWhatsApp(`✉️ Newsletter signup\n${email}`); }
+    catch (e) { console.error('[newsletter/signup] whatsapp failed:', e.message); }
 
     return res.status(200).json({ success: true, already: false, codeHint: 'VELOX-',
       message: 'Code sent to your inbox' });
