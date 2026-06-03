@@ -17,10 +17,10 @@ module.exports = async function handler(req, res) {
   const sid = String(b.sid || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
   if (!sid) { res.status(204).end(); return; }
 
-  // Don't make the visitor wait on the DB write.
-  res.status(204).end();
+  // Write BEFORE responding — on Vercel, work after res.end() can be frozen and
+  // never complete. The client uses sendBeacon, so it doesn't wait on this anyway.
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/site_presence`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/site_presence?on_conflict=sid`, {
       method: 'POST',
       headers: {
         apikey: SERVICE, Authorization: `Bearer ${SERVICE}`,
@@ -29,5 +29,11 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({ sid, last_seen: new Date().toISOString() }),
     });
-  } catch (e) { /* best-effort */ }
+    if (!r.ok) {
+      const t = await r.text().catch(function () { return ''; });
+      console.error('[presence] write failed', r.status, t);
+    }
+  } catch (e) { console.error('[presence]', e.message); }
+  res.status(204).end();
 };
+
