@@ -124,6 +124,7 @@
     loadActions();
     loadXeroStatus();
     loadClickDropStatus();
+    loadAnalytics();
     registerSW();
     wirePush();
   }
@@ -1108,6 +1109,22 @@
   // ── DASHBOARD (period stats + chart) + CUSTOMERS + ORDER FILTER ──────────────
   var DASH_PERIOD = '7';
   var extrasWired = false;
+  var ANALYTICS = [];
+
+  function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+
+  async function loadAnalytics() {
+    if (!window._sb) return;
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) return;
+      var r = await fetch('/api/admin/analytics', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      ANALYTICS = (d && d.rows) || [];
+      renderDashboard(ordersCache);
+    } catch (e) { /* dashboard still works without GA */ }
+  }
 
   function isPaid(o) { return o.status === 'paid' || o.status === 'dispatched'; }
   function ordUnits(o) { return orderItems(o).reduce(function (s, it) { return s + (Number(it.qty || it.quantity) || 1); }, 0); }
@@ -1136,11 +1153,18 @@
     var n = inPeriod.length;
     var aov = n ? rev / n : 0;
     var label = DASH_PERIOD === 'today' ? 'today' : 'last ' + DASH_PERIOD + ' days';
+    // GA visitors + conversion for the same window
+    var sinceStr = ymd(since);
+    var conn = (ANALYTICS || []).length > 0;
+    var sessions = (ANALYTICS || []).filter(function (a) { return a.date >= sinceStr; }).reduce(function (s, a) { return s + (a.sessions || 0); }, 0);
+    var convRate = sessions ? (n / sessions * 100) : 0;
     el.innerHTML =
       card2('Revenue', '£' + rev.toFixed(2), label) +
       card2('Orders', String(n), label) +
       card2('Avg order', '£' + aov.toFixed(2), n + ' paid') +
-      card2('Units sold', String(units), label);
+      card2('Units sold', String(units), label) +
+      card2('Visitors', conn ? String(sessions) : '—', conn ? label + ' (sessions)' : 'GA not connected') +
+      card2('Conversion', (conn && sessions) ? convRate.toFixed(1) + '%' : '—', conn ? (n + ' orders / ' + sessions + ' sessions') : 'connect GA in Settings');
     // highlight active period button
     document.querySelectorAll('.dash-per').forEach(function (b) {
       var on = b.dataset.period === DASH_PERIOD;
@@ -1221,17 +1245,50 @@
 
   // ── SUBSCRIBERS ───────────────────────────────────────────────────────────
 
+  var lastSubs = [];
+  var subsExportBound = false;
   function loadSubscribers() {
     if (!window._sb) return;
+    if (!subsExportBound) {
+      var xbtn = document.getElementById('subs-export');
+      if (xbtn) { xbtn.addEventListener('click', exportSubscribersCSV); subsExportBound = true; }
+    }
     window._sb.from('subscribers')
       .select('*')
       .order('created_at', { ascending: false })
       .then(function (r) {
         var subs = r.data || [];
+        lastSubs = subs;
         var subsEl = document.getElementById('stat-subs');
         if (subsEl) subsEl.textContent = subs.length;
         renderSubscribers(subs);
       });
+  }
+
+  function exportSubscribersCSV() {
+    if (!lastSubs.length) { if (window.toast) window.toast('No subscribers to export yet.'); return; }
+    var rows = [['email', 'subscribed_at', 'source', 'status']];
+    lastSubs.forEach(function (s) {
+      rows.push([
+        s.email || '',
+        s.created_at ? new Date(s.created_at).toISOString() : '',
+        s.source || 'website',
+        s.unsubscribed_at ? 'unsubscribed' : 'active',
+      ]);
+    });
+    var csv = rows.map(function (r) {
+      return r.map(function (v) {
+        v = String(v == null ? '' : v);
+        return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+      }).join(',');
+    }).join('\r\n');
+    var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'velox-subscribers-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
   function renderSubscribers(subs) {
