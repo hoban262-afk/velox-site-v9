@@ -145,6 +145,7 @@
       <button class="admin-tab"        data-tab="orders"       onclick="switchTab('orders')">Orders</button>
       <button class="admin-tab"        data-tab="margins"      onclick="switchTab('margins')">Margins</button>
       <button class="admin-tab"        data-tab="interest"     onclick="switchTab('interest')">Interest</button>
+      <button class="admin-tab"        data-tab="customers"    onclick="switchTab('customers')">Customers</button>
       <button class="admin-tab"        data-tab="pricing"      onclick="switchTab('pricing')">Pricing</button>
       <button class="admin-tab"        data-tab="reviews"      onclick="switchTab('reviews')">Reviews</button>
       <button class="admin-tab"        data-tab="campaign"     onclick="switchTab('campaign')">Campaign</button>
@@ -155,6 +156,18 @@
 
     <!-- Overview -->
     <div class="admin-panel active" id="panel-overview">
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Performance</div>
+          <div id="dash-periods" style="display:flex;gap:4px">
+            <button class="dash-per status-select" data-period="today" style="cursor:pointer">Today</button>
+            <button class="dash-per status-select" data-period="7" style="cursor:pointer">7 days</button>
+            <button class="dash-per status-select" data-period="30" style="cursor:pointer">30 days</button>
+          </div>
+        </div>
+        <div class="stat-grid" id="dash-stats"><div class="adm-loading">Loading&hellip;</div></div>
+        <div id="dash-chart" style="margin-top:8px"></div>
+      </div>
       <div class="stat-grid" id="overview-stats">
         <div class="stat-card"><div class="stat-label">Total orders</div><div class="stat-value" id="stat-orders">—</div></div>
         <div class="stat-card"><div class="stat-label">Paid orders</div><div class="stat-value" id="stat-paid">—</div></div>
@@ -205,8 +218,31 @@
           <div class="adm-sec-title">All orders</div>
           <button class="btn-p" id="orders-export" style="width:auto;padding:7px 16px;font-size:12px">Export CSV</button>
         </div>
-        <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 14px">Click any order to see its contents, discount, shipping and delivery address.</p>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 12px">Click any order to see its contents, discount, shipping and delivery address.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <input id="ord-search" class="status-select" placeholder="Search name, email or reference" style="flex:1;min-width:200px">
+          <select id="ord-filter" class="status-select">
+            <option value="">All statuses</option>
+            <option value="pending">pending</option>
+            <option value="paid">paid</option>
+            <option value="dispatched">dispatched</option>
+            <option value="cancelled">cancelled</option>
+          </select>
+        </div>
         <div id="orders-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
+    <!-- Customers -->
+    <div class="admin-panel" id="panel-customers">
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Customers</div>
+          <input id="cust-search" class="status-select" placeholder="Search name or email" style="max-width:220px">
+        </div>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 12px">Everyone who's ordered, ranked by total spend. Repeat buyers are your most valuable.</p>
+        <div class="stat-grid" id="cust-stats"></div>
+        <div id="customers-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
     </div>
 

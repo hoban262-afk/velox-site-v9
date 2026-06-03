@@ -771,9 +771,12 @@
       .order('created_at', { ascending: false })
       .then(function (r) {
         ordersCache = r.data || [];
-        renderOrders(ordersCache);
+        applyOrderFilter();
         renderRecentOrders(ordersCache.slice(0, 5));
         updateStats(ordersCache);
+        renderDashboard(ordersCache);
+        renderCustomers(ordersCache);
+        wireAdminExtras();
       });
     var cb = document.getElementById('ord-create');
     if (cb && !cb._wired) { cb._wired = true; cb.addEventListener('click', createOrder); }
@@ -1102,6 +1105,120 @@
     if (recSub) recSub.textContent = recovered.length + (recovered.length === 1 ? ' order' : ' orders');
   }
 
+  // ── DASHBOARD (period stats + chart) + CUSTOMERS + ORDER FILTER ──────────────
+  var DASH_PERIOD = '7';
+  var extrasWired = false;
+
+  function isPaid(o) { return o.status === 'paid' || o.status === 'dispatched'; }
+  function ordUnits(o) { return orderItems(o).reduce(function (s, it) { return s + (Number(it.qty || it.quantity) || 1); }, 0); }
+  function startOfDay(d) { d = new Date(d); d.setHours(0, 0, 0, 0); return d; }
+
+  function wireAdminExtras() {
+    if (extrasWired) return; extrasWired = true;
+    document.querySelectorAll('.dash-per').forEach(function (b) {
+      b.addEventListener('click', function () { DASH_PERIOD = b.dataset.period; renderDashboard(ordersCache); });
+    });
+    var os = document.getElementById('ord-search'); if (os) os.addEventListener('input', applyOrderFilter);
+    var of = document.getElementById('ord-filter'); if (of) of.addEventListener('change', applyOrderFilter);
+    var cs = document.getElementById('cust-search'); if (cs) cs.addEventListener('input', function () { renderCustomers(ordersCache); });
+  }
+
+  function renderDashboard(orders) {
+    var el = document.getElementById('dash-stats');
+    if (!el) return;
+    var now = new Date();
+    var since;
+    if (DASH_PERIOD === 'today') since = startOfDay(now);
+    else { since = startOfDay(now); since.setDate(since.getDate() - (Number(DASH_PERIOD) - 1)); }
+    var inPeriod = orders.filter(function (o) { return isPaid(o) && new Date(o.created_at) >= since; });
+    var rev = inPeriod.reduce(function (s, o) { return s + (parseFloat(o.total) || 0); }, 0);
+    var units = inPeriod.reduce(function (s, o) { return s + ordUnits(o); }, 0);
+    var n = inPeriod.length;
+    var aov = n ? rev / n : 0;
+    var label = DASH_PERIOD === 'today' ? 'today' : 'last ' + DASH_PERIOD + ' days';
+    el.innerHTML =
+      card2('Revenue', '£' + rev.toFixed(2), label) +
+      card2('Orders', String(n), label) +
+      card2('Avg order', '£' + aov.toFixed(2), n + ' paid') +
+      card2('Units sold', String(units), label);
+    // highlight active period button
+    document.querySelectorAll('.dash-per').forEach(function (b) {
+      var on = b.dataset.period === DASH_PERIOD;
+      b.style.color = on ? '#01D3A0' : ''; b.style.borderColor = on ? '#01D3A0' : '';
+    });
+    drawDashChart(orders);
+  }
+
+  function card2(l, v, sub) {
+    return '<div class="stat-card"><div class="stat-label">' + l + '</div><div class="stat-value">' + v + '</div><div class="stat-sub">' + (sub || '') + '</div></div>';
+  }
+
+  function drawDashChart(orders) {
+    var wrap = document.getElementById('dash-chart'); if (!wrap) return;
+    var days = 14, today = startOfDay(new Date());
+    var buckets = [];
+    for (var i = days - 1; i >= 0; i--) { var d = new Date(today); d.setDate(d.getDate() - i); buckets.push({ d: d, rev: 0 }); }
+    orders.forEach(function (o) {
+      if (!isPaid(o)) return;
+      var od = startOfDay(o.created_at).getTime();
+      for (var j = 0; j < buckets.length; j++) { if (buckets[j].d.getTime() === od) { buckets[j].rev += parseFloat(o.total) || 0; break; } }
+    });
+    var max = Math.max(1, Math.max.apply(null, buckets.map(function (b) { return b.rev; })));
+    var bars = buckets.map(function (b) {
+      var h = Math.round((b.rev / max) * 90);
+      var lbl = b.d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      return '<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px" title="' + lbl + ': £' + b.rev.toFixed(2) + '">' +
+        '<div style="width:60%;min-height:2px;height:' + Math.max(2, h) + 'px;background:' + (b.rev ? '#01D3A0' : '#1a1a1a') + ';border-radius:3px 3px 0 0"></div>' +
+        '<div style="font-size:8px;color:var(--t3,#6b7280);writing-mode:vertical-rl;transform:rotate(180deg);height:34px;overflow:hidden">' + lbl + '</div>' +
+      '</div>';
+    }).join('');
+    wrap.innerHTML = '<div style="font-size:11px;color:var(--t3,#6b7280);margin-bottom:6px">Daily revenue — last 14 days</div>' +
+      '<div style="display:flex;align-items:flex-end;gap:3px;height:130px;border-bottom:1px solid var(--brd,#1a1a1a);padding-bottom:2px">' + bars + '</div>';
+  }
+
+  function applyOrderFilter() {
+    var q = (document.getElementById('ord-search') || {}).value || '';
+    var st = (document.getElementById('ord-filter') || {}).value || '';
+    q = q.trim().toLowerCase();
+    var filtered = ordersCache.filter(function (o) {
+      if (st && o.status !== st) return false;
+      if (!q) return true;
+      var ref = (o.notes || o.id.slice(0, 8)).toLowerCase();
+      return (o.customer_name || '').toLowerCase().indexOf(q) > -1 ||
+             (o.customer_email || '').toLowerCase().indexOf(q) > -1 ||
+             ref.indexOf(q) > -1;
+    });
+    renderOrders(filtered);
+  }
+
+  function renderCustomers(orders) {
+    var wrap = document.getElementById('customers-wrap'); if (!wrap) return;
+    var paid = orders.filter(isPaid);
+    var m = {};
+    paid.forEach(function (o) {
+      var key = (o.customer_email || o.customer_name || 'unknown').toLowerCase();
+      if (!m[key]) m[key] = { name: o.customer_name || '—', email: o.customer_email || '', orders: 0, spend: 0, last: o.created_at };
+      m[key].orders++; m[key].spend += parseFloat(o.total) || 0;
+      if (new Date(o.created_at) > new Date(m[key].last)) m[key].last = o.created_at;
+      if (!m[key].name || m[key].name === '—') m[key].name = o.customer_name || m[key].name;
+    });
+    var list = Object.keys(m).map(function (k) { return m[k]; }).sort(function (a, b) { return b.spend - a.spend; });
+    var repeat = list.filter(function (c) { return c.orders > 1; }).length;
+    var statsEl = document.getElementById('cust-stats');
+    if (statsEl) statsEl.innerHTML = card2('Customers', String(list.length), 'with a paid order') + card2('Repeat buyers', String(repeat), '2+ orders');
+
+    var q = ((document.getElementById('cust-search') || {}).value || '').trim().toLowerCase();
+    if (q) list = list.filter(function (c) { return (c.name || '').toLowerCase().indexOf(q) > -1 || (c.email || '').toLowerCase().indexOf(q) > -1; });
+    if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers yet.</div>'; return; }
+    wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' +
+      list.map(function (c) {
+        return '<tr><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
+          '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
+          '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
+          '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
   // ── SUBSCRIBERS ───────────────────────────────────────────────────────────
 
   function loadSubscribers() {
@@ -1248,7 +1365,7 @@
     if (!rows.length) { el.innerHTML = '<p class="adm-empty">No products yet — run the product_variants seed.</p>'; return; }
     var html = '<table class="adm-table"><thead><tr>' +
       '<th>Product</th><th>Size</th><th>Base £</th><th>Sale £</th><th>RRP £</th>' +
-      '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Sells at</th><th></th>' +
+      '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Qty</th><th>Sells at</th><th></th>' +
       '</tr></thead><tbody>';
     rows.forEach(function (v) {
       var sells = (v.sale_price != null ? v.sale_price : v.base_price);
@@ -1262,6 +1379,7 @@
         '<td align="center">' + pvCheck(v.id, 'deal', v.deal_flag) + '</td>' +
         '<td align="center">' + pvCheck(v.id, 'stock', v.in_stock) + '</td>' +
         '<td align="center">' + pvCheck(v.id, 'low', v.low_stock) + '</td>' +
+        '<td align="center"><input id="pv-' + v.id + '-qty" class="status-select" type="number" step="1" min="0" value="' + (v.stock_qty == null ? '' : v.stock_qty) + '" style="width:58px;text-align:right"></td>' +
         '<td id="pv-' + v.id + '-sells" style="color:#01D3A0;font-weight:600;white-space:nowrap">£' + Number(sells).toFixed(2) + '</td>' +
         '<td style="white-space:nowrap"><button class="btn-p" style="width:auto;padding:5px 12px" onclick="savePricing(\'' + v.id + '\')">Save</button> ' +
         '<span id="pv-' + v.id + '-msg" style="font-size:12px"></span></td>' +
@@ -1284,10 +1402,15 @@
     if (base == null || base <= 0) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Base price required.'; } return; }
     var sale = num('sale');
     if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Saving…'; }
+    function qty() {
+      var raw = (document.getElementById('pv-' + id + '-qty') || {}).value;
+      if (raw == null || String(raw).trim() === '') return null;
+      var n = parseInt(raw, 10); return isNaN(n) ? null : Math.max(0, n);
+    }
     window._sb.from('product_variants').update({
       base_price: base, sale_price: sale, compare_at: num('compare'),
       discountable: chk('disc'), deal_flag: chk('deal'),
-      in_stock: chk('stock'), low_stock: chk('low')
+      in_stock: chk('stock'), low_stock: chk('low'), stock_qty: qty()
     }).eq('id', id).then(function (r) {
       if (r.error) { if (msg) { msg.style.color = '#f87171'; msg.textContent = r.error.message; } return; }
       var sellsEl = document.getElementById('pv-' + id + '-sells');
