@@ -17,7 +17,8 @@
   }
 
   function fmt(n) {
-    return '£' + n.toFixed(2);
+    var v = Math.round(n * 100) / 100;
+    return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2));
   }
 
   function render() {

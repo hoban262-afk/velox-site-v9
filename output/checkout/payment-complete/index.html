@@ -421,7 +421,8 @@
   }
 
   function fmt(n, currency) {
-    return (currency === 'EUR' ? '€' : '£') + Number(n).toFixed(2);
+    var v = Math.round(Number(n) * 100) / 100;
+    return (currency === 'EUR' ? '€' : '£') + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2));
   }
 
   function escHtml(s) {
@@ -504,7 +505,7 @@
         ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
         : item.price * (item.qty || 1);
       return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-             ' — ' + currSym + price.toFixed(2);
+             ' — ' + fmt(price, currency);
     }).join('\n');
   }
 
@@ -599,7 +600,7 @@
         html += '<li class="co-cart-row">' +
           '<span class="co-cart-name">' + escHtml(item.name) +
           ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-          '<span class="co-cart-price">' + currSym + price.toFixed(2) + '</span>' +
+          '<span class="co-cart-price">' + fmt(price, currency) + '</span>' +
           '</li>';
       });
       html += '</ul>';

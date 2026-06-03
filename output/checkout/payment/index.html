@@ -774,7 +774,7 @@
       String(d.getMonth() + 1).padStart(2, '0') +
       String(d.getDate()).padStart(2, '0');
   }
-  function fmtPounds(n) { return '£' + Number(n).toFixed(2); }
+  function fmtPounds(n) { var v = Math.round(Number(n) * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
 
   // Re-compute applied discount from DOM state
   // checkout.js disables the input when a code is applied — we read it back here
@@ -913,7 +913,7 @@
         .filter(Boolean).join(', ');
       var productsList = cart.map(function (item) {
         return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-          ' — £' + (item.price * (item.qty || 1)).toFixed(2);
+          ' — ' + fmtPounds(item.price * (item.qty || 1));
       }).join('\n');
 
       // 5. Persist to sessionStorage before redirect

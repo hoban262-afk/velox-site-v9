@@ -17,7 +17,7 @@
   function show(id) { var e = $(id); if (e) e.style.display = ''; }
   function hide(id) { var e = $(id); if (e) e.style.display = 'none'; }
   function fmtDate(d) { try { return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); } catch(e){ return d; } }
-  function money(n) { return '£' + Number(n || 0).toFixed(2); }
+  function money(n) { var v = Math.round(Number(n || 0) * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
 
   var TIERS = [
     { name:'Bronze', min:0 }, { name:'Silver', min:500 },

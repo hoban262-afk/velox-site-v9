@@ -16,7 +16,7 @@
   var SB_URL  = 'https://stkjdtyhaxejxqmbzyua.supabase.co';
   var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
 
-  function money(n) { return '£' + Number(n).toFixed(2); }
+  function money(n) { var v = Math.round(Number(n) * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
   function eff(v) { return (v.sale_price != null) ? Number(v.sale_price) : Number(v.base_price); }
   // "was" strikethrough: on a deal -> base_price; standing markdown -> compare_at; else none.
   function wasOf(v) { return (v.sale_price != null) ? Number(v.base_price) : (v.compare_at != null ? Number(v.compare_at) : null); }
