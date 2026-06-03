@@ -193,3 +193,22 @@
   // Native <details> handles this — no JS needed.
 
 }());
+
+// ── First-party analytics beacon (no cookies, no PII) ─────────────────────────
+(function () {
+  try {
+    if (location.pathname.indexOf('/admin') === 0) return; // never track the admin
+    var sid;
+    try { sid = localStorage.getItem('vp_sid'); } catch (e) {}
+    if (!sid) {
+      sid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      try { localStorage.setItem('vp_sid', sid); } catch (e) {}
+    }
+    var payload = JSON.stringify({ sid: sid, path: location.pathname, ref: document.referrer || '' });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+    } else {
+      fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
+    }
+  } catch (e) {}
+}());
