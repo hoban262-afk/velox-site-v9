@@ -70,7 +70,7 @@
     if (signInBtn) signInBtn.disabled = true;
 
     window._sb.auth.signInWithPassword({
-      email:    'support@veloxpeps.com',
+      email:    'veloxpeps@gmail.com',
       password: pw,
     }).then(function (r) {
       if (signInBtn) signInBtn.disabled = false;
