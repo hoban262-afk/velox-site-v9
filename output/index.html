@@ -294,7 +294,7 @@
     .hp-panel-link:hover { text-decoration: underline; }
 
     /* ── Social-proof bar (under hero) ── */
-    .vp-spbar { background: #0b0b0b; border-top: 1px solid var(--brd, rgba(255,255,255,.07)); border-bottom: 1px solid var(--brd, rgba(255,255,255,.07)); }
+    .vp-spbar { background: #0b0b0b; border-bottom: 1px solid var(--brd, rgba(255,255,255,.07)); }
     .vp-spbar-i { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 26px; padding: 15px 24px; }
     .vp-spbar-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #9CA3AF; letter-spacing: .01em; }
     .vp-spbar-item svg { width: 16px; height: 16px; stroke: #00D4A0; fill: none; flex: 0 0 auto; }
@@ -507,7 +507,7 @@
 </section>
 
 <style>
-  .dotd { padding: 28px 20px 0; }
+  .dotd { padding: 34px 20px; border-top: 1px solid rgba(255,255,255,.07); border-bottom: 1px solid rgba(255,255,255,.07); }
   .dotd-card { display:flex; flex-direction:row; align-items:center; text-align:left;
     gap:30px; max-width:880px; margin:0 auto;
     background:linear-gradient(135deg,#06140f,#0a0d12); border:1px solid rgba(1,211,160,.42);
@@ -529,7 +529,7 @@
   .dotd-badge { background:#01D3A0; color:#021; font-weight:800; font-size:.72rem; padding:3px 10px; border-radius:20px; }
   .dotd-count { font-family:'DM Mono',monospace; font-size:.82rem; color:#D1A400; margin-top:8px; }
   @media (max-width:600px){
-    .dotd{ padding:8px 14px 0; }
+    .dotd{ padding:24px 14px; }
     .dotd-card{ flex-direction:column; text-align:center; gap:16px; padding:24px 20px; border-radius:16px; }
     .dotd-imgwrap{ flex-basis:auto; width:160px; height:160px; }
     .dotd-price{ justify-content:center; }
