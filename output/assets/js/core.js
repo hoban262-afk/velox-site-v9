@@ -210,5 +210,19 @@
     } else {
       fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
     }
+
+    // ── Live-presence heartbeat (powers the admin "live on site" counter) ──
+    function vpPing() {
+      if (document.visibilityState === 'hidden') return;
+      var p = JSON.stringify({ sid: sid });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/presence', new Blob([p], { type: 'application/json' }));
+      } else {
+        fetch('/api/presence', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: p, keepalive: true }).catch(function () {});
+      }
+    }
+    vpPing();
+    setInterval(vpPing, 60000);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') vpPing(); });
   } catch (e) {}
 }());

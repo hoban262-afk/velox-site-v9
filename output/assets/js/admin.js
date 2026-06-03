@@ -1158,8 +1158,16 @@
 
   function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
+  var liveWired = false;
   async function loadAnalytics() {
     if (!window._sb) return;
+    if (!liveWired) {
+      liveWired = true;
+      var lc = document.getElementById('live-count');
+      if (lc) lc.addEventListener('click', loadLive);
+      loadLive();
+      setInterval(loadLive, 15000);
+    }
     try {
       var s = await window._sb.auth.getSession();
       var token = s && s.data && s.data.session && s.data.session.access_token;
@@ -1169,6 +1177,20 @@
       ANALYTICS = (d && d.rows) || [];
       renderDashboard(ordersCache);
     } catch (e) { /* dashboard still works without GA */ }
+  }
+
+  // Live "on site now" counter — distinct devices with a heartbeat in the last 90s.
+  async function loadLive() {
+    var el = document.getElementById('live-count-n');
+    if (!el || !window._sb) return;
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) return;
+      var r = await fetch('/api/admin/live', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      el.textContent = (d && typeof d.live === 'number') ? String(d.live) : '—';
+    } catch (e) {}
   }
 
   function isPaid(o) { return o.status === 'paid' || o.status === 'dispatched'; }
@@ -1208,8 +1230,8 @@
       card2('Orders', String(n), label) +
       card2('Avg order', '£' + aov.toFixed(2), n + ' paid') +
       card2('Units sold', String(units), label) +
-      card2('Visitors', conn ? String(sessions) : '—', conn ? label + ' (sessions)' : 'GA not connected') +
-      card2('Conversion', (conn && sessions) ? convRate.toFixed(1) + '%' : '—', conn ? (n + ' orders / ' + sessions + ' sessions') : 'connect GA in Settings');
+      card2('Visitors', conn ? String(sessions) : '—', conn ? label + ' (unique / day)' : 'no visits tracked yet') +
+      card2('Conversion', (conn && sessions) ? convRate.toFixed(1) + '%' : '—', conn ? (n + ' orders / ' + sessions + ' visitors') : 'no visit data yet');
     // highlight active period button
     document.querySelectorAll('.dash-per').forEach(function (b) {
       var on = b.dataset.period === DASH_PERIOD;

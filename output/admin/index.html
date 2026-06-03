@@ -270,7 +270,10 @@
     <div class="admin-panel active" id="panel-overview">
       <div class="adm-section">
         <div class="adm-sec-hdr">
-          <div class="adm-sec-title">Performance</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="adm-sec-title">Performance</div>
+            <button id="live-count" type="button" title="People on site right now — auto-refreshes every 15s, click to refresh now" style="display:inline-flex;align-items:center;gap:6px;background:rgba(1,211,160,.1);border:1px solid rgba(1,211,160,.3);color:#01D3A0;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;padding:5px 11px;border-radius:999px;cursor:pointer"><span style="width:7px;height:7px;border-radius:50%;background:#01D3A0;box-shadow:0 0 6px #01D3A0"></span><span id="live-count-n">&mdash;</span>&nbsp;live</button>
+          </div>
           <div id="dash-periods" style="display:flex;gap:4px">
             <button class="dash-per status-select" data-period="today" style="cursor:pointer">Today</button>
             <button class="dash-per status-select" data-period="7" style="cursor:pointer">7 days</button>
