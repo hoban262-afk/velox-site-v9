@@ -81,36 +81,60 @@
 
     .adm-loading     { font-size:13px; color:var(--t3,#6b7280); padding:20px 0; text-align:center; }
 
-    /* ── Mobile ─────────────────────────────────────────────────────────────── */
+    /* ── Mobile / installed PWA ─────────────────────────────────────────────── */
     @media (max-width: 640px) {
-      .admin-topbar  { padding:12px 16px; }
+      /* Pinned top bar that clears the iPhone notch / dynamic island */
+      .admin-topbar  { padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+                       position:sticky; top:0; z-index:30; }
       .admin-topbar-brand { font-size:10px; }
+      .admin-logout  { padding:9px 14px; font-size:13px; }
 
       /* Tab bar becomes a horizontal swipe strip instead of overflowing */
       .admin-tabs    { padding:12px 12px 0; gap:2px; flex-wrap:nowrap; overflow-x:auto;
                        -webkit-overflow-scrolling:touch; scrollbar-width:none; }
       .admin-tabs::-webkit-scrollbar { display:none; }
-      .admin-tab     { flex:0 0 auto; padding:9px 12px; white-space:nowrap; }
+      .admin-tab     { flex:0 0 auto; padding:11px 14px; white-space:nowrap; font-size:13px; }
 
-      .admin-panel   { padding:20px 14px; }
+      /* Panels: comfy padding + clear the home indicator at the bottom */
+      .admin-panel   { padding:18px 14px calc(28px + env(safe-area-inset-bottom)); }
       .adm-section   { padding:16px 14px; }
       .adm-sec-hdr   { flex-wrap:wrap; gap:8px; }
 
       /* Stat cards: two per row (one on very small screens) */
-      .stat-grid     { grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
-      .stat-card     { padding:14px 14px; }
+      .stat-grid     { grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+      .stat-card     { padding:14px; }
       .stat-value    { font-size:22px; }
 
       /* Wide data tables/lists swipe horizontally rather than breaking layout */
       [id$="-wrap"], [id$="-list"], #recent-orders-list { overflow-x:auto; -webkit-overflow-scrolling:touch; }
       .adm-table     { min-width:520px; }
+      .adm-table th, .adm-table td { padding:11px 12px; }
 
-      /* Inline form rows: fields fill the width so they're tappable */
+      /* Bigger tap targets; 16px font stops iOS auto-zooming the page on focus */
+      .status-select { min-height:40px; font-size:14px; }
+      .f-inp, input.status-select, select.status-select, textarea {
+        font-size:16px !important; min-height:42px; padding:9px 12px; border-radius:6px; }
+      .adm-table input.status-select, .adm-table select.status-select { min-height:36px; }
+
+      /* Dashboard period toggle: comfy pills + shorter chart */
+      #dash-periods { gap:6px; }
+      #dash-periods .dash-per { min-height:40px; padding:0 14px; }
+      #dash-chart > div:last-child { height:112px !important; }
+
+      /* Buttons: bigger; standalone/header actions full-width, in-table buttons stay inline */
+      .btn-p { min-height:44px; }
+      .adm-sec-hdr .btn-p[style*="width:auto"],
+      #panel-settings .btn-p[style*="width:auto"],
+      #panel-orders .adm-section:first-child .btn-p { width:100% !important; }
+      .adm-table .btn-p { min-height:34px; width:auto !important; padding:6px 12px; }
+
+      /* Search / filter / create-order fields fill the width so they're tappable */
+      #ord-search, #ord-filter, #cust-search,
       #panel-orders .adm-section > div > .status-select { flex:1 1 100%; max-width:none !important; }
-      .btn-p[style*="width:auto"] { width:100% !important; }
     }
     @media (max-width: 380px) {
-      .stat-grid     { grid-template-columns:1fr; }
+      .stat-grid   { grid-template-columns:1fr; }
+      .admin-tab   { padding:11px 11px; }
     }
   </style>
 </head>
