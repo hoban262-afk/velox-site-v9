@@ -98,7 +98,13 @@
     });
   }
 
-  // ── Tab switching ─────────────────────────────────────────────────────────
+  // ── Tab switching + bottom nav + sheet + toasts ─────────────────────────────
+  var TAB_TITLES = {
+    overview: 'Overview', actions: 'Actions', orders: 'Orders', margins: 'Margins',
+    interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
+    campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings'
+  };
+  var BN_PRIMARY = { overview: 1, orders: 1, margins: 1, customers: 1 };
 
   window.switchTab = function (tab) {
     document.querySelectorAll('.admin-tab').forEach(function (btn) {
@@ -107,7 +113,43 @@
     document.querySelectorAll('.admin-panel').forEach(function (panel) {
       panel.classList.toggle('active', panel.id === 'panel-' + tab);
     });
+    // bottom nav: highlight the matching item, else "More"
+    document.querySelectorAll('.bn-item').forEach(function (b) {
+      var on = b.id === 'bn-more' ? !BN_PRIMARY[tab] : b.dataset.tab === tab;
+      b.classList.toggle('active', on);
+      if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    document.querySelectorAll('.ms-item').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === tab); });
+    var st = document.getElementById('screen-title'); if (st) st.textContent = TAB_TITLES[tab] || 'Velox Admin';
+    closeMore();
+    if (window.innerWidth <= 640) { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } }
   };
+
+  window.openMore = function () {
+    var s = document.getElementById('more-sheet'), b = document.getElementById('more-backdrop');
+    if (b) b.classList.add('open');
+    if (s) requestAnimationFrame(function () { s.classList.add('open'); });
+  };
+  window.closeMore = function () {
+    var s = document.getElementById('more-sheet'), b = document.getElementById('more-backdrop');
+    if (s) s.classList.remove('open');
+    if (b) b.classList.remove('open');
+  };
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') window.closeMore(); });
+
+  function showToast(msg, type) {
+    var w = document.getElementById('toast-wrap'); if (!w) { return; }
+    var t = document.createElement('div');
+    t.className = 'toast ' + (type || '');
+    t.textContent = msg;
+    w.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('show'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 260);
+    }, 2600);
+  }
+  window.showToast = showToast;
 
   // ── Data loaders ──────────────────────────────────────────────────────────
 
@@ -561,6 +603,7 @@
     var countEl = document.getElementById('actions-count');
     if (badge) { badge.textContent = actions.length; badge.style.display = actions.length ? 'inline-block' : 'none'; }
     if (countEl) countEl.textContent = actions.length + ' pending';
+    var moreDot = document.getElementById('bn-more-dot'); if (moreDot) moreDot.style.display = actions.length ? 'block' : 'none';
     var el = document.getElementById('actions-list');
     if (!el) return;
     if (!actions.length) { el.innerHTML = '<p class="adm-empty">Nothing waiting for approval. 🎉</p>'; return; }
@@ -963,6 +1006,8 @@
           ordersCache.forEach(function (o) { if (o.id === orderId) o.status = newStatus; });
           renderRecentOrders(ordersCache.slice(0, 5));
           updateStats(ordersCache);
+          renderDashboard(ordersCache); renderCustomers(ordersCache);
+          if (window.showToast) showToast('Order marked ' + newStatus, 'ok');
           // Marking paid → push the order into Royal Mail Click & Drop so a
           // label is ready to print. Idempotent server-side (won't double-import).
           if (newStatus === 'paid') pushToClickAndDrop(orderId);
@@ -1473,6 +1518,7 @@
       var sellsEl = document.getElementById('pv-' + id + '-sells');
       if (sellsEl) sellsEl.textContent = '£' + Number(sale != null ? sale : base).toFixed(2);
       if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Saved'; }
+      if (window.showToast) showToast('Price updated', 'ok');
     });
   };
 
