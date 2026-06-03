@@ -4345,24 +4345,11 @@ html { overflow-x: hidden !important; }
    homepage stacks section, category CTA banner
    ======================================================================= */
 
-/* ── 1. Nav: Stacks link teal highlight ─────────────────────────────────── */
+/* ── 1. Nav: Stacks link (matches other nav links) ──────────────────────── */
 
-.nav-links a.nl-stacks {
-  color: rgba(255,107,0,.75) !important;
-  font-weight: 600 !important;
-}
-.nav-links a.nl-stacks:hover {
-  color: #ffffff !important;
-}
-
-/* Mobile menu: Stacks as top-level orange item */
+/* Mobile menu: Stacks as standard top-level item */
 .mob-menu a.mob-nl-stacks {
-  color: rgba(255,107,0,.75) !important;
-  font-weight: 700 !important;
-  padding-left: 0 !important;        /* full-width, not indented like sub-items */
-  border-top: 1px solid rgba(255,107,0,.18) !important;
-  border-bottom: 1px solid rgba(255,107,0,.18) !important;
-  margin: 4px 0 !important;
+  padding-left: 0 !important;
 }
 
 /* ── 2. Stack card image placeholder ────────────────────────────────────── */
