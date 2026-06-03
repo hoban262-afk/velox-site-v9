@@ -56,7 +56,8 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify([{
         user_id: user.id, name, email,
         payout_details: payout, promo_method: promo || null,
-        status: 'pending_approval', commission_type: 'percentage', commission_rate: 10,
+        status: 'pending_approval', commission_type: 'percentage',
+        commission_rate: 10, commission_pct: 10, discount_pct: 10,
       }]),
     });
     if (!ins.ok) {
