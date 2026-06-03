@@ -11,10 +11,9 @@
  * `x-internal-secret: $INTERNAL_TASK_SECRET` header for manual/admin triggers.
  *
  * Stage timing (hours after the pending order was created):
- *   stage 1 → 1h   stage 2 → 24h   stage 3 → 72h
- * The 1h floor on stage 1 also clears any payment-settlement lag, so a
- * customer who actually paid is flipped to 'paid' by the webhook before any
- * recovery email could go out.
+ *   stage 1 → 30 min   stage 2 → 3h   stage 3 → 12h (+ a unique 15% code)
+ * Only status=pending orders are emailed, so a customer whose payment settled
+ * is already flipped to 'paid' by the webhook and excluded from the sequence.
  */
 
 const { Resend } = require('resend');
@@ -61,6 +60,40 @@ function signOrderToken(orderId) {
   const id = String(orderId);
   const sig = crypto.createHmac('sha256', SERVICE).update(`recover:${id}`).digest('hex').slice(0, 32);
   return `${Buffer.from(id, 'utf-8').toString('base64url')}.${sig}`;
+}
+
+// ── Stage-3 unique 15% code ──────────────────────────────────────────────────
+const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous 0/O/1/I
+function genCode() {
+  let s = '';
+  const bytes = crypto.randomBytes(6);
+  for (let i = 0; i < 6; i++) s += ALPHABET[bytes[i] % ALPHABET.length];
+  return 'VELOX-' + s;
+}
+
+// Returns a unique, single-use 15% code bound to this order's email, stored in
+// recovery_codes (validated at checkout, expires in 7 days). Reuses the code if
+// one already exists for the order so re-runs never mint duplicates.
+async function recoveryCodeFor(order) {
+  const oid = encodeURIComponent(String(order.id));
+  try {
+    const existing = await sbGet(`recovery_codes?order_id=eq.${oid}&select=code&limit=1`);
+    if (Array.isArray(existing) && existing.length && existing[0].code) return existing[0].code;
+  } catch {}
+  const expires = new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString();
+  const body = {
+    email: String(order.customer_email).toLowerCase(), code: genCode(),
+    order_id: String(order.id), discount_pct: 15, expires_at: expires,
+  };
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/recovery_codes`, {
+      method: 'POST', headers: { ...sbHeaders, Prefer: 'return=minimal' }, body: JSON.stringify(body),
+    });
+    if (r.ok) return body.code;
+    if (r.status === 409) { body.code = genCode(); continue; } // rare code collision — retry once
+    throw new Error(`recovery_codes insert -> ${r.status}`);
+  }
+  throw new Error('recovery_codes insert failed after retry');
 }
 
 // Which stage (if any) is due for an order, given its age and current stage.
@@ -130,6 +163,13 @@ module.exports = async function handler(req, res) {
       resumeUrl:      `${SITE}/api/recovery/resume?token=${encodeURIComponent(signOrderToken(order.id))}`,
       unsubscribeUrl: `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(signEmailToken(order.customer_email))}`,
     };
+
+    // Stage 3 carries a unique 15% code. If minting fails, the email still
+    // sends (the template falls back to the no-code "final reminder" copy).
+    if (stage === 3) {
+      try { links.discountCode = await recoveryCodeFor(order); }
+      catch (e) { console.error('[recovery/run] code gen failed for', order.id, e.message); }
+    }
 
     let email;
     try { email = buildRecoveryEmail(stage, order, links); }

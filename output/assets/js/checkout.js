@@ -281,20 +281,6 @@
 
       try { sessionStorage.setItem('vp_checkout', JSON.stringify(data)); } catch (ex) {}
 
-      // Klaviyo: identify + Started Checkout (powers the abandoned-cart flow)
-      if (window.vpk && data.email) {
-        window.vpk.identify(data.email, { $first_name: data.fname || '', $last_name: data.lname || '' });
-        var kItems = cart.map(function (i) { return { item_id: i.slug, item_name: i.name, item_variant: i.size, price: i.price, quantity: i.qty || 1 }; });
-        var kVal = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
-        window.vpk.track('Started Checkout', {
-          $event_id: 'sc_' + Date.now(),
-          $value: Math.round(kVal * 100) / 100,
-          ItemNames: cart.map(function (i) { return i.name; }),
-          Items: kItems,
-          CheckoutURL: location.origin + '/cart/'
-        });
-      }
-
       window.location.href = '/checkout/payment/';
     });
   }

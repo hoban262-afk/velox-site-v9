@@ -28,6 +28,19 @@ module.exports = async function handler(req, res) {
     );
     var rows = await r.json();
     var rec = Array.isArray(rows) && rows[0];
+    var pct = 10;  // welcome codes are a flat 10%
+
+    // Fall back to recovery_codes — the unique 15% abandoned-checkout codes.
+    if (!rec) {
+      var rr = await fetch(
+        SUPABASE_URL + '/rest/v1/recovery_codes?code=eq.' + encodeURIComponent(code) +
+        '&select=email,expires_at,used_at,unsubscribed_at,discount_pct',
+        { headers: { apikey: SERVICE, Authorization: 'Bearer ' + SERVICE } }
+      );
+      var rrows = await rr.json();
+      rec = Array.isArray(rrows) && rrows[0];
+      if (rec) pct = Number(rec.discount_pct) || 15;
+    }
 
     if (!rec)                                        return res.status(200).json({ valid: false, reason: 'not_found' });
     if (rec.unsubscribed_at)                         return res.status(200).json({ valid: false, reason: 'inactive' });
@@ -35,7 +48,7 @@ module.exports = async function handler(req, res) {
     if (new Date(rec.expires_at) < new Date())       return res.status(200).json({ valid: false, reason: 'expired' });
     if (email && rec.email.toLowerCase() !== email)  return res.status(200).json({ valid: false, reason: 'email_mismatch' });
 
-    return res.status(200).json({ valid: true, type: 'percentage', value: 10, code: code });
+    return res.status(200).json({ valid: true, type: 'percentage', value: pct, code: code });
   } catch (e) {
     console.error('[newsletter/validate]', e.message);
     return res.status(500).json({ valid: false, reason: 'error' });
