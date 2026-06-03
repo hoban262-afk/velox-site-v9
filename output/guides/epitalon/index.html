@@ -512,9 +512,13 @@
       <a class="nl " href="/affiliate-program/">Affiliate</a>
     </div>
     <div class="nav-actions">
-      <a class="nav-ig nav-search" href="/#search" aria-label="Search the catalogue" title="Search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </a>
+      <form class="vp-search vp-search-nav" role="search" onsubmit="return false">
+        <div class="vp-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="vp-search-input" type="search" placeholder="Search&hellip;" aria-label="Search the catalogue" autocomplete="off">
+        </div>
+        <div class="vp-search-results" hidden></div>
+      </form>
       <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -850,5 +854,6 @@
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/newsletter-popup.js"></script>
   <script src="/assets/js/klaviyo-events.js" defer></script>
+  <script src="/assets/js/search.js" defer></script>
 </body>
 </html>

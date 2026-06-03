@@ -38,7 +38,14 @@
     '.vp-search-hero .vp-search-box svg{left:18px;width:20px;height:20px;stroke:#00D4A0}',
     '.vp-search-btn{position:absolute;right:6px;top:6px;bottom:6px;border:none;border-radius:8px;background:#00D4A0;color:#021;font-family:var(--mono,monospace);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:0 20px;cursor:pointer;transition:background .15s}',
     '.vp-search-btn:hover{background:#00B888}',
-    '@media(max-width:560px){.vp-search-hero .vp-search-input{padding-right:96px}.vp-search-btn{padding:0 14px}}'
+    '@media(max-width:560px){.vp-search-hero .vp-search-input{padding-right:96px}.vp-search-btn{padding:0 14px}}',
+    /* nav compact variant */
+    '.vp-search-nav{flex:0 0 200px;max-width:200px;margin-left:auto;}',
+    '.vp-search-nav .vp-search-input{font-size:13px;padding:7px 12px 7px 36px;border-radius:8px;background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);}',
+    '.vp-search-nav .vp-search-input:focus{background:#0f0f0f;border-color:#00D4A0;}',
+    '.vp-search-nav .vp-search-box svg{left:10px;width:15px;height:15px;}',
+    '.vp-search-nav .vp-search-results{min-width:300px;left:auto;right:0;}',
+    '@media(max-width:900px){.vp-search-nav{display:none;}}'
   ].join('');
   document.head.appendChild(css);
 
@@ -140,14 +147,11 @@
     });
   });
 
-  // Header magnifier links here via /#search — scroll to + focus the bar.
+  // Focus the nav search bar if the URL hash is #search.
   function focusSearchFromHash() {
     if (window.location.hash !== '#search') return;
-    var f = document.querySelector('.vp-search');
-    if (!f) return;
-    var inp = f.querySelector('.vp-search-input');
-    f.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if (inp) setTimeout(function () { inp.focus(); }, 350);
+    var inp = document.querySelector('.vp-search-nav .vp-search-input');
+    if (inp) setTimeout(function () { inp.focus(); }, 100);
   }
   focusSearchFromHash();
   window.addEventListener('hashchange', focusSearchFromHash);
