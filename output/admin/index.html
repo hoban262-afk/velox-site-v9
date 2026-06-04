@@ -49,6 +49,11 @@
     .admin-tab       { font-size:13px; font-weight:500; color:var(--t3,#6b7280); background:none; border:none; border-bottom:2px solid transparent; padding:8px 16px; cursor:pointer; transition:color .15s; margin-bottom:-1px; }
     .admin-tab:hover { color:var(--t2,#9ca3af); }
     .admin-tab.active { color:#fff; border-bottom-color:var(--g,#01D3A0); }
+    .admin-subtabs-wrap { padding:10px 24px 0; }
+    .admin-subtabs   { display:flex; gap:4px; flex-wrap:wrap; }
+    .admin-subtab    { font-size:12.5px; font-weight:600; color:var(--t3,#6b7280); background:none; border:none; padding:6px 13px; border-radius:7px; cursor:pointer; transition:color .15s, background-color .15s; }
+    .admin-subtab:hover { color:#fff; background:rgba(255,255,255,.04); }
+    .admin-subtab.active { color:var(--g,#01D3A0); background:rgba(1,211,160,.12); }
 
     .admin-panel     { display:none; padding:28px 24px; }
     .admin-panel.active { display:block; }
@@ -134,6 +139,7 @@
 
       /* Top tab strip is replaced by the bottom navigation bar on mobile */
       .admin-tabs { display:none; }
+      .admin-subtabs-wrap { display:none; }
       .admin-topbar-brand { display:none; }
       .admin-screen-title { display:block; }
 
@@ -586,6 +592,14 @@
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('reorder','Replenishment')">Replenishment</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('review','Review request')">Review request</button>
         </div>
+        <div style="margin-top:16px;font-size:13px;color:var(--t3,#6b7280);line-height:1.5">Or send a single <strong style="color:#fff">test copy to support@veloxpeps.com only</strong> — renders the real email with sample data, sends to no one else:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('restock','Back in stock')">Test: Back in stock</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('welcome','Welcome series')">Test: Welcome</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('abandoned','Abandoned checkout')">Test: Abandoned cart</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('reorder','Replenishment')">Test: Replenishment</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('review','Review request')">Test: Review request</button>
+        </div>
         <pre id="mkt-run-result" style="display:none;margin:14px 0 0;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:12px;font-size:12px;color:#9ca3af;white-space:pre-wrap;word-break:break-word"></pre>
       </div>
     </div>
@@ -612,7 +626,10 @@ It covers what the peptide is, the tissue-repair and angiogenesis pathways resea
 Read the full summary in the research library below. As always, batch documentation is available on request for every compound we stock.
 
 For in vitro research use only. Not for human or veterinary consumption.</textarea>
-        <div style="margin-top:14px"><button class="btn-p" id="camp-send" style="width:auto;padding:11px 24px">Send campaign</button></div>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn-p" id="camp-send" style="width:auto;padding:11px 24px">Send campaign</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:11px 18px" onclick="veloxSendTestCampaign()">Send test to support@veloxpeps.com</button>
+        </div>
         <div class="acc-msg" id="camp-msg" style="font-size:13px;margin-top:10px"></div>
       </div>
     </div>

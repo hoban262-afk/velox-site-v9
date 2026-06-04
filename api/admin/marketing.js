@@ -190,6 +190,20 @@ module.exports = async function handler(req, res) {
     const segment = b.segment === 'customers' ? 'customers' : 'all';
     if (!subject || !message) return res.status(400).json({ error: 'Subject and message are required' });
 
+    // Test send: render the real campaign email but deliver only to support@.
+    if (b.test) {
+      const TEST_TO = 'support@veloxpeps.com';
+      const unsub = `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubToken(TEST_TO))}`;
+      const r = await sendMail({
+        to: TEST_TO, subject: '[TEST] ' + subject,
+        html: wrapCampaign(bodyToHtml(message), TEST_TO),
+        text: message + '\n\n— Velox Peptides (test send)',
+        flow: 'test', track: false,
+        headers: { 'List-Unsubscribe': `<${unsub}>` },
+      }).catch(() => ({ ok: false }));
+      return res.status(200).json({ test: true, sent: r && r.ok ? 1 : 0, to: TEST_TO });
+    }
+
     try {
       const emails = await recipientsFor(segment);
       if (!emails.length) return res.status(200).json({ sent: 0, total: 0, message: 'No recipients in that segment.' });

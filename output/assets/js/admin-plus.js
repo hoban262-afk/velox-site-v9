@@ -118,6 +118,41 @@
     try { var r = await fetch(path, { headers: { Authorization: 'Bearer ' + t } }); return await r.json(); }
     catch (e) { return null; }
   }
+  async function apiPost(path, body) {
+    var t = await token(); if (!t) return { ok: false, d: { error: 'Not signed in' } };
+    try {
+      var r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t }, body: JSON.stringify(body) });
+      var d = await r.json().catch(function () { return {}; });
+      return { ok: r.ok, d: d };
+    } catch (e) { return { ok: false, d: { error: e.message } }; }
+  }
+
+  // ── Email-marketing test sends (deliver only to support@veloxpeps.com) ────
+  window.veloxSendTest = async function (type, label) {
+    var out = document.getElementById('mkt-run-result');
+    label = label || type;
+    if (out) { out.style.display = 'block'; out.textContent = 'Sending test “' + label + '” to support@veloxpeps.com…'; }
+    var r = await apiPost('/api/admin/send-test', { type: type });
+    var ok = r && r.ok && r.d && r.d.ok;
+    if (out) out.textContent = ok
+      ? '✓ Test “' + label + '” sent to support@veloxpeps.com — check that inbox.'
+      : 'Test failed: ' + ((r && r.d && r.d.error) || 'unknown error');
+    if (window.showToast) showToast(ok ? 'Test sent to support@veloxpeps.com' : 'Test failed', ok ? 'ok' : 'err');
+  };
+
+  window.veloxSendTestCampaign = async function () {
+    var subj = ((document.getElementById('camp-subject') || {}).value || '').trim();
+    var msg = ((document.getElementById('camp-message') || {}).value || '').trim();
+    var seg = (document.getElementById('camp-segment') || {}).value || 'all';
+    var m = document.getElementById('camp-msg');
+    function set(t, ok) { if (m) { m.style.color = ok ? '#01D3A0' : '#f87171'; m.textContent = t; } }
+    if (!subj || !msg) { set('Add a subject and message first.', false); return; }
+    set('Sending test to support@veloxpeps.com…', true); if (m) m.style.color = '#9ca3af';
+    var r = await apiPost('/api/admin/marketing', { action: 'campaign', test: true, subject: subj, body: msg, segment: seg });
+    var ok = r && r.ok && r.d && r.d.sent > 0;
+    set(ok ? '✓ Test sent to support@veloxpeps.com — check that inbox.' : ('Test failed: ' + ((r && r.d && r.d.error) || 'unknown error')), ok);
+    if (window.showToast) showToast(ok ? 'Test sent to support@veloxpeps.com' : 'Test failed', ok ? 'ok' : 'err');
+  };
 
   async function loadData() {
     if (!window._sb) return;
