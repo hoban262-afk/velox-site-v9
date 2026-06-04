@@ -516,6 +516,18 @@
         <div style="margin:22px 0 8px;font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Recent campaigns</div>
         <div id="mkt-campaigns"></div>
       </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Run a flow now</div></div>
+        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 14px;line-height:1.5">Fires the live worker immediately instead of waiting for its schedule. <strong style="color:#fbbf24">These send real emails</strong> to anyone currently due. <strong style="color:#fff">Back in stock</strong> is the safe one to try first — its first run only records the stock snapshot and sends nothing.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('restock','Back in stock')">Back in stock</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('welcome','Welcome series')">Welcome series</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('abandoned','Abandoned checkout')">Abandoned checkout</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('reorder','Replenishment')">Replenishment</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('review','Review request')">Review request</button>
+        </div>
+        <pre id="mkt-run-result" style="display:none;margin:14px 0 0;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:12px;font-size:12px;color:#9ca3af;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
     </div>
 
     <div class="admin-panel" id="panel-campaign">

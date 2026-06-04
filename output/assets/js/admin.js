@@ -844,6 +844,24 @@
     } catch (e) { if (cards) cards.innerHTML = '<div class="adm-empty">Could not load marketing data.</div>'; }
   }
 
+  window.runFlow = async function (flow, label) {
+    var out = document.getElementById('mkt-run-result');
+    if (!window.confirm('Run "' + label + '" now?\n\nThis fires the live worker and may send real emails to anyone currently due.')) return;
+    if (out) { out.style.display = 'block'; out.textContent = 'Running ' + label + '…'; }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { if (out) out.textContent = 'Session expired — sign in again.'; return; }
+      var r = await fetch('/api/admin/run-flow', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ flow: flow }),
+      });
+      var d = await r.json().catch(function () { return {}; });
+      if (out) out.textContent = label + (r.ok ? ' ✓\n' : ' — error\n') + JSON.stringify(d.result || d, null, 2);
+      if (r.ok) loadMarketing();
+    } catch (e) { if (out) out.textContent = 'Failed: ' + (e && e.message); }
+  };
+
   function mktCard(label, value, sub) {
     return '<div style="background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:13px 14px">' +
       '<div style="font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">' + esc(label) + '</div>' +
