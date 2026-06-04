@@ -39,7 +39,7 @@
 
   function showDash() {
     if (loginWrap) loginWrap.style.display = 'none';
-    if (dashWrap)  dashWrap.style.display  = 'block';
+    if (dashWrap)  dashWrap.style.display  = 'flex';
     loadAllData();
   }
 
