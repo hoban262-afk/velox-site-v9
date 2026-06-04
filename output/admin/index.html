@@ -54,6 +54,30 @@
     .admin-subtab    { font-size:12.5px; font-weight:600; color:var(--t3,#6b7280); background:none; border:none; padding:6px 13px; border-radius:7px; cursor:pointer; transition:color .15s, background-color .15s; }
     .admin-subtab:hover { color:#fff; background:rgba(255,255,255,.04); }
     .admin-subtab.active { color:var(--g,#01D3A0); background:rgba(1,211,160,.12); }
+    /* ── Sidebar layout (desktop) ──────────────────────────────────── */
+    #admin-groups, #admin-subtabs-wrap { display:none; }
+    .admin-dash { display:flex; align-items:stretch; min-height:100vh; }
+    .admin-sidebar { flex:0 0 236px; width:236px; background:#0a0c0f; border-right:1px solid var(--brd,#1a1a1a);
+      display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+    .admin-main { flex:1; min-width:0; display:flex; flex-direction:column; }
+    .sb-brand { display:flex; align-items:center; gap:11px; padding:18px 18px 16px; border-bottom:1px solid var(--brd,#1a1a1a); }
+    .sb-brand-mark { width:34px; height:34px; border-radius:9px; background:#01D3A0; color:#021; font-weight:800; font-size:17px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+    .sb-brand-name { font-size:14px; font-weight:700; color:#fff; line-height:1.2; }
+    .sb-brand-sub { font-size:11px; color:var(--t3,#6b7280); }
+    .sb-nav { flex:1; overflow-y:auto; padding:8px 10px 14px; }
+    .sb-sec { font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--t3,#6b7280); padding:14px 10px 5px; }
+    .sb-item { display:flex; align-items:center; gap:11px; width:100%; box-sizing:border-box; background:none; border:none; color:var(--t2,#9ca3af); font:inherit; font-size:13.5px; font-weight:500; padding:9px 10px; border-radius:8px; cursor:pointer; text-align:left; transition:background-color .12s, color .12s; }
+    .sb-item svg { width:18px; height:18px; flex:0 0 auto; color:var(--t3,#6b7280); }
+    .sb-item:hover { background:rgba(255,255,255,.045); color:#fff; }
+    .sb-item.active { background:rgba(1,211,160,.12); color:#01D3A0; font-weight:600; }
+    .sb-item.active svg { color:#01D3A0; }
+    .sb-user { display:flex; align-items:center; gap:10px; padding:12px 14px; border-top:1px solid var(--brd,#1a1a1a); }
+    .sb-user-av { width:31px; height:31px; border-radius:50%; background:#01D3A0; color:#021; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+    .sb-user-meta { flex:1; min-width:0; }
+    .sb-user-name { font-size:12.5px; color:#fff; font-weight:600; }
+    .sb-user-mail { font-size:11px; color:var(--t3,#6b7280); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sb-logout { background:none; border:none; color:var(--t3,#6b7280); cursor:pointer; padding:5px; border-radius:6px; flex:0 0 auto; }
+    .sb-logout:hover { color:#fff; background:rgba(255,255,255,.05); }
 
     .admin-panel     { display:none; padding:28px 24px; }
     .admin-panel.active { display:block; }
@@ -140,6 +164,9 @@
       /* Top tab strip is replaced by the bottom navigation bar on mobile */
       .admin-tabs { display:none; }
       .admin-subtabs-wrap { display:none; }
+      /* Sidebar is desktop-only; mobile keeps the bottom nav + more sheet */
+      .admin-sidebar { display:none; }
+      .admin-dash { display:block; }
       .admin-topbar-brand { display:none; }
       .admin-screen-title { display:block; }
 
@@ -221,9 +248,54 @@
   <!-- ── Dashboard ─────────────────────────────────────────────────────────── -->
   <div class="admin-dash" id="admin-dash">
 
+    <!-- ── Sidebar (desktop) ──────────────────────────────────────────────── -->
+    <aside class="admin-sidebar">
+      <div class="sb-brand">
+        <div class="sb-brand-mark">V</div>
+        <div><div class="sb-brand-name">Velox Admin</div><div class="sb-brand-sub">veloxpeps.com</div></div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-sec">Main</div>
+        <button class="sb-item active" data-tab="overview" onclick="switchTab('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg> Overview</button>
+
+        <div class="sb-sec">Orders</div>
+        <button class="sb-item" data-tab="orders" onclick="switchTab('orders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg> Orders</button>
+        <button class="sb-item" data-tab="actions" onclick="switchTab('actions')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 6h13l3.5 6v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5Z"/></svg> Fulfilment<span id="actions-badge" style="display:none;margin-left:auto;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 7px">0</span></button>
+
+        <div class="sb-sec">Marketing</div>
+        <button class="sb-item" data-tab="marketing" onclick="switchTab('marketing')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 5-5"/></svg> Analytics</button>
+        <button class="sb-item" data-tab="campaign" onclick="switchTab('campaign')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Campaigns</button>
+        <button class="sb-item" data-tab="reviews" onclick="switchTab('reviews')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 18.3 6.2 21l1.1-6.5L2.6 9.8l6.5-.9Z"/></svg> Reviews</button>
+        <button class="sb-item" data-tab="subscribers" onclick="switchTab('subscribers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M20.5 20a5 5 0 0 0-3.8-4.85"/></svg> Subscribers</button>
+        <button class="sb-item" data-tab="interest" onclick="switchTab('interest')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Interest</button>
+
+        <div class="sb-sec">Catalogue</div>
+        <button class="sb-item" data-tab="pricing" onclick="switchTab('pricing')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13 21a2 2 0 0 1-2.8 0L3 13.8V4h9.8l7.8 7.6a2 2 0 0 1 0 1.8Z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg> Pricing &amp; stock</button>
+        <button class="sb-item" data-tab="deal" onclick="switchTab('deal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.9 2.9M16.2 16.2l2.9 2.9M2 12h4M18 12h4M4.9 19.1l2.9-2.9M16.2 7.8l2.9-2.9"/><circle cx="12" cy="12" r="3.5"/></svg> Deal of the Day</button>
+
+        <div class="sb-sec">Insights</div>
+        <button class="sb-item" data-tab="margins" onclick="switchTab('margins')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V11"/><path d="M12 21V4"/><path d="M18 21v-7"/></svg> Margins</button>
+        <button class="sb-item" data-tab="traffic" onclick="switchTab('traffic')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 5-6"/></svg> Traffic</button>
+        <button class="sb-item" data-tab="seo" onclick="switchTab('seo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search (SEO)</button>
+
+        <div class="sb-sec">People</div>
+        <button class="sb-item" data-tab="customers" onclick="switchTab('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M20.5 20a5 5 0 0 0-3.8-4.85"/></svg> Customers</button>
+        <button class="sb-item" data-tab="affiliates" onclick="switchTab('affiliates')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg> Affiliates</button>
+
+        <div class="sb-sec">Account</div>
+        <button class="sb-item" data-tab="settings" onclick="switchTab('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg> Settings</button>
+      </nav>
+      <div class="sb-user">
+        <div class="sb-user-av">D</div>
+        <div class="sb-user-meta"><div class="sb-user-name">Declan</div><div class="sb-user-mail">support@veloxpeps.com</div></div>
+        <button class="sb-logout" title="Sign out" onclick="document.getElementById('admin-logout').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+
     <div class="admin-topbar">
       <div class="admin-topbar-l">
-        <div class="admin-topbar-brand">Velox Admin</div>
         <div class="admin-screen-title" id="screen-title">Overview</div>
       </div>
       <button class="admin-logout" id="admin-logout">Sign out</button>
@@ -241,7 +313,7 @@
     <div class="admin-subtabs-wrap" id="admin-subtabs-wrap">
       <div class="admin-subtabs" data-group="orders" hidden>
         <button class="admin-subtab" data-tab="orders" onclick="switchTab('orders')">Orders</button>
-        <button class="admin-subtab" data-tab="actions" onclick="switchTab('actions')">Fulfilment<span id="actions-badge" style="display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 7px;vertical-align:middle">0</span></button>
+        <button class="admin-subtab" data-tab="actions" onclick="switchTab('actions')">Fulfilment</button>
       </div>
       <div class="admin-subtabs" data-group="customers" hidden>
         <button class="admin-subtab" data-tab="customers" onclick="switchTab('customers')">Customers</button>
@@ -724,6 +796,7 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
       </div>
     </div>
 
+    </div><!-- /admin-main -->
   </div><!-- /admin-dash -->
 </div><!-- /admin-wrap -->
 

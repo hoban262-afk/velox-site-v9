@@ -141,6 +141,10 @@
         b.classList.toggle('active', b.dataset.tab === tab);
       });
     }
+    // Sidebar nav active state (desktop).
+    document.querySelectorAll('.sb-item').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
     document.querySelectorAll('.admin-panel').forEach(function (panel) {
       panel.classList.toggle('active', panel.id === 'panel-' + tab);
     });
