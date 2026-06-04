@@ -78,13 +78,23 @@ module.exports = async function handler(req, res) {
   if (!(await isAdmin(req))) return res.status(401).json({ error: 'Unauthorized' });
   if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: 'Email service not configured' });
 
-  const type = String((req.body || {}).type || '').trim();
+  const body = req.body || {};
+  const type = String(body.type || '').trim();
+  // Abandoned-cart sequence stage: 1 (30 min), 2 (3 h), 3 (12 h, carries 15% code).
+  const stage = Math.min(3, Math.max(1, parseInt(body.stage, 10) || 1));
   const { order, links } = sample();
 
   let email;
   try {
     if (type === 'welcome')        email = buildWelcomeEmail(2, { email: TEST_TO }, links);
-    else if (type === 'abandoned') email = buildRecoveryEmail(1, order, links);
+    else if (type === 'abandoned') {
+      // Only stage 3 shows a discount code; stages 1 & 2 must never carry one
+      // (an incentive that early just trains customers to abandon).
+      const recoveryLinks = Object.assign({}, links, {
+        discountCode: stage === 3 ? 'VLX15-TEST7K' : null,
+      });
+      email = buildRecoveryEmail(stage, order, recoveryLinks);
+    }
     else if (type === 'reorder')   email = buildReorderEmail(order, links);
     else if (type === 'review')    email = buildReviewRequestEmail(order, links);
     else if (type === 'restock')   email = restockEmail();
@@ -103,7 +113,7 @@ module.exports = async function handler(req, res) {
       flow: 'test',     // excluded from marketing analytics
       track: false,     // don't rewrite links for a preview
     });
-    return res.status(200).json({ ok: !!(r && r.ok), to: TEST_TO, type, subject: '[TEST] ' + email.subject });
+    return res.status(200).json({ ok: !!(r && r.ok), to: TEST_TO, type, stage: type === 'abandoned' ? stage : undefined, subject: '[TEST] ' + email.subject });
   } catch (e) {
     console.error('[admin/send-test send]', e.message);
     return res.status(500).json({ error: 'Send failed: ' + e.message });

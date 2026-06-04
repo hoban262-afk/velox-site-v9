@@ -128,11 +128,13 @@
   }
 
   // ── Email-marketing test sends (deliver only to support@veloxpeps.com) ────
-  window.veloxSendTest = async function (type, label) {
+  window.veloxSendTest = async function (type, label, stage) {
     var out = document.getElementById('mkt-run-result');
     label = label || type;
     if (out) { out.style.display = 'block'; out.textContent = 'Sending test “' + label + '” to support@veloxpeps.com…'; }
-    var r = await apiPost('/api/admin/send-test', { type: type });
+    var payload = { type: type };
+    if (stage) payload.stage = stage;
+    var r = await apiPost('/api/admin/send-test', payload);
     var ok = r && r.ok && r.d && r.d.ok;
     if (out) out.textContent = ok
       ? '✓ Test “' + label + '” sent to support@veloxpeps.com — check that inbox.'

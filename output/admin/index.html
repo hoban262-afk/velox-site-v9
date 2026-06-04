@@ -56,7 +56,7 @@
     .admin-subtab.active { color:var(--g,#01D3A0); background:rgba(1,211,160,.12); }
     /* ── Sidebar layout (desktop) ──────────────────────────────────── */
     #admin-groups, #admin-subtabs-wrap { display:none; }
-    .admin-dash { display:flex; align-items:stretch; min-height:100vh; }
+    .admin-shell { display:flex; align-items:stretch; min-height:100vh; width:100%; }
     .admin-sidebar { flex:0 0 236px; width:236px; background:#0a0c0f; border-right:1px solid var(--brd,#1a1a1a);
       display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
     .admin-main { flex:1; min-width:0; display:flex; flex-direction:column; }
@@ -166,7 +166,7 @@
       .admin-subtabs-wrap { display:none; }
       /* Sidebar is desktop-only; mobile keeps the bottom nav + more sheet */
       .admin-sidebar { display:none; }
-      .admin-dash { display:block; }
+      .admin-shell { display:block; }
       .admin-topbar-brand { display:none; }
       .admin-screen-title { display:block; }
 
@@ -247,6 +247,7 @@
 
   <!-- ── Dashboard ─────────────────────────────────────────────────────────── -->
   <div class="admin-dash" id="admin-dash">
+   <div class="admin-shell">
 
     <!-- ── Sidebar (desktop) ──────────────────────────────────────────────── -->
     <aside class="admin-sidebar">
@@ -685,7 +686,9 @@
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('restock','Back in stock')">Test: Back in stock</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('welcome','Welcome series')">Test: Welcome</button>
-          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('abandoned','Abandoned checkout')">Test: Abandoned cart</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('abandoned','Abandoned #1 · 30 min',1)">Test: Abandoned #1 (30m)</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('abandoned','Abandoned #2 · 3 h',2)">Test: Abandoned #2 (3h)</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('abandoned','Abandoned #3 · 15% code',3)">Test: Abandoned #3 (15% code)</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('reorder','Replenishment')">Test: Replenishment</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('review','Review request')">Test: Review request</button>
         </div>
@@ -797,6 +800,7 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
     </div>
 
     </div><!-- /admin-main -->
+   </div><!-- /admin-shell -->
   </div><!-- /admin-dash -->
 </div><!-- /admin-wrap -->
 
