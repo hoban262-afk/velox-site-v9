@@ -229,23 +229,40 @@
       <button class="admin-logout" id="admin-logout">Sign out</button>
     </div>
 
-    <div class="admin-tabs">
-      <button class="admin-tab active" data-tab="overview"     onclick="switchTab('overview')">Overview</button>
-      <button class="admin-tab"        data-tab="actions"      onclick="switchTab('actions')">Actions<span id="actions-badge" style="display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 7px;vertical-align:middle">0</span></button>
-      <button class="admin-tab"        data-tab="orders"       onclick="switchTab('orders')">Orders</button>
-      <button class="admin-tab"        data-tab="margins"      onclick="switchTab('margins')">Margins</button>
-      <button class="admin-tab"        data-tab="interest"     onclick="switchTab('interest')">Interest</button>
-      <button class="admin-tab"        data-tab="customers"    onclick="switchTab('customers')">Customers</button>
-      <button class="admin-tab"        data-tab="traffic"      onclick="switchTab('traffic')">Traffic</button>
-      <button class="admin-tab"        data-tab="seo"          onclick="switchTab('seo')">SEO</button>
-      <button class="admin-tab"        data-tab="pricing"      onclick="switchTab('pricing')">Pricing</button>
-      <button class="admin-tab"        data-tab="deal"         onclick="switchTab('deal')">Deal</button>
-      <button class="admin-tab"        data-tab="reviews"      onclick="switchTab('reviews')">Reviews</button>
-      <button class="admin-tab"        data-tab="marketing"    onclick="switchTab('marketing')">Marketing</button>
-      <button class="admin-tab"        data-tab="campaign"     onclick="switchTab('campaign')">Campaign</button>
-      <button class="admin-tab"        data-tab="subscribers"  onclick="switchTab('subscribers')">Subscribers</button>
-      <button class="admin-tab"        data-tab="affiliates"   onclick="switchTab('affiliates')">Affiliates</button>
-      <button class="admin-tab"        data-tab="settings"     onclick="switchTab('settings')">Settings</button>
+    <div class="admin-tabs" id="admin-groups">
+      <button class="admin-tab active" data-group="overview"  onclick="switchGroup('overview')">Overview</button>
+      <button class="admin-tab"        data-group="orders"    onclick="switchGroup('orders')">Orders</button>
+      <button class="admin-tab"        data-group="customers" onclick="switchGroup('customers')">Customers</button>
+      <button class="admin-tab"        data-group="marketing" onclick="switchGroup('marketing')">Marketing</button>
+      <button class="admin-tab"        data-group="catalog"   onclick="switchGroup('catalog')">Catalog</button>
+      <button class="admin-tab"        data-group="insights"  onclick="switchGroup('insights')">Insights</button>
+      <button class="admin-tab"        data-group="settings"  onclick="switchGroup('settings')">Settings</button>
+    </div>
+    <div class="admin-subtabs-wrap" id="admin-subtabs-wrap">
+      <div class="admin-subtabs" data-group="orders" hidden>
+        <button class="admin-subtab" data-tab="orders" onclick="switchTab('orders')">Orders</button>
+        <button class="admin-subtab" data-tab="actions" onclick="switchTab('actions')">Fulfilment<span id="actions-badge" style="display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 7px;vertical-align:middle">0</span></button>
+      </div>
+      <div class="admin-subtabs" data-group="customers" hidden>
+        <button class="admin-subtab" data-tab="customers" onclick="switchTab('customers')">Customers</button>
+        <button class="admin-subtab" data-tab="subscribers" onclick="switchTab('subscribers')">Subscribers</button>
+        <button class="admin-subtab" data-tab="interest" onclick="switchTab('interest')">Interest</button>
+        <button class="admin-subtab" data-tab="affiliates" onclick="switchTab('affiliates')">Affiliates</button>
+      </div>
+      <div class="admin-subtabs" data-group="marketing" hidden>
+        <button class="admin-subtab" data-tab="marketing" onclick="switchTab('marketing')">Analytics</button>
+        <button class="admin-subtab" data-tab="campaign" onclick="switchTab('campaign')">Campaigns</button>
+        <button class="admin-subtab" data-tab="reviews" onclick="switchTab('reviews')">Reviews</button>
+      </div>
+      <div class="admin-subtabs" data-group="catalog" hidden>
+        <button class="admin-subtab" data-tab="pricing" onclick="switchTab('pricing')">Pricing &amp; stock</button>
+        <button class="admin-subtab" data-tab="deal" onclick="switchTab('deal')">Deal of the Day</button>
+      </div>
+      <div class="admin-subtabs" data-group="insights" hidden>
+        <button class="admin-subtab" data-tab="margins" onclick="switchTab('margins')">Margins</button>
+        <button class="admin-subtab" data-tab="traffic" onclick="switchTab('traffic')">Traffic</button>
+        <button class="admin-subtab" data-tab="seo" onclick="switchTab('seo')">Search (SEO)</button>
+      </div>
     </div>
 
     <!-- ── Mobile bottom navigation ──────────────────────────────────────────── -->

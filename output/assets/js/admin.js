@@ -100,17 +100,47 @@
 
   // ── Tab switching + bottom nav + sheet + toasts ─────────────────────────────
   var TAB_TITLES = {
-    overview: 'Overview', actions: 'Actions', orders: 'Orders', margins: 'Margins',
+    overview: 'Overview', actions: 'Fulfilment', orders: 'Orders', margins: 'Margins',
     interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
     campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings',
-    deal: 'Deal of the Day'
+    deal: 'Deal of the Day', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing'
   };
   var BN_PRIMARY = { overview: 1, orders: 1, margins: 1, customers: 1 };
 
+  // Grouped desktop navigation: each top-level group fans out to a sub-tab row.
+  var GROUPS = {
+    overview:  ['overview'],
+    orders:    ['orders', 'actions'],
+    customers: ['customers', 'subscribers', 'interest', 'affiliates'],
+    marketing: ['marketing', 'campaign', 'reviews'],
+    catalog:   ['pricing', 'deal'],
+    insights:  ['margins', 'traffic', 'seo'],
+    settings:  ['settings'],
+  };
+  var TAB_GROUP = {};
+  Object.keys(GROUPS).forEach(function (g) { GROUPS[g].forEach(function (t) { TAB_GROUP[t] = g; }); });
+  var groupLast = {}; // remembers the last sub-tab visited per group
+
+  window.switchGroup = function (g) {
+    var tabs = GROUPS[g]; if (!tabs) return;
+    window.switchTab(groupLast[g] || tabs[0]);
+  };
+
   window.switchTab = function (tab) {
-    document.querySelectorAll('.admin-tab').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.tab === tab);
-    });
+    // Primary group bar + secondary sub-tab row (desktop).
+    var g = TAB_GROUP[tab];
+    if (g) {
+      groupLast[g] = tab;
+      document.querySelectorAll('#admin-groups .admin-tab').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.group === g);
+      });
+      document.querySelectorAll('.admin-subtabs').forEach(function (row) {
+        row.hidden = (row.dataset.group !== g);
+      });
+      document.querySelectorAll('.admin-subtab').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.tab === tab);
+      });
+    }
     document.querySelectorAll('.admin-panel').forEach(function (panel) {
       panel.classList.toggle('active', panel.id === 'panel-' + tab);
     });
