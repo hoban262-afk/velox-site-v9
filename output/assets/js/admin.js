@@ -39,7 +39,7 @@
 
   function showDash() {
     if (loginWrap) loginWrap.style.display = 'none';
-    if (dashWrap)  dashWrap.style.display  = 'flex';
+    if (dashWrap)  dashWrap.style.display  = 'block';
     loadAllData();
   }
 
@@ -650,10 +650,18 @@
         if (sel) sel.value = deal.slug + '|' + deal.size;
         var pctEl = document.getElementById('deal-pct'); if (pctEl) pctEl.value = deal.discount_pct;
         var hEl = document.getElementById('deal-headline'); if (hEl) hEl.value = deal.headline || '';
-        var aEl = document.getElementById('deal-active'); if (aEl) aEl.checked = deal.active !== false;
-        var apEl = document.getElementById('deal-apply'); if (apEl) apEl.checked = deal.applied === true;
-        var eEl = document.getElementById('deal-ends'); if (eEl && deal.ends_at) eEl.value = toLocalDT(new Date(deal.ends_at));
-        if (st) st.textContent = 'Live: ' + deal.slug + ' · ' + deal.discount_pct + '% off' + (deal.applied ? ' · real price live' : '');
+        var isActive = deal.active !== false;
+        var isExpired = deal.ends_at && new Date(deal.ends_at).getTime() <= Date.now();
+        var aEl = document.getElementById('deal-active');
+        // If the deal is inactive or expired, reset to a clean active state — don't let stale data poison the next save.
+        if (aEl) aEl.checked = isActive && !isExpired;
+        var apEl = document.getElementById('deal-apply'); if (apEl) apEl.checked = deal.applied === true && !isExpired;
+        var eEl = document.getElementById('deal-ends');
+        // Only pre-fill ends_at if the deal is still live — clear it for expired deals.
+        if (eEl) eEl.value = (deal.ends_at && !isExpired) ? toLocalDT(new Date(deal.ends_at)) : '';
+        if (st) st.textContent = isActive && !isExpired
+          ? 'Live: ' + deal.slug + ' · ' + deal.discount_pct + '% off' + (deal.applied ? ' · real price live' : '')
+          : 'Last deal expired — update below and save to start a new one';
       } else if (st) { st.textContent = 'No deal running'; }
     } catch (e) {}
     if (!dealBound) {

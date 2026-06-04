@@ -53,7 +53,7 @@ module.exports = async function handler(req, res) {
       ? n(prod.sale_price)
       : Math.round(base * (1 - pct / 100) * 100) / 100;
 
-    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json({
       deal: {
         slug: deal.slug,
