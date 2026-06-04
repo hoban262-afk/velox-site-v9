@@ -133,7 +133,7 @@ function windowFor(q) {
   }
 
   // Rolling-day ranges: previous window is the equal-length span immediately before.
-  const days = key === '3m' ? 90 : key === 'year' ? 365 : key === '28d' ? 28 : 30;
+  const days = key === '7d' || key === '1w' ? 7 : key === '3m' ? 90 : key === 'year' ? 365 : key === '28d' ? 28 : 30;
   const s = new Date(end);  s.setUTCDate(s.getUTCDate() - (days - 1));
   const pe = new Date(s);   pe.setUTCDate(pe.getUTCDate() - 1);
   const ps = new Date(pe);  ps.setUTCDate(ps.getUTCDate() - (days - 1));

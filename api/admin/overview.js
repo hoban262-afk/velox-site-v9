@@ -1,14 +1,14 @@
 /**
  * GET /api/admin/overview — ADMIN ONLY
  *
- * Powers the extra Overview + Traffic dashboards in the admin app with data the
- * browser can't read directly under RLS:
- *   - traffic: first-party visits (visitors/pageviews per day, top pages,
- *     top referrers, period totals) from the `visits` table
- *   - loyalty: customer loyalty-tier breakdown + points from `profiles`
+ * Traffic + loyalty aggregates for the admin dashboards, for an arbitrary time
+ * window passed as ?minutes=N (omit for "all time"). Returns:
+ *   - traffic: visitors/pageviews for the window + the previous equal window
+ *     (for deltas), an adaptive ~24-bucket time series, top pages, top referrers
+ *   - loyalty: tier breakdown + points (window-independent)
  *
- * Orders, products, affiliates etc. are read client-side from Supabase; this
- * endpoint only returns the service-role-only aggregates. Read-only.
+ * Orders/products/affiliates are read client-side from Supabase; this endpoint
+ * only returns the service-role-only data (visits, profiles). Read-only.
  */
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -33,8 +33,6 @@ async function isAdmin(req) {
   } catch { return false; }
 }
 
-const ymd = (d) => new Date(d).toISOString().slice(0, 10);
-
 // Normalise a referrer into a readable source bucket.
 function refSource(ref) {
   if (!ref) return 'Direct / none';
@@ -57,6 +55,21 @@ function refSource(ref) {
   }
 }
 
+// Label a bucket's start time at a resolution appropriate to the bucket size.
+function bucketLabel(ms, stepMs) {
+  const d = new Date(ms);
+  if (stepMs < 6 * 3600e3) {
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+  }
+  if (stepMs < 3 * 86400e3) {
+    return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', timeZone: 'UTC' });
+  }
+  if (stepMs < 32 * 86400e3) {
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', timeZone: 'UTC' });
+  }
+  return d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Not configured' });
@@ -67,62 +80,64 @@ module.exports = async function handler(req, res) {
   });
 
   try {
-    const now = new Date();
-    const since30 = new Date(now); since30.setDate(since30.getDate() - 30);
-    const sinceISO = since30.toISOString();
+    const minutes = parseInt((req.query || {}).minutes, 10);
+    const hasWin  = Number.isFinite(minutes) && minutes > 0;
+    const nowMs   = Date.now();
+    const lenMs   = hasWin ? minutes * 60000 : null;
+    const sinceCur  = hasWin ? nowMs - lenMs : 0;          // window start
+    const sincePull = hasWin ? nowMs - 2 * lenMs : 0;      // also pull the previous window for deltas
+    const sinceISO  = new Date(sincePull).toISOString();
 
     const [vRes, pRes] = await Promise.all([
-      sb(`visits?select=sid,path,ref,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.desc&limit=20000`),
+      sb(`visits?select=sid,path,ref,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.desc&limit=50000`),
       sb('profiles?select=loyalty_tier,lifetime_points,loyalty_points&deleted_at=is.null'),
     ]);
-
     const visits   = vRes.ok ? await vRes.json() : [];
     const profiles = pRes.ok ? await pRes.json() : [];
 
-    // ── Traffic aggregation ──────────────────────────────────────────────
-    const todayStr = ymd(now);
-    const d7 = new Date(now); d7.setDate(d7.getDate() - 6); const d7str = ymd(d7);
-    const dayMap = {};            // date -> { visitors:Set, views:n }
-    const pageMap = {};           // path -> views
-    const pageVisitors = {};      // path -> Set(sid)
-    const refMap = {};            // source -> count
-    let views7 = 0, views30 = 0;
-    const vis7 = new Set(), vis30 = new Set(), visToday = new Set();
+    // ── window bounds for the time series ────────────────────────────────
+    let earliest = nowMs;
+    for (const v of visits) { const t = new Date(v.created_at).getTime(); if (t < earliest) earliest = t; }
+    const winStart = hasWin ? sinceCur : (visits.length ? earliest : nowMs - 86400e3);
+    const N = 24;
+    const stepMs = Math.max(60000, (nowMs - winStart) / N);
+    const series = [];
+    for (let i = 0; i < N; i++) {
+      const bs = winStart + i * stepMs;
+      series.push({ label: bucketLabel(bs, stepMs), visitors: 0, pageviews: 0, _sids: new Set() });
+    }
+
+    const curVis = new Set(), prevVis = new Set();
+    let curViews = 0, prevViews = 0;
+    const pageMap = {}, pageVis = {}, refMap = {};
 
     for (const v of visits) {
-      const day = ymd(v.created_at);
-      if (!dayMap[day]) dayMap[day] = { visitors: new Set(), views: 0 };
-      dayMap[day].visitors.add(v.sid);
-      dayMap[day].views++;
-      views30++;
-      vis30.add(v.sid);
-      const path = (v.path || '/').split('?')[0];
-      pageMap[path] = (pageMap[path] || 0) + 1;
-      (pageVisitors[path] = pageVisitors[path] || new Set()).add(v.sid);
-      const src = refSource(v.ref);
-      refMap[src] = (refMap[src] || 0) + 1;
-      if (day >= d7str) { views7++; vis7.add(v.sid); }
-      if (day === todayStr) visToday.add(v.sid);
+      const t = new Date(v.created_at).getTime();
+      const inCur = t >= sinceCur && t <= nowMs;
+      if (inCur) {
+        curVis.add(v.sid); curViews++;
+        const path = (v.path || '/').split('?')[0];
+        pageMap[path] = (pageMap[path] || 0) + 1;
+        (pageVis[path] = pageVis[path] || new Set()).add(v.sid);
+        const src = refSource(v.ref);
+        refMap[src] = (refMap[src] || 0) + 1;
+        let idx = Math.floor((t - winStart) / stepMs);
+        if (idx < 0) idx = 0; if (idx > N - 1) idx = N - 1;
+        series[idx]._sids.add(v.sid); series[idx].pageviews++;
+      } else if (hasWin && t >= sincePull && t < sinceCur) {
+        prevVis.add(v.sid); prevViews++;
+      }
     }
-
-    // Fill a continuous 30-day daily series (so the chart has no gaps).
-    const daily = [];
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(now); d.setDate(d.getDate() - i);
-      const key = ymd(d);
-      const e = dayMap[key];
-      daily.push({ date: key, visitors: e ? e.visitors.size : 0, pageviews: e ? e.views : 0 });
-    }
+    series.forEach((b) => { b.visitors = b._sids.size; delete b._sids; });
 
     const topPages = Object.keys(pageMap)
-      .map((p) => ({ path: p, views: pageMap[p], visitors: pageVisitors[p].size }))
+      .map((p) => ({ path: p, views: pageMap[p], visitors: pageVis[p].size }))
       .sort((a, b) => b.views - a.views).slice(0, 12);
-
     const topReferrers = Object.keys(refMap)
       .map((s) => ({ source: s, count: refMap[s] }))
       .sort((a, b) => b.count - a.count).slice(0, 10);
 
-    // ── Loyalty aggregation ──────────────────────────────────────────────
+    // ── loyalty (window-independent) ─────────────────────────────────────
     const tiers = { Bronze: 0, Silver: 0, Gold: 0, Platinum: 0 };
     let pointsLive = 0, pointsLifetime = 0;
     for (const p of profiles) {
@@ -136,16 +151,17 @@ module.exports = async function handler(req, res) {
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json({
       traffic: {
-        daily, topPages, topReferrers,
+        window: { minutes: hasWin ? minutes : null },
         totals: {
-          visitorsToday: visToday.size,
-          visitors7: vis7.size, visitors30: vis30.size,
-          pageviews7: views7,  pageviews30: views30,
+          visitors: curVis.size, pageviews: curViews,
+          visitorsPrev: hasWin ? prevVis.size : null,
+          pageviewsPrev: hasWin ? prevViews : null,
         },
+        series, topPages, topReferrers,
         tracked: visits.length > 0,
       },
       loyalty: { members: profiles.length, tiers, pointsLive, pointsLifetime },
-      generated_at: now.toISOString(),
+      generated_at: new Date().toISOString(),
     });
   } catch (e) {
     console.error('[admin/overview]', e.message);
