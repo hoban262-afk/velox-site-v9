@@ -23,4 +23,5 @@ var DISCOUNT_CODES = [
 
   // ── Add codes below in the same format ─────────────────────────────────────
   // { code: "EXAMPLE", type: "percentage", value: 15, active: true },
+  { code: "JOSIE20", type: "percentage", value: 20, active: true },
 ];
