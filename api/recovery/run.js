@@ -16,8 +16,8 @@
  * is already flipped to 'paid' by the webhook and excluded from the sequence.
  */
 
-const { Resend } = require('resend');
 const crypto = require('crypto');
+const { sendMail } = require('../../lib/mail');
 const { STAGES, buildRecoveryEmail } = require('../../lib/recovery-emails');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -122,9 +122,7 @@ module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Supabase not configured' });
   if (!authorised(req)) return res.status(401).json({ error: 'Unauthorised' });
 
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'Resend not configured' });
-  const resend = new Resend(apiKey);
+  if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: 'Resend not configured' });
 
   const summary = { scanned: 0, sent: 0, skipped_unsub: 0, errors: 0, by_stage: { 1: 0, 2: 0, 3: 0 } };
 
@@ -176,12 +174,17 @@ module.exports = async function handler(req, res) {
     catch (e) { console.error('[recovery/run] build failed for', order.id, e.message); summary.errors++; continue; }
 
     try {
-      await resend.emails.send({
-        from: 'Velox Peptides <newsletter@veloxpeps.com>',
+      const sendRes = await sendMail({
         to: order.customer_email,
         subject: email.subject,
         html: email.html,
+        flow: 'abandoned', stage, orderId: order.id,
+        headers: {
+          'List-Unsubscribe': `<${links.unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       });
+      if (!sendRes.ok) { summary.errors++; continue; }
       await sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, {
         recovery_stage: stage,
         last_recovery_email_at: new Date().toISOString(),

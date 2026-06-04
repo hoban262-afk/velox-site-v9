@@ -162,6 +162,7 @@
     loadBundlesAdmin();
     loadReviews();
     loadCampaign();
+    loadMarketing();
     loadSubscribers();
     loadAffiliates();
     loadActions();
@@ -824,6 +825,87 @@
     }
   }
 
+  // ── MARKETING (flow analytics) ──────────────────────────────────────────────
+  var FLOW_LABELS = {
+    welcome: 'Welcome series', abandoned: 'Abandoned checkout', back_in_stock: 'Back in stock',
+    reorder: 'Replenishment', review: 'Review request', campaign: 'Campaigns',
+  };
+  async function loadMarketing() {
+    if (!window._sb) return;
+    var cards = document.getElementById('mkt-cards');
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) return;
+      var r = await fetch('/api/admin/marketing?view=overview', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (cards) cards.innerHTML = '<div class="adm-empty">Could not load: ' + esc((d && d.error) || ('HTTP ' + r.status)) + '</div>'; return; }
+      renderMarketing(d);
+    } catch (e) { if (cards) cards.innerHTML = '<div class="adm-empty">Could not load marketing data.</div>'; }
+  }
+
+  function mktCard(label, value, sub) {
+    return '<div style="background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:13px 14px">' +
+      '<div style="font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">' + esc(label) + '</div>' +
+      '<div style="font-size:20px;font-weight:800;color:#fff">' + value + '</div>' +
+      (sub ? '<div style="font-size:11px;color:var(--t3,#6b7280);margin-top:2px">' + esc(sub) + '</div>' : '') + '</div>';
+  }
+
+  function renderMarketing(d) {
+    var gbp = function (v) { return '£' + Number(v || 0).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); };
+    var t = d.totals || {};
+    var sc = document.getElementById('mkt-subcount');
+    if (sc) sc.textContent = (d.subscriber_count != null ? d.subscriber_count : '—') + ' active subscribers';
+    var cards = document.getElementById('mkt-cards');
+    if (cards) cards.innerHTML =
+      mktCard('Revenue', gbp(t.revenue), (t.orders || 0) + ' orders') +
+      mktCard('Emails sent', (t.sends || 0).toLocaleString('en-GB'), null) +
+      mktCard('Open rate', (t.sends ? Math.round(t.opens / t.sends * 100) : 0) + '%', (t.opens || 0) + ' opens') +
+      mktCard('Click rate', (t.sends ? Math.round(t.clicks / t.sends * 100) : 0) + '%', (t.clicks || 0) + ' clicks');
+
+    // Daily revenue bars
+    var chart = document.getElementById('mkt-chart');
+    if (chart) {
+      var series = d.series || [];
+      var max = Math.max.apply(null, series.map(function (x) { return x.revenue; }).concat([1]));
+      chart.innerHTML = series.map(function (x) {
+        var h = Math.max(2, Math.round(x.revenue / max * 88));
+        return '<div title="' + x.date + ': ' + gbp(x.revenue) + '" style="flex:1;min-width:0;height:' + h + 'px;background:linear-gradient(180deg,#01D3A0,#018a69);border-radius:3px 3px 0 0;opacity:' + (x.revenue ? 1 : .25) + '"></div>';
+      }).join('');
+    }
+
+    // Flow table
+    var flows = document.getElementById('mkt-flows');
+    if (flows) {
+      var rows = (d.flows || []).map(function (f) {
+        return '<tr style="border-top:1px solid var(--brd,#1a1a1a)">' +
+          '<td style="padding:9px 8px;font-size:13px;color:#fff;font-weight:600">' + esc(FLOW_LABELS[f.flow] || f.flow) + '</td>' +
+          '<td style="padding:9px 8px;font-size:13px;color:var(--t2,#9ca3af);text-align:right">' + f.sends + '</td>' +
+          '<td style="padding:9px 8px;font-size:13px;color:var(--t2,#9ca3af);text-align:right">' + f.open_rate + '%</td>' +
+          '<td style="padding:9px 8px;font-size:13px;color:var(--t2,#9ca3af);text-align:right">' + f.click_rate + '%</td>' +
+          '<td style="padding:9px 8px;font-size:13px;color:#01D3A0;font-weight:700;text-align:right">' + gbp(f.revenue) + '</td></tr>';
+      }).join('');
+      flows.innerHTML = '<table style="width:100%;border-collapse:collapse;min-width:420px">' +
+        '<tr><th style="text-align:left;padding:0 8px 6px;font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase">Flow</th>' +
+        '<th style="text-align:right;padding:0 8px 6px;font-size:11px;color:var(--t3,#6b7280)">Sent</th>' +
+        '<th style="text-align:right;padding:0 8px 6px;font-size:11px;color:var(--t3,#6b7280)">Open</th>' +
+        '<th style="text-align:right;padding:0 8px 6px;font-size:11px;color:var(--t3,#6b7280)">Click</th>' +
+        '<th style="text-align:right;padding:0 8px 6px;font-size:11px;color:var(--t3,#6b7280)">Revenue</th></tr>' + rows + '</table>';
+    }
+
+    // Recent campaigns
+    var camps = document.getElementById('mkt-campaigns');
+    if (camps) {
+      var list = d.campaigns || [];
+      camps.innerHTML = list.length ? list.map(function (c) {
+        return '<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--brd,#1a1a1a)">' +
+          '<div style="min-width:0"><div style="font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(c.subject) + '</div>' +
+          '<div style="font-size:11px;color:var(--t3,#6b7280)">' + new Date(c.created_at).toLocaleDateString('en-GB') + ' · ' + esc(c.segment) + '</div></div>' +
+          '<div style="font-size:12px;color:var(--t2,#9ca3af);white-space:nowrap">' + (c.sent_count || 0) + '/' + (c.total || 0) + ' sent</div></div>';
+      }).join('') : '<div class="adm-empty">No campaigns sent yet.</div>';
+    }
+  }
+
   // ── CAMPAIGN (email broadcast) ──────────────────────────────────────────────
   function loadCampaign() {
     if (!window._sb) return;
@@ -851,13 +933,15 @@
     try {
       var s = await window._sb.auth.getSession();
       var token = s.data && s.data.session && s.data.session.access_token;
-      var r = await fetch('/api/newsletter/broadcast', {
+      var segEl = document.getElementById('camp-segment');
+      var segment = segEl ? segEl.value : 'all';
+      var r = await fetch('/api/admin/marketing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({ subject: subject, message: message }),
+        body: JSON.stringify({ action: 'campaign', subject: subject, body: message, segment: segment }),
       });
       var d = await r.json();
-      if (r.ok) setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' subscribers.', true);
+      if (r.ok) { setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' recipients.', true); if (typeof loadMarketing === 'function') loadMarketing(); }
       else setMsg(d.error || 'Send failed.', false);
     } catch (e) { setMsg('Send failed — please try again.', false); }
     btn.disabled = false; btn.textContent = orig;

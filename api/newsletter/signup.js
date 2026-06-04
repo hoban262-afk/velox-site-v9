@@ -128,9 +128,11 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'Could not create your code. Please try again.' });
     }
 
-    // Add to the general subscriber list too (ignore duplicates)
+    // Add to the general subscriber list too (ignore duplicates). welcome_stage=1
+    // marks that the stage-1 (code + handbook) email below has been sent, so the
+    // welcome-run worker continues from stage 2.
     sb('subscribers', { method: 'POST', headers: { Prefer: 'resolution=ignore-duplicates' },
-      body: JSON.stringify({ email: email, source: 'popup' }) }).catch(function () {});
+      body: JSON.stringify({ email: email, source: 'popup', welcome_stage: 1, welcome_last_at: new Date().toISOString() }) }).catch(function () {});
 
     // ── Send the welcome email ──────────────────────────────────────────────
     if (process.env.RESEND_API_KEY) {
