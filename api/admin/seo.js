@@ -24,6 +24,31 @@ const SA_EMAIL = process.env.GSC_SA_EMAIL;
 const SA_KEY   = (process.env.GSC_SA_PRIVATE_KEY || '').replace(/\\n/g, '\n');
 const SITE     = process.env.GSC_SITE || 'sc-domain:veloxpeps.com';
 
+// OAuth user credentials (preferred — works even when service-account keys are
+// blocked by an org policy). Set these three in Vercel to use OAuth.
+const OAUTH_CLIENT_ID     = process.env.GSC_OAUTH_CLIENT_ID;
+const OAUTH_CLIENT_SECRET = process.env.GSC_OAUTH_CLIENT_SECRET;
+const OAUTH_REFRESH_TOKEN = process.env.GSC_OAUTH_REFRESH_TOKEN;
+const HAS_OAUTH = !!(OAUTH_CLIENT_ID && OAUTH_CLIENT_SECRET && OAUTH_REFRESH_TOKEN);
+const HAS_SA    = !!(SA_EMAIL && SA_KEY);
+
+// Exchange a stored refresh token for a short-lived access token.
+async function getOAuthToken() {
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: OAUTH_CLIENT_ID,
+      client_secret: OAUTH_CLIENT_SECRET,
+      refresh_token: OAUTH_REFRESH_TOKEN,
+      grant_type: 'refresh_token',
+    }),
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error_description || d.error || 'token refresh failed');
+  return d.access_token;
+}
+
 const KNOWN_ADMIN_EMAILS = new Set([
   (process.env.ADMIN_EMAIL || '').toLowerCase(),
   'support@veloxpeps.com',
@@ -110,12 +135,12 @@ function sumTotals(rows) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
   if (!(await isAdmin(req))) return res.status(401).json({ error: 'Unauthorized' });
-  if (!SA_EMAIL || !SA_KEY) {
+  if (!HAS_OAUTH && !HAS_SA) {
     return res.status(200).json({ configured: false, site: SITE });
   }
 
   try {
-    const token = await getAccessToken();
+    const token = HAS_OAUTH ? await getOAuthToken() : await getAccessToken();
 
     // GSC data lags ~2–3 days; end the window 3 days back so totals are stable.
     const end = new Date(); end.setDate(end.getDate() - 3);
