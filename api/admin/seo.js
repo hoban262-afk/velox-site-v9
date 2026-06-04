@@ -101,6 +101,45 @@ async function getAccessToken() {
 
 const ymd = (d) => new Date(d).toISOString().slice(0, 10);
 
+// Resolve the requested period into a date window + a matching comparison window.
+// Supported ?range=  1m | 3m | quarter | year | 28d   and  ?range=month&month=YYYY-MM
+function windowFor(q) {
+  q = q || {};
+  const now = new Date();
+  // GSC data lags ~3 days; end the window there so totals are stable.
+  let end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  end.setUTCDate(end.getUTCDate() - 3);
+  const key = String(q.range || '1m').toLowerCase();
+
+  // A specific calendar month.
+  if (key === 'month' && /^\d{4}-\d{2}$/.test(q.month || '')) {
+    const [y, m] = q.month.split('-').map(Number);
+    const s = new Date(Date.UTC(y, m - 1, 1));
+    let e = new Date(Date.UTC(y, m, 0));               // last day of that month
+    if (e > end) e = end;                              // cap the current month at the data edge
+    const ps = new Date(Date.UTC(y, m - 2, 1));        // previous calendar month
+    const pe = new Date(Date.UTC(y, m - 1, 0));
+    return { range: { startDate: ymd(s), endDate: ymd(e) }, prevRange: { startDate: ymd(ps), endDate: ymd(pe) }, label: q.month };
+  }
+
+  // Current calendar quarter to date, compared to the previous full quarter.
+  if (key === 'quarter') {
+    const y = end.getUTCFullYear();
+    const qi = Math.floor(end.getUTCMonth() / 3);
+    const s = new Date(Date.UTC(y, qi * 3, 1));
+    const ps = new Date(Date.UTC(y, qi * 3 - 3, 1));
+    const pe = new Date(Date.UTC(y, qi * 3, 0));
+    return { range: { startDate: ymd(s), endDate: ymd(end) }, prevRange: { startDate: ymd(ps), endDate: ymd(pe) }, label: 'quarter' };
+  }
+
+  // Rolling-day ranges: previous window is the equal-length span immediately before.
+  const days = key === '3m' ? 90 : key === 'year' ? 365 : key === '28d' ? 28 : 30;
+  const s = new Date(end);  s.setUTCDate(s.getUTCDate() - (days - 1));
+  const pe = new Date(s);   pe.setUTCDate(pe.getUTCDate() - 1);
+  const ps = new Date(pe);  ps.setUTCDate(ps.getUTCDate() - (days - 1));
+  return { range: { startDate: ymd(s), endDate: ymd(end) }, prevRange: { startDate: ymd(ps), endDate: ymd(pe) }, label: key };
+}
+
 async function query(token, body) {
   const r = await fetch(
     `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(SITE)}/searchAnalytics/query`,
@@ -142,21 +181,15 @@ module.exports = async function handler(req, res) {
   try {
     const token = HAS_OAUTH ? await getOAuthToken() : await getAccessToken();
 
-    // GSC data lags ~2–3 days; end the window 3 days back so totals are stable.
-    const end = new Date(); end.setDate(end.getDate() - 3);
-    const start = new Date(end); start.setDate(start.getDate() - 27);          // 28-day window
-    const prevEnd = new Date(start); prevEnd.setDate(prevEnd.getDate() - 1);
-    const prevStart = new Date(prevEnd); prevStart.setDate(prevStart.getDate() - 27);
-
-    const range     = { startDate: ymd(start),     endDate: ymd(end) };
-    const prevRange = { startDate: ymd(prevStart), endDate: ymd(prevEnd) };
+    const win = windowFor(req.query || {});
+    const range = win.range, prevRange = win.prevRange;
 
     const [totalRows, prevRows, queryRows, pageRows, dayRows] = await Promise.all([
       query(token, { ...range, dimensions: [], rowLimit: 1 }),
       query(token, { ...prevRange, dimensions: [], rowLimit: 1 }),
       query(token, { ...range, dimensions: ['query'], rowLimit: 20 }),
       query(token, { ...range, dimensions: ['page'],  rowLimit: 20 }),
-      query(token, { ...range, dimensions: ['date'],  rowLimit: 60 }),
+      query(token, { ...range, dimensions: ['date'],  rowLimit: 400 }),
     ]);
 
     const totals = sumTotals(totalRows);
@@ -176,7 +209,7 @@ module.exports = async function handler(req, res) {
 
     res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=1800');
     return res.status(200).json({
-      configured: true, site: SITE, range, prevRange,
+      configured: true, site: SITE, range, prevRange, label: win.label,
       totals, prev, queries, pages, daily,
     });
   } catch (e) {

@@ -366,22 +366,55 @@
   }
 
   // ── SEO TAB ──────────────────────────────────────────────────────────────
+  // Selected period: a rolling range (1m/3m/quarter/year) or a specific month.
+  var SEO_RANGE = { type: 'rel', key: '1m' };
+
+  function seoMonthsList() {                       // last 16 months (GSC's retention)
+    var out = [], now = new Date();
+    for (var i = 0; i < 16; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      out.push({ val: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'),
+                 label: d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) });
+    }
+    return out;
+  }
+  function seoBtn(key, label) {
+    var on = SEO_RANGE.type === 'rel' && SEO_RANGE.key === key;
+    return '<button class="status-select" style="cursor:pointer;padding:7px 14px;' +
+      (on ? 'color:#01D3A0;border-color:#01D3A0' : '') + '" onclick="veloxSeoSetRange(\'' + key + '\')">' + label + '</button>';
+  }
+  function seoControlsHtml() {
+    var monthOn = SEO_RANGE.type === 'month';
+    var opts = '<option value="">Pick a month…</option>' + seoMonthsList().map(function (m) {
+      return '<option value="' + m.val + '"' + (monthOn && SEO_RANGE.month === m.val ? ' selected' : '') + '>' + m.label + '</option>';
+    }).join('');
+    return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px">' +
+      seoBtn('1m', '1 month') + seoBtn('3m', '3 months') + seoBtn('quarter', 'Quarter') + seoBtn('year', 'Year') +
+      '<select class="status-select" style="cursor:pointer;padding:7px 10px;' +
+        (monthOn ? 'color:#01D3A0;border-color:#01D3A0' : '') + '" onchange="veloxSeoSetMonth(this.value)">' + opts + '</select>' +
+      '</div>';
+  }
+  window.veloxSeoSetRange = function (k) { SEO_RANGE = { type: 'rel', key: k }; loadSEO(); };
+  window.veloxSeoSetMonth = function (m) { if (!m) return; SEO_RANGE = { type: 'month', month: m }; loadSEO(); };
+
   async function loadSEO() {
-    setHTML('seo-body', '<div class="adm-loading">Loading Search Console…</div>');
-    var d = await apiGet('/api/admin/seo');
-    if (!d) { setHTML('seo-body', '<div class="adm-empty">Could not reach the SEO endpoint.</div>'); return; }
+    var qs = SEO_RANGE.type === 'month'
+      ? ('?range=month&month=' + encodeURIComponent(SEO_RANGE.month))
+      : ('?range=' + SEO_RANGE.key);
+    setHTML('seo-body', seoControlsHtml() + '<div class="adm-loading">Loading Search Console…</div>');
+    var d = await apiGet('/api/admin/seo' + qs);
+    if (!d) { setHTML('seo-body', seoControlsHtml() + '<div class="adm-empty">Could not reach the SEO endpoint.</div>'); return; }
     if (d.configured === false) {
-      setHTML('seo-body',
-        '<div class="adm-empty" style="line-height:1.6">Google Search Console isn\'t connected yet.<br>' +
-        'Add a Google service account to Search Console and set <code>GSC_SA_EMAIL</code> + <code>GSC_SA_PRIVATE_KEY</code> in Vercel — then this tab shows live clicks, impressions, queries and pages.</div>');
+      setHTML('seo-body', seoControlsHtml() +
+        '<div class="adm-empty" style="line-height:1.6">Google Search Console isn\'t connected yet. Set the GSC OAuth credentials in Vercel and redeploy — then this tab shows live clicks, impressions, queries and pages.</div>');
       return;
     }
-    if (d.error) { setHTML('seo-body', '<div class="adm-empty">Search Console error: ' + esc(d.error) + '</div>'); return; }
+    if (d.error) { setHTML('seo-body', seoControlsHtml() + '<div class="adm-empty">Search Console error: ' + esc(d.error) + '</div>'); return; }
 
     var t = d.totals || {}, p = d.prev || {};
-    var stats = card('Clicks · 28d', num(t.clicks), delta(t.clicks, p.clicks) + ' vs prev 28d') +
-      card('Impressions · 28d', num(t.impressions), delta(t.impressions, p.impressions) + ' vs prev 28d') +
-      card('CTR · 28d', (t.ctr * 100).toFixed(1) + '%', delta(t.ctr, p.ctr) + ' vs prev') +
+    var stats = card('Clicks', num(t.clicks), delta(t.clicks, p.clicks) + ' vs prev') +
+      card('Impressions', num(t.impressions), delta(t.impressions, p.impressions) + ' vs prev') +
+      card('CTR', (t.ctr * 100).toFixed(1) + '%', delta(t.ctr, p.ctr) + ' vs prev') +
       card('Avg position', (t.position || 0).toFixed(1), delta(p.position, t.position, { goodUp: true }) + ' vs prev');
 
     var posCol = function (v) { return v <= 10 ? '#01D3A0' : v <= 25 ? '#fbbf24' : '#f87171'; };
@@ -406,7 +439,8 @@
       '<strong style="color:#fbbf24">Priority page:</strong> ' + esc(opp.page.replace(/^https?:\/\/[^/]+/, '')) + ' — ' + num(opp.impressions) + ' impressions but ranking ~' + opp.position.toFixed(0) + '. Strengthen it with internal links + content depth to break onto page 1.</div>' : '';
 
     setHTML('seo-body',
-      '<div style="font-size:11px;color:var(--t3,#6b7280);margin-bottom:12px">' + esc(d.site) + ' · ' + (d.range ? d.range.startDate + ' → ' + d.range.endDate : '28 days') + '</div>' +
+      seoControlsHtml() +
+      '<div style="font-size:11px;color:var(--t3,#6b7280);margin-bottom:12px">' + esc(d.site) + ' · ' + (d.range ? d.range.startDate + ' → ' + d.range.endDate : '') + '</div>' +
       '<div class="stat-grid">' + stats + '</div>' + oppHtml +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" class="traffic-cols">' +
         '<div><div style="font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Top queries</div>' + qT + '</div>' +
