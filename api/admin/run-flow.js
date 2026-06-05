@@ -17,12 +17,15 @@ const KNOWN_ADMIN_EMAILS = new Set([
   'support@veloxpeps.com', 'veloxpeps@gmail.com',
 ].filter(Boolean));
 
+// Static requires (literal paths) so Vercel's dependency tracer bundles every
+// worker file into this function. A dynamic require(variable) is invisible to
+// the bundler and fails at runtime with "Cannot find module".
 const WORKERS = {
-  welcome:   '../recovery/welcome-run',
-  restock:   '../recovery/restock-run',
-  abandoned: '../recovery/run',
-  reorder:   '../recovery/reorder-run',
-  review:    '../recovery/review-run',
+  welcome:   require('../recovery/welcome-run'),
+  restock:   require('../recovery/restock-run'),
+  abandoned: require('../recovery/run'),
+  reorder:   require('../recovery/reorder-run'),
+  review:    require('../recovery/review-run'),
 };
 
 async function isAdmin(req) {
@@ -61,14 +64,13 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const flow = String((req.body || {}).flow || '').trim();
-  const modPath = WORKERS[flow];
-  if (!modPath) return res.status(400).json({ error: 'Unknown flow' });
+  const worker = WORKERS[flow];
+  if (!worker) return res.status(400).json({ error: 'Unknown flow' });
   if (!process.env.CRON_SECRET && !process.env.INTERNAL_TASK_SECRET) {
     return res.status(400).json({ error: 'No CRON_SECRET or INTERNAL_TASK_SECRET set in Vercel — cannot trigger workers.' });
   }
 
   try {
-    const worker = require(modPath);
     const fres = captureRes();
     await worker(workerReq(), fres);
     return res.status(200).json({ ok: fres._status < 400, flow, status: fres._status, result: fres._json });
