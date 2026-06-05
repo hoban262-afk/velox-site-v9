@@ -4345,24 +4345,11 @@ html { overflow-x: hidden !important; }
    homepage stacks section, category CTA banner
    ======================================================================= */
 
-/* ── 1. Nav: Stacks link teal highlight ─────────────────────────────────── */
+/* ── 1. Nav: Stacks link (matches other nav links) ──────────────────────── */
 
-.nav-links a.nl-stacks {
-  color: rgba(255,107,0,.75) !important;
-  font-weight: 600 !important;
-}
-.nav-links a.nl-stacks:hover {
-  color: #ffffff !important;
-}
-
-/* Mobile menu: Stacks as top-level orange item */
+/* Mobile menu: Stacks as standard top-level item */
 .mob-menu a.mob-nl-stacks {
-  color: rgba(255,107,0,.75) !important;
-  font-weight: 700 !important;
-  padding-left: 0 !important;        /* full-width, not indented like sub-items */
-  border-top: 1px solid rgba(255,107,0,.18) !important;
-  border-bottom: 1px solid rgba(255,107,0,.18) !important;
-  margin: 4px 0 !important;
+  padding-left: 0 !important;
 }
 
 /* ── 2. Stack card image placeholder ────────────────────────────────────── */
@@ -4614,35 +4601,43 @@ html { overflow-x: hidden !important; }
    Fix: give label a real flex-basis so when price block is wide it
    wraps to its own row rather than crushing the label.               */
 .cp-size-opt {
-  align-items: flex-start !important;
+  display: flex !important;
+  align-items: center !important;
   flex-wrap: wrap !important;
-  row-gap: 4px !important;
-  column-gap: 8px !important;
+  row-gap: 6px !important;
+  column-gap: 12px !important;
 }
 .cp-size-opt input[type="radio"] {
-  flex-shrink: 0 !important;
-  margin-top: 3px !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
 }
+/* The size label must NEVER break — keep "10mg" / "40mg Pen" on one line */
 .cp-size-l {
-  flex: 1 1 120px !important;
-  min-width: 0 !important;
-  font-size: 12px !important;
-  line-height: 1.5 !important;
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
   word-break: normal !important;
-  overflow-wrap: break-word !important;
+  overflow-wrap: normal !important;
+  min-width: 44px !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
 }
+/* Price block sits to the right and wraps internally (or to its own row) when tight */
 .cp-size-price-wrap {
-  flex-shrink: 0 !important;
-  flex-basis: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
   margin-left: auto !important;
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
 }
+/* The "Pre-loaded pen…" note always drops to its own full-width line */
+.cp-size-note { flex-basis: 100% !important; margin-top: 2px !important; }
 
-/* At ≤1100px panel gets narrower — move price to its own line */
+/* Narrower panels: let the price block left-align under the label cleanly */
 @media (max-width: 1100px) {
-  .cp-size-price-wrap {
-    flex-basis: 100% !important;
-    margin-left: 28px !important;
-  }
+  .cp-size-price-wrap { justify-content: flex-start !important; }
 }
 
 /* 2. Hero image not clipped at top
@@ -5672,3 +5667,157 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !im
   .cp-hto { padding: 11px 12px; }
   .cp-hto-step { font-size: 12px; }
 }
+
+/* ============================================================
+   MOBILE POLISH + TEXT-WRAP SAFETY
+   - Headlines never break ugly (text-wrap: balance)
+   - Long words wrap rather than overflow
+   - Button labels never split
+   - Mobile prominence for the new Research nav link
+   - Site-wide horizontal-overflow guard
+   ============================================================ */
+
+/* No horizontal scroll, ever */
+html, body { overflow-x: hidden !important; }
+
+/* Headlines wrap cleanly across breakpoints */
+h1, h2, h3, .h-h1, .page-h1, .rl-h1, .sec-t, .cc-name, .cp-name,
+.cat-tile-name, .hp-feat-title, .rl-card-title, .rl-h2, .rl-h3,
+.confirm-t, .nl-t, .hp-comm-title {
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: manual;
+}
+
+/* Body text never overflows containers (long URLs, IBANs, etc.) */
+p, li, dd, dt, .cc-desc, .cc-full, .cc-meta, .rl-card-excerpt,
+.card-body, address, .ft-tag, .h-sub, .vp-hto-card-desc {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Buttons never split their label across lines */
+.btn-p, .btn-o, .cc-atc, .nav-cart-label, .rl-sb-btn, .rl-sb-btn-o,
+.eg-btn, .cart-proceed, .cart-continue, .co-submit, .confirm-cta a,
+.vp-hto-cta a, .nl-btn, button[type="submit"] {
+  white-space: nowrap;
+}
+
+/* Product / research card titles: never crush down to one word per line */
+.cc-name, .cp-name, .rl-card-title, .cat-tile-name {
+  min-width: 0;
+}
+
+/* Flex containers: ensure children can shrink (prevents overflow + char-wrap) */
+.cc, .cc-body, .cc-ft, .cc-price-block, .rl-card, .rl-card-footer,
+.cp-hero, .cp-hero-main, .cart-summary, .co-summary, .pts-grid > * {
+  min-width: 0;
+}
+
+/* ── MOBILE-SPECIFIC POLISH (≤ 767px) ───────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Tighter horizontal padding for full-width feel without edge-crash */
+  .sec-i, .hero-i, .vp-hto-inner, .rl-outer, .acc-wrap { padding-left: 18px; padding-right: 18px; }
+
+  /* Headlines: slightly tighter line-height + balance for clean two-line layout */
+  h1, .h-h1, .page-h1, .rl-h1 { line-height: 1.08; text-wrap: balance; }
+  h2, .sec-t, .hp-feat-title  { line-height: 1.18; text-wrap: balance; }
+
+  /* Primary CTAs: full-width tap targets */
+  .btn-p, .btn-o { display: inline-block; min-height: 44px; padding-left: 22px; padding-right: 22px; }
+
+  /* Single-column safety on tight grids */
+  .prod-grid-4 { grid-template-columns: 1fr 1fr !important; }
+  @media (max-width: 480px) { .prod-grid-4 { grid-template-columns: 1fr !important; } }
+
+  /* Footer columns stack cleanly */
+  .ft-cols { grid-template-columns: 1fr 1fr; }
+
+  /* Cart proceed / continue: keep on one line, full width */
+  .cart-proceed, .cart-continue { width: 100%; box-sizing: border-box; text-align: center; }
+
+  /* Compliance + footer text wrap rather than overflow */
+  .cb-i, .ft-i, .ft-disc { overflow-wrap: break-word; }
+}
+
+/* ── RESEARCH NAV LINK PROMINENCE ──────────────────────────────────────── */
+/* Mobile menu: make it stand out (most customers come from mobile) */
+a.mob-nl[href="/guides/"] {
+  color: #01D3A0 !important;
+  font-weight: 700;
+  position: relative;
+}
+a.mob-nl[href="/guides/"]::after {
+  content: 'NEW';
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #021;
+  background: #01D3A0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Desktop: NEW pill after the Research link.
+   NOTE: ::after is already used by the nav hover-underline (.site-header .nl::after),
+   so the badge lives on ::before and is pushed after the text with flex `order`
+   (the nav link is display:inline-flex). This avoids the two effects colliding. */
+a.nl[href="/guides/"] { position: relative; }
+a.nl[href="/guides/"]::before {
+  content: 'NEW';
+  order: 1;
+  display: inline-block;
+  align-self: center;
+  line-height: 1;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #021;
+  background: #01D3A0;
+  padding: 2px 5px;
+  border-radius: 2px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── PRODUCT PAGE SIMPLIFICATION ─────────────────────────────────────────────
+   Calmer buy box + clean above-the-fold. Goal: the top of the page reads as
+   title · viewing · spec · price, with the wordy description/compliance pushed
+   below the fold (still in the DOM, so SEO is unchanged). Global = all PDPs. */
+
+/* Drop the contradictory per-size deal % badges — the strikethrough + sale
+   price already communicate each size's discount, without the 29/35/20% noise. */
+.cp-size-badge { display: none !important; }
+
+/* One scarcity cue only. Keep the per-variant "Only X left" indicator
+   (#vp-size-stock, injected into the buy box), drop the separate red banner. */
+.vp-urgency-banner { display: none !important; }
+
+/* Remove the bulky 3-step "How to order" block — payment method is already
+   covered in the order meta list below the button. */
+.cp-hto { display: none; }
+
+/* Calm the buy box: lose the neon top bar, soften the border and the size rows. */
+.cp-order::before { display: none; }
+.cp-order { background: #0b0d11; border-color: rgba(255,255,255,.08); }
+.cp-size-opt { background: #0e1116; border-color: rgba(255,255,255,.07); }
+.cp-size-was { color: #6B7280; }
+.cp-order-meta li { font-size: 10px; }
+/* vp-vol-note carries inline styles, so override with !important */
+.vp-vol-note { background: transparent !important; border: none !important;
+  padding: 0 0 6px !important; color: #9CA3AF !important; }
+
+/* Reorder the text column so the scannable spec table sits high (a buying
+   signal) and the description + compliance drop to the bottom — visible on
+   scroll. cp-hero-main is a flex column; eyebrow/title/viewing keep order 0. */
+.cp-hero-main { justify-content: flex-start; }
+.cp-hero-main .cp-spec { order: 1; margin-top: 8px; max-width: 520px; }
+.cp-hero-main .cp-lede { order: 2; margin-top: 18px; }
+.cp-hero-main .disc-inline { order: 3; margin-top: 14px; }

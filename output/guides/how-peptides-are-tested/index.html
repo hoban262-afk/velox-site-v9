@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>How Peptides Are Tested: HPLC &amp; Mass Spec | Velox Peptides</title>
+  <meta name="description" content="A plain-English guide to how research peptides are tested: why third-party testing matters, HPLC for purity, mass spectrometry for identity, appearance checks, and what a certificate of analysis records. Velox batches are third-party tested.">
+  <link rel="canonical" href="https://veloxpeps.com/guides/how-peptides-are-tested/">
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Velox Peptides">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://veloxpeps.com/guides/how-peptides-are-tested/">
+  <meta property="og:title" content="How Peptides Are Tested: HPLC &amp; Mass Spec | Velox Peptides">
+  <meta property="og:description" content="A plain-English guide to how research peptides are tested: why third-party testing matters, HPLC for purity, mass spectrometry for identity, appearance checks, and what a certificate of analysis records. Velox batches are third-party tested.">
+  <meta property="og:image" content="https://veloxpeps.com/assets/images/og/bpc-157.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_GB">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How Peptides Are Tested: HPLC &amp; Mass Spec | Velox Peptides">
+  <meta name="twitter:description" content="A plain-English guide to how research peptides are tested: why third-party testing matters, HPLC for purity, mass spectrometry for identity, appearance checks, and what a certificate of analysis records. Velox batches are third-party tested.">
+  <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og/bpc-157.png">
+
+  <!-- Icons and manifest -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#030407">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/css/core.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+
+  <!-- JSON-LD: Organisation -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Velox Peptides","legalName":"CRP Labs Ltd","url":"https://veloxpeps.com","logo":"https://veloxpeps.com/assets/images/logo.png","email":"support@veloxpeps.com","address":{"@type":"PostalAddress","addressLocality":"Holywood","addressRegion":"Northern Ireland","addressCountry":"GB"},"identifier":{"@type":"PropertyValue","propertyID":"UK Company Number","value":"NI738125"},"sameAs":["https://www.instagram.com/veloxpeps"]}</script>
+
+  <!-- JSON-LD: Article -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How Peptides Are Tested: HPLC & Mass Spec","description":"A plain-English guide to how research peptides are tested for purity and identity using HPLC and mass spectrometry, plus what a certificate of analysis records.","datePublished":"2026-06-01","dateModified":"2026-06-01","author":{"@type":"Organization","name":"Velox Peptides Research Team"},"publisher":{"@type":"Organization","name":"Velox Peptides","logo":{"@type":"ImageObject","url":"https://veloxpeps.com/assets/images/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://veloxpeps.com/guides/how-peptides-are-tested/"},"image":"https://veloxpeps.com/assets/images/og/bpc-157.png","keywords":"peptide testing, HPLC, high-performance liquid chromatography, mass spectrometry, purity, certificate of analysis, third-party testing, Janoshik"}</script>
+
+  <!-- JSON-LD: BreadcrumbList -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://veloxpeps.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://veloxpeps.com/guides/"},{"@type":"ListItem","position":3,"name":"How Peptides Are Tested"}]}</script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is HPLC purity?","acceptedAnswer":{"@type":"Answer","text":"HPLC (high-performance liquid chromatography) separates the components of a sample so each can be measured. HPLC purity is the percentage of the sample that is the target peptide rather than impurities such as shorter or longer chains. A result like 99% means 99 parts in 100 are the correct compound."}},{"@type":"Question","name":"What does mass spectrometry confirm?","acceptedAnswer":{"@type":"Answer","text":"Mass spectrometry measures the molecular weight of a molecule very precisely. By comparing the measured weight to the expected weight of the target peptide, it confirms the compound's identity, that the right molecule was actually made."}},{"@type":"Question","name":"Who tests Velox batches?","acceptedAnswer":{"@type":"Answer","text":"Velox Peptides batches are tested by an independent third-party laboratory, Janoshik Analytical. Batch documentation, including the certificate of analysis, is available on request before ordering."}}]}</script>
+
+  <style>
+    /* ── Research article layout ── */
+    .rl-outer { padding: 0 0 80px; }
+    .rl-layout {
+      display: grid;
+      grid-template-columns: 1fr 296px;
+      gap: 56px;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .rl-layout { grid-template-columns: 1fr; gap: 0; }
+    }
+
+    /* ── Article header ── */
+    .rl-header { padding: 40px 0 32px; border-bottom: 1px solid #1a1d24; margin-bottom: 40px; }
+    .rl-cat-badge {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #1a1600;
+      background: #FFE500;
+      padding: 3px 10px;
+      border-radius: 3px;
+      margin-bottom: 14px;
+    }
+    .rl-h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: #F9FAFB;
+      margin: 0 0 20px;
+    }
+    .rl-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: #6B7280;
+      margin-bottom: 24px;
+    }
+    .rl-meta-sep { opacity: 0.4; }
+
+    /* ── Quick stats bar ── */
+    .rl-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border: 1px solid #1a1d24;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      background: #0a0d12;
+    }
+    .rl-stat {
+      flex: 1;
+      min-width: 160px;
+      padding: 12px 16px;
+      border-right: 1px solid #1a1d24;
+    }
+    .rl-stat:last-child { border-right: none; }
+    .rl-stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #4B5563;
+      margin-bottom: 4px;
+    }
+    .rl-stat-value {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: #9CA3AF;
+      font-weight: 500;
+    }
+    @media (max-width: 600px) {
+      .rl-stat { min-width: 48%; border-bottom: 1px solid #1a1d24; }
+      .rl-stats { border-radius: 6px; }
+    }
+
+    /* ── Compliance notice ── */
+    .rl-compliance {
+      background: rgba(245,183,0,.07);
+      border: 1px solid rgba(245,183,0,.25);
+      border-left: 3px solid #F5B800;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: #D1A400;
+      line-height: 1.55;
+    }
+    .rl-compliance strong { color: #F5B800; }
+
+    /* ── Section headings ── */
+    .rl-section { margin-bottom: 48px; }
+    .rl-h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #F9FAFB;
+      letter-spacing: 0.01em;
+      margin: 0 0 16px;
+      padding-top: 8px;
+      border-top: 2px solid #01D3A0;
+      display: inline-block;
+    }
+    .rl-h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #E5E7EB;
+      margin: 28px 0 10px;
+    }
+    .rl-h3::before {
+      content: '— ';
+      color: #01D3A0;
+    }
+    .rl-article p {
+      font-size: 0.95rem;
+      color: #9CA3AF;
+      line-height: 1.75;
+      margin: 0 0 16px;
+    }
+    .rl-article strong { color: #D1D5DB; }
+    .rl-article a { color: #01D3A0; text-decoration: none; }
+    .rl-article a:hover { text-decoration: underline; }
+
+    /* ── Inline citation ── */
+    .rl-cite {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: #4B5563;
+      vertical-align: super;
+      margin-left: 2px;
+    }
+    .rl-cite a { color: #4B5563; }
+    .rl-cite a:hover { color: #01D3A0; }
+
+    /* ── Study callout cards ── */
+    .rl-study {
+      background: #0a0d12;
+      border: 1px solid #1a1d24;
+      border-left: 3px solid #01D3A0;
+      border-radius: 6px;
+      padding: 20px 20px 16px;
+      margin: 24px 0;
+    }
+    .rl-study-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #01D3A0;
+      margin-bottom: 6px;
+    }
+    .rl-study-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #E5E7EB;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .rl-study p {
+      font-size: 0.88rem !important;
+      margin-bottom: 8px !important;
+    }
+    .rl-study-pmid {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: #4B5563;
+      margin-top: 10px !important;
+    }
+    .rl-study-pmid a { color: #4B5563; }
+    .rl-study-pmid a:hover { color: #01D3A0; }
+
+    /* ── Comparison table ── */
+    .rl-table-wrap { overflow-x: auto; margin: 20px 0; }
+    .rl-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .rl-table th {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6B7280;
+      background: #0a0d12;
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid #1a1d24;
+    }
+    .rl-table th.rl-table-highlight {
+      color: #01D3A0;
+      background: rgba(1,211,160,.05);
+    }
+    .rl-table td {
+      padding: 11px 16px;
+      color: #9CA3AF;
+      border-bottom: 1px solid #111418;
+      vertical-align: middle;
+    }
+    .rl-table tr td:first-child {
+      color: #D1D5DB;
+      font-weight: 500;
+    }
+    .rl-table td.rl-table-highlight {
+      background: rgba(1,211,160,.04);
+      color: #D1D5DB;
+    }
+    .rl-table .rl-yes { color: #01D3A0; font-weight: 700; }
+    .rl-table .rl-no  { color: #374151; }
+    .rl-table tr:last-child td { border-bottom: none; }
+
+    /* ── Supply info box ── */
+    .rl-supply-box {
+      background: #0a0d12;
+      border: 1px solid #1a1d24;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .rl-supply-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 480px) { .rl-supply-grid { grid-template-columns: 1fr; } }
+    .rl-supply-item {}
+    .rl-supply-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #4B5563;
+      margin-bottom: 3px;
+    }
+    .rl-supply-value {
+      font-size: 0.88rem;
+      color: #D1D5DB;
+      font-weight: 500;
+    }
+    .rl-supply-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #01D3A0;
+      color: #030407;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: 0.03em;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .rl-supply-cta:hover { background: #00bf8f; text-decoration: none; }
+
+    /* ── References ── */
+    .rl-refs ol {
+      padding-left: 20px;
+      margin: 0;
+    }
+    .rl-refs li {
+      font-size: 0.82rem;
+      color: #6B7280;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      font-family: 'DM Mono', monospace;
+    }
+    .rl-refs li a { color: #4B5563; }
+    .rl-refs li a:hover { color: #01D3A0; }
+
+    /* ── FAQ ── */
+    .rl-faq-item {
+      border-bottom: 1px solid #1a1d24;
+      padding: 20px 0;
+    }
+    .rl-faq-item:last-child { border-bottom: none; }
+    .rl-faq-q {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #E5E7EB;
+      margin-bottom: 10px;
+    }
+    .rl-faq-a {
+      font-size: 0.88rem;
+      color: #9CA3AF;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── Sidebar ── */
+    .rl-sidebar {
+      position: sticky;
+      top: 80px;
+    }
+    @media (max-width: 960px) {
+      .rl-sidebar {
+        position: static;
+        border-top: 1px solid #1a1d24;
+        padding-top: 40px;
+        margin-top: 48px;
+      }
+    }
+    .rl-sb-card {
+      background: #0a0d12;
+      border: 1px solid #1a1d24;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .rl-sb-hdr {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #4B5563;
+      margin-bottom: 12px;
+    }
+    .rl-sb-compound-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #F9FAFB;
+      margin-bottom: 4px;
+    }
+    .rl-sb-purity {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: #01D3A0;
+      margin-bottom: 14px;
+    }
+    .rl-sb-prices {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .rl-sb-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .rl-sb-price-size { color: #6B7280; }
+    .rl-sb-price-val { color: #D1D5DB; font-weight: 600; }
+    .rl-sb-low-stock {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #FF4444;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      font-family: 'DM Mono', monospace;
+      animation: vp-low-stock-pulse 2.5s ease-in-out infinite;
+    }
+    .rl-sb-low-stock::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #FF4444;
+      flex-shrink: 0;
+    }
+    .rl-sb-btn {
+      display: block;
+      text-align: center;
+      background: #01D3A0;
+      color: #030407;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: 0.03em;
+      padding: 11px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s;
+      margin-bottom: 8px;
+    }
+    .rl-sb-btn:hover { background: #00bfbf; text-decoration: none; }
+    .rl-sb-btn-o {
+      display: block;
+      text-align: center;
+      background: transparent;
+      color: #9CA3AF;
+      font-size: 0.8rem;
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: 1px solid #1a1d24;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .rl-sb-btn-o:hover { border-color: #374151; color: #D1D5DB; text-decoration: none; }
+    .rl-sb-related-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #111418;
+      text-decoration: none;
+    }
+    .rl-sb-related-item:last-child { border-bottom: none; }
+    .rl-sb-related-name { font-size: 0.875rem; color: #D1D5DB; font-weight: 500; }
+    .rl-sb-related-cat {
+      font-size: 0.68rem;
+      font-family: 'DM Mono', monospace;
+      color: #4B5563;
+      letter-spacing: 0.06em;
+    }
+    .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
+    .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+  </style>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YFPX0Q1G50"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YFPX0Q1G50');
+  </script>
+</head>
+<body class="page-research">
+
+<div class="ann-bar" role="note" aria-label="Site announcements">
+  <div class="ann-track-wrap" aria-hidden="true">
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-logo" href="/" aria-label="Velox Peptides">
+      <img class="nav-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="auto">
+    </a>
+    <div class="nav-links">
+      <a class="nl " href="/compounds/">Shop</a>
+      <a class="nl " href="/guides/glossary/">Glossary</a>
+      <a class="nl " href="/guides/">Guide Hub</a>
+      <a class="nl " href="/about/">About</a>
+      <a class="nl " href="/contact/">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <form class="vp-search vp-search-nav" role="search" onsubmit="return false">
+        <div class="vp-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="vp-search-input" type="search" placeholder="Search&hellip;" aria-label="Search the catalogue" autocomplete="off">
+        </div>
+        <div class="vp-search-results" hidden></div>
+      </form>
+      <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+      <a class="nav-ig" href="/account/" aria-label="My account" title="My account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      <a class="nav-cart" href="/cart/" aria-label="View cart">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="nav-cart-label">Order</span>
+        <span class="nav-cart-count" id="nav-cart-count">0</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mob-menu" id="mob-menu" aria-hidden="true">
+    <a href="/compounds/" class="mob-nl">Shop</a>
+    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub">— Cognitive</a>
+    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub">— Metabolic</a>
+    <a href="/compounds/recovery/" class="mob-nl mob-nl-sub">— Recovery</a>
+    <a href="/compounds/growth/" class="mob-nl mob-nl-sub">— Growth</a>
+    <a href="/compounds/antioxidant/" class="mob-nl mob-nl-sub">— Antioxidant</a>
+    <a href="/guides/glossary/" class="mob-nl">Glossary</a>
+    <a href="/guides/" class="mob-nl">Guide Hub</a>
+    <a href="/about/" class="mob-nl">About</a>
+    <a href="/contact/" class="mob-nl">Contact</a>
+    <a href="/cart/" class="mob-nl">Order</a>
+    <a href="/account/" class="mob-nl">My account</a>
+  </div>
+</header>
+
+<main class="site-main">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a class="bc-link" href="/">Home</a><span class="bc-sep" aria-hidden="true">›</span><a class="bc-link" href="/guides/">Guides</a><span class="bc-sep" aria-hidden="true">›</span><span class="bc-current" aria-current="page">How Peptides Are Tested</span>
+  </nav>
+
+  <div class="rl-outer">
+    <div class="rl-layout">
+
+      <!-- ═══ MAIN ARTICLE COLUMN ═══ -->
+      <article class="rl-article" itemscope itemtype="https://schema.org/Article">
+
+        <header class="rl-header">
+          <a href="/guides/" class="rl-cat-badge" aria-label="Guides">GUIDE</a>
+          <h1 class="rl-h1" itemprop="headline">How Peptides Are Tested: HPLC &amp; Mass Spec</h1>
+          <div class="rl-meta">
+            <span>Published 1 June 2026</span>
+            <span class="rl-meta-sep">&middot;</span>
+            <span>Velox Peptides Research Team</span>
+            <span class="rl-meta-sep">&middot;</span>
+            <span>Quality &amp; testing guide</span>
+          </div>
+
+          <div class="rl-compliance" role="note">
+            <strong>For research reference only.</strong> This guide explains laboratory testing methods for <em>in vitro</em> research reagents. Research peptides are for in vitro research use only &mdash; never for human or veterinary use, injection, dosing, diagnosis, or treatment. Nothing here is a health or medical claim.
+          </div>
+        </header>
+
+        <section class="rl-section" aria-labelledby="sec-why">
+          <h2 class="rl-h2" id="sec-why">Why Third-Party Testing Matters</h2>
+          <p>When a peptide is made, the maker could in theory test it and report whatever numbers they like. <strong>Third-party testing</strong> means an independent laboratory &mdash; one that does not sell the product &mdash; runs the tests instead. Because that lab has no reason to flatter the results, its report is more trustworthy. For a researcher, this is the difference between "trust us" and "here is independent proof". It is also how you confirm two things that matter most: that the powder really is the peptide it claims to be, and that it is as pure as claimed.</p>
+        </section>
+
+        <section class="rl-section" aria-labelledby="sec-hplc">
+          <h2 class="rl-h2" id="sec-hplc">HPLC: Measuring Purity</h2>
+          <p><strong>HPLC</strong> stands for <strong>high-performance liquid chromatography</strong>. That is a mouthful, so here is the plain idea. Imagine pouring a mixture through a long, tightly packed tube. Different molecules travel through the tube at different speeds, so they come out the far end at different times and get separated &mdash; a bit like runners spreading out along a track. A detector at the end records each component as a peak on a chart.</p>
+          <p>The size of each peak tells you how much of that component is present. The big peak is your target peptide; any small extra peaks are impurities such as chains that are slightly too short or too long. <strong>HPLC purity</strong> is simply the target peak expressed as a percentage of everything detected. So "99% purity" means 99 parts in 100 are the correct compound. This is the headline number researchers look at first.</p>
+        </section>
+
+        <section class="rl-section" aria-labelledby="sec-ms">
+          <h2 class="rl-h2" id="sec-ms">Mass Spectrometry: Confirming Identity</h2>
+          <p>HPLC tells you <em>how pure</em> a sample is, but not <em>what</em> the main peak actually is. That is the job of <strong>mass spectrometry</strong> (often shortened to "mass spec"). A mass spectrometer measures the <strong>molecular weight</strong> of a molecule &mdash; essentially how heavy it is &mdash; with great precision.</p>
+          <p>Every peptide has an expected molecular weight you can calculate from its sequence. If the measured weight matches the expected weight, you have confirmation that the right molecule was actually made. If it is off, something is wrong &mdash; perhaps an amino acid is missing or out of place. In short: HPLC answers "how pure?", mass spec answers "is it really the right compound?". Together they cover both purity and identity.</p>
+        </section>
+
+        <section class="rl-section" aria-labelledby="sec-appearance">
+          <h2 class="rl-h2" id="sec-appearance">Appearance Checks</h2>
+          <p>The simplest test is just looking. A visual <strong>appearance check</strong> notes things like colour and physical form &mdash; a research peptide is typically expected to be a white or off-white powder. Unexpected colour, clumping, or visible particles can be an early sign that something is off, prompting closer testing. It is a quick, low-tech first pass that complements the instrument-based methods above.</p>
+        </section>
+
+        <section class="rl-section" aria-labelledby="sec-coa">
+          <h2 class="rl-h2" id="sec-coa">What a Certificate of Analysis Records</h2>
+          <p>All of these results are written up in a document called a <strong>certificate of analysis</strong> (CoA). A CoA is the test report for one specific batch. It typically records the compound name, the batch or lot number, the HPLC purity percentage, the mass-spec result confirming identity, the appearance, and the test dates. Learning to read one is a useful skill &mdash; see <a href="/guides/reading-a-certificate-of-analysis/">Reading a Certificate of Analysis</a> for a walkthrough, and the <a href="/guides/glossary/">glossary</a> for any unfamiliar terms.</p>
+        </section>
+
+        <section class="rl-section" aria-labelledby="sec-velox">
+          <h2 class="rl-h2" id="sec-velox">How Velox Batches Are Tested</h2>
+          <p>Velox Peptides batches are tested by an independent third-party laboratory, <strong>Janoshik Analytical</strong>, using HPLC for purity and mass spectrometry for identity. Batch documentation, including the certificate of analysis, is available on request before ordering &mdash; email <a href="mailto:support@veloxpeps.com?subject=CoA request">support@veloxpeps.com</a>. You can also read more about our approach on the <a href="/about/quality-and-testing/">Quality &amp; Testing</a> page.</p>
+        </section>
+
+        <section class="rl-section" aria-labelledby="sec-faq">
+          <h2 class="rl-h2" id="sec-faq">Frequently Asked Questions</h2>
+
+          <div class="rl-faq-item">
+            <p class="rl-faq-q">What is HPLC purity?</p>
+            <p class="rl-faq-a">HPLC (high-performance liquid chromatography) separates the components of a sample so each can be measured. HPLC purity is the percentage of the sample that is the target peptide rather than impurities such as shorter or longer chains. A result like 99% means 99 parts in 100 are the correct compound.</p>
+          </div>
+
+          <div class="rl-faq-item">
+            <p class="rl-faq-q">What does mass spectrometry confirm?</p>
+            <p class="rl-faq-a">Mass spectrometry measures the molecular weight of a molecule very precisely. By comparing the measured weight to the expected weight of the target peptide, it confirms the compound's identity &mdash; that the right molecule was actually made.</p>
+          </div>
+
+          <div class="rl-faq-item">
+            <p class="rl-faq-q">Who tests Velox batches?</p>
+            <p class="rl-faq-a">Velox Peptides batches are tested by an independent third-party laboratory, Janoshik Analytical. Batch documentation, including the certificate of analysis, is available on request before ordering.</p>
+          </div>
+        </section>
+
+      </article>
+      <!-- ═══ END MAIN ARTICLE ═══ -->
+
+
+      <!-- ═══ SIDEBAR ═══ -->
+      <aside class="rl-sidebar" aria-label="Order and related compounds">
+
+        <div class="rl-sb-card">
+          <div class="rl-sb-hdr">Explore</div>
+          <a class="rl-sb-btn" href="/compounds/">Browse research compounds &rarr;</a>
+          <a class="rl-sb-btn-o" href="/guides/">All guides</a>
+        </div>
+
+        <div class="rl-sb-card">
+          <div class="rl-sb-hdr">Related guides</div>
+          <a class="rl-sb-related-item" href="/guides/reading-a-certificate-of-analysis/"><div><div class="rl-sb-related-name">Reading a Certificate of Analysis</div><div class="rl-sb-related-cat">RESEARCH</div></div><span class="rl-sb-related-arr">&rarr;</span></a>
+          <a class="rl-sb-related-item" href="/guides/what-are-research-peptides/"><div><div class="rl-sb-related-name">What Are Research Peptides?</div><div class="rl-sb-related-cat">GUIDE</div></div><span class="rl-sb-related-arr">&rarr;</span></a>
+          <a class="rl-sb-related-item" href="/guides/glossary/"><div><div class="rl-sb-related-name">Glossary</div><div class="rl-sb-related-cat">GUIDE</div></div><span class="rl-sb-related-arr">&rarr;</span></a>
+        </div>
+
+      </aside>
+      <!-- ═══ END SIDEBAR ═══ -->
+
+    </div>
+  </div>
+
+</main>
+
+<div class="compliance-block" role="note" aria-label="Compliance notice">
+  <div class="cb-i">
+    <strong>Compliance statement.</strong>
+    Velox Peptides supplies research reagents for <em>in vitro</em> use by qualified researchers. Every compound is sold strictly as a research reagent. No product is a medicinal product within the meaning of the Human Medicines Regulations 2012. No product has been evaluated by the MHRA or FDA. No product is intended for human or veterinary consumption, diagnosis, treatment, cure, or prevention of any condition. Any use outside lawful scientific research is outside the scope of sale. See our <a href="/legal/research-use-policy/">Research Use Policy</a> and <a href="/legal/mhra-statement/">MHRA Statement</a>.
+    <br><br>
+    <em>All research summaries on this page are derived from publicly available peer-reviewed literature. Velox Peptides makes no therapeutic claims. For research use only.</em>
+  </div>
+</div>
+
+<footer class="site-footer" id="footer">
+  <div class="ft-i">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="ft-logo-wordmark">Velox Peptides</div>
+        <p class="ft-tag">Research peptide supplier &mdash; shipping to UK &amp; EU. HPLC-verified, dispatched from Northern Ireland.</p>
+        <address class="ft-address">
+          CRP Labs Ltd<br>
+          Company no. NI738125<br>
+          Holywood, Northern Ireland, United Kingdom<br>
+          <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a>
+        </address>
+      </div>
+      <div class="ft-cols">
+        <div class="ft-col">
+          <div class="ft-col-h">Compounds</div>
+          <a href="/compounds/">All compounds</a>
+          <a href="/compounds/cognitive/">Cognitive</a>
+          <a href="/compounds/metabolic/">Metabolic</a>
+          <a href="/compounds/recovery/">Recovery</a>
+          <a href="/compounds/growth/">Growth</a>
+          <a href="/compounds/antioxidant/">Antioxidant</a>
+          <a href="/stacks/">Research Bundles</a>
+          <a href="/supplies/bacteriostatic-water/">Bacteriostatic Water</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Resources</div>
+          <a href="/affiliate-program/">Affiliate Program</a>
+          <a href="/guides/">Guides</a>
+          <a href="/guides/glossary/">Glossary</a>
+          <a href="/guides/bpc-157/">BPC-157 Research</a>
+          <a href="/tools/reconstitution-calculator/">Reconstitution Calculator</a>
+          <a href="/about/">About Velox</a>
+          <a href="/about/quality-and-testing/">Quality &amp; Testing</a>
+          <a href="/about/coa-library/">CoA Library</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Order &amp; Delivery</div>
+          <a href="/cart/">Current order</a>
+          <a href="/shipping/">Shipping &amp; Delivery</a>
+          <a href="/legal/refunds/">Refunds &amp; Returns</a>
+          <a href="/contact/">Contact</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Legal</div>
+          <a href="/legal/research-use-policy/">Research Use Policy</a>
+          <a href="/legal/mhra-statement/">MHRA Statement</a>
+          <a href="/legal/terms/">Terms &amp; Conditions</a>
+          <a href="/legal/privacy/">Privacy Policy</a>
+          <a href="/legal/cookies/">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div class="ft-cr">&copy; 2026 CRP Labs Ltd. All rights reserved.</div>
+      <div class="ft-disc">For in vitro research use only. Not for human or veterinary consumption.</div>
+    </div>
+  </div>
+</footer>
+
+<div class="entry-gate" id="entry-gate" role="dialog" aria-modal="true" aria-labelledby="eg-av-title">
+  <div class="eg-i">
+    <div class="eg-logo-wrap">
+      <img class="eg-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="190">
+    </div>
+    <div class="eg-eyebrow">AGE VERIFICATION</div>
+    <h2 id="eg-av-title" class="eg-av-title">Confirm your eligibility</h2>
+    <p class="eg-sub">This website is restricted to qualified researchers aged 21 or over. All products are for in vitro research use only.</p>
+    <div class="eg-checks">
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am 21 years of age or older</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am a qualified researcher, scientist, or laboratory professional</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">All products will be used for lawful in vitro research only &mdash; not for human consumption</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I accept the <a href="/legal/terms/" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank" rel="noopener">Research Use Disclaimer</a></span>
+      </label>
+    </div>
+    <div class="eg-disclaimer">
+      All products sold for research use only. Not for human consumption. Not evaluated by the MHRA or FDA.
+    </div>
+    <div class="eg-actions">
+      <button class="eg-btn eg-btn-p" id="eg-accept">I CONFIRM &mdash; ENTER SITE</button>
+      <a class="eg-exit-link" href="https://www.gov.uk" rel="noopener">Exit</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/assets/js/core.js"></script>
+<script src="/assets/js/conversion.js" defer></script>
+<script src="/assets/js/animations.js" defer></script>
+  <script src="/assets/js/newsletter-popup.js"></script>
+  <script src="/assets/js/search.js" defer></script>
+</body>
+</html>

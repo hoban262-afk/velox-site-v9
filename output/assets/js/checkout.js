@@ -69,67 +69,81 @@
     return savingGBP;
   }
 
-  function renderTotalsWithDiscount(cart, discount, region) {
-    var r = (region !== undefined) ? region : currentRegion();
-    var t = cartTotals(cart, r);
-    var savingGBP = (discount && discount.saving) ? discount.saving : 0;
-    var saving = savingInCurrency(savingGBP, r);
-    var discountedSubtotal = Math.max(0, t.subtotal - saving);
-    var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
-    var flatRate   = r === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
-    var shipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
-    var discountedTotal = Math.round((discountedSubtotal + shipping) * 100) / 100;
-
-    var subEl    = document.getElementById('co-subtotal');
-    var shipEl   = document.getElementById('co-shipping');
-    var totEl    = document.getElementById('co-total');
-    var discLine = document.getElementById('co-discount-line');
-    var discLbl  = document.getElementById('co-discount-label');
-    var discAmt  = document.getElementById('co-discount-amount');
-
-    if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
-    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
-
-    if (discount && saving > 0) {
-      if (discLine) discLine.style.display = '';
-      if (discLbl)  discLbl.textContent  = discount.code;
-      if (discAmt)  discAmt.textContent  = '−' + fmt(saving, r);
-      if (totEl)    totEl.textContent    = fmt(discountedTotal, r);
-    } else {
-      if (discLine) discLine.style.display = 'none';
-      if (totEl)    totEl.textContent = fmt(discountedTotal, r);
+  // Volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 20% (by quantity of DISCOUNTABLE
+  // vials). Pens are never discounted and never count toward the tier.
+  function isPen(i) { return /pen/i.test(i.size || ''); }
+  function discountableGBP(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
+  function discountableQty(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : (i.qty || 1)); }, 0); }
+  function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.10 : (q === 2 ? 0.05 : 0)); }
+  // Promotional saving (GBP) = larger of (code, volume) on the discountable subtotal only.
+  // Code + volume never stack, so promo ≤ 20% of the discountable subtotal.
+  function bestPromoGBP(cart, codeDiscount) {
+    var base = discountableGBP(cart);
+    var codeSaving = (codeDiscount && codeDiscount.saving) || 0;
+    var rate = vpVolumeRate(discountableQty(cart));
+    var volSaving = Math.round(base * rate * 100) / 100;
+    if (volSaving > codeSaving) {
+      return { saving: volSaving, label: 'Volume discount −' + Math.round(rate * 100) + '%', code: 'VOLUME-' + Math.round(rate * 100) };
     }
+    return { saving: codeSaving, label: codeDiscount ? codeDiscount.code : '', code: codeDiscount ? codeDiscount.code : '' };
+  }
+
+  // Kept for existing callers — just re-renders the summary (which now applies discounts).
+  function renderTotalsWithDiscount(cart, discount, region) {
+    renderCartSummary(cart, region);
   }
 
   function renderCartSummary(cart, region) {
     var r = (region !== undefined) ? region : currentRegion();
     var el = document.getElementById('co-cart-items');
-    if (!el) return;
-    if (!cart.length) {
-      el.innerHTML = '<p style="color:#9CA3AF;font-size:13px;">No items in order.</p>';
-      return;
+    if (el) {
+      if (!cart.length) {
+        el.innerHTML = '<p style="color:#9CA3AF;font-size:13px;">No items in order.</p>';
+      } else {
+        var html = '<ul class="co-cart-list">';
+        cart.forEach(function (item) {
+          var priceInCurrency = r === 'EU'
+            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
+            : item.price * (item.qty || 1);
+          html += '<li class="co-cart-row"><span class="co-cart-name">' + escHtml(item.name) +
+            ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
+            '<span class="co-cart-price">' + fmt(priceInCurrency, r) + '</span></li>';
+        });
+        html += '</ul>';
+        el.innerHTML = html;
+      }
     }
-    var html = '<ul class="co-cart-list">';
-    cart.forEach(function (item) {
-      var priceInCurrency = r === 'EU'
-        ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-        : item.price * (item.qty || 1);
-      html += '<li class="co-cart-row"><span class="co-cart-name">' + escHtml(item.name) +
-        ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-        '<span class="co-cart-price">' + fmt(priceInCurrency, r) + '</span></li>';
-    });
-    html += '</ul>';
-    el.innerHTML = html;
 
-    var t      = cartTotals(cart, r);
+    // Totals — apply the active promotion (volume or code, whichever is larger) + points,
+    // so EVERY checkout stage shows the discounted total, not just the Pay Now button.
+    var t = cartTotals(cart, r);
+    var promo = bestPromoGBP(cart, appliedDiscount);
+    var saving = savingInCurrency(promo.saving, r);
+    var ptsSaving = savingInCurrency(appliedPointsSavingGBP, r);
+    var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
+    var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
+    var flatRate   = r === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
+    var shipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
+    var total = Math.round((discountedSubtotal + shipping) * 100) / 100;
+
     var subEl  = document.getElementById('co-subtotal');
     var shipEl = document.getElementById('co-shipping');
     var totEl  = document.getElementById('co-total');
     var shpLbl = document.getElementById('co-shipping-label');
+    var discLine = document.getElementById('co-discount-line');
+    var discLbl  = document.getElementById('co-discount-label');
+    var discAmt  = document.getElementById('co-discount-amount');
     if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
-    if (shipEl) shipEl.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping, r);
-    if (totEl)  totEl.textContent  = fmt(t.total, r);
+    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
+    if (totEl)  totEl.textContent  = fmt(total, r);
     if (shpLbl) shpLbl.textContent = r === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+    if (saving > 0) {
+      if (discLine) discLine.style.display = '';
+      if (discLbl)  discLbl.textContent = promo.label;
+      if (discAmt)  discAmt.textContent = '−' + fmt(saving, r);
+    } else if (discLine) {
+      discLine.style.display = 'none';
+    }
   }
 
   function randChars(n) {
@@ -146,6 +160,10 @@
 
   var cart = getCart();
   var appliedDiscount = null;
+  var appliedPoints = 0;            // loyalty points being redeemed this order
+  var appliedPointsSavingGBP = 0;   // their £ value (100 points = £1)
+  var welcomeCodeApplied = null;    // VELOX-XXXXXX newsletter code applied (server-validated)
+  var affiliateApplied = null;      // { id, code, discount_pct } — affiliate ref code applied
 
   // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
   var shippingForm = document.getElementById('shipping-form');
@@ -186,6 +204,33 @@
 
     // Set initial state
     applyRegion(activeRegion);
+
+    // Pre-fill from the signed-in user's profile (optional — guests unaffected)
+    if (window._sb) {
+      (async function () {
+        try {
+          var sess = await window._sb.auth.getSession();
+          if (!sess.data || !sess.data.session) return;
+          var uid = sess.data.session.user.id;
+          var pr = await window._sb.from('profiles')
+            .select('name,email,saved_addresses,default_address_id').eq('id', uid).single();
+          var p = pr.data; if (!p) return;
+          var nm = (p.name || '').trim().split(' ');
+          function setIfEmpty(id, val) { var el = document.getElementById(id); if (el && !el.value && val) el.value = val; }
+          setIfEmpty('sh-fname', nm[0] || '');
+          setIfEmpty('sh-lname', nm.slice(1).join(' ') || '');
+          setIfEmpty('sh-email', sess.data.session.user.email || '');
+          var addrs = p.saved_addresses || [];
+          var def = addrs.filter(function (a) { return a.id === p.default_address_id; })[0] || addrs[0];
+          if (def) {
+            setIfEmpty('sh-addr1', def.line1);
+            setIfEmpty('sh-addr2', def.line2);
+            setIfEmpty('sh-city',  def.city);
+            setIfEmpty('sh-post',  def.postcode);
+          }
+        } catch (e) { /* silent — never block guest checkout */ }
+      })();
+    }
 
     shippingForm.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -235,6 +280,7 @@
       };
 
       try { sessionStorage.setItem('vp_checkout', JSON.stringify(data)); } catch (ex) {}
+
       window.location.href = '/checkout/payment/';
     });
   }
@@ -288,6 +334,15 @@
     var discountApply = document.getElementById('discount-apply');
     var discountMsg   = document.getElementById('discount-msg');
 
+    function applyDiscountResult(result) {
+      appliedDiscount = result;
+      var displaySaving = savingInCurrency(result.saving, payRegion);
+      discountMsg.innerHTML = '<span class="dc-ok">✓ Code applied — saving ' + fmt(displaySaving, payRegion) + '</span>';
+      discountInput.disabled = true;
+      if (discountApply) { discountApply.textContent = 'Applied'; discountApply.disabled = true; }
+      renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
+    }
+
     function handleApply() {
       if (!discountInput || !discountMsg) return;
       var code = discountInput.value.trim();
@@ -297,19 +352,57 @@
       }
       // calcDiscount always works in GBP; convert saving to display currency
       var tGBP   = cartTotals(cart, 'UK');
-      var result = calcDiscount(tGBP.subtotal, code);
-      if (result) {
-        appliedDiscount = result;
-        var displaySaving = savingInCurrency(result.saving, payRegion);
-        discountMsg.innerHTML = '<span class="dc-ok">✓ Code applied — saving ' + fmt(displaySaving, payRegion) + '</span>';
-        discountInput.disabled = true;
-        if (discountApply) { discountApply.textContent = 'Applied'; discountApply.disabled = true; }
-        renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
-      } else {
-        appliedDiscount = null;
-        discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
-        renderTotalsWithDiscount(cart, null, payRegion);
+      var result = calcDiscount(discountableGBP(cart), code);
+      if (result) { applyDiscountResult(result); return; }
+
+      // Unique newsletter welcome code (VELOX-XXXXXX) — validate server-side
+      if (/^VELOX-/i.test(code)) {
+        var chkEmail = '';
+        try { chkEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+        discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
+        fetch('/api/newsletter/validate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code, email: chkEmail }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.valid) {
+            welcomeCodeApplied = code.toUpperCase();
+            var pct = Number(d.value) || 10;                       // % from server (single source of truth)
+            var saving = Math.round(tGBP.subtotal * pct) / 100;   // welcome code % off, GBP
+            applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: pct, saving: saving });
+          } else {
+            welcomeCodeApplied = null; appliedDiscount = null;
+            var reasons = {
+              expired: 'This code has expired.', already_used: 'This code has already been used.',
+              email_mismatch: 'This code was issued to a different email address.',
+              not_found: 'Invalid discount code.', inactive: 'This code is no longer active.',
+            };
+            discountMsg.innerHTML = '<span class="dc-err">' + (reasons[d && d.reason] || 'Invalid discount code.') + '</span>';
+            renderTotalsWithDiscount(cart, null, payRegion);
+          }
+        }).catch(function () {
+          discountMsg.innerHTML = '<span class="dc-err">Could not validate code. Please try again.</span>';
+        });
+        return;
       }
+
+      // Try affiliate ref code — validate server-side (last fallback)
+      discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
+      fetch('/api/affiliate/validate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code }),
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.valid) {
+          affiliateApplied = { id: d.affiliate_id, code: code.toUpperCase(), discount_pct: d.discount_pct };
+          var saving = Math.round(discountableGBP(cart) * d.discount_pct) / 100;
+          applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: d.discount_pct, saving: saving });
+        } else {
+          affiliateApplied = null; appliedDiscount = null;
+          discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
+          renderTotalsWithDiscount(cart, null, payRegion);
+        }
+      }).catch(function () {
+        discountMsg.innerHTML = '<span class="dc-err">Could not validate code. Please try again.</span>';
+      });
     }
 
     if (discountApply) discountApply.addEventListener('click', handleApply);
@@ -317,6 +410,47 @@
       discountInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') { e.preventDefault(); handleApply(); }
       });
+    }
+
+    // ── Loyalty points redemption (signed-in users with balance >= 500) ──────
+    if (window._sb) {
+      (async function () {
+        try {
+          var sess = await window._sb.auth.getSession();
+          if (!sess.data || !sess.data.session) return;
+          var pr = await window._sb.from('profiles').select('loyalty_points')
+            .eq('id', sess.data.session.user.id).single();
+          var balance = (pr.data && pr.data.loyalty_points) || 0;
+          if (balance < 500) return;
+
+          var anchor = document.getElementById('discount-msg') || document.getElementById('discount-input');
+          if (!anchor) return;
+          var box = document.createElement('div');
+          box.style.cssText = 'margin-top:14px;padding:14px;border:1px solid #1a1a1a;border-radius:8px;background:#0d0d0d';
+          box.innerHTML =
+            '<div style="font-size:11px;color:#01D3A0;font-weight:700;letter-spacing:.08em;margin-bottom:8px">LOYALTY POINTS</div>' +
+            '<div style="font-size:13px;color:#9ca3af;margin-bottom:10px">You have <strong style="color:#fff">' + balance + '</strong> points (worth £' + (balance / 100).toFixed(2) + '). Redeem in multiples of 100, minimum 500.</div>' +
+            '<div style="display:flex;gap:8px"><input id="pts-input" type="number" step="100" min="500" max="' + balance + '" placeholder="500" style="flex:1;background:#111;border:1px solid #1a1a1a;color:#fff;padding:9px 10px;border-radius:6px;font-size:14px">' +
+            '<button id="pts-apply" type="button" style="background:#01D3A0;color:#021;border:none;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer">Redeem</button></div>' +
+            '<div id="pts-msg" style="font-size:12px;margin-top:8px"></div>';
+          anchor.parentNode.insertBefore(box, anchor.nextSibling);
+
+          document.getElementById('pts-apply').addEventListener('click', function () {
+            var m = document.getElementById('pts-msg');
+            var pts = parseInt(document.getElementById('pts-input').value, 10);
+            if (!pts || pts < 500) { m.style.color = '#f87171'; m.textContent = 'Minimum redemption is 500 points.'; return; }
+            if (pts % 100 !== 0)   { m.style.color = '#f87171'; m.textContent = 'Points must be a multiple of 100.'; return; }
+            if (pts > balance)     { m.style.color = '#f87171'; m.textContent = 'You only have ' + balance + ' points.'; return; }
+            appliedPoints = pts;
+            appliedPointsSavingGBP = pts / 100;   // 100 points = £1
+            m.style.color = '#01D3A0';
+            m.textContent = '✓ Redeeming ' + pts + ' points (−' + fmt(savingInCurrency(appliedPointsSavingGBP, payRegion), payRegion) + ')';
+            document.getElementById('pts-input').disabled = true;
+            document.getElementById('pts-apply').disabled = true;
+            renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
+          });
+        } catch (e) { /* silent — never block checkout */ }
+      })();
     }
 
     // ── GoCardless Instant Bank Pay — DISABLED (kept for re-enable) ─────────
@@ -354,13 +488,15 @@
         gcChk.orderRef        = ref;
         gcChk.subtotal        = t.subtotal;
         gcChk.shipping        = finalShipping;
-        gcChk.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
-        gcChk.discount_saving = saving; // stored in customer's currency
-        gcChk.total           = finalTotal;
-        gcChk.cart_snapshot   = JSON.stringify(cart);
-        gcChk.payment_method  = 'instant';
-        gcChk.currency        = currency;
-        gcChk.region          = payRegion;
+        gcChk.discount_code          = appliedDiscount ? appliedDiscount.code : '';
+        gcChk.discount_saving        = saving; // stored in customer's currency
+        gcChk.total                  = finalTotal;
+        gcChk.cart_snapshot          = JSON.stringify(cart);
+        gcChk.payment_method         = 'instant';
+        gcChk.currency               = currency;
+        gcChk.region                 = payRegion;
+        gcChk.affiliate_id           = affiliateApplied ? affiliateApplied.id   : null;
+        gcChk.affiliate_code_used    = affiliateApplied ? affiliateApplied.code : null;
         try { sessionStorage.setItem('vp_checkout', JSON.stringify(gcChk)); } catch (ex) {}
         try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
 
@@ -423,85 +559,6 @@
     }
     */ // END GoCardless disabled block
 
-    // ── PsiFi Card / Apple Pay / Google Pay — DISABLED (kept for re-enable) ─
-    /* RE-ENABLE: uncomment and restore psifi-pay-btn in payment HTML
-    var psifiPayBtn = document.getElementById('psifi-pay-btn');
-    if (psifiPayBtn) {
-      psifiPayBtn.addEventListener('click', function () {
-        var errEl = document.getElementById('co-err');
-        var terms = paymentForm.querySelector('input[name="terms"]');
-        if (!terms || !terms.checked) {
-          if (errEl) errEl.textContent = 'Please accept the Terms & Conditions and Research Use Policy.';
-          return;
-        }
-        if (errEl) errEl.textContent = '';
-
-        psifiPayBtn.disabled = true;
-        psifiPayBtn.textContent = 'Processing…';
-
-        var ref        = 'VP-' + todayStr() + '-' + randChars(4);
-        var t          = cartTotals(cart, payRegion);
-        var savingGBP  = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-        var saving     = savingInCurrency(savingGBP, payRegion);
-        var discountedSubtotal = Math.max(0, t.subtotal - saving);
-        var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
-        var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
-        var finalShipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
-        var finalTotal    = Math.round((discountedSubtotal + finalShipping) * 100) / 100;
-        var currency      = payRegion === 'EU' ? 'EUR' : 'GBP';
-
-        var psChk = {};
-        try { psChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
-        psChk.orderRef        = ref;
-        psChk.subtotal        = t.subtotal;
-        psChk.shipping        = finalShipping;
-        psChk.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
-        psChk.discount_saving = saving;
-        psChk.total           = finalTotal;
-        psChk.cart_snapshot   = JSON.stringify(cart);
-        psChk.payment_method  = 'psifi';
-        psChk.currency        = currency;
-        psChk.region          = payRegion;
-        try { sessionStorage.setItem('vp_checkout', JSON.stringify(psChk)); } catch (ex) {}
-        try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
-
-        fetch('/api/create-psifi-payment', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            total:     finalTotal,  // full basket total in pounds/euros (e.g. 34.99)
-            currency:  currency,
-            order_ref: ref,
-          }),
-        })
-        .then(function (resp) {
-          return resp.json().then(function (data) {
-            return { ok: resp.ok, status: resp.status, data: data };
-          });
-        })
-        .then(function (result) {
-          console.log('[checkout] create-psifi-payment response HTTP', result.status, JSON.stringify(result.data));
-          if (result.ok && result.data.checkout_url) {
-            window.location.href = result.data.checkout_url;
-          } else {
-            var errField = result.data.error;
-            var errMsg = typeof errField === 'string'
-              ? errField
-              : (errField ? JSON.stringify(errField) : null);
-            throw new Error(errMsg || ('PsiFi error HTTP ' + result.status));
-          }
-        })
-        .catch(function (err) {
-          var msg = (err && err.message) ? err.message : 'Payment failed — please try again or use bank transfer.';
-          console.error('[checkout] create-psifi-payment error:', msg);
-          if (errEl) errEl.textContent = msg;
-          psifiPayBtn.disabled = false;
-          psifiPayBtn.textContent = 'Pay Now →';
-        });
-      });
-    }
-    */ // END PsiFi disabled block
-
     // ── Bank transfer form submit (UK + EU) ───────────────────────────────
     paymentForm.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -518,9 +575,10 @@
 
       var ref        = 'VP-' + todayStr() + '-' + randChars(4);
       var t          = cartTotals(cart, payRegion);
-      var savingGBP  = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-      var saving     = savingInCurrency(savingGBP, payRegion);
-      var discountedSubtotal = Math.max(0, t.subtotal - saving);
+      var promo      = bestPromoGBP(cart, appliedDiscount);
+      var saving     = savingInCurrency(promo.saving, payRegion);
+      var ptsSaving  = savingInCurrency(appliedPointsSavingGBP, payRegion);
+      var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
       var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
       var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
       var finalShipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
@@ -531,13 +589,17 @@
         existing.orderRef        = ref;
         existing.subtotal        = t.subtotal;
         existing.shipping        = finalShipping;
-        existing.discount_code   = appliedDiscount ? appliedDiscount.code   : '';
+        existing.discount_code   = promo.code;
         existing.discount_saving = saving;
-        existing.total           = finalTotal;
-        existing.cart_snapshot   = JSON.stringify(cart);
-        existing.currency        = payRegion === 'EU' ? 'EUR' : 'GBP';
-        existing.region          = payRegion;
-        existing.payment_method  = 'bank';
+        existing.points_redeemed      = appliedPoints;
+        existing.welcome_code         = welcomeCodeApplied;
+        existing.total                = finalTotal;
+        existing.cart_snapshot        = JSON.stringify(cart);
+        existing.currency             = payRegion === 'EU' ? 'EUR' : 'GBP';
+        existing.region               = payRegion;
+        existing.payment_method       = 'bank';
+        existing.affiliate_id         = affiliateApplied ? affiliateApplied.id   : null;
+        existing.affiliate_code_used  = affiliateApplied ? affiliateApplied.code : null;
         sessionStorage.setItem('vp_checkout', JSON.stringify(existing));
       } catch (ex) {}
 
@@ -656,6 +718,68 @@
           }
         ).catch(function () {});
       } catch (ex) {}
+
+      // ── Save order to Supabase (so it appears in /admin/ + the user's account)
+      // Silent — never blocks the confirmation page. Links to the user's account
+      // when signed in (so loyalty points award once the order is marked paid).
+      if (window._sb) {
+        (async function () {
+          try {
+            var sbItems = confirmedCart.map(function (item) {
+              return { name: item.name, slug: item.slug, size: item.size,
+                       qty: item.qty || 1, price: item.price };
+            });
+            var uid = null;
+            try { var s = await window._sb.auth.getSession(); if (s.data && s.data.session) uid = s.data.session.user.id; } catch (e) {}
+            var r = await window._sb.from('orders').insert([{
+              customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim() || 'Customer',
+              customer_email:  chk.email || '',
+              items:           sbItems,
+              subtotal:        Number(chk.subtotal) || Number(chk.total) || 0,  // pre-discount, drives points
+              total:           Number(chk.total) || 0,
+              discount:        Number(chk.discount_saving) || 0,
+              shipping:        Number(chk.shipping) || 0,
+              payment_method:  chk.payment_method || 'bank',
+              notes:           chk.orderRef || '',
+              user_id:         uid,
+              points_redeemed:     Number(chk.points_redeemed) || 0,
+              welcome_code:        chk.welcome_code || null,
+              affiliate_id:        chk.affiliate_id || null,
+              affiliate_code_used: chk.affiliate_code_used || null,
+              // Shipping address — needed for dispatch emails + Royal Mail Click & Drop
+              ship_name:       ((chk.fname || '') + ' ' + (chk.lname || '')).trim() || null,
+              ship_line1:      chk.addr1 || null,
+              ship_line2:      chk.addr2 || null,
+              ship_city:       chk.city || null,
+              ship_postcode:   chk.postcode || null,
+              ship_country:    chk.country || 'GB',
+              ship_phone:      chk.phone || null,
+            }]);
+            if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
+          } catch (sbErr) {
+            console.error('[checkout] Supabase save threw:', sbErr);
+          }
+        })();
+      }
+
+      // ── Post-order: prompt guests to save their details (non-blocking) ────
+      if (window._sb) {
+        (async function () {
+          try {
+            var s = await window._sb.auth.getSession();
+            if (s.data && s.data.session) return;   // already signed in
+            var host = document.getElementById('confirm-summary');
+            if (!host) return;
+            var card = document.createElement('div');
+            card.style.cssText = 'margin-top:24px;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:10px;padding:20px 22px;text-align:left';
+            card.innerHTML =
+              '<div style="color:#fff;font-size:15px;font-weight:700;margin-bottom:6px">Save your details &amp; earn points</div>' +
+              '<p style="color:#9ca3af;font-size:13px;margin:0 0 14px">Create a free account to track this order, reorder in one click, and earn loyalty points on future purchases. This order will link to your account automatically.</p>' +
+              '<a href="/account/" style="display:inline-block;text-decoration:none;background:#01D3A0;color:#021;padding:10px 20px;border-radius:7px;font-weight:700;font-size:13px">Create account</a>';
+            host.parentNode.insertBefore(card, host.nextSibling);
+          } catch (e) {}
+        })();
+      }
     }
 
     renderCartSummary(confirmedCart.length ? confirmedCart : [], confRegion);

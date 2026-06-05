@@ -143,7 +143,86 @@
     if (window.toast) window.toast('Added to order \u2014 ' + name);
   });
 
+  // ── Newsletter subscribe ──────────────────────────────────────────────────────
+  var nlBtn = document.querySelector('.nl-btn');
+  var nlInp = document.querySelector('.nl-inp');
+
+  if (nlBtn && nlInp) {
+    nlBtn.addEventListener('click', function () {
+      var email = nlInp.value.trim();
+      if (!email || !email.includes('@')) {
+        if (window.toast) window.toast('Please enter a valid email address.');
+        return;
+      }
+
+      // Issue (or re-send) the handbook + 10%-off welcome code via the signup API —
+      // same path as the popup, so the inline form's promise is real.
+      nlBtn.disabled = true;
+      nlBtn.textContent = 'Sending…';
+      fetch('/api/newsletter/signup', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email }),
+      }).then(function (r) {
+        return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+      }).then(function (res) {
+        if (res.ok && res.d && res.d.success) {
+          try { localStorage.setItem('velox_subscribed', '1'); } catch (e) {}
+          nlInp.value = '';
+          nlBtn.textContent = res.d.already ? 'Already sent ✓' : 'Code sent ✓';
+          if (window.toast) window.toast(res.d.already
+            ? "You're already subscribed — check your inbox for your handbook and code."
+            : 'Your handbook and 10% off code are on the way — check your inbox.');
+        } else {
+          nlBtn.disabled = false;
+          nlBtn.textContent = 'Send my code';
+          if (window.toast) window.toast((res.d && res.d.error) || 'Something went wrong. Please try again.');
+        }
+      }).catch(function () {
+        nlBtn.disabled = false;
+        nlBtn.textContent = 'Send my code';
+        if (window.toast) window.toast('Something went wrong. Please try again.');
+      });
+    });
+
+    nlInp.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') nlBtn.click();
+    });
+  }
+
   // ── FAQ accordion ────────────────────────────────────────────────────────────
   // Native <details> handles this — no JS needed.
 
+}());
+
+// ── First-party analytics beacon (no cookies, no PII) ─────────────────────────
+(function () {
+  try {
+    if (location.pathname.indexOf('/admin') === 0) return; // never track the admin
+    var sid;
+    try { sid = localStorage.getItem('vp_sid'); } catch (e) {}
+    if (!sid) {
+      sid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      try { localStorage.setItem('vp_sid', sid); } catch (e) {}
+    }
+    var payload = JSON.stringify({ sid: sid, path: location.pathname, ref: document.referrer || '' });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+    } else {
+      fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
+    }
+
+    // ── Live-presence heartbeat (powers the admin "live on site" counter) ──
+    function vpPing() {
+      if (document.visibilityState === 'hidden') return;
+      var p = JSON.stringify({ sid: sid });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/presence', new Blob([p], { type: 'application/json' }));
+      } else {
+        fetch('/api/presence', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: p, keepalive: true }).catch(function () {});
+      }
+    }
+    vpPing();
+    setInterval(vpPing, 60000);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') vpPing(); });
+  } catch (e) {}
 }());

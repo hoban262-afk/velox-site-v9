@@ -17,7 +17,8 @@
   }
 
   function fmt(n) {
-    return '£' + n.toFixed(2);
+    var v = Math.round(n * 100) / 100;
+    return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2));
   }
 
   function render() {
@@ -35,6 +36,7 @@
       if (emptyEl) emptyEl.style.display = '';
       if (summaryEl) summaryEl.style.display = 'none';
       itemsEl.innerHTML = '';
+      var n0 = document.getElementById('vp-freeship'); if (n0) n0.remove();
       return;
     }
 
@@ -46,8 +48,10 @@
     cart.forEach(function (item, idx) {
       var row = document.createElement('div');
       row.className = 'cart-item';
+      // Only allow relative paths (starting with /) to prevent javascript: / data: XSS via item.url
+      var safeUrl = (item.url && typeof item.url === 'string' && /^\//.test(item.url)) ? item.url : '#';
       row.innerHTML = '<div class="cart-item-info">' +
-        '<a class="cart-item-name" href="' + (item.url || '#') + '">' + escHtml(item.name) + '</a>' +
+        '<a class="cart-item-name" href="' + safeUrl + '">' + escHtml(item.name) + '</a>' +
         '<div class="cart-item-size">' + escHtml(item.size) + '</div>' +
         '</div>' +
         '<div class="cart-item-price">' + fmt(item.price) + '</div>' +
@@ -81,21 +85,73 @@
       });
     });
 
-    // Totals
+    // Totals — volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 15%.
+    // Pens and BAC water are excluded: never discounted and never count toward the tier.
+    function isPen(i) { return /pen/i.test(i.size || ''); }
+    function isBac(i) { return i.slug === 'bacteriostatic-water'; }
+    function isExcluded(i) { return isPen(i) || isBac(i); }
     var subtotal = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
-    var shipping = subtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-    var total = subtotal + shipping;
+    var totalQty = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
+    var discQty  = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : (i.qty || 1)); }, 0);
+    var discBase = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : i.price * (i.qty || 1)); }, 0);
+    var rate = discQty >= 4 ? 0.15 : (discQty === 3 ? 0.10 : (discQty === 2 ? 0.05 : 0));
+    var volSaving = Math.round(discBase * rate * 100) / 100;
+    var discSub = Math.max(0, subtotal - volSaving);
+    var shipping = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    var total = discSub + shipping;
 
     if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
     if (shippingEl) shippingEl.textContent = shipping === 0 ? 'Free' : fmt(shipping);
     if (totalEl)    totalEl.textContent = fmt(total);
+    renderVolumeRow(volSaving, rate);
 
     // Update nav count
     var countEl = document.getElementById('nav-cart-count');
     if (countEl) {
-      var qty = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
-      countEl.textContent = String(qty);
+      countEl.textContent = String(totalQty);
     }
+
+    // Free-shipping progress nudge — based on the discounted subtotal (matches checkout).
+    renderFreeShipNudge(discSub);
+  }
+
+  function renderVolumeRow(saving, rate) {
+    var totalRow = document.querySelector('.cart-sum-total');
+    if (!totalRow || !totalRow.parentNode) return;
+    var row = document.getElementById('vp-vol-row');
+    if (saving > 0) {
+      if (!row) {
+        row = document.createElement('div');
+        row.id = 'vp-vol-row';
+        row.className = 'cart-sum-row';
+        row.style.color = '#01D3A0';
+        totalRow.parentNode.insertBefore(row, totalRow);
+      }
+      row.innerHTML = '<span>Volume discount (' + Math.round(rate * 100) + '% off)</span>' +
+        '<span>−' + fmt(saving) + '</span>';
+    } else if (row) {
+      row.remove();
+    }
+  }
+
+  function renderFreeShipNudge(subtotal) {
+    var itemsEl = document.getElementById('cart-items');
+    if (!itemsEl || !itemsEl.parentNode) return;
+    var n = document.getElementById('vp-freeship');
+    if (!n) {
+      n = document.createElement('div');
+      n.id = 'vp-freeship';
+      n.style.cssText = 'margin:0 0 18px;padding:12px 16px;border:1px solid #1a1a1a;border-radius:8px;background:#0d0d0d;font-size:13px;color:#9CA3AF';
+      itemsEl.parentNode.insertBefore(n, itemsEl);
+    }
+    var remaining = FREE_THRESHOLD - subtotal;
+    var pct = Math.max(0, Math.min(100, (subtotal / FREE_THRESHOLD) * 100));
+    var msg = remaining > 0
+      ? 'You’re <strong style="color:#fff">' + fmt(remaining) + '</strong> away from <strong style="color:#01D3A0">free UK shipping</strong>'
+      : '<strong style="color:#01D3A0">✓ You’ve unlocked free UK shipping</strong>';
+    n.innerHTML = '<div style="margin-bottom:8px">' + msg + '</div>' +
+      '<div style="height:6px;background:#1a1a1a;border-radius:99px;overflow:hidden">' +
+      '<div style="height:100%;width:' + pct.toFixed(0) + '%;background:#01D3A0;border-radius:99px;transition:width .3s"></div></div>';
   }
 
   function escHtml(s) {

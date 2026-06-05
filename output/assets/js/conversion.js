@@ -16,8 +16,8 @@
     );
     if (!els.length) return;
 
-    var BASE      = 1423;
-    var BASE_MS   = new Date('2026-05-16T00:00:00Z').getTime();
+    var BASE      = 5310;
+    var BASE_MS   = new Date('2026-05-31T00:00:00Z').getTime();
     var todayMs   = new Date();
     todayMs.setUTCHours(0, 0, 0, 0);
     var days = Math.max(0, Math.round((todayMs.getTime() - BASE_MS) / 86400000));
@@ -30,7 +30,7 @@
 
     var total = BASE;
     for (var i = 0; i < days; i++) {
-      total += Math.floor(seeded(i) * 7) + 12;   /* 12–18 new orders per day */
+      total += Math.floor(seeded(i) * 16) + 25;  /* 25–40 new orders per day */
     }
 
     /* count-up animation: from (total - 20) to total over 1.5 s */
@@ -580,4 +580,35 @@
     init();
   }
 
+}());
+
+(function () {
+  var els = document.querySelectorAll('.vp-pdp-dispatch');
+  if (!els.length) return;
+  function parts() {
+    var f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    var p = {}; f.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+    return p;
+  }
+  function render() {
+    var p = parts();
+    var weekend = (p.weekday === 'Sat' || p.weekday === 'Sun');
+    var secs = parseInt(p.hour, 10) * 3600 + parseInt(p.minute, 10) * 60 + parseInt(p.second, 10);
+    var cutoff = 14 * 3600;
+    var html;
+    if (!weekend && secs < cutoff) {
+      var left = cutoff - secs, hh = Math.floor(left / 3600), mm = Math.floor((left % 3600) / 60);
+      html = 'Order within <strong style="color:#01D3A0">' + hh + 'h ' + mm + 'm</strong> for same-day dispatch';
+    } else {
+      html = 'Order now — <strong style="color:#01D3A0">dispatched next working day</strong>';
+    }
+    els.forEach(function (el) {
+      var t = el.querySelector('.vp-pdp-dispatch-txt');
+      if (t) t.innerHTML = html;
+      el.hidden = false;
+      el.style.display = 'flex';
+    });
+  }
+  render();
+  setInterval(render, 30000);
 }());

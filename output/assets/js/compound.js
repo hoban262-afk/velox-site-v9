@@ -17,6 +17,15 @@
 
   readSelectedPrice();
 
+  // GA4 ecommerce: product view
+  if (typeof gtag === 'function') {
+    var _vi = form.querySelector('input[name="size"]:checked');
+    gtag('event', 'view_item', {
+      currency: 'GBP', value: activePrice.value,
+      items: [{ item_id: form.getAttribute('data-compound') || '', item_name: form.getAttribute('data-name') || '', item_variant: _vi ? _vi.value : '', price: activePrice.value, quantity: 1 }]
+    });
+  }
+
   var sizeInputs = form.querySelectorAll('input[name="size"]');
   sizeInputs.forEach(function (input) {
     input.addEventListener('change', function () {
@@ -74,6 +83,14 @@
     if (countEl) {
       var total = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
       countEl.textContent = String(total);
+    }
+
+    // GA4 ecommerce: add to cart
+    if (typeof gtag === 'function') {
+      gtag('event', 'add_to_cart', {
+        currency: 'GBP', value: price,
+        items: [{ item_id: slug, item_name: name, item_variant: size, price: price, quantity: 1 }]
+      });
     }
 
     if (window.toast) window.toast('Added to order');

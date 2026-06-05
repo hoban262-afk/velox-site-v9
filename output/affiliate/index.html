@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Affiliate Portal — Velox Peptides</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#030407">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/core.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/supabase-client.js"></script>
+  <style>
+    .acc-wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+    .acc-loading{color:var(--t3,#6b7280);text-align:center;padding:80px 0;font-family:'DM Mono',monospace;font-size:13px}
+    a.acc-back{color:var(--t3,#6b7280);font-size:13px;text-decoration:none}
+
+    .auth-box{max-width:460px;margin:40px auto;background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:12px;padding:34px 30px}
+    .auth-tabs{display:flex;gap:6px;margin-bottom:24px}
+    .auth-tab{flex:1;text-align:center;font-size:13px;font-weight:600;color:var(--t3,#6b7280);background:none;border:none;border-bottom:2px solid transparent;padding:8px;cursor:pointer}
+    .auth-tab.active{color:#fff;border-bottom-color:var(--g,#01D3A0)}
+    .auth-form{display:none}.auth-form.active{display:block}
+    .auth-form h1{font-size:20px;color:#fff;margin:0 0 6px}
+    .auth-form p.sub{font-size:13px;color:var(--t3,#6b7280);margin:0 0 20px;line-height:1.5}
+    .f-lbl{display:block;font-size:12px;color:var(--t2,#9ca3af);margin:0 0 5px;font-weight:500}
+    .f-inp{width:100%;box-sizing:border-box;margin-bottom:14px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:11px 12px;border-radius:7px;font:inherit;font-size:14px}
+    textarea.f-inp{min-height:70px;resize:vertical}
+    .btn-p{width:100%;background:var(--g,#01D3A0);color:#021;border:none;border-radius:7px;padding:12px;font-weight:700;font-size:14px;cursor:pointer}
+    .btn-p:disabled{opacity:.6;cursor:default}
+    .btn-o{background:none;border:1px solid var(--brd,#1a1a1a);color:#fff;border-radius:7px;padding:9px 16px;font-size:13px;cursor:pointer}
+    .auth-link{background:none;border:none;color:var(--g,#01D3A0);font-size:12px;cursor:pointer;padding:0;margin-top:10px}
+    .auth-msg{font-size:13px;margin-top:12px;min-height:18px}
+    .auth-msg.ok{color:var(--g,#01D3A0)}.auth-msg.err{color:#f87171}
+
+    /* Status (awaiting / rejected / disabled) */
+    .status-box{max-width:520px;margin:60px auto;text-align:center;background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:12px;padding:40px 34px}
+    .status-box .ico{font-size:34px;margin-bottom:12px}
+    .status-box h1{font-size:22px;color:#fff;margin:0 0 10px}
+    .status-box p{font-size:14px;color:var(--t2,#9ca3af);line-height:1.6;margin:0 0 8px}
+
+    /* Dashboard */
+    .dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+    .dash-hello{font-size:24px;font-weight:700;color:#fff}
+    .dash-signout{font-size:12px;color:var(--t3,#6b7280);background:none;border:1px solid var(--brd,#1a1a1a);border-radius:5px;padding:6px 14px;cursor:pointer}
+    .code-box{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(180deg,rgba(1,211,160,.08),rgba(1,211,160,.02));border:1px solid rgba(1,211,160,.3);border-radius:12px;padding:18px 22px;margin-bottom:22px}
+    .code-box .lbl{font-size:11px;font-weight:700;color:var(--g,#01D3A0);letter-spacing:.12em;text-transform:uppercase}
+    .code-box .code{font-family:'DM Mono',monospace;font-size:26px;font-weight:600;color:#fff;letter-spacing:.04em}
+    .code-copy{background:var(--g,#01D3A0);color:#021;border:none;border-radius:7px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer}
+    .pts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+    .pts-card{background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:18px 20px}
+    .pts-label{font-size:10px;font-weight:700;color:var(--t3,#6b7280);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .pts-value{font-size:26px;font-weight:700;color:#fff}
+    .pts-sub{font-size:11px;color:var(--t3,#6b7280);margin-top:4px}
+    .acc-tabs{display:flex;gap:4px;border-bottom:1px solid var(--brd,#1a1a1a);margin:6px 0 24px;flex-wrap:wrap}
+    .acc-tab{font-size:13px;font-weight:500;color:var(--t3,#6b7280);background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;cursor:pointer;margin-bottom:-1px}
+    .acc-tab.active{color:#fff;border-bottom-color:var(--g,#01D3A0)}
+    .acc-tab .pill{display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 6px}
+    .acc-panel{display:none}.acc-panel.active{display:block}
+    .card{background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:20px 22px;margin-bottom:18px}
+    .card h3{font-size:14px;color:#fff;margin:0 0 14px}
+    .flt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    .flt button{font-size:12px;color:var(--t2,#9ca3af);background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:20px;padding:5px 13px;cursor:pointer}
+    .flt button.active{color:#021;background:var(--g,#01D3A0);border-color:var(--g,#01D3A0);font-weight:700}
+    table.acc-tbl{width:100%;border-collapse:collapse;font-size:13px}
+    .acc-tbl th{text-align:left;color:var(--t3,#6b7280);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--brd,#1a1a1a);white-space:nowrap}
+    .acc-tbl td{padding:10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--t2,#9ca3af)}
+    .badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;text-transform:uppercase;white-space:nowrap}
+    .b-payable{background:rgba(74,159,224,.12);color:#4a9fe0}
+    .b-paid{background:rgba(1,211,160,.12);color:#01D3A0}
+    .b-pending{background:rgba(255,255,255,.06);color:#9ca3af}
+    .b-reversed{background:rgba(248,113,113,.12);color:#f87171}
+    .b-clawback{background:rgba(245,179,1,.15);color:#f5b301}
+    .b-dispatched{background:rgba(74,159,224,.12);color:#4a9fe0}
+    .b-cancelled{background:rgba(248,113,113,.12);color:#f87171}
+    .b-refunded{background:rgba(248,113,113,.12);color:#f87171}
+    .empty{color:var(--t3,#6b7280);font-size:13px;padding:6px 0}
+    .notif{display:flex;gap:12px;align-items:flex-start;padding:12px 4px;border-bottom:1px solid rgba(255,255,255,.04)}
+    .notif .dot{width:8px;height:8px;border-radius:50%;background:var(--g,#01D3A0);margin-top:5px;flex:0 0 8px}
+    .notif.read .dot{background:transparent;border:1px solid var(--brd,#333)}
+    .notif .msg{font-size:13px;color:#fff}
+    .notif.read .msg{color:var(--t2,#9ca3af)}
+    .notif .when{font-size:11px;color:var(--t3,#6b7280);margin-top:2px}
+  </style>
+</head>
+<body style="background:#030407;margin:0">
+<div class="acc-wrap">
+  <a class="acc-back" href="/">&larr; Back to shop</a>
+
+  <div id="acc-loading" class="acc-loading">Loading the affiliate portal&hellip;</div>
+
+  <!-- AUTH (logged out) -->
+  <div id="auth-view" style="display:none">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-f="login"    onclick="authTab('login')">Sign in</button>
+        <button class="auth-tab"        data-f="register" onclick="authTab('register')">Become an affiliate</button>
+      </div>
+
+      <form class="auth-form active" id="form-login" onsubmit="return false">
+        <h1>Affiliate sign in</h1>
+        <p class="sub">Track your referred orders, commission and payouts.</p>
+        <label class="f-lbl" for="li-email">Email</label>
+        <input class="f-inp" id="li-email" type="email" autocomplete="email">
+        <label class="f-lbl" for="li-pw">Password</label>
+        <input class="f-inp" id="li-pw" type="password" autocomplete="current-password">
+        <button class="btn-p" id="li-btn">Sign in</button>
+        <button class="auth-link" onclick="authTab('reset')" type="button">Forgot your password?</button>
+        <div class="auth-msg" id="auth-msg-login"></div>
+      </form>
+
+      <form class="auth-form" id="form-register" onsubmit="return false">
+        <h1>Apply to be an affiliate</h1>
+        <p class="sub">Apply for a unique discount code and earn commission on every order placed with it. Applications are reviewed before approval.</p>
+        <label class="f-lbl" for="rg-name">Full name</label>
+        <input class="f-inp" id="rg-name" autocomplete="name">
+        <label class="f-lbl" for="rg-email">Email</label>
+        <input class="f-inp" id="rg-email" type="email" autocomplete="email">
+        <label class="f-lbl" for="rg-pw">Password (min 8 characters)</label>
+        <input class="f-inp" id="rg-pw" type="password" autocomplete="new-password">
+        <label class="f-lbl" for="rg-payout">Payout details (PayPal email or bank reference)</label>
+        <input class="f-inp" id="rg-payout" placeholder="e.g. payments@yourname.com">
+        <label class="f-lbl" for="rg-promo">How do you plan to promote us? (optional)</label>
+        <textarea class="f-inp" id="rg-promo" placeholder="e.g. Instagram fitness page, ~20k followers"></textarea>
+        <button class="btn-p" id="rg-btn">Submit application</button>
+        <div class="auth-msg" id="auth-msg-register"></div>
+      </form>
+
+      <form class="auth-form" id="form-reset" onsubmit="return false">
+        <h1>Reset password</h1>
+        <p class="sub">We'll email you a secure reset link.</p>
+        <label class="f-lbl" for="rs-email">Email</label>
+        <input class="f-inp" id="rs-email" type="email" autocomplete="email">
+        <button class="btn-p" id="rs-btn">Send reset link</button>
+        <button class="auth-link" onclick="authTab('login')" type="button">Back to sign in</button>
+        <div class="auth-msg" id="auth-msg-reset"></div>
+      </form>
+
+      <form class="auth-form" id="form-newpw" onsubmit="return false">
+        <h1>Set a new password</h1>
+        <p class="sub">Enter a new password for your account.</p>
+        <label class="f-lbl" for="np-pw">New password (min 8 characters)</label>
+        <input class="f-inp" id="np-pw" type="password" autocomplete="new-password">
+        <button class="btn-p" id="np-btn">Update password</button>
+        <div class="auth-msg" id="auth-msg-newpw"></div>
+      </form>
+    </div>
+    <p style="text-align:center;margin-top:16px"><a href="/affiliate-program/" style="color:var(--t3,#6b7280);font-size:13px;text-decoration:none">New here? Learn about the affiliate program &rarr;</a></p>
+  </div>
+
+  <!-- STATUS (logged in but not active) -->
+  <div id="status-view" style="display:none">
+    <div class="status-box">
+      <div class="ico" id="status-ico">⏳</div>
+      <h1 id="status-title">Application received</h1>
+      <p id="status-msg">Your affiliate application is being reviewed. You'll be able to access your dashboard once it's approved.</p>
+      <p style="margin-top:18px"><button class="btn-o" id="status-signout">Sign out</button></p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (active affiliate) -->
+  <div id="dash-view" style="display:none">
+    <div class="dash-top">
+      <div class="dash-hello" id="dash-hello">Affiliate dashboard</div>
+      <button class="dash-signout" id="dash-signout">Sign out</button>
+    </div>
+
+    <div class="code-box">
+      <div>
+        <div class="lbl">Your affiliate code</div>
+        <div class="code" id="aff-code">—</div>
+      </div>
+      <button class="code-copy" id="aff-code-copy">Copy code</button>
+    </div>
+
+    <div class="pts-grid">
+      <div class="pts-card"><div class="pts-label">Paid out</div><div class="pts-value" id="t-paid">£0.00</div><div class="pts-sub">Commission you've been paid</div></div>
+      <div class="pts-card"><div class="pts-label">Payable</div><div class="pts-value" id="t-payable">£0.00</div><div class="pts-sub">Confirmed, awaiting payout</div></div>
+      <div class="pts-card"><div class="pts-label">Pending</div><div class="pts-value" id="t-pending">£0.00</div><div class="pts-sub">Accrued, order not yet dispatched</div></div>
+      <div class="pts-card"><div class="pts-label">Reversed</div><div class="pts-value" id="t-reversed">£0.00</div><div class="pts-sub">Cancelled / refunded orders</div></div>
+    </div>
+
+    <div class="acc-tabs">
+      <button class="acc-tab active" data-t="orders"        onclick="affTab('orders')">Orders</button>
+      <button class="acc-tab"        data-t="payouts"       onclick="affTab('payouts')">Payouts</button>
+      <button class="acc-tab"        data-t="notifications" onclick="affTab('notifications')">Notifications<span class="pill" id="notif-pill">0</span></button>
+      <button class="acc-tab"        data-t="settings"      onclick="affTab('settings')">Settings</button>
+    </div>
+
+    <div class="acc-panel active" id="panel-orders">
+      <div class="card">
+        <h3>Referred orders</h3>
+        <div class="flt" id="ord-filter">
+          <button class="active" data-s="all">All</button>
+          <button data-s="pending">Pending</button>
+          <button data-s="payable">Payable</button>
+          <button data-s="paid">Paid</button>
+          <button data-s="reversed">Reversed</button>
+        </div>
+        <div id="orders-wrap"><p class="empty">No referred orders yet.</p></div>
+      </div>
+    </div>
+
+    <div class="acc-panel" id="panel-payouts">
+      <div class="card"><h3>Payout history</h3><div id="payouts-wrap"><p class="empty">No payouts yet.</p></div></div>
+    </div>
+
+    <div class="acc-panel" id="panel-notifications">
+      <div class="card"><h3>Notifications</h3><div id="notif-wrap"><p class="empty">No notifications yet.</p></div></div>
+    </div>
+
+    <div class="acc-panel" id="panel-settings">
+      <div class="card">
+        <h3>Customise your commission split</h3>
+        <p style="font-size:13px;color:var(--t2,#9ca3af);margin:0 0 22px;line-height:1.6">
+          You control how the 20% budget is split between your commission and the discount your customers get.
+          Each side must be at least 5%. Changes take effect immediately on new orders.
+        </p>
+        <label class="f-lbl" for="split-slider">Your commission: <strong id="split-commission-display" style="color:#fff">10</strong>%</label>
+        <input id="split-slider" type="range" min="5" max="15" step="1" value="10"
+          style="width:100%;height:6px;accent-color:#01D3A0;cursor:pointer;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3,#6b7280);margin-bottom:20px">
+          <span>5% commission / 15% customer discount</span>
+          <span>15% commission / 5% customer discount</span>
+        </div>
+        <div class="pts-grid" style="margin-bottom:22px">
+          <div class="pts-card">
+            <div class="pts-label">Your commission</div>
+            <div class="pts-value" id="split-commission-val" style="color:#01D3A0">10%</div>
+            <div class="pts-sub">You earn per referred order</div>
+          </div>
+          <div class="pts-card">
+            <div class="pts-label">Customer discount</div>
+            <div class="pts-value" id="split-discount-val">10%</div>
+            <div class="pts-sub">Off their order total with your code</div>
+          </div>
+        </div>
+        <button class="btn-p" id="split-save-btn" style="max-width:180px">Save split</button>
+        <div class="auth-msg" id="split-msg" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/affiliate.js"></script>
+  <script src="/assets/js/search.js" defer></script>
+</body>
+</html>

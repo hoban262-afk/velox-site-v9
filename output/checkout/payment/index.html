@@ -366,7 +366,7 @@
   <link rel="stylesheet" href="/assets/css/animations.css">
 
   <!-- JSON-LD -->
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "veloxpeps@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeps"]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "support@veloxpeps.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeps"]}</script>
 
   <script defer src="/_vercel/insights/script.js"></script>
   <!-- Google tag (gtag.js) -->
@@ -395,13 +395,20 @@
 
     <div class="nav-links">
       <a class="nl " href="/compounds/">Shop</a>
-      <a class="nl nl-stacks" href="/stacks/">Research Bundles</a>
+      <a class="nl " href="/guides/glossary/">Glossary</a>
+      <a class="nl " href="/guides/">Guide Hub</a>
       <a class="nl " href="/about/">About</a>
-      <a class="nl " href="/faq/">FAQ</a>
       <a class="nl " href="/contact/">Contact</a>
     </div>
 
     <div class="nav-actions">
+      <form class="vp-search vp-search-nav" role="search" onsubmit="return false">
+        <div class="vp-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="vp-search-input" type="search" placeholder="Search&hellip;" aria-label="Search the catalogue" autocomplete="off">
+        </div>
+        <div class="vp-search-results" hidden></div>
+      </form>
       <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -409,6 +416,7 @@
           <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
         </svg>
       </a>
+      <a class="nav-ig" href="/account/" aria-label="My account" title="My account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
       <a class="nav-cart" href="/cart/" aria-label="View cart">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span class="nav-cart-label">Order</span>
@@ -422,18 +430,17 @@
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true">
     <a href="/compounds/" class="mob-nl">Shop</a>
-    <a href="/compounds/neuropeptide-research/" class="mob-nl mob-nl-sub">— Neuropeptide Research</a>
-    <a href="/compounds/incretin-receptor-research/" class="mob-nl mob-nl-sub">— Incretin &amp; Receptor Research</a>
-    <a href="/compounds/angiogenic-tissue-research/" class="mob-nl mob-nl-sub">— Angiogenic &amp; Tissue Research</a>
-    <a href="/compounds/somatotropic-research/" class="mob-nl mob-nl-sub">— Somatotropic Research</a>
-    <a href="/compounds/oxidative-pathway-research/" class="mob-nl mob-nl-sub">— Oxidative Pathway Research</a>
-    <a href="/stacks/" class="mob-nl mob-nl-stacks">Research Bundles</a>
-    <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">— Reconstitution Calculator</a>
+    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub">— Cognitive</a>
+    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub">— Metabolic</a>
+    <a href="/compounds/recovery/" class="mob-nl mob-nl-sub">— Recovery</a>
+    <a href="/compounds/growth/" class="mob-nl mob-nl-sub">— Growth</a>
+    <a href="/compounds/antioxidant/" class="mob-nl mob-nl-sub">— Antioxidant</a>
+    <a href="/guides/glossary/" class="mob-nl">Glossary</a>
+    <a href="/guides/" class="mob-nl">Guide Hub</a>
     <a href="/about/" class="mob-nl">About</a>
-    <a href="/faq/" class="mob-nl">FAQ</a>
-    <a href="/shipping/" class="mob-nl mob-nl-sub">— Shipping</a>
     <a href="/contact/" class="mob-nl">Contact</a>
     <a href="/cart/" class="mob-nl">Order</a>
+    <a href="/account/" class="mob-nl">My account</a>
   </div>
 </header>
 
@@ -604,7 +611,7 @@
           <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">&pound;3.80</span></div>
         </div>
         <div class="co-deliver-to" id="co-deliver-to"></div>
-        <div class="co-support-note">Questions? Email us at <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a></div>
+        <div class="co-support-note">Questions? Email us at <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a></div>
       </aside>
     </div>
   </div>
@@ -629,24 +636,26 @@
           CRP Labs Ltd<br>
           Company no. NI738125<br>
           Holywood, Northern Ireland, United Kingdom<br>
-          <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a>
+          <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a>
         </address>
       </div>
       <div class="ft-cols">
         <div class="ft-col">
           <div class="ft-col-h">Compounds</div>
           <a href="/compounds/">All compounds</a>
-          <a href="/compounds/neuropeptide-research/">Neuropeptide Research</a>
-          <a href="/compounds/incretin-receptor-research/">Incretin &amp; Receptor Research</a>
-          <a href="/compounds/angiogenic-tissue-research/">Angiogenic &amp; Tissue Research</a>
-          <a href="/compounds/somatotropic-research/">Somatotropic Research</a>
-          <a href="/compounds/oxidative-pathway-research/">Oxidative Pathway Research</a>
+          <a href="/compounds/cognitive/">Cognitive</a>
+          <a href="/compounds/metabolic/">Metabolic</a>
+          <a href="/compounds/recovery/">Recovery</a>
+          <a href="/compounds/growth/">Growth</a>
+          <a href="/compounds/antioxidant/">Antioxidant</a>
           <a href="/stacks/">Research Bundles</a>
           <a href="/supplies/bacteriostatic-water/">Bacteriostatic Water</a>
         </div>
         <div class="ft-col">
           <div class="ft-col-h">Resources</div>
-          <a href="/research/">Research Library</a>
+          <a href="/affiliate-program/">Affiliate Program</a>
+          <a href="/guides/">Guides</a>
+          <a href="/guides/glossary/">Glossary</a>
           <a href="/tools/reconstitution-calculator/">Reconstitution Calculator</a>
           <a href="/about/">About Velox</a>
           <a href="/about/quality-and-testing/">Quality &amp; Testing</a>
@@ -760,7 +769,7 @@
       String(d.getMonth() + 1).padStart(2, '0') +
       String(d.getDate()).padStart(2, '0');
   }
-  function fmtPounds(n) { return '£' + Number(n).toFixed(2); }
+  function fmtPounds(n) { var v = Math.round(Number(n) * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
 
   // Re-compute applied discount from DOM state
   // checkout.js disables the input when a code is applied — we read it back here
@@ -781,12 +790,34 @@
     return null;
   }
 
+  // Volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 15% (by quantity of DISCOUNTABLE
+  // vials). Pens and BAC water are never discounted and never count toward the tier.
+  function vpIsPen(i) { return /pen/i.test(i.size || ''); }
+  function vpIsBac(i) { return i.slug === 'bacteriostatic-water'; }
+  function vpExcluded(i) { return vpIsPen(i) || vpIsBac(i); }
+  function vpDiscountableGBP(cart) { return cart.reduce(function (s, i) { return s + (vpExcluded(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
+  function vpDiscountableQty(cart) { return cart.reduce(function (s, i) { return s + (vpExcluded(i) ? 0 : (i.qty || 1)); }, 0); }
+  function vpVolumeRate(q) { return q >= 4 ? 0.15 : (q === 3 ? 0.10 : (q === 2 ? 0.05 : 0)); }
+  // Best promotional saving = LARGER of (applied code, volume), on the discountable subtotal
+  // only. Code + volume do not stack, so promo ≤ 15% of the discountable subtotal.
+  function bestPromo(cart) {
+    var base = vpDiscountableGBP(cart);
+    var code = getAppliedDiscount(base);
+    var codeSaving = (code && code.saving) || 0;
+    var rate = vpVolumeRate(vpDiscountableQty(cart));
+    var volSaving = Math.round(base * rate * 100) / 100;
+    if (volSaving > codeSaving) {
+      return { code: 'VOLUME-' + Math.round(rate * 100), saving: volSaving, label: 'Volume discount −' + Math.round(rate * 100) + '%', isVolume: true };
+    }
+    return { code: code ? code.code : '', saving: codeSaving, label: code ? code.code : '', isVolume: false };
+  }
+
   // Update the PAY NOW button amount display
   function updateFenaTotal() {
     var cart     = getCart();
     var t        = cartTotals(cart);
-    var discount = getAppliedDiscount(t.subtotal);
-    var saving   = (discount && discount.saving) || 0;
+    var promo    = bestPromo(cart);
+    var saving   = promo.saving;
     var discSub  = Math.max(0, t.subtotal - saving);
     var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
     var el = document.getElementById('fena-total');
@@ -861,8 +892,8 @@
         return;
       }
       var t        = cartTotals(cart);
-      var discount = getAppliedDiscount(t.subtotal);
-      var saving   = (discount && discount.saving) || 0;
+      var promo    = bestPromo(cart);
+      var saving   = promo.saving;
       var discSub  = Math.max(0, t.subtotal - saving);
       var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
       var total    = discSub + ship;
@@ -877,7 +908,7 @@
         .filter(Boolean).join(', ');
       var productsList = cart.map(function (item) {
         return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-          ' — £' + (item.price * (item.qty || 1)).toFixed(2);
+          ' — ' + fmtPounds(item.price * (item.qty || 1));
       }).join('\n');
 
       // 5. Persist to sessionStorage before redirect
@@ -885,7 +916,7 @@
         orderRef:        ref,
         subtotal:        t.subtotal,
         shipping:        ship,
-        discount_code:   discount ? discount.code : '',
+        discount_code:   promo.code,
         discount_saving: saving,
         total:           total,
         cart_snapshot:   JSON.stringify(cart),
@@ -896,7 +927,16 @@
       try {
         sessionStorage.setItem('vp_checkout', JSON.stringify(session));
         sessionStorage.removeItem('vp_order_fired');
+        // Mirror to localStorage: sessionStorage is wiped when the mobile
+        // bank-app redirect returns, localStorage survives the round-trip.
+        localStorage.setItem('vp_checkout', JSON.stringify(session));
       } catch (ex) {}
+
+      // Structured line items for the captured order (Click & Drop, Xero, account)
+      var structuredItems = cart.map(function (item) {
+        return { name: item.name, slug: item.slug, size: item.size,
+                 qty: item.qty || 1, price: item.price };
+      });
 
       // 6. Build metadata echoed back by Fena webhook
       var metadata = {
@@ -913,9 +953,10 @@
         shipping_address: shippingAddr,
         shipping_method:  'Royal Mail Tracked 24',
         order_items:      productsList,
+        items:            structuredItems,
         subtotal:         t.subtotal.toFixed(2),
         shipping:         ship.toFixed(2),
-        discount_code:    discount ? discount.code : '',
+        discount_code:    promo.code,
         discount_saving:  saving.toFixed(2),
         total:            total.toFixed(2),
         currency:         'GBP',
@@ -964,9 +1005,20 @@
             throw new Error(errMsg);
           }
 
-          // 9. Redirect to Fena hosted payment page
+          // 9. Branded "redirecting to your bank" interstitial → then redirect
           console.log('[fena-pay] Redirecting to Fena — ref:', ref, 'orderId:', data.orderId);
-          window.location.href = data.paymentUrl;
+          var _st = document.createElement('style');
+          _st.textContent = '@keyframes vp-rspin{to{transform:rotate(360deg)}}';
+          document.head.appendChild(_st);
+          var _ov = document.createElement('div');
+          _ov.style.cssText = 'position:fixed;inset:0;background:rgba(3,4,7,.96);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:Inter,Arial,sans-serif;text-align:center;padding:20px';
+          _ov.innerHTML =
+            '<div style="font-size:11px;color:#01D3A0;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:700">VELOX PEPTIDES &middot; SECURE PAYMENT</div>' +
+            '<div style="width:48px;height:48px;border:3px solid #1F2937;border-top-color:#01D3A0;border-radius:50%;animation:vp-rspin .8s linear infinite;margin-bottom:24px"></div>' +
+            '<div style="font-size:19px;font-weight:600;color:#fff;margin-bottom:8px">Redirecting you to your bank</div>' +
+            '<div style="font-size:13px;color:#9CA3AF;max-width:380px;line-height:1.65">Processed securely by Fena open banking. No card or bank details are stored on our site &mdash; you authorise the payment in your own banking app.</div>';
+          document.body.appendChild(_ov);
+          setTimeout(function () { window.location.href = data.paymentUrl; }, 350);
         })
         .catch(function (e) {
           clearTimeout(timeoutId);
@@ -991,5 +1043,6 @@
 
 <script src="/assets/js/conversion.js" defer></script>
 <script src="/assets/js/animations.js" defer></script>
+  <script src="/assets/js/search.js" defer></script>
 </body>
 </html>

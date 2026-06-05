@@ -1,0 +1,126 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options",        "value": "SAMEORIGIN" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy",        "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy",     "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "X-XSS-Protection",       "value": "1; mode=block" }
+      ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/recovery/run",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/recovery/reorder-run",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/recovery/welcome-run",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/recovery/restock-run",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/recovery/review-run",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/admin/insights-run",
+      "schedule": "0 8 * * 1"
+    },
+    {
+      "path": "/api/analytics/ga-run",
+      "schedule": "0 6 * * *"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/compounds/neuropeptide-research/",
+      "destination": "/compounds/cognitive/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/neuropeptide-research",
+      "destination": "/compounds/cognitive/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/incretin-receptor-research/",
+      "destination": "/compounds/metabolic/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/incretin-receptor-research",
+      "destination": "/compounds/metabolic/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/angiogenic-tissue-research/",
+      "destination": "/compounds/recovery/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/angiogenic-tissue-research",
+      "destination": "/compounds/recovery/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/somatotropic-research/",
+      "destination": "/compounds/growth/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/somatotropic-research",
+      "destination": "/compounds/growth/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/oxidative-pathway-research/",
+      "destination": "/compounds/antioxidant/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/oxidative-pathway-research",
+      "destination": "/compounds/antioxidant/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/healing-and-repair/",
+      "destination": "/compounds/recovery/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/healing-and-repair",
+      "destination": "/compounds/recovery/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/anti-ageing/",
+      "destination": "/compounds/antioxidant/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/anti-ageing",
+      "destination": "/compounds/antioxidant/",
+      "permanent": true
+    },
+    {
+      "source": "/research/:path*",
+      "destination": "/guides/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/research",
+      "destination": "/guides",
+      "permanent": true
+    }
+  ]
+}

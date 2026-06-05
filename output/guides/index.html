@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Guides — Research Peptide Education, Comparisons & Glossary | Velox Peptides</title>
+  <meta name="description" content="Velox Peptides guides: educational explainers, peptide comparisons, a research-terms glossary and FAQs for HPLC-verified research peptides. UK supplier.">
+  <link rel="canonical" href="https://veloxpeps.com/guides/">
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Velox Peptides">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://veloxpeps.com/guides/">
+  <meta property="og:title" content="Guides — Research Peptide Education, Comparisons & Glossary | Velox Peptides">
+  <meta property="og:description" content="Velox Peptides guides: educational explainers, peptide comparisons, a research-terms glossary and FAQs for HPLC-verified research peptides. UK supplier.">
+  <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_GB">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Guides — Research Peptide Education, Comparisons & Glossary | Velox Peptides">
+  <meta name="twitter:description" content="Velox Peptides guides: educational explainers, peptide comparisons, a research-terms glossary and FAQs for HPLC-verified research peptides. UK supplier.">
+  <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
+
+  <!-- Icons and manifest -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#030407">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/assets/css/core.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Velox Peptides","legalName":"CRP Labs Ltd","url":"https://veloxpeps.com","logo":"https://veloxpeps.com/assets/images/logo.png","email":"support@veloxpeps.com","address":{"@type":"PostalAddress","addressLocality":"Holywood","addressRegion":"Northern Ireland","addressCountry":"GB"},"identifier":{"@type":"PropertyValue","propertyID":"UK Company Number","value":"NI738125"},"sameAs":["https://www.instagram.com/veloxpeps"]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Velox Peptides Guides","description":"Educational explainers, peptide comparisons, a research-terms glossary and FAQs for HPLC-verified research peptides.","url":"https://veloxpeps.com/guides/","publisher":{"@type":"Organization","name":"Velox Peptides"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://veloxpeps.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://veloxpeps.com/guides/"}]}</script>
+
+  <style>
+    /* Research library grid */
+    .rl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 32px;
+    }
+    @media (max-width: 900px) { .rl-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .rl-grid { grid-template-columns: 1fr; } }
+
+    .rl-card {
+      background: #0a0d12;
+      border: 1px solid #1a1d24;
+      border-radius: 10px;
+      padding: 22px 20px 18px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+    }
+    .rl-card:hover {
+      border-color: rgba(1,211,160,.35);
+      transform: translateY(-2px);
+    }
+    .rl-card-published {
+      border-color: rgba(1,211,160,.2);
+    }
+    .rl-card-published:hover {
+      border-color: rgba(1,211,160,.55);
+    }
+
+    .rl-card-cat {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .rl-card-cat-metabolic { color: #c8b800; }
+    .rl-card-cat-cognitive  { color: #9B6DFF; }
+    .rl-card-cat-healing    { color: #4FC3F7; }
+    .rl-card-cat-growth     { color: #4A9FE0; }
+    .rl-card-cat-antiageing { color: #F472B6; }
+
+    .rl-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #E5E7EB;
+      line-height: 1.35;
+    }
+    .rl-card-excerpt {
+      font-size: 0.82rem;
+      color: #6B7280;
+      line-height: 1.6;
+      flex: 1;
+    }
+    .rl-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+    .rl-card-status-live {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #01D3A0;
+      background: rgba(1,211,160,.1);
+      border: 1px solid rgba(1,211,160,.25);
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+    .rl-card-status-soon {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #4B5563;
+      background: rgba(107,114,128,.08);
+      border: 1px solid rgba(107,114,128,.2);
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+    .rl-card-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: #374151;
+    }
+    .rl-card-cat-guide { color: #94A3B8; }
+
+    .rl-card-arr {
+      color: #01D3A0;
+      font-size: 0.9rem;
+    }
+
+    .rl-section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #374151;
+      margin: 48px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .rl-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #1a1d24;
+    }
+  </style>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YFPX0Q1G50"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YFPX0Q1G50');
+  </script>
+</head>
+<body class="page-research">
+
+<div class="ann-bar" role="note" aria-label="Site announcements">
+  <div class="ann-track-wrap" aria-hidden="true">
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-logo" href="/" aria-label="Velox Peptides">
+      <img class="nav-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="auto">
+    </a>
+    <div class="nav-links">
+      <a class="nl " href="/compounds/">Shop</a>
+      <a class="nl " href="/guides/glossary/">Glossary</a>
+      <a class="nl " href="/guides/">Guide Hub</a>
+      <a class="nl " href="/about/">About</a>
+      <a class="nl " href="/contact/">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <form class="vp-search vp-search-nav" role="search" onsubmit="return false">
+        <div class="vp-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="vp-search-input" type="search" placeholder="Search&hellip;" aria-label="Search the catalogue" autocomplete="off">
+        </div>
+        <div class="vp-search-results" hidden></div>
+      </form>
+      <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+      <a class="nav-ig" href="/account/" aria-label="My account" title="My account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      <a class="nav-cart" href="/cart/" aria-label="View cart">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="nav-cart-label">Order</span>
+        <span class="nav-cart-count" id="nav-cart-count">0</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mob-menu" id="mob-menu" aria-hidden="true">
+    <a href="/compounds/" class="mob-nl">Shop</a>
+    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub">— Cognitive</a>
+    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub">— Metabolic</a>
+    <a href="/compounds/recovery/" class="mob-nl mob-nl-sub">— Recovery</a>
+    <a href="/compounds/growth/" class="mob-nl mob-nl-sub">— Growth</a>
+    <a href="/compounds/antioxidant/" class="mob-nl mob-nl-sub">— Antioxidant</a>
+    <a href="/guides/glossary/" class="mob-nl">Glossary</a>
+    <a href="/guides/" class="mob-nl">Guide Hub</a>
+    <a href="/about/" class="mob-nl">About</a>
+    <a href="/contact/" class="mob-nl">Contact</a>
+    <a href="/cart/" class="mob-nl">Order</a>
+    <a href="/account/" class="mob-nl">My account</a>
+  </div>
+</header>
+
+<main class="site-main">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a class="bc-link" href="/">Home</a><span class="bc-sep" aria-hidden="true">›</span><span class="bc-current" aria-current="page">Guides</span></nav>
+
+<section class="page-intro">
+  <div class="sec-i">
+    <div class="page-eyebrow">— Learn</div>
+    <h1 class="page-h1">Velox Peptides Guides</h1>
+    <p class="page-lede">
+      Educational resources for researchers working with HPLC-verified peptides &mdash; plain-English explainers, side-by-side compound comparisons, a research-terms glossary, and frequently asked questions. Everything you need to understand the science and the documentation behind each compound.
+    </p>
+    <p class="page-compliance">
+      <strong>For scientific reference only &mdash; not medical advice.</strong>
+      All content is derived from peer-reviewed preclinical and clinical research. Summaries are provided for scientific reference, not medical advice, diagnosis, or treatment. All compounds are for in vitro research use only. Not for human or veterinary consumption.
+    </p>
+  </div>
+</section>
+
+<section class="about-section">
+  <div class="sec-i">
+
+    <!-- Educational Guides -->
+    <div class="rl-section-label">Educational Guides</div>
+    <div class="rl-grid">
+      <a class="rl-card rl-card-published" href="/guides/what-are-research-peptides/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">What Are Research Peptides? A Plain-English Primer</div>
+        <div class="rl-card-excerpt">A simple introduction to what peptides are, how they differ from proteins, and why they are supplied strictly as in vitro research reagents.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/peptide-storage-and-handling/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">Peptide Storage &amp; Handling in the Lab</div>
+        <div class="rl-card-excerpt">How to keep lyophilised and reconstituted research peptides stable &mdash; temperature, light, desiccants, and good laboratory practice.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/bacteriostatic-water-explained/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">Bacteriostatic Water Explained</div>
+        <div class="rl-card-excerpt">What bacteriostatic water is, how it differs from sterile water, and why it is commonly used to reconstitute peptides in the lab.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/how-peptides-are-tested/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">How Peptides Are Tested: HPLC &amp; Mass Spec</div>
+        <div class="rl-card-excerpt">A plain-English walk through the two main analytical methods used to confirm a peptide&rsquo;s purity and identity.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/peptide-reconstitution-guide/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">Peptide Reconstitution Guide</div>
+        <div class="rl-card-excerpt">A technical reference for dissolving lyophilised peptides &mdash; concentration calculations, sterile handling, and storage guidance.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/reading-a-certificate-of-analysis/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">How to Read a Certificate of Analysis</div>
+        <div class="rl-card-excerpt">What HPLC purity figures mean, how to interpret a CoA, and why mass spectrometry confirmation matters.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/how-to-buy-research-peptides-uk/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">How to Buy Research Peptides in the UK</div>
+        <div class="rl-card-excerpt">What to look for in a UK supplier &mdash; HPLC documentation, CoA transparency, batch testing, and shipping standards.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/are-research-peptides-legal-uk/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">Are Research Peptides Legal in the UK?</div>
+        <div class="rl-card-excerpt">The legal status of research peptides under UK law and what &ldquo;for research use only&rdquo; means for researchers.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Comparisons -->
+    <div class="rl-section-label">Comparisons</div>
+    <div class="rl-grid">
+      <a class="rl-card rl-card-published" href="/guides/bpc-157-vs-tb-500/">
+        <div class="rl-card-cat rl-card-cat-healing">Comparison</div>
+        <div class="rl-card-title">BPC-157 vs TB-500</div>
+        <div class="rl-card-excerpt">Two tissue-repair peptides compared side by side &mdash; mechanisms, study models, and the rationale for combining them in research.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/semax-vs-selank/">
+        <div class="rl-card-cat rl-card-cat-cognitive">Comparison</div>
+        <div class="rl-card-title">Semax vs Selank</div>
+        <div class="rl-card-excerpt">Two Russian neuropeptides compared &mdash; their BDNF and GABA pathway mechanisms and combined research rationale.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/cjc-1295-vs-tesamorelin/">
+        <div class="rl-card-cat rl-card-cat-growth">Comparison</div>
+        <div class="rl-card-title">CJC-1295 vs Tesamorelin</div>
+        <div class="rl-card-excerpt">Two GHRH analogues compared &mdash; half-life profiles and GH pulse amplitude data from rodent models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-vs-tirzepatide-vs-semaglutide/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Comparison</div>
+        <div class="rl-card-title">Retatrutide vs Tirzepatide vs Semaglutide</div>
+        <div class="rl-card-excerpt">Three incretin receptor agonists compared &mdash; receptor targets and the difference between single, dual, and triple agonism.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/is-retatrutide-a-glp-1/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Guide</div>
+        <div class="rl-card-title">Is Retatrutide a GLP-1?</div>
+        <div class="rl-card-excerpt">Answer-first explainer &mdash; why Retatrutide is a GLP-1 / GIP / glucagon triple agonist, with plain-English diagrams.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/selank-vs-dsip/">
+        <div class="rl-card-cat rl-card-cat-cognitive">Comparison</div>
+        <div class="rl-card-title">Selank vs DSIP</div>
+        <div class="rl-card-excerpt">An anxiolytic neuropeptide compared with a sleep-modulating peptide &mdash; distinct mechanisms studied in rodent models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/ghk-cu-vs-bpc-157/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Comparison</div>
+        <div class="rl-card-title">GHK-Cu vs BPC-157</div>
+        <div class="rl-card-excerpt">A copper-tripeptide compared with a pentadecapeptide &mdash; their differing roles in tissue-remodelling and repair research.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Glossary & FAQs -->
+    <div class="rl-section-label">Glossary &amp; FAQs</div>
+    <div class="rl-grid">
+      <a class="rl-card rl-card-published" href="/guides/glossary/">
+        <div class="rl-card-cat rl-card-cat-guide">Glossary</div>
+        <div class="rl-card-title">Research Peptide Glossary (A&ndash;Z)</div>
+        <div class="rl-card-excerpt">Plain-English definitions of the key scientific and laboratory terms you will meet across our guides and research summaries.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/faq/">
+        <div class="rl-card-cat rl-card-cat-guide">FAQ</div>
+        <div class="rl-card-title">Frequently Asked Questions</div>
+        <div class="rl-card-excerpt">Answers to common questions about ordering, shipping, documentation, and the research-use-only nature of our compounds.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Research Summaries -->
+    <div class="rl-section-label">Research Summaries</div>
+    <div class="rl-grid">
+      <a class="rl-card rl-card-published" href="/guides/retatrutide/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A GLP-1/GIP/glucagon triple agonist studied in preclinical and early clinical metabolic research.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/bpc-157/">
+        <div class="rl-card-cat rl-card-cat-healing">Research Summary</div>
+        <div class="rl-card-title">BPC-157: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A synthetic pentadecapeptide studied in angiogenesis, tendon and ligament, and gastrointestinal repair models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/tb-500/">
+        <div class="rl-card-cat rl-card-cat-healing">Research Summary</div>
+        <div class="rl-card-title">TB-500: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A thymosin &beta;4 fragment studied for actin binding, cell migration, and angiogenesis in tissue-repair models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/semax/">
+        <div class="rl-card-cat rl-card-cat-cognitive">Research Summary</div>
+        <div class="rl-card-title">Semax: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A neuropeptide studied for BDNF and NGF pathway activity in preclinical neuroscience models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/selank/">
+        <div class="rl-card-cat rl-card-cat-cognitive">Research Summary</div>
+        <div class="rl-card-title">Selank: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A neuropeptide studied for anxiolytic effects and GABA pathway modulation in rodent models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/cjc-1295/">
+        <div class="rl-card-cat rl-card-cat-growth">Research Summary</div>
+        <div class="rl-card-title">CJC-1295: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A modified GHRH analogue studied for growth-hormone pulse amplitude in preclinical models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/tesamorelin/">
+        <div class="rl-card-cat rl-card-cat-growth">Research Summary</div>
+        <div class="rl-card-title">Tesamorelin: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A GHRH analogue studied for receptor activation and pulsatile GH secretion in rodent models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/ghk-cu/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Research Summary</div>
+        <div class="rl-card-title">GHK-Cu: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A naturally-occurring copper-tripeptide studied in dermal fibroblast and tissue-remodelling models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/mots-c/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">MOTS-C: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A mitochondrially-encoded peptide studied for AMPK activation and metabolic signalling in rodent models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/nad-plus/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Research Summary</div>
+        <div class="rl-card-title">NAD+: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A cellular cofactor studied for energy metabolism and sirtuin pathway activation in animal models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/kpv/">
+        <div class="rl-card-cat rl-card-cat-healing">Research Summary</div>
+        <div class="rl-card-title">KPV: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">An alpha-MSH C-terminal tripeptide studied for NF-&#954;B inhibition and mucosal inflammation models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/melanotan-ii/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Research Summary</div>
+        <div class="rl-card-title">Melanotan II: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A melanocortin receptor agonist studied for pigmentation pathway signalling in rodent models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/glutathione/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Research Summary</div>
+        <div class="rl-card-title">Glutathione: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">An endogenous tripeptide antioxidant studied for oxidative stress pathways in cellular and animal models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/dsip/">
+        <div class="rl-card-cat rl-card-cat-cognitive">Research Summary</div>
+        <div class="rl-card-title">DSIP: Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A delta sleep-inducing neuropeptide studied for sleep modulation and stress response in rodent models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Jun 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<section class="research-cta">
+  <div class="sec-i">
+    <div class="cta-card">
+      <div>
+        <h2 class="cta-t">Browse the compound catalogue</h2>
+        <p>Every compound page includes a research overview, specification table, and batch testing summary.</p>
+      </div>
+      <a class="btn-p" href="/compounds/">View compounds &rarr;</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="compliance-block" role="note" aria-label="Compliance notice">
+  <div class="cb-i">
+    <strong>Compliance statement.</strong>
+    Velox Peptides supplies research reagents for <em>in vitro</em> use by qualified researchers. Every compound is sold strictly as a research reagent. No product is a medicinal product within the meaning of the Human Medicines Regulations 2012. No product has been evaluated by the MHRA or FDA. No product is intended for human or veterinary consumption, diagnosis, treatment, cure, or prevention of any condition. Any use outside lawful scientific research is outside the scope of sale. See our <a href="/legal/research-use-policy/">Research Use Policy</a> and <a href="/legal/mhra-statement/">MHRA Statement</a>.
+  </div>
+</div>
+
+<footer class="site-footer" id="footer">
+  <div class="ft-i">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="ft-logo-wordmark">Velox Peptides</div>
+        <p class="ft-tag">Research peptide supplier &mdash; shipping to UK &amp; EU. HPLC-verified, dispatched from Northern Ireland.</p>
+        <address class="ft-address">
+          CRP Labs Ltd<br>
+          Company no. NI738125<br>
+          Holywood, Northern Ireland, United Kingdom<br>
+          <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a>
+        </address>
+      </div>
+      <div class="ft-cols">
+        <div class="ft-col">
+          <div class="ft-col-h">Compounds</div>
+          <a href="/compounds/">All compounds</a>
+          <a href="/compounds/cognitive/">Cognitive</a>
+          <a href="/compounds/metabolic/">Metabolic</a>
+          <a href="/compounds/recovery/">Recovery</a>
+          <a href="/compounds/growth/">Growth</a>
+          <a href="/compounds/antioxidant/">Antioxidant</a>
+          <a href="/stacks/">Research Bundles</a>
+          <a href="/supplies/bacteriostatic-water/">Bacteriostatic Water</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Resources</div>
+          <a href="/affiliate-program/">Affiliate Program</a>
+          <a href="/guides/">Guides</a>
+          <a href="/guides/glossary/">Glossary</a>
+          <a href="/guides/retatrutide/">Retatrutide Research</a>
+          <a href="/tools/reconstitution-calculator/">Reconstitution Calculator</a>
+          <a href="/about/">About Velox</a>
+          <a href="/about/quality-and-testing/">Quality &amp; Testing</a>
+          <a href="/about/coa-library/">CoA Library</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Order &amp; Delivery</div>
+          <a href="/cart/">Current order</a>
+          <a href="/shipping/">Shipping &amp; Delivery</a>
+          <a href="/legal/refunds/">Refunds &amp; Returns</a>
+          <a href="/contact/">Contact</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Legal</div>
+          <a href="/legal/research-use-policy/">Research Use Policy</a>
+          <a href="/legal/mhra-statement/">MHRA Statement</a>
+          <a href="/legal/terms/">Terms &amp; Conditions</a>
+          <a href="/legal/privacy/">Privacy Policy</a>
+          <a href="/legal/cookies/">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div class="ft-cr">&copy; 2026 CRP Labs Ltd. All rights reserved.</div>
+      <div class="ft-disc">For in vitro research use only. Not for human or veterinary consumption.</div>
+    </div>
+  </div>
+</footer>
+
+<div class="entry-gate" id="entry-gate" role="dialog" aria-modal="true" aria-labelledby="eg-av-title">
+  <div class="eg-i">
+    <div class="eg-logo-wrap">
+      <img class="eg-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="190">
+    </div>
+    <div class="eg-eyebrow">AGE VERIFICATION</div>
+    <h2 id="eg-av-title" class="eg-av-title">Confirm your eligibility</h2>
+    <p class="eg-sub">This website is restricted to qualified researchers aged 21 or over. All products are for in vitro research use only.</p>
+    <div class="eg-checks">
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am 21 years of age or older</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am a qualified researcher, scientist, or laboratory professional</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">All products will be used for lawful in vitro research only &mdash; not for human consumption</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I accept the <a href="/legal/terms/" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank" rel="noopener">Research Use Disclaimer</a></span>
+      </label>
+    </div>
+    <div class="eg-disclaimer">
+      All products sold for research use only. Not for human consumption. Not evaluated by the MHRA or FDA.
+    </div>
+    <div class="eg-actions">
+      <button class="eg-btn eg-btn-p" id="eg-accept">I CONFIRM &mdash; ENTER SITE</button>
+      <a class="eg-exit-link" href="https://www.gov.uk" rel="noopener">Exit</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/assets/js/core.js"></script>
+<script src="/assets/js/conversion.js" defer></script>
+<script src="/assets/js/animations.js" defer></script>
+  <script src="/assets/js/newsletter-popup.js"></script>
+  <script src="/assets/js/search.js" defer></script>
+</body>
+</html>

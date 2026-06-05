@@ -1,144 +1,176 @@
 /**
- * POST /api/fena-webhook
+ * /api/fena-webhook — Vercel Edge Function
  *
- * Receives Fena payment event webhooks.
- * On a successful payment: fires order emails and logs to Google Sheets.
- * Resend idempotency keys prevent duplicate emails if the payment-complete page
- * also calls /api/confirm-fena-payment for the same order.
+ * Fena calls this when a payment event occurs. On a success event we mark the
+ * matching Supabase order 'paid' and fire Click & Drop + Xero. This is the
+ * browser-independent confirmation (the customer's return to the site is the
+ * other, faster path via confirm-fena-payment).
  *
- * Fena retries webhooks on non-200 responses, so always return 200 for
- * acknowledged events (even if our downstream processing fails).
+ * Fena's exact payload shape isn't documented for our account, so this handler
+ * is deliberately tolerant: it logs the RAW body (to confirm the real shape),
+ * then tries JSON, a signed JWT in a `token` field, and form-urlencoded. It
+ * matches the order by reference (= our 12-char paymentRef, stored in
+ * orders.notes by create-fena-payment) or by an order UUID if present.
  */
-const crypto = require('crypto');
-const { sendEmails } = require('./send-order');
 
-// In-process dedup guard — Resend idempotency handles cross-cold-start dedup
-const processedOrders = new Set();
+export const config = { runtime: 'edge' };
 
-const SUCCESS_STATUSES = new Set(['CAPTURED', 'SUCCESS', 'COMPLETED', 'PAID']);
+const SUCCESS_STATUSES = new Set(['completed', 'success', 'paid', 'captured', 'settled', 'complete']);
 
-module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+function decodeJwtPayload(token) {
+  try {
+    const parts = String(token).split('.');
+    if (parts.length !== 3) return null;
+    const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
+    return JSON.parse(atob(padded));
+  } catch { return null; }
+}
 
-  const body    = req.body;
-  const rawBody = JSON.stringify(body);
-
-  // ── Signature verification ─────────────────────────────────────────────────
-  const terminalSecret = process.env.FENA_TERMINAL_SECRET;
-  const sigHeader      = req.headers['x-fena-signature'] ||
-                         req.headers['x-webhook-signature'] || '';
-
-  if (terminalSecret && sigHeader) {
-    try {
-      const sigHex = sigHeader.replace(/^sha256=/, '');
-      const expected = crypto.createHmac('sha256', terminalSecret).update(rawBody).digest('hex');
-      const sigBuf   = Buffer.from(sigHex, 'hex');
-      const expBuf   = Buffer.from(expected, 'hex');
-      if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
-        console.error('[fena-webhook] Signature mismatch — rejecting event');
-        return res.status(401).json({ error: 'Invalid signature' });
-      }
-    } catch (e) {
-      console.error('[fena-webhook] Signature error:', e.message);
-      return res.status(401).json({ error: 'Signature verification failed' });
+// Pull the first present value across a list of candidate keys (top-level + nested).
+function pick(obj, keys) {
+  if (!obj || typeof obj !== 'object') return undefined;
+  for (const k of keys) {
+    if (obj[k] != null && obj[k] !== '') return obj[k];
+  }
+  for (const nest of ['payload', 'data', 'result', 'metadata', 'order', 'payment']) {
+    if (obj[nest] && typeof obj[nest] === 'object') {
+      const v = pick(obj[nest], keys);
+      if (v != null && v !== '') return v;
     }
-  } else if (!terminalSecret) {
-    console.warn('[fena-webhook] FENA_TERMINAL_SECRET not set — signature verification skipped');
+  }
+  return undefined;
+}
+
+export default async function handler(req) {
+  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+
+  // ── Shared-secret gate ──────────────────────────────────────────────────────
+  // This is a server-to-server endpoint, so a shared secret is a valid guard.
+  // Without it, anyone on the internet can POST {"status":"completed","reference":...}
+  // and flip an order to PAID (order refs leak in the redirect URL). Configure the
+  // Fena webhook URL as  https://veloxpeps.com/api/fena-webhook?key=<FENA_WEBHOOK_SECRET>
+  // (or send it as an x-webhook-secret header). When the env var is set we REQUIRE a
+  // match; when it is unset we fail OPEN + warn, so deploying this never breaks the
+  // live webhook before the secret is configured.
+  const WEBHOOK_SECRET = process.env.FENA_WEBHOOK_SECRET;
+  if (WEBHOOK_SECRET) {
+    let provided = req.headers.get('x-webhook-secret') || '';
+    if (!provided) {
+      try { provided = new URL(req.url).searchParams.get('key') || ''; } catch { /* ignore */ }
+    }
+    if (provided !== WEBHOOK_SECRET) {
+      console.warn('[fena-webhook] rejected: missing/invalid shared secret');
+      return new Response('Unauthorized', { status: 401 });
+    }
+  } else {
+    // Fail CLOSED: refuse all requests until the secret is configured.
+    // Set FENA_WEBHOOK_SECRET in Vercel env vars and configure the same value
+    // as ?key=<secret> on the Fena webhook URL (or x-webhook-secret header).
+    console.error('[fena-webhook] FENA_WEBHOOK_SECRET not configured — refusing all requests. Set the env var to enable this endpoint.');
+    return new Response('Unauthorized', { status: 401 });
   }
 
-  // ── Parse event ────────────────────────────────────────────────────────────
-  const status    = (body.status || body.payment_status || '').toUpperCase();
-  const reference = body.reference || body.orderId || body.order_id || body.id || '';
-  const fenaId    = body.id || body.orderId || '';
+  const SUPABASE_URL              = process.env.SUPABASE_URL;
+  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('[fena-webhook] Missing Supabase env');
+    return new Response('Misconfigured', { status: 500 });
+  }
 
-  console.log(`[fena-webhook] Event — status: ${status}, reference: ${reference}, fenaId: ${fenaId}`);
+  // ── Read + log the raw body (so we can confirm Fena's real shape) ───────────
+  const ct  = (req.headers.get('content-type') || '').toLowerCase();
+  const raw = await req.text();
+  console.log(`[fena-webhook] content-type="${ct}" raw=${raw.slice(0, 600)}`);
+
+  // ── Parse into a single object, however Fena framed it ──────────────────────
+  let obj = {};
+  try {
+    if (ct.includes('application/x-www-form-urlencoded')) {
+      const params = new URLSearchParams(raw);
+      obj = Object.fromEntries(params.entries());
+      if (obj.token) obj = Object.assign(obj, decodeJwtPayload(obj.token) || {});
+    } else {
+      obj = JSON.parse(raw || '{}');
+      const tok = obj.token || obj.jwt;
+      if (tok) obj = Object.assign(obj, decodeJwtPayload(tok) || {});
+    }
+  } catch (e) {
+    console.error('[fena-webhook] parse failed:', e.message);
+    return new Response('OK', { status: 200 }); // ack so Fena doesn't retry-storm
+  }
+
+  const status    = String(pick(obj, ['status', 'paymentStatus', 'payment_status', 'state']) || '').toLowerCase();
+  const reference  = pick(obj, ['reference', 'merchantReference', 'paymentReference', 'orderReference', 'merchant_reference']);
+  const orderUuid = pick(obj, ['order_id', 'orderId']);
+  const paymentId = pick(obj, ['payment_id', 'paymentId', 'id']) || null;
+
+  console.log(`[fena-webhook] parsed status="${status}" reference="${reference || ''}" orderUuid="${orderUuid || ''}"`);
 
   if (!SUCCESS_STATUSES.has(status)) {
-    console.log(`[fena-webhook] Non-success status "${status}" — acknowledged, not processed`);
-    return res.status(200).json({ received: true });
+    console.log(`[fena-webhook] status "${status}" not a success event — acknowledging`);
+    return new Response('OK', { status: 200 });
+  }
+  if (!reference && !orderUuid) {
+    console.warn('[fena-webhook] success event but no reference/order_id to match — acknowledging');
+    return new Response('OK', { status: 200 });
   }
 
-  // ── Dedup ──────────────────────────────────────────────────────────────────
-  if (processedOrders.has(reference)) {
-    console.log(`[fena-webhook] Duplicate event for ${reference} — skipping`);
-    return res.status(200).json({ received: true, duplicate: true });
-  }
-  processedOrders.add(reference);
-
-  // ── Build order payload from metadata ─────────────────────────────────────
-  // Metadata is the order data we passed when creating the Fena payment session
-  const meta        = body.metadata || {};
-  const amountPence = body.amount   || 0;
-  const amountGBP   = (amountPence / 100).toFixed(2);
-
-  const customerName = meta.customer_name ||
-    (((meta.fname || '') + ' ' + (meta.lname || '')).trim()) || 'Customer';
-
-  const d = {
-    order_number:     reference,
-    customer_name:    customerName,
-    customer_email:   meta.customer_email  || meta.email || '',
-    customer_phone:   meta.customer_phone  || meta.phone || '',
-    addr1:            meta.addr1           || '',
-    addr2:            meta.addr2           || '',
-    city:             meta.city            || '',
-    postcode:         meta.postcode        || '',
-    country:          meta.country         || 'United Kingdom',
-    shipping_address: meta.shipping_address || '',
-    shipping_method:  meta.shipping_method  || 'Royal Mail Tracked 24',
-    order_items:      meta.order_items      || '',
-    order_subtotal:   meta.subtotal         ? Number(meta.subtotal).toFixed(2) : amountGBP,
-    shipping_cost:    meta.shipping         ? Number(meta.shipping).toFixed(2) : '0.00',
-    discount_code:    meta.discount_code    || '',
-    discount_saving:  meta.discount_saving  ? Number(meta.discount_saving).toFixed(2) : '0.00',
-    order_total:      meta.total            ? Number(meta.total).toFixed(2) : amountGBP,
-    currency:         meta.currency        || 'GBP',
-    region:           meta.region          || 'UK',
-    payment_method:   'fena',
+  const sbHeaders = {
+    apikey: SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+    'Content-Type': 'application/json',
   };
 
-  if (!d.customer_email) {
-    console.warn(`[fena-webhook] No customer_email for ${reference} — admin email only`);
-  }
-
-  // ── Fire emails ────────────────────────────────────────────────────────────
-  // Resend idempotency key = orderRef-admin / orderRef-customer.
-  // If /api/confirm-fena-payment already fired these, Resend deduplicates within 24 h.
+  // ── Find the order (by UUID, else by reference stored in notes) ─────────────
+  let order = null;
   try {
-    await sendEmails(d, reference);
-    console.log(`[fena-webhook] Emails sent for ${reference}`);
+    const filter = orderUuid
+      ? `id=eq.${encodeURIComponent(orderUuid)}`
+      : `notes=eq.${encodeURIComponent(reference)}`;
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?${filter}&select=id,status&order=created_at.desc&limit=1`, { headers: sbHeaders });
+    const rows = r.ok ? await r.json() : [];
+    order = Array.isArray(rows) ? rows[0] : null;
   } catch (e) {
-    console.error(`[fena-webhook] Email send failed for ${reference}:`, e.message);
-    // Don't return 500 — acknowledge receipt so Fena doesn't retry infinitely
+    console.error('[fena-webhook] order lookup threw:', e.message);
   }
 
-  // ── Google Sheets log ──────────────────────────────────────────────────────
-  const sheetsUrl = process.env.GOOGLE_SHEETS_URL;
-  if (sheetsUrl) {
+  if (!order) {
+    console.warn(`[fena-webhook] no order found (ref=${reference} uuid=${orderUuid}) — acknowledging`);
+    return new Response('OK', { status: 200 });
+  }
+
+  // ── Mark paid (idempotent) ──────────────────────────────────────────────────
+  if (order.status !== 'paid' && order.status !== 'dispatched') {
     try {
-      await fetch(sheetsUrl, {
-        method:  'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          orderId:       reference,
-          date:          new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
-          name:          d.customer_name,
-          email:         d.customer_email,
-          phone:         d.customer_phone,
-          address:       d.shipping_address,
-          products:      d.order_items,
-          total:         '£' + d.order_total,
-          discountCode:  d.discount_code || 'None',
-          region:        d.region,
-          currency:      d.currency,
-          paymentMethod: 'Fena Pay by Bank',
-        }),
+      const patch = { status: 'paid' };
+      if (paymentId) patch.fena_payment_id = String(paymentId);
+      const pr = await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}`, {
+        method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' }, body: JSON.stringify(patch),
       });
-      console.log(`[fena-webhook] Sheets log sent for ${reference}`);
+      if (!pr.ok) {
+        console.error('[fena-webhook] PATCH failed:', pr.status, (await pr.text()).slice(0, 200));
+        return new Response('DB error', { status: 500 });
+      }
+      console.log(`[fena-webhook] Order ${order.id} → paid`);
     } catch (e) {
-      console.error(`[fena-webhook] Sheets logging failed for ${reference}:`, e.message);
+      console.error('[fena-webhook] PATCH threw:', e.message);
+      return new Response('DB error', { status: 500 });
     }
+  } else {
+    console.log(`[fena-webhook] Order ${order.id} already ${order.status} — skipping`);
   }
 
-  return res.status(200).json({ received: true, processed: true });
-};
+  // ── Fire-and-forget: Click & Drop label + Xero invoice (idempotent) ─────────
+  const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
+  if (INTERNAL_SECRET) {
+    const trigger = (path) => fetch(`https://veloxpeps.com${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
+      body: JSON.stringify({ order_id: order.id }),
+    }).catch((e) => console.error(`[fena-webhook] ${path} trigger failed:`, e.message));
+    await Promise.allSettled([trigger('/api/clickdrop/push'), trigger('/api/xero/create-invoice')]);
+  }
+
+  return new Response('OK', { status: 200 });
+}

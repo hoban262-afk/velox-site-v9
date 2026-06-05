@@ -45,7 +45,7 @@
   
 
   <!-- JSON-LD -->
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "veloxpeps@gmail.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeps"]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "support@veloxpeps.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeps"]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Research Stacks", "url": "https://veloxpeps.com/stacks/", "mainEntity": {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": 1, "url": "https://veloxpeps.com/stacks/cognitive/", "name": "Semax + Selank"}, {"@type": "ListItem", "position": 2, "url": "https://veloxpeps.com/stacks/cognitive-and-sleep/", "name": "Semax + Selank + DSIP"}, {"@type": "ListItem", "position": 3, "url": "https://veloxpeps.com/stacks/gh-peptide/", "name": "CJC-1295 wo DAC + Tesamorelin"}, {"@type": "ListItem", "position": 4, "url": "https://veloxpeps.com/stacks/anti-ageing/", "name": "GHK-Cu + Glutathione + NAD+"}, {"@type": "ListItem", "position": 5, "url": "https://veloxpeps.com/stacks/metabolic/", "name": "Mots-C + NAD+ + Retatrutide"}, {"@type": "ListItem", "position": 6, "url": "https://veloxpeps.com/stacks/skin-and-aesthetic/", "name": "Melanotan II + GHK-Cu + Glutathione"}, {"@type": "ListItem", "position": 7, "url": "https://veloxpeps.com/stacks/ultimate-repair/", "name": "BPC-157 + TB-500 + GHK-Cu"}, {"@type": "ListItem", "position": 8, "url": "https://veloxpeps.com/stacks/repair-and-metabolic/", "name": "Retatrutide + BPC-157 + TB-500"}, {"@type": "ListItem", "position": 9, "url": "https://veloxpeps.com/stacks/gh-and-metabolic/", "name": "Retatrutide + Tesamorelin"}]}}</script>
 
   
@@ -77,12 +77,20 @@
     <div class="nav-links">
       <a class="nl " href="/compounds/">Shop</a>
       <a class="nl active nl-stacks" href="/stacks/">Research Bundles</a>
+      <a class="nl " href="/guides/glossary/">Glossary</a>
+      <a class="nl " href="/guides/">Guide Hub</a>
       <a class="nl " href="/about/">About</a>
-      <a class="nl " href="/faq/">FAQ</a>
       <a class="nl " href="/contact/">Contact</a>
     </div>
 
     <div class="nav-actions">
+      <form class="vp-search vp-search-nav" role="search" onsubmit="return false">
+        <div class="vp-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="vp-search-input" type="search" placeholder="Search&hellip;" aria-label="Search the catalogue" autocomplete="off">
+        </div>
+        <div class="vp-search-results" hidden></div>
+      </form>
       <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -90,6 +98,7 @@
           <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
         </svg>
       </a>
+      <a class="nav-ig" href="/account/" aria-label="My account" title="My account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
       <a class="nav-cart" href="/cart/" aria-label="View cart">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span class="nav-cart-label">Order</span>
@@ -103,18 +112,17 @@
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true">
     <a href="/compounds/" class="mob-nl">Shop</a>
-    <a href="/compounds/neuropeptide-research/" class="mob-nl mob-nl-sub">— Neuropeptide Research</a>
-    <a href="/compounds/incretin-receptor-research/" class="mob-nl mob-nl-sub">— Incretin &amp; Receptor Research</a>
-    <a href="/compounds/angiogenic-tissue-research/" class="mob-nl mob-nl-sub">— Angiogenic &amp; Tissue Research</a>
-    <a href="/compounds/somatotropic-research/" class="mob-nl mob-nl-sub">— Somatotropic Research</a>
-    <a href="/compounds/oxidative-pathway-research/" class="mob-nl mob-nl-sub">— Oxidative Pathway Research</a>
-    <a href="/stacks/" class="mob-nl mob-nl-stacks">Research Bundles</a>
-    <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">— Reconstitution Calculator</a>
+    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub">— Cognitive</a>
+    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub">— Metabolic</a>
+    <a href="/compounds/recovery/" class="mob-nl mob-nl-sub">— Recovery</a>
+    <a href="/compounds/growth/" class="mob-nl mob-nl-sub">— Growth</a>
+    <a href="/compounds/antioxidant/" class="mob-nl mob-nl-sub">— Antioxidant</a>
+    <a href="/guides/glossary/" class="mob-nl">Glossary</a>
+    <a href="/guides/" class="mob-nl">Guide Hub</a>
     <a href="/about/" class="mob-nl">About</a>
-    <a href="/faq/" class="mob-nl">FAQ</a>
-    <a href="/shipping/" class="mob-nl mob-nl-sub">— Shipping</a>
     <a href="/contact/" class="mob-nl">Contact</a>
     <a href="/cart/" class="mob-nl">Order</a>
+    <a href="/account/" class="mob-nl">My account</a>
   </div>
 </header>
 
@@ -292,24 +300,26 @@
           CRP Labs Ltd<br>
           Company no. NI738125<br>
           Holywood, Northern Ireland, United Kingdom<br>
-          <a href="mailto:veloxpeps@gmail.com">veloxpeps@gmail.com</a>
+          <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a>
         </address>
       </div>
       <div class="ft-cols">
         <div class="ft-col">
           <div class="ft-col-h">Compounds</div>
           <a href="/compounds/">All compounds</a>
-          <a href="/compounds/neuropeptide-research/">Neuropeptide Research</a>
-          <a href="/compounds/incretin-receptor-research/">Incretin &amp; Receptor Research</a>
-          <a href="/compounds/angiogenic-tissue-research/">Angiogenic &amp; Tissue Research</a>
-          <a href="/compounds/somatotropic-research/">Somatotropic Research</a>
-          <a href="/compounds/oxidative-pathway-research/">Oxidative Pathway Research</a>
+          <a href="/compounds/cognitive/">Cognitive</a>
+          <a href="/compounds/metabolic/">Metabolic</a>
+          <a href="/compounds/recovery/">Recovery</a>
+          <a href="/compounds/growth/">Growth</a>
+          <a href="/compounds/antioxidant/">Antioxidant</a>
           <a href="/stacks/">Research Bundles</a>
           <a href="/supplies/bacteriostatic-water/">Bacteriostatic Water</a>
         </div>
         <div class="ft-col">
           <div class="ft-col-h">Resources</div>
-          <a href="/research/">Research Library</a>
+          <a href="/affiliate-program/">Affiliate Program</a>
+          <a href="/guides/">Guides</a>
+          <a href="/guides/glossary/">Glossary</a>
           <a href="/tools/reconstitution-calculator/">Reconstitution Calculator</a>
           <a href="/about/">About Velox</a>
           <a href="/about/quality-and-testing/">Quality &amp; Testing</a>
@@ -392,5 +402,7 @@
 
 <script src="/assets/js/conversion.js" defer></script>
 <script src="/assets/js/animations.js" defer></script>
+  <script src="/assets/js/newsletter-popup.js"></script>
+  <script src="/assets/js/search.js" defer></script>
 </body>
 </html>

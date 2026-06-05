@@ -1,4 +1,6 @@
 const { Resend } = require('resend');
+const { sendWhatsApp } = require('../lib/notify-whatsapp');
+const { sendPush } = require('../lib/notify-push');
 
 const LOGO = 'https://veloxpeps.com/assets/images/veloxpeps2.png';
 
@@ -75,7 +77,7 @@ function mhraFooter() {
 }
 
 function emailHeader(title) {
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head>
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><title>${title}</title><style>:root{color-scheme:dark;supported-color-schemes:dark}</style></head>
 <body style="${S.body}">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="${S.wrap}"><tr><td align="center" style="${S.td}">
 <table width="600" cellpadding="0" cellspacing="0" border="0" style="${S.card}">
@@ -87,17 +89,14 @@ function emailFooter() {
   return `</table></td></tr></table></body></html>`;
 }
 
-/* ── 1. Customer email — instant payment (Fena, PsiFi, or GoCardless) ─────── */
+/* ── 1. Customer email — instant payment (Fena or GoCardless) ─────────────── */
 function buildCustomerInstantHtml(d, itemsHtml) {
   const sym          = currencySymbol(d);
   const isEU         = d.region === 'EU';
-  const isPsifi      = d.payment_method === 'psifi';
   const isFena       = d.payment_method === 'fena';
   const shippingName = d.shipping_method || (isEU ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24');
   const deliveryTime = isEU ? '3&ndash;5 working days' : '1&ndash;2 working days';
-  const providerName = isFena  ? 'Fena Pay by Bank'
-                     : isPsifi ? 'Card / Apple Pay / Google Pay'
-                     :           'GoCardless Instant Bank Pay';
+  const providerName = isFena ? 'Fena Pay by Bank' : 'GoCardless Instant Bank Pay';
 
   return emailHeader('Order Confirmed') + `
 <tr><td align="center" style="padding:0 40px 8px">
@@ -271,16 +270,13 @@ ${mhraFooter()}
 
 /* ── 3. Admin notification email ────────────────────────────────────────────── */
 function buildAdminHtml(d, itemsHtml) {
-  const isPsifi   = d.payment_method === 'psifi';
   const isFena    = d.payment_method === 'fena';
-  const isInstant = d.payment_method === 'instant' || isPsifi || isFena;
+  const isInstant = d.payment_method === 'instant' || isFena;
   const payBadge = isFena
     ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Fena Pay by Bank &mdash; PAYMENT CONFIRMED</p></td>`
-    : isPsifi
-      ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Card / Apple Pay / Google Pay &mdash; PAYMENT CONFIRMED</p></td>`
-      : isInstant
-        ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Instant Payment &mdash; PAYMENT CONFIRMED</p></td>`
-        : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
+    : isInstant
+      ? `<td style="background:#014d39;border:1px solid #01D3A0;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#01D3A0;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#10003; Instant Payment &mdash; PAYMENT CONFIRMED</p></td>`
+      : `<td style="background:#1a0d00;border:1px solid #F59E0B;border-radius:4px;padding:8px 16px;display:inline-block"><p style="margin:0;font-size:12px;font-weight:700;color:#F59E0B;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">&#8987; Bank Transfer &mdash; PAYMENT PENDING</p></td>`;
 
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>New Order</title></head>
 <body style="${S.body}">
@@ -376,7 +372,7 @@ function buildDispatchHtml(d) {
 </td></tr>
 
 <tr><td style="padding:0 40px 24px">
-  <p style="margin:0 0 8px;font-size:12px;color:#888;line-height:1.6">Questions about your order? Reply to this email or contact us at <a href="mailto:veloxpeps@gmail.com" style="color:#01D3A0;text-decoration:none">veloxpeps@gmail.com</a> with your order reference.</p>
+  <p style="margin:0 0 8px;font-size:12px;color:#888;line-height:1.6">Questions about your order? Reply to this email or contact us at <a href="mailto:support@veloxpeps.com" style="color:#01D3A0;text-decoration:none">support@veloxpeps.com</a> with your order reference.</p>
 </td></tr>
 
 ${mhraFooter()}
@@ -394,7 +390,7 @@ ${mhraFooter()}
  */
 async function sendEmails(d, idempotencyKey) {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const isInstant = d.payment_method === 'instant' || d.payment_method === 'psifi' || d.payment_method === 'fena';
+  const isInstant = d.payment_method === 'instant' || d.payment_method === 'fena';
 
   // Parse "Product Name size x1 — £XX.XX" or "...— €XX.XX" lines into two-column rows
   const sym = d.currency === 'EUR' ? '&euro;' : '&pound;';
@@ -415,13 +411,36 @@ async function sendEmails(d, idempotencyKey) {
   const customerOpts = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-customer` } : {};
 
   console.log(`[send-order] Sending admin email for ${d.order_number}${idempotencyKey ? ` (idempotencyKey: ${idempotencyKey}-admin)` : ''}`);
-  // Admin notification — always fires
+  // Admin notification — always fires. Goes to the monitored order-alert inbox(es).
+  // Override via ORDER_ALERT_EMAILS (comma-separated) in the project env.
+  const ORDER_ALERTS = (process.env.ORDER_ALERT_EMAILS || 'support@veloxpeps.com')
+    .split(',').map((s) => s.trim()).filter(Boolean);
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
-    to: 'veloxpeps@gmail.com',
+    to: ORDER_ALERTS,
+    replyTo: 'support@veloxpeps.com',
     subject: `New Order ${d.order_number} — ${d.currency === 'EUR' ? '€' : '£'}${d.order_total} — ${isInstant ? 'PAID' : 'PENDING'}`,
     html: buildAdminHtml(d, itemsHtml),
   }, adminOpts);
+
+  // WhatsApp alert to the team (owner + Luke) — best-effort, never blocks the order.
+  try {
+    const sym = d.currency === 'EUR' ? '€' : '£';
+    const itemsLine = String(d.order_items || '').split('\n').map((x) => x.trim()).filter(Boolean).join('; ').slice(0, 350);
+    await sendWhatsApp(
+      `🟢 New order ${d.order_number}\n${sym}${d.order_total} · ${isInstant ? 'PAID' : 'PENDING'}\n${d.customer_name || ''}` +
+      (itemsLine ? `\n${itemsLine}` : ''));
+  } catch (e) { console.error('[send-order] whatsapp failed:', e.message); }
+
+  // Web push to installed admin devices (the "cha-ching") — best-effort.
+  try {
+    const sym = d.currency === 'EUR' ? '€' : '£';
+    await sendPush({
+      title: `New order — ${sym}${d.order_total}`,
+      body: `${d.order_number} · ${isInstant ? 'PAID' : 'PENDING'} · ${d.customer_name || 'Customer'}`,
+      url: '/admin/',
+    });
+  } catch (e) { console.error('[send-order] push failed:', e.message); }
 
   // Customer email — different template per payment method
   const customerSubject = isInstant
@@ -460,8 +479,38 @@ async function sendDispatch(d) {
 }
 
 /* ── HTTP handlers ──────────────────────────────────────────────────────────── */
+
+// Auth: internal task secret OR a signed-in admin's Supabase bearer token.
+// The /api/send-order HTTP endpoint can fire emails FROM orders@veloxpeps.com —
+// left open it's a phishing relay. The exported sendEmails() function is still
+// called directly (no HTTP) by confirm-fena-payment and fena-webhook, which is fine.
+const KNOWN_SEND_ORDER_ADMINS = new Set([
+  (process.env.ADMIN_EMAIL || '').toLowerCase(),
+  'support@veloxpeps.com',
+].filter(Boolean));
+
+async function isAuthorized(req) {
+  const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
+  if (INTERNAL_SECRET && (req.headers['x-internal-secret'] || '') === INTERNAL_SECRET) return true;
+  const token = (req.headers['authorization'] || '').replace(/^Bearer\s+/i, '');
+  if (!token) return false;
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const ANON         = process.env.SUPABASE_ANON_KEY;
+  const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SUPABASE_URL) return false;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { Authorization: `Bearer ${token}`, apikey: ANON || SERVICE || '' },
+    });
+    if (!r.ok) return false;
+    const u = await r.json();
+    return !!u && KNOWN_SEND_ORDER_ADMINS.has((u.email || '').toLowerCase());
+  } catch { return false; }
+}
+
 async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+  if (!(await isAuthorized(req))) return res.status(401).json({ error: 'Unauthorized' });
   try {
     await sendEmails(req.body);
     res.status(200).json({ ok: true });
