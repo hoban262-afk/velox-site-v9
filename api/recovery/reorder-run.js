@@ -11,6 +11,7 @@
 
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
+const { recordRun } = require('../../lib/worker-log');
 const { REORDER_WINDOW, buildReorderEmail } = require('../../lib/reorder-email');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -137,5 +138,6 @@ module.exports = async function handler(req, res) {
   }
 
   console.log('[reorder-run] done', JSON.stringify(summary));
+  await recordRun('reorder', summary.errors === 0, summary);
   return res.status(200).json({ ok: true, ...summary });
 };

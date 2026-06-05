@@ -11,6 +11,7 @@
  */
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
+const { recordRun } = require('../../lib/worker-log');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -148,5 +149,6 @@ module.exports = async function handler(req, res) {
   } catch (e) { console.error('[restock-run] snapshot upsert failed', e.message); }
 
   console.log('[restock-run] done', JSON.stringify(summary));
+  await recordRun('restock', summary.errors === 0, summary);
   return res.status(200).json({ ok: true, ...summary });
 };

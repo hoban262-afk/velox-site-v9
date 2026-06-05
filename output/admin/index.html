@@ -782,6 +782,13 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
     <!-- Settings / Integrations -->
     <div class="admin-panel" id="panel-settings">
       <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">System health</div><button class="status-select" id="health-refresh" type="button" style="cursor:pointer;padding:6px 14px;font-size:12px">Refresh</button></div>
+        <div style="margin:4px 0 8px;font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.05em">Background workers</div>
+        <div id="health-workers"><div class="adm-loading">Loading&hellip;</div></div>
+        <div style="margin:18px 0 8px;font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.05em">Integrations</div>
+        <div id="health-integrations"></div>
+      </div>
+      <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">Order alerts on this device</div></div>
         <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 14px;line-height:1.5">
           Install this admin as an app (browser menu → <strong style="color:#fff">Add to Home Screen</strong>) and turn on push notifications to get an instant alert on your phone for every new order — no need to keep it open. Do this on each device you and Luke want alerted.

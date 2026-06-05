@@ -41,6 +41,12 @@
   function showDash() {
     if (loginWrap) loginWrap.style.display = 'none';
     if (dashWrap)  dashWrap.style.display  = 'block';
+    try {
+      var savedTab = localStorage.getItem('vx_admin_tab');
+      if (savedTab && TAB_TITLES[savedTab]) switchTab(savedTab);
+      var sb = document.querySelector('.admin-sidebar');
+      if (sb && localStorage.getItem('vx_admin_sb') === '1') sb.classList.add('collapsed');
+    } catch (e) {}
     loadAllData();
   }
 
@@ -148,6 +154,7 @@
     document.querySelectorAll('.sb-item').forEach(function (b) {
       b.classList.toggle('active', b.dataset.tab === tab);
     });
+    try { localStorage.setItem('vx_admin_tab', tab); } catch (e) {}
     document.querySelectorAll('.admin-panel').forEach(function (panel) {
       panel.classList.toggle('active', panel.id === 'panel-' + tab);
     });
@@ -189,6 +196,147 @@
   }
   window.showToast = showToast;
 
+  // ── Collapsible sidebar ─────────────────────────────────────────────────────
+  window.toggleSidebar = function () {
+    var sb = document.querySelector('.admin-sidebar'); if (!sb) return;
+    var c = sb.classList.toggle('collapsed');
+    try { localStorage.setItem('vx_admin_sb', c ? '1' : '0'); } catch (e) {}
+  };
+
+  // ── Command palette (Cmd/Ctrl + K) ──────────────────────────────────────────
+  var cmdFiltered = [], cmdSel = 0;
+  function cmdItems() {
+    return Object.keys(TAB_TITLES).map(function (t) { return { tab: t, label: TAB_TITLES[t] }; });
+  }
+  window.openCmd = function () {
+    var o = document.getElementById('cmdk'); if (!o) return;
+    o.classList.add('open');
+    var inp = document.getElementById('cmdk-input'); if (inp) { inp.value = ''; setTimeout(function () { inp.focus(); }, 30); }
+    renderCmd('');
+  };
+  window.closeCmd = function () { var o = document.getElementById('cmdk'); if (o) o.classList.remove('open'); };
+  function renderCmd(q) {
+    q = (q || '').trim().toLowerCase();
+    cmdFiltered = cmdItems().filter(function (it) { return !q || it.label.toLowerCase().indexOf(q) > -1 || it.tab.indexOf(q) > -1; });
+    cmdSel = 0;
+    var list = document.getElementById('cmdk-list'); if (!list) return;
+    if (!cmdFiltered.length) { list.innerHTML = '<div class="cmdk-empty">No matches</div>'; return; }
+    list.innerHTML = cmdFiltered.map(function (it, i) {
+      return '<div class="cmdk-item' + (i === 0 ? ' sel' : '') + '" data-i="' + i + '" onclick="cmdGo(' + i + ')">' + esc(it.label) + '</div>';
+    }).join('');
+  }
+  window.cmdGo = function (i) { var it = cmdFiltered[i]; if (it) { switchTab(it.tab); closeCmd(); } };
+  function cmdMove(d) {
+    if (!cmdFiltered.length) return;
+    cmdSel = Math.max(0, Math.min(cmdFiltered.length - 1, cmdSel + d));
+    document.querySelectorAll('#cmdk-list .cmdk-item').forEach(function (el, i) { el.classList.toggle('sel', i === cmdSel); });
+    var sel = document.querySelector('#cmdk-list .cmdk-item.sel'); if (sel) sel.scrollIntoView({ block: 'nearest' });
+  }
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); window.openCmd(); return; }
+    var o = document.getElementById('cmdk'); if (!o || !o.classList.contains('open')) return;
+    if (e.key === 'Escape') window.closeCmd();
+    else if (e.key === 'ArrowDown') { e.preventDefault(); cmdMove(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); cmdMove(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); window.cmdGo(cmdSel); }
+  });
+  (function () {
+    var inp = document.getElementById('cmdk-input');
+    if (inp) inp.addEventListener('input', function () { renderCmd(this.value); });
+  })();
+
+  // ── Customer profile drawer (RFM) ───────────────────────────────────────────
+  function rfmSegment(freq, spend, recencyDays) {
+    if (freq >= 3 || spend >= 300) return { label: 'VIP', color: '#01D3A0', bg: 'rgba(1,211,160,.15)' };
+    if (recencyDays <= 30 && freq <= 1) return { label: 'New', color: '#60a5fa', bg: 'rgba(96,165,250,.15)' };
+    if (recencyDays > 120) return { label: 'Lapsed', color: '#f87171', bg: 'rgba(248,113,113,.15)' };
+    if (recencyDays > 60) return { label: 'At risk', color: '#fbbf24', bg: 'rgba(251,191,36,.15)' };
+    return { label: 'Active', color: '#9ca3af', bg: 'rgba(255,255,255,.06)' };
+  }
+  window.openCustomer = function (key) {
+    try { key = decodeURIComponent(key); } catch (e) {}
+    var ords = (ordersCache || []).filter(function (o) { return ((o.customer_email || o.customer_name || '').toLowerCase()) === key; });
+    if (!ords.length) return;
+    ords.sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+    var paid = ords.filter(isPaid);
+    var spend = paid.reduce(function (s, o) { return s + (parseFloat(o.total) || 0); }, 0);
+    var freq = paid.length;
+    var last = ords[0].created_at;
+    var recencyDays = Math.floor((Date.now() - new Date(last).getTime()) / 864e5);
+    var seg = rfmSegment(freq, spend, recencyDays);
+    var aov = freq ? spend / freq : 0;
+    var name = ords[0].customer_name || '—';
+    var email = ords[0].customer_email || '';
+    var rows = ords.map(function (o) {
+      var ic = itemCount(o);
+      return '<div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--brd,#1a1a1a)">' +
+        '<div><div style="color:#fff;font-size:13px">' + fmtDate(o.created_at) + '</div>' +
+        '<div style="font-size:11px;color:var(--t3,#6b7280)">' + esc(o.status || '—') + ' · ' + ic + ' item' + (ic === 1 ? '' : 's') + '</div></div>' +
+        '<div style="color:#01D3A0;font-weight:600">£' + (parseFloat(o.total) || 0).toFixed(2) + '</div></div>';
+    }).join('');
+    var d = document.getElementById('cust-drawer'); if (!d) return;
+    d.innerHTML =
+      '<div class="cust-dh"><div><div style="font-size:17px;font-weight:700;color:#fff">' + esc(name) + '</div>' +
+        '<div style="font-size:12px;color:var(--t3,#6b7280);margin-top:2px">' + esc(email) + '</div>' +
+        '<span class="seg-badge" style="margin-top:10px;color:' + seg.color + ';background:' + seg.bg + '">' + seg.label + '</span></div>' +
+        '<button class="cust-close" onclick="closeCustomer()">&times;</button></div>' +
+      '<div style="padding:16px 22px"><div class="stat-grid">' +
+        card2('Lifetime spend', '£' + spend.toFixed(2), freq + ' paid order' + (freq === 1 ? '' : 's')) +
+        card2('Avg order', '£' + aov.toFixed(2), '') +
+        card2('Last order', recencyDays + 'd ago', fmtDate(last)) +
+      '</div>' +
+        '<div style="margin:18px 0 2px;font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.05em">Order history</div>' +
+        (rows || '<div class="adm-empty">No orders.</div>') +
+      '</div>';
+    var ov = document.getElementById('cust-drawer-ov'); if (ov) ov.classList.add('open');
+    d.classList.add('open');
+  };
+  window.closeCustomer = function () {
+    var ov = document.getElementById('cust-drawer-ov'); if (ov) ov.classList.remove('open');
+    var d = document.getElementById('cust-drawer'); if (d) d.classList.remove('open');
+  };
+
+  // ── System health (workers + integrations) ──────────────────────────────────
+  function healthDot(ok) { return '<span style="width:8px;height:8px;border-radius:50%;display:inline-block;background:' + (ok ? '#01D3A0' : '#f87171') + ';flex:0 0 auto"></span>'; }
+  function healthAgo(iso) {
+    if (!iso) return 'never';
+    var s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+    if (s < 60) return s + 's ago';
+    if (s < 3600) return Math.floor(s / 60) + 'm ago';
+    if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+    return Math.floor(s / 86400) + 'd ago';
+  }
+  function loadHealth() {
+    if (!window._sb) return;
+    var rb = document.getElementById('health-refresh');
+    if (rb && !rb._wired) { rb._wired = true; rb.addEventListener('click', loadHealth); }
+    window._sb.auth.getSession().then(function (s) {
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) return;
+      fetch('/api/admin/health', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(function (r) { return r.json(); }).then(renderHealth)
+        .catch(function () { var w = document.getElementById('health-workers'); if (w) w.innerHTML = '<div class="adm-empty">Could not load.</div>'; });
+    });
+  }
+  function renderHealth(d) {
+    var wEl = document.getElementById('health-workers');
+    if (wEl) wEl.innerHTML = (d.workers || []).map(function (w) {
+      var last = w.last, ok = last ? last.ok : false;
+      var sent = last && last.summary ? (last.summary.sent != null ? last.summary.sent : (last.summary.emailed != null ? last.summary.emailed : '')) : '';
+      var detail = last ? (healthAgo(last.ran_at) + (sent !== '' ? ' · ' + sent + ' sent' : '')) : 'has not run yet';
+      var color = last ? (ok ? 'var(--t2,#9ca3af)' : '#f87171') : 'var(--t3,#6b7280)';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--brd,#1a1a1a)">' + healthDot(last && ok) +
+        '<div style="flex:1;min-width:0"><div style="color:#fff;font-size:13px">' + esc(w.label) + ' <span style="color:var(--t3,#6b7280);font-size:11px">· ' + esc(w.schedule) + '</span></div>' +
+        '<div style="font-size:11px;color:' + color + '">' + esc(detail) + '</div></div></div>';
+    }).join('');
+    var iEl = document.getElementById('health-integrations');
+    if (iEl) iEl.innerHTML = (d.integrations || []).map(function (it) {
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--brd,#1a1a1a)">' + healthDot(it.ok) +
+        '<div style="flex:1"><span style="color:#fff;font-size:13px">' + esc(it.label) + '</span>' + (it.note ? ' <span style="color:var(--t3,#6b7280);font-size:11px">' + esc(it.note) + '</span>' : '') + '</div>' +
+        '<span style="font-size:11px;color:' + (it.ok ? '#01D3A0' : 'var(--t3,#6b7280)') + '">' + (it.ok ? 'Connected' : 'Not set') + '</span></div>';
+    }).join('');
+  }
+
   // ── Data loaders ──────────────────────────────────────────────────────────
 
   function loadAllData() {
@@ -206,6 +354,7 @@
     loadXeroStatus();
     loadClickDropStatus();
     loadAnalytics();
+    loadHealth();
     loadDeal();
     registerSW();
     wirePush();
@@ -1076,6 +1225,7 @@
         renderRecentOrders(ordersCache.slice(0, 5));
         updateStats(ordersCache);
         renderDashboard(ordersCache);
+        renderCockpit(ordersCache);
         renderCustomers(ordersCache);
         wireAdminExtras();
       });
@@ -1464,6 +1614,53 @@
     var cs = document.getElementById('cust-search'); if (cs) cs.addEventListener('input', function () { renderCustomers(ordersCache); });
   }
 
+  function miniSpark(vals) {
+    var max = Math.max.apply(null, vals.concat([1]));
+    return '<div style="display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:8px">' + vals.map(function (v) {
+      var h = Math.max(2, Math.round(v / max * 26));
+      return '<div style="flex:1;height:' + h + 'px;background:' + (v ? '#01D3A0' : '#1a1a1a') + ';border-radius:2px 2px 0 0;opacity:' + (v ? 1 : .5) + '"></div>';
+    }).join('') + '</div>';
+  }
+  function kpiCard(label, value, sub, spark) {
+    return '<div class="stat-card"><div class="stat-label">' + label + '</div><div class="stat-value">' + value + '</div><div class="stat-sub">' + (sub || '') + '</div>' + (spark || '') + '</div>';
+  }
+  function renderCockpit(orders) {
+    var el = document.getElementById('cockpit-stats'); if (!el) return;
+    var today = startOfDay(new Date());
+    var paid = orders.filter(isPaid);
+    var buckets = [];
+    for (var i = 13; i >= 0; i--) { var d = new Date(today); d.setDate(d.getDate() - i); buckets.push({ t: d.getTime(), rev: 0 }); }
+    paid.forEach(function (o) { var od = startOfDay(o.created_at).getTime(); for (var j = 0; j < buckets.length; j++) { if (buckets[j].t === od) { buckets[j].rev += parseFloat(o.total) || 0; break; } } });
+    var revToday = buckets[buckets.length - 1].rev;
+    var since7 = new Date(today); since7.setDate(since7.getDate() - 6);
+    var rev7 = paid.filter(function (o) { return new Date(o.created_at) >= since7; }).reduce(function (s, o) { return s + (parseFloat(o.total) || 0); }, 0);
+    var awaiting = orders.filter(function (o) { return o.status === 'paid'; }).length;
+    var dc = document.getElementById('cockpit-date');
+    if (dc) dc.textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+    el.innerHTML =
+      kpiCard('Revenue today', '£' + revToday.toFixed(2), '') +
+      kpiCard('Revenue 7d', '£' + rev7.toFixed(2), 'last 7 days', miniSpark(buckets.map(function (b) { return b.rev; }))) +
+      kpiCard('Awaiting dispatch', String(awaiting), awaiting ? 'paid, not shipped' : 'all shipped ✓') +
+      kpiCard('Low stock', '—', 'checking…') +
+      kpiCard('New subscribers', '—', 'last 7 days');
+    loadCockpitExtras();
+  }
+  function loadCockpitExtras() {
+    if (!window._sb) return;
+    window._sb.from('product_variants').select('in_stock,low_stock').then(function (r) {
+      var rows = r.data || [];
+      var oos = rows.filter(function (v) { return v.in_stock === false; }).length;
+      var low = rows.filter(function (v) { return v.low_stock === true && v.in_stock !== false; }).length;
+      var cards = document.querySelectorAll('#cockpit-stats .stat-card');
+      if (cards[3]) { cards[3].querySelector('.stat-value').textContent = String(oos + low); cards[3].querySelector('.stat-sub').textContent = oos + ' out · ' + low + ' low'; }
+    });
+    var since = new Date(); since.setDate(since.getDate() - 7);
+    window._sb.from('subscribers').select('id', { count: 'exact', head: true }).gte('created_at', since.toISOString()).then(function (r) {
+      var cards = document.querySelectorAll('#cockpit-stats .stat-card');
+      if (cards[4]) cards[4].querySelector('.stat-value').textContent = String(r.count != null ? r.count : '—');
+    });
+  }
+
   function renderDashboard(orders) {
     var el = document.getElementById('dash-stats');
     if (!el) return;
@@ -1545,7 +1742,7 @@
     var m = {};
     paid.forEach(function (o) {
       var key = (o.customer_email || o.customer_name || 'unknown').toLowerCase();
-      if (!m[key]) m[key] = { name: o.customer_name || '—', email: o.customer_email || '', orders: 0, spend: 0, last: o.created_at };
+      if (!m[key]) m[key] = { key: key, name: o.customer_name || '—', email: o.customer_email || '', orders: 0, spend: 0, last: o.created_at };
       m[key].orders++; m[key].spend += parseFloat(o.total) || 0;
       if (new Date(o.created_at) > new Date(m[key].last)) m[key].last = o.created_at;
       if (!m[key].name || m[key].name === '—') m[key].name = o.customer_name || m[key].name;
@@ -1560,7 +1757,7 @@
     if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers yet.</div>'; return; }
     wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' +
       list.map(function (c) {
-        return '<tr><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
+        return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
           '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
           '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
           '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
