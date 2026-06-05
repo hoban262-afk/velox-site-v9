@@ -99,6 +99,15 @@
     .cmdk-item.sel { background:rgba(1,211,160,.12); color:#01D3A0; }
     .cmdk-empty { padding:16px; color:var(--t3,#6b7280); font-size:13px; text-align:center; }
     .cmdk-hint { padding:8px 14px; font-size:11px; color:var(--t3,#6b7280); border-top:1px solid var(--brd,#1a1a1a); }
+    /* Customer profile drawer */
+    .cust-drawer-ov { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:390; display:none; }
+    .cust-drawer-ov.open { display:block; }
+    .cust-drawer { position:fixed; top:0; right:0; height:100vh; width:min(440px,94vw); background:#0d1117; border-left:1px solid var(--brd,#1a1a1a); box-shadow:-20px 0 60px rgba(0,0,0,.5); transform:translateX(100%); transition:transform .2s ease; overflow-y:auto; z-index:391; }
+    .cust-drawer.open { transform:translateX(0); }
+    .cust-dh { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:20px 22px 16px; border-bottom:1px solid var(--brd,#1a1a1a); }
+    .cust-close { background:none; border:none; color:var(--t3,#6b7280); cursor:pointer; font-size:22px; line-height:1; padding:0 6px; }
+    .cust-close:hover { color:#fff; }
+    .seg-badge { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; }
 
     .admin-panel     { display:none; padding:28px 24px; }
     .admin-panel.active { display:block; }
@@ -748,7 +757,7 @@ Read the full summary in the research library below. As always, batch documentat
 For in vitro research use only. Not for human or veterinary consumption.</textarea>
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="btn-p" id="camp-send" style="width:auto;padding:11px 24px">Send campaign</button>
-          <button class="status-select" type="button" style="cursor:pointer;padding:11px 18px" onclick="veloxSendTestCampaign()">Send test to support@veloxpeps.com</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:11px 18px" onclick="veloxSendTestCampaign()">Send test to my inbox</button>
         </div>
         <div class="acc-msg" id="camp-msg" style="font-size:13px;margin-top:10px"></div>
       </div>
@@ -838,6 +847,10 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
         <div class="cmdk-hint">&uarr;&darr; to move &middot; &crarr; to open &middot; esc to close</div>
       </div>
     </div>
+
+    <!-- Customer profile drawer -->
+    <div class="cust-drawer-ov" id="cust-drawer-ov" onclick="closeCustomer()"></div>
+    <aside class="cust-drawer" id="cust-drawer"></aside>
   </div><!-- /admin-dash -->
 </div><!-- /admin-wrap -->
 

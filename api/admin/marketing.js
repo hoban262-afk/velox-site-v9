@@ -192,7 +192,11 @@ module.exports = async function handler(req, res) {
 
     // Test send: render the real campaign email but deliver only to support@.
     if (b.test) {
-      const TEST_TO = 'support@veloxpeps.com';
+      // support@veloxpeps.com is a Gmail send-as alias with no inbox, so tests
+      // sent there vanish. Default to the real mailbox; allow a validated override.
+      const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const reqTo = String(b.testTo || '').toLowerCase().trim();
+      const TEST_TO = EMAIL_RE.test(reqTo) ? reqTo : (process.env.TEST_EMAIL_TO || 'veloxpeps@gmail.com');
       const unsub = `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubToken(TEST_TO))}`;
       const r = await sendMail({
         to: TEST_TO, subject: '[TEST] ' + subject,
