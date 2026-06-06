@@ -856,8 +856,12 @@
       slug: parts[0], size: parts[1], discount_pct: pct,
       headline: (document.getElementById('deal-headline') || {}).value || '',
       ends_at: endsVal ? new Date(endsVal).toISOString() : null,
-      active: !!(document.getElementById('deal-active') || {}).checked,
-      apply: !!(document.getElementById('deal-apply') || {}).checked,
+      // Saving a Deal of the Day always publishes it live as a REAL discount —
+      // that's the whole point. Use "Clear deal" to take it down. (Previously
+      // these read checkboxes that defaulted UNCHECKED whenever the prior deal
+      // was inactive, so every save silently stayed hidden and un-discounted.)
+      active: true,
+      apply: true,
     };
     if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Saving…'; }
     try {
