@@ -5821,3 +5821,22 @@ a.nl[href="/guides/"]::before {
 .cp-hero-main .cp-spec { order: 1; margin-top: 8px; max-width: 520px; }
 .cp-hero-main .cp-lede { order: 2; margin-top: 18px; }
 .cp-hero-main .disc-inline { order: 3; margin-top: 14px; }
+
+/* ── Retatrutide flagship card — animated edge shimmer (matches Velox Pro) ── */
+@property --proang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+@keyframes vpProSpin { to { --proang:360deg; } }
+@keyframes vpProGlow { 0%,100%{ box-shadow:0 8px 30px -12px rgba(1,211,160,.30); } 50%{ box-shadow:0 0 22px 1px rgba(1,211,160,.16), 0 12px 38px -10px rgba(1,211,160,.45); } }
+.cc:has(a[href*="compounds/retatrutide"]){
+  border:1.5px solid transparent;
+  background:
+    var(--bg3) padding-box,
+    conic-gradient(from var(--proang),
+      rgba(1,211,160,.20) 0deg, rgba(1,211,160,.20) 80deg,
+      #01D3A0 120deg, #d8fff4 148deg, #ffffff 152deg, #d8fff4 156deg, #01D3A0 184deg,
+      rgba(1,211,160,.20) 232deg, rgba(1,211,160,.20) 360deg) border-box;
+  animation: vpProSpin 3.5s linear infinite, vpProGlow 3s ease-in-out infinite;
+}
+.cc:has(a[href*="compounds/retatrutide"]):hover{ border-color:transparent; transform:translateY(-3px); }
+@media (prefers-reduced-motion: reduce){
+  .cc:has(a[href*="compounds/retatrutide"]){ animation:none; box-shadow:0 0 0 1.5px #01D3A0; }
+}

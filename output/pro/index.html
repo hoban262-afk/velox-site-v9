@@ -91,7 +91,7 @@
 
     /* ── Featured card — animated, glowing, elevated ────── */
     @property --proang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
-    .tier.featured { z-index:2; border:1.5px solid transparent; transform:translateY(-8px) scale(1.04); background:linear-gradient(180deg,#0e141b,#0a0e13) padding-box, conic-gradient(from var(--proang), rgba(1,211,160,.28), #01D3A0, #6cf7d6, #01D3A0, rgba(1,211,160,.28)) border-box; animation:proFloat 5s ease-in-out infinite, proGlow 3s ease-in-out infinite, proSpin 5s linear infinite; }
+    .tier.featured { z-index:2; border:1.5px solid transparent; transform:translateY(-8px) scale(1.04); background:linear-gradient(180deg,#0e141b,#0a0e13) padding-box, conic-gradient(from var(--proang), rgba(1,211,160,.20) 0deg, rgba(1,211,160,.20) 80deg, #01D3A0 120deg, #d8fff4 148deg, #ffffff 152deg, #d8fff4 156deg, #01D3A0 184deg, rgba(1,211,160,.20) 232deg, rgba(1,211,160,.20) 360deg) border-box; animation:proFloat 5s ease-in-out infinite, proGlow 3s ease-in-out infinite, proSpin 3.5s linear infinite; }
     .tier.featured::after { content:""; position:absolute; inset:0; border-radius:16px; pointer-events:none; background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.07) 50%, transparent 65%); background-size:280% 100%; animation:proShimmer 5s ease-in-out infinite; }
     .tier.featured .badge { animation:proBadge 2.4s ease-in-out infinite; }
 

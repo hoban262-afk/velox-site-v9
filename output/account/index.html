@@ -164,6 +164,22 @@
         <div id="pro-card-body"></div>
       </div>
 
+      <div class="card" id="storage-card" style="display:none">
+        <h3>Storage &amp; stability log <span style="color:var(--t3);font-weight:400">— Pro</span></h3>
+        <p style="font-size:13px;color:var(--t3);margin:0 0 14px">Log a reconstituted vial and we'll track its stability window — 28 days at 2–8°C with bacteriostatic water, 24h without.</p>
+        <div id="storage-body"></div>
+      </div>
+
+      <div class="card" id="spend-card" style="display:none">
+        <h3>Spend summary <span style="color:var(--t3);font-weight:400">— Pro</span></h3>
+        <div id="spend-body">Loading&hellip;</div>
+      </div>
+
+      <div class="card" id="invoices-card" style="display:none">
+        <h3>Invoices</h3>
+        <div id="invoices-body">Loading&hellip;</div>
+      </div>
+
       <div class="card">
         <h3>How your points work</h3>
         <ul style="margin:0;padding-left:18px;color:#9CA3AF;font-size:13px;line-height:1.95">
@@ -278,6 +294,8 @@
             var m = document.getElementById('pro-cancel-msg');
             if (m) m.innerHTML = 'Pro is billed by a bank standing order, so you cancel it in your <strong style="color:#fff">banking app</strong> (look under standing orders for &ldquo;Velox&rdquo;). Your Pro pricing stays active until ' + (until || 'the end of your billing period') + '. Need a hand? Email <a href="mailto:support@veloxpeps.com" style="color:#01D3A0">support@veloxpeps.com</a>.';
           });
+          try { renderStorage(); } catch (e) {}
+          try { renderAccountExtras(); } catch (e) {}
         } else {
           body.innerHTML =
             '<p style="font-size:13px;color:#9CA3AF;margin:0 0 12px">Get an automatic discount on every order, free tracked UK shipping and first dibs on restocks.</p>' +
@@ -285,6 +303,133 @@
         }
       } catch (e) {}
     }
+    function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+    function expiryInfo(rec, withBac){
+      var exp=new Date(rec); exp.setDate(exp.getDate()+(withBac?28:1));
+      var left=Math.ceil((exp-new Date())/86400000);
+      return { left:left, color:(left<=0?'#f87171':(left<=7?'#fbbf24':'#01D3A0')), label:(left<=0?'Expired':(left+' day'+(left===1?'':'s')+' left')) };
+    }
+    function storageFormHtml(){
+      var today=new Date().toISOString().slice(0,10);
+      return '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">' +
+        '<input class="f-inp" id="sl-compound" placeholder="Compound (e.g. Retatrutide)" style="flex:2;min-width:150px;margin:0">' +
+        '<input class="f-inp" id="sl-size" placeholder="Size" style="flex:1;min-width:80px;margin:0">' +
+        '<input class="f-inp" id="sl-date" type="date" value="'+today+'" style="flex:1;min-width:120px;margin:0">' +
+        '<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#9ca3af"><input type="checkbox" id="sl-bac" checked> BAC water</label>' +
+        '<button class="btn-p" id="sl-add" style="width:auto;padding:10px 18px">Log vial</button>' +
+        '</div><div class="acc-msg" id="sl-msg"></div>';
+    }
+    function wireStorageForm(){
+      var add=document.getElementById('sl-add');
+      if(add) add.addEventListener('click', async function(){
+        var comp=((document.getElementById('sl-compound')||{}).value||'').trim();
+        var size=((document.getElementById('sl-size')||{}).value||'').trim();
+        var date=(document.getElementById('sl-date')||{}).value||'';
+        var bac=!!(document.getElementById('sl-bac')||{}).checked;
+        var msg=document.getElementById('sl-msg');
+        if(!comp||!date){ if(msg){msg.className='acc-msg err';msg.textContent='Enter a compound and date.';} return; }
+        try{
+          var s=await window._sb.auth.getSession();
+          var uid=s&&s.data&&s.data.session&&s.data.session.user&&s.data.session.user.id;
+          var r=await window._sb.from('storage_log').insert({user_id:uid,compound:comp,size:size||null,reconstituted_on:date,with_bac:bac});
+          if(r.error) throw r.error;
+          if(msg){msg.textContent='';}
+          loadStorageList();
+        }catch(e){ if(msg){msg.className='acc-msg err';msg.textContent='Could not save: '+(e.message||'error');} }
+      });
+    }
+    async function loadStorageList(){
+      var list=document.getElementById('storage-list'); if(!list||!window._sb) return;
+      try{
+        var r=await window._sb.from('storage_log').select('*').order('reconstituted_on',{ascending:false});
+        var rows=r.data||[];
+        if(!rows.length){ list.innerHTML='<p style="color:var(--t3);font-size:13px">No vials logged yet.</p>'; return; }
+        list.innerHTML=rows.map(function(x){
+          var info=expiryInfo(x.reconstituted_on,x.with_bac);
+          return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.05)">'+
+            '<div><div style="color:#fff;font-size:14px">'+esc(x.compound)+(x.size?' <span style="color:var(--t3)">· '+esc(x.size)+'</span>':'')+'</div>'+
+            '<div style="font-size:12px;color:var(--t3)">Reconstituted '+x.reconstituted_on+' · '+(x.with_bac?'BAC water (28d)':'no BAC (24h)')+'</div></div>'+
+            '<div style="text-align:right;flex:0 0 auto"><div style="font-size:13px;font-weight:700;color:'+info.color+'">'+info.label+'</div>'+
+            '<button data-id="'+x.id+'" class="sl-del" style="background:none;border:none;color:#f87171;font-size:12px;cursor:pointer">Remove</button></div></div>';
+        }).join('');
+        list.querySelectorAll('.sl-del').forEach(function(b){
+          b.addEventListener('click', async function(){ try{ await window._sb.from('storage_log').delete().eq('id', b.getAttribute('data-id')); loadStorageList(); }catch(e){} });
+        });
+      }catch(e){ list.innerHTML='<p style="color:#f87171;font-size:13px">Could not load log.</p>'; }
+    }
+    function renderStorage(){
+      var card=document.getElementById('storage-card'), body=document.getElementById('storage-body');
+      if(!card||!body||!window._sb) return;
+      card.style.display='';
+      body.innerHTML=storageFormHtml()+'<div id="storage-list" style="margin-top:14px">Loading…</div>';
+      wireStorageForm();
+      loadStorageList();
+    }
+
+    // ── Spend summary + downloadable invoices (no VAT — not VAT registered) ──
+    function gbp(n){ return '£' + (Number(n) || 0).toFixed(2); }
+    async function fetchMyOrders(){
+      try{
+        var s=await window._sb.auth.getSession();
+        var uid=s&&s.data&&s.data.session&&s.data.session.user&&s.data.session.user.id;
+        if(!uid) return [];
+        var r=await window._sb.from('orders').select('*').eq('user_id',uid).order('created_at',{ascending:false});
+        return (r.data||[]).filter(function(o){ return o.status==='paid'||o.status==='dispatched'; });
+      }catch(e){ return []; }
+    }
+    async function renderAccountExtras(){
+      var orders=await fetchMyOrders();
+      var sc=document.getElementById('spend-card'), sb=document.getElementById('spend-body');
+      if(sc&&sb){
+        sc.style.display='';
+        var total=orders.reduce(function(s,o){return s+(Number(o.total)||0);},0);
+        var count=orders.length, avg=count?total/count:0;
+        var now=new Date(), months=[];
+        for(var i=5;i>=0;i--){ var d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push({key:d.getFullYear()+'-'+(d.getMonth()+1),label:d.toLocaleDateString('en-GB',{month:'short'}),v:0}); }
+        orders.forEach(function(o){ var d=new Date(o.created_at); var k=d.getFullYear()+'-'+(d.getMonth()+1); for(var j=0;j<months.length;j++){ if(months[j].key===k){ months[j].v+=Number(o.total)||0; break; } } });
+        var max=Math.max.apply(null,months.map(function(m){return m.v;}).concat([1]));
+        var bars=months.map(function(m){ var h=Math.max(2,Math.round((m.v/max)*70)); return '<div style="flex:1;text-align:center"><div style="height:70px;display:flex;align-items:flex-end;justify-content:center"><div title="'+gbp(m.v)+'" style="width:60%;background:#01D3A0;border-radius:3px 3px 0 0;height:'+h+'px"></div></div><div style="font-size:10px;color:var(--t3);margin-top:4px">'+m.label+'</div></div>'; }).join('');
+        sb.innerHTML='<div class="pts-grid" style="margin-bottom:16px">'+
+          '<div class="pts-card"><div class="pts-label">Total spent</div><div class="pts-value">'+gbp(total)+'</div></div>'+
+          '<div class="pts-card"><div class="pts-label">Orders</div><div class="pts-value">'+count+'</div></div>'+
+          '<div class="pts-card"><div class="pts-label">Avg order</div><div class="pts-value">'+gbp(avg)+'</div></div></div>'+
+          '<div style="display:flex;gap:8px;align-items:flex-end">'+bars+'</div>';
+      }
+      var ic=document.getElementById('invoices-card'), ib=document.getElementById('invoices-body');
+      if(ic&&ib){
+        ic.style.display='';
+        if(!orders.length){ ib.innerHTML='<p style="color:var(--t3);font-size:13px">No paid orders yet.</p>'; }
+        else{
+          ib.innerHTML=orders.map(function(o,idx){
+            return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.05)">'+
+              '<div><div style="color:#fff;font-size:13px">Invoice '+esc(o.notes||('#'+String(o.id).slice(0,8)))+'</div>'+
+              '<div style="font-size:12px;color:var(--t3)">'+new Date(o.created_at).toLocaleDateString('en-GB')+' · '+gbp(o.total)+'</div></div>'+
+              '<button class="btn-o inv-btn" data-i="'+idx+'" style="padding:7px 14px;font-size:12px">Download invoice</button></div>';
+          }).join('');
+          ib.querySelectorAll('.inv-btn').forEach(function(b){ b.addEventListener('click',function(){ openInvoice(orders[parseInt(b.getAttribute('data-i'),10)]); }); });
+        }
+      }
+    }
+    function invoiceHtml(o){
+      var items=Array.isArray(o.items)?o.items:[];
+      var rows=items.map(function(it){ var qty=Number(it.qty||it.quantity||1)||1; var price=Number(it.price||it.line_total||0); return '<tr><td>'+esc(it.name||it.slug||'Item')+(it.size?(' — '+esc(it.size)):'')+'</td><td style="text-align:center">'+qty+'</td><td style="text-align:right">£'+price.toFixed(2)+'</td><td style="text-align:right">£'+(price*qty).toFixed(2)+'</td></tr>'; }).join('');
+      var ref=esc(o.notes||('#'+String(o.id).slice(0,8)));
+      return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice '+ref+'</title><style>body{font-family:Arial,sans-serif;color:#111;max-width:720px;margin:24px auto;padding:0 20px}h1{font-size:22px;margin:0}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{padding:8px;border-bottom:1px solid #eee;font-size:13px}th{text-align:left;color:#666;font-size:11px;text-transform:uppercase}.tot td{border:none;padding:4px 8px}.muted{color:#666;font-size:12px}@media print{button{display:none}}</style></head><body>'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><h1>Velox Peptides</h1><div class="muted">CRP Labs Ltd · Company no. NI738125<br>Holywood, Northern Ireland, United Kingdom<br>support@veloxpeps.com</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:700">INVOICE</div><div class="muted">'+ref+'<br>'+new Date(o.created_at).toLocaleDateString('en-GB')+'</div></div></div>'+
+        '<div style="margin-top:18px" class="muted"><strong>Billed to:</strong> '+esc(o.customer_name||'')+'<br>'+esc(o.customer_email||'')+(o.ship_line1?('<br>'+esc(o.ship_line1)+(o.ship_city?(', '+esc(o.ship_city)):'')+(o.ship_postcode?(' '+esc(o.ship_postcode)):'')):'')+'</div>'+
+        '<table><thead><tr><th>Item</th><th style="text-align:center">Qty</th><th style="text-align:right">Unit</th><th style="text-align:right">Total</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+        '<table style="margin-top:8px"><tbody class="tot">'+
+          '<tr><td style="text-align:right">Subtotal</td><td style="text-align:right;width:120px">£'+(Number(o.subtotal||o.total||0)).toFixed(2)+'</td></tr>'+
+          (Number(o.discount)>0?('<tr><td style="text-align:right">Discount</td><td style="text-align:right">−£'+Number(o.discount).toFixed(2)+'</td></tr>'):'')+
+          '<tr><td style="text-align:right">Shipping</td><td style="text-align:right">'+(Number(o.shipping)>0?('£'+Number(o.shipping).toFixed(2)):'Free')+'</td></tr>'+
+          '<tr><td style="text-align:right;font-weight:700">Total</td><td style="text-align:right;font-weight:700">£'+(Number(o.total||0)).toFixed(2)+'</td></tr>'+
+        '</tbody></table>'+
+        '<p class="muted" style="margin-top:20px">VAT not applicable — CRP Labs Ltd is not VAT registered. For in vitro research use only. Not for human or veterinary consumption.</p>'+
+        '<button onclick="window.print()" style="margin-top:14px;padding:10px 18px;background:#01D3A0;border:none;border-radius:6px;font-weight:700;cursor:pointer">Print / Save as PDF</button>'+
+        '</body></html>';
+    }
+    function openInvoice(o){ var w=window.open('','_blank'); if(!w) return; w.document.write(invoiceHtml(o)); w.document.close(); w.focus(); }
+
     if (window._sb && window._sb.auth && window._sb.auth.onAuthStateChange) {
       window._sb.auth.onAuthStateChange(function () { renderPro(); });
     }
