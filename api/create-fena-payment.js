@@ -67,6 +67,32 @@ export default async function handler(req) {
 
   const meta = metadata || {};
 
+  // ── Verify Velox Peps Pro membership → entitled discount (server-trusted) ─────
+  // The cart sends member-discounted prices; without recomputing the entitlement
+  // here the price guard below would wrongly reject legitimate member orders.
+  // memberPct comes ONLY from the verified user token + profile, never the client.
+  let memberPct = 0, memberTier = null;
+  try {
+    const authz = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+    const SBU = process.env.SUPABASE_URL, SVC = process.env.SUPABASE_SERVICE_ROLE_KEY, ANON = process.env.SUPABASE_ANON_KEY;
+    if (authz && SBU && SVC) {
+      const ures = await fetch(`${SBU}/auth/v1/user`, { headers: { Authorization: `Bearer ${authz}`, apikey: ANON || SVC } });
+      if (ures.ok) {
+        const u = await ures.json();
+        if (u && u.id) {
+          const pr = await fetch(`${SBU}/rest/v1/profiles?id=eq.${u.id}&select=is_pro,pro_tier,pro_until`, { headers: { apikey: SVC, Authorization: `Bearer ${SVC}` } });
+          const prof = pr.ok ? (await pr.json())[0] : null;
+          if (prof && prof.is_pro && prof.pro_tier && (!prof.pro_until || new Date(prof.pro_until) > new Date())) {
+            const tr = await fetch(`${SBU}/rest/v1/membership_tiers?key=eq.${encodeURIComponent(prof.pro_tier)}&select=discount_pct`, { headers: { apikey: SVC, Authorization: `Bearer ${SVC}` } });
+            const t = tr.ok ? (await tr.json())[0] : null;
+            memberPct = t ? Number(t.discount_pct) : 0;
+            memberTier = prof.pro_tier;
+          }
+        }
+      }
+    }
+  } catch (e) { console.error('[create-fena-payment] member lookup (non-fatal):', e.message); }
+
   // ── Capture the order in Supabase as 'pending' BEFORE redirecting ──────────
   // This is the source of truth: it survives the customer's browser losing
   // sessionStorage across the mobile bank-app redirect. The webhook /
@@ -100,8 +126,10 @@ export default async function handler(req) {
           dbSubtotal += dbp * (Number(it.qty) || 1);
         }
         dbSubtotal = Math.round(dbSubtotal * 100) / 100;
-        if (allKnown && n(meta.subtotal) + 0.01 < dbSubtotal) {
-          console.warn(`[create-fena-payment] PRICE GUARD: client subtotal £${n(meta.subtotal)} below DB £${dbSubtotal} — rejecting`);
+        // Lower the floor by the member's verified tier discount so Pro orders pass.
+        const dbFloor = Math.round(dbSubtotal * (1 - memberPct / 100) * 100) / 100;
+        if (allKnown && n(meta.subtotal) + 0.01 < dbFloor) {
+          console.warn(`[create-fena-payment] PRICE GUARD: client subtotal £${n(meta.subtotal)} below floor £${dbFloor} (memberPct=${memberPct}) — rejecting`);
           return new Response(JSON.stringify({ error: 'Your basket prices are out of date. Please refresh the page and try again.' }),
             { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
         }

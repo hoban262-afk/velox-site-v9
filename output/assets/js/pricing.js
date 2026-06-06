@@ -17,24 +17,74 @@
   var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
 
   function money(n) { var v = Math.round(Number(n) * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
-  function eff(v) { return (v.sale_price != null) ? Number(v.sale_price) : Number(v.base_price); }
+  // Velox Peps Pro member discount (0 unless a signed-in member). Applied to the
+  // effective price so it flows to BOTH the displayed price and the data-price
+  // attribute the cart reads — i.e. the member rate is what actually gets charged.
+  var MEMBER_PCT = 0;
+  function eff(v) {
+    var base = (v.sale_price != null) ? Number(v.sale_price) : Number(v.base_price);
+    return MEMBER_PCT > 0 ? Math.round(base * (1 - MEMBER_PCT / 100) * 100) / 100 : base;
+  }
   // "was" strikethrough: on a deal -> base_price; standing markdown -> compare_at; else none.
   function wasOf(v) { return (v.sale_price != null) ? Number(v.base_price) : (v.compare_at != null ? Number(v.compare_at) : null); }
   function pct(from, to) { return Math.round((1 - to / from) * 100); }
 
-  fetch(SB_URL + '/rest/v1/product_variants?select=*', {
-    headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON }
-  })
-    .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (rows) {
-      if (!rows || !rows.length) return;          // keep hardcoded fallback
-      var bySlug = {};
-      rows.forEach(function (v) { (bySlug[v.slug] = bySlug[v.slug] || []).push(v); });
-      try { hydratePDP(bySlug); } catch (e) {}
-      try { hydrateCards(bySlug); } catch (e) {}
-      try { hydrateBundles(rows); } catch (e) {}
+  function hydrateAll() {
+    fetch(SB_URL + '/rest/v1/product_variants?select=*', {
+      headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON }
     })
-    .catch(function () { /* network/RLS issue — hardcoded prices remain */ });
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rows) {
+        if (!rows || !rows.length) return;          // keep hardcoded fallback
+        var bySlug = {};
+        rows.forEach(function (v) { (bySlug[v.slug] = bySlug[v.slug] || []).push(v); });
+        try { hydratePDP(bySlug); } catch (e) {}
+        try { hydrateCards(bySlug); } catch (e) {}
+        try { hydrateBundles(rows); } catch (e) {}
+      })
+      .catch(function () { /* network/RLS issue — hardcoded prices remain */ });
+  }
+
+  // Resolve the signed-in member's tier discount FIRST, then hydrate, so every
+  // price (and the cart-read data-price) reflects the Pro rate. Fails open to 0%.
+  function getMemberPct() {
+    return new Promise(function (resolve) {
+      try {
+        var raw = localStorage.getItem('sb-stkjdtyhaxejxqmbzyua-auth-token');
+        var tok = raw ? (JSON.parse(raw) || {}).access_token : null;
+        if (!tok) return resolve(0);
+        fetch(SB_URL + '/rest/v1/profiles?select=is_pro,pro_tier,pro_until', { headers: { apikey: SB_ANON, Authorization: 'Bearer ' + tok } })
+          .then(function (r) { return r.ok ? r.json() : []; })
+          .then(function (rows) {
+            var p = Array.isArray(rows) ? rows[0] : null;
+            if (!p || !p.is_pro || !p.pro_tier) return resolve(0);
+            if (p.pro_until && new Date(p.pro_until) < new Date()) return resolve(0);
+            fetch(SB_URL + '/rest/v1/membership_tiers?key=eq.' + encodeURIComponent(p.pro_tier) + '&select=discount_pct', { headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON } })
+              .then(function (r) { return r.ok ? r.json() : []; })
+              .then(function (t) { var row = Array.isArray(t) ? t[0] : null; resolve(row ? Number(row.discount_pct) : 0); })
+              .catch(function () { resolve(0); });
+          })
+          .catch(function () { resolve(0); });
+      } catch (e) { resolve(0); }
+    });
+  }
+
+  function showMemberBanner(p) {
+    try {
+      if (document.getElementById('vp-pro-banner')) return;
+      var b = document.createElement('div');
+      b.id = 'vp-pro-banner';
+      b.style.cssText = 'position:sticky;top:0;z-index:9999;background:#01D3A0;color:#021;font:600 13px/1.4 Arial,Helvetica,sans-serif;text-align:center;padding:7px 12px';
+      b.textContent = '✓ Pro pricing active — ' + p + '% off applied across the site';
+      if (document.body) document.body.insertBefore(b, document.body.firstChild);
+    } catch (e) {}
+  }
+
+  getMemberPct().then(function (p) {
+    MEMBER_PCT = Number(p) || 0;
+    if (MEMBER_PCT > 0) showMemberBanner(MEMBER_PCT);
+    hydrateAll();
+  });
 
   // ── Bundles (stacks) — price auto-computes from component base prices ───────
   function hydrateBundles(variantRows) {

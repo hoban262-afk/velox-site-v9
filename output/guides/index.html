@@ -165,6 +165,43 @@
       height: 1px;
       background: #1a1d24;
     }
+
+    /* ── Guide hub redesign: denser, colour-coded, animated ─────────────── */
+    .rl-grid { grid-template-columns: repeat(auto-fill, minmax(224px, 1fr)); gap: 14px; margin-top: 18px; }
+    @media (max-width: 900px) { .rl-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
+    @media (max-width: 480px) { .rl-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
+    .rl-card { padding: 15px 15px 12px; gap: 6px; border-radius: 9px; overflow: hidden; }
+    .rl-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #232733; opacity: .6; transition: opacity .2s, background .2s; }
+    .rl-card:hover { transform: translateY(-3px); }
+    .rl-card-title { font-size: 0.86rem; line-height: 1.3; }
+    .rl-card-excerpt { font-size: 0.76rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .rl-card-arr { transition: transform .2s; }
+    .rl-card:hover .rl-card-arr { transform: translateX(4px); }
+    /* category-coded left accent + tinted hover glow (no markup change, via :has) */
+    .rl-card:has(.rl-card-cat-metabolic)::before  { background:#c8b800; }
+    .rl-card:has(.rl-card-cat-cognitive)::before  { background:#9B6DFF; }
+    .rl-card:has(.rl-card-cat-healing)::before    { background:#4FC3F7; }
+    .rl-card:has(.rl-card-cat-growth)::before     { background:#4A9FE0; }
+    .rl-card:has(.rl-card-cat-antiageing)::before { background:#F472B6; }
+    .rl-card:has(.rl-card-cat-guide)::before      { background:#94A3B8; }
+    .rl-card:hover::before { opacity: 1; }
+    .rl-card:has(.rl-card-cat-metabolic):hover  { border-color:rgba(200,184,0,.5);  box-shadow:0 10px 30px rgba(200,184,0,.10); }
+    .rl-card:has(.rl-card-cat-cognitive):hover  { border-color:rgba(155,109,255,.5); box-shadow:0 10px 30px rgba(155,109,255,.12); }
+    .rl-card:has(.rl-card-cat-healing):hover    { border-color:rgba(79,195,247,.5);  box-shadow:0 10px 30px rgba(79,195,247,.12); }
+    .rl-card:has(.rl-card-cat-growth):hover     { border-color:rgba(74,159,224,.5);  box-shadow:0 10px 30px rgba(74,159,224,.12); }
+    .rl-card:has(.rl-card-cat-antiageing):hover { border-color:rgba(244,114,182,.5); box-shadow:0 10px 30px rgba(244,114,182,.12); }
+    .rl-card:has(.rl-card-cat-guide):hover      { border-color:rgba(148,163,184,.5); box-shadow:0 10px 30px rgba(148,163,184,.10); }
+
+    /* scroll-reveal (gated on .gh-anim so no-JS keeps cards visible) */
+    .gh-anim .rl-card { opacity: 0; transform: translateY(14px); }
+    .gh-anim .rl-card.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s ease; }
+
+    /* sticky filter bar */
+    .gh-filters { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 12px; margin: 26px 0 4px; background: rgba(3,4,7,.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .gh-pill { font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; background: #0a0d12; border: 1px solid #1a1d24; border-radius: 999px; padding: 7px 15px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; }
+    .gh-pill:hover { color: #fff; border-color: #374151; }
+    .gh-pill.active { color: #021; background: #01D3A0; border-color: #01D3A0; }
+    .rl-section-label { margin: 30px 0 4px; scroll-margin-top: 70px; }
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -258,6 +295,14 @@
 
 <section class="about-section">
   <div class="sec-i">
+
+    <div class="gh-filters" id="gh-filters" role="tablist" aria-label="Filter guides">
+      <button class="gh-pill active" data-filter="all">All</button>
+      <button class="gh-pill" data-filter="research">Compounds</button>
+      <button class="gh-pill" data-filter="comparison">Comparisons</button>
+      <button class="gh-pill" data-filter="educational">Guides</button>
+      <button class="gh-pill" data-filter="glossary">Glossary &amp; FAQ</button>
+    </div>
 
     <!-- Educational Guides -->
     <div class="rl-section-label">Educational Guides</div>
@@ -699,5 +744,47 @@
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/newsletter-popup.js"></script>
   <script src="/assets/js/search.js" defer></script>
+  <script>
+  (function () {
+    document.body.classList.add('gh-anim');
+    var cards = [].slice.call(document.querySelectorAll('.rl-card'));
+
+    // Scroll-reveal with a light stagger.
+    function reveal(list) {
+      if (!('IntersectionObserver' in window)) { list.forEach(function (c) { c.classList.add('in'); }); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -40px 0px' });
+      list.forEach(function (c, i) { c.style.transitionDelay = (Math.min(i, 8) * 45) + 'ms'; io.observe(c); });
+    }
+    reveal(cards);
+
+    // Group each section label with the grid that follows it, for filtering.
+    var pairs = [];
+    document.querySelectorAll('.rl-section-label').forEach(function (lbl) {
+      var grid = lbl.nextElementSibling;
+      if (grid && grid.classList.contains('rl-grid')) {
+        pairs.push({ lbl: lbl, grid: grid, key: lbl.textContent.trim().toLowerCase() });
+      }
+    });
+
+    document.querySelectorAll('.gh-pill').forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        document.querySelectorAll('.gh-pill').forEach(function (x) { x.classList.remove('active'); });
+        pill.classList.add('active');
+        var f = pill.dataset.filter;
+        pairs.forEach(function (pr) {
+          var show = (f === 'all') || pr.key.indexOf(f) > -1;
+          pr.lbl.style.display = show ? '' : 'none';
+          pr.grid.style.display = show ? '' : 'none';
+          if (show) {
+            // re-run reveal on the now-visible cards
+            [].slice.call(pr.grid.querySelectorAll('.rl-card')).forEach(function (c) { c.classList.add('in'); });
+          }
+        });
+      });
+    });
+  })();
+  </script>
 </body>
 </html>

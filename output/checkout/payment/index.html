@@ -978,9 +978,14 @@
         }, API_TIMEOUT_MS);
       });
 
+      // Pass the signed-in member's token so the server can verify their Pro tier
+      // and accept the member-discounted price (the price guard needs this).
+      var _sbTok = (function () { try { var r = localStorage.getItem('sb-stkjdtyhaxejxqmbzyua-auth-token'); return r ? (JSON.parse(r) || {}).access_token : null; } catch (e) { return null; } })();
+      var _payHdrs = { 'Content-Type': 'application/json' };
+      if (_sbTok) _payHdrs.Authorization = 'Bearer ' + _sbTok;
       var apiPromise = fetch('/api/create-fena-payment', {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: _payHdrs,
         body:    JSON.stringify({
           amount_pence: totalPence,
           reference:    ref,

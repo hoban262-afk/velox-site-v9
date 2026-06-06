@@ -103,6 +103,57 @@ export default async function handler(req) {
 
   console.log(`[fena-webhook] parsed status="${status}" reference="${reference || ''}" orderUuid="${orderUuid || ''}"`);
 
+  // ── Subscription events (Pro membership / subscribe-&-save) take priority ────
+  // These handle the FULL status lifecycle (not just success), since we must
+  // also react to warning/cancelled to downgrade members.
+  {
+    const subHeaders = { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`, 'Content-Type': 'application/json' };
+    let sub = null;
+    try {
+      const f = paymentId
+        ? `fena_payment_id=eq.${encodeURIComponent(paymentId)}`
+        : (reference ? `reference=eq.${encodeURIComponent(reference)}` : null);
+      if (f) {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?${f}&select=*&order=created_at.desc&limit=1`, { headers: subHeaders });
+        sub = r.ok ? (await r.json())[0] : null;
+      }
+    } catch (e) { console.error('[fena-webhook] sub lookup threw:', e.message); }
+
+    if (sub) {
+      const active = SUCCESS_STATUSES.has(status) || status === 'active' || status === 'paid';
+      const ended  = ['cancelled', 'rejected', 'warning', 'overdue'].includes(status);
+      const patch  = { status: status || sub.status, updated_at: new Date().toISOString() };
+      if (ended) patch.cancelled_at = new Date().toISOString();
+      await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?id=eq.${sub.id}`, {
+        method: 'PATCH', headers: { ...subHeaders, Prefer: 'return=minimal' }, body: JSON.stringify(patch),
+      }).catch(() => {});
+
+      // Pro membership → flip the profile gating flags.
+      if (sub.kind === 'pro' && sub.user_id) {
+        if (active) {
+          const until = new Date();
+          if (sub.plan === 'annual') until.setFullYear(until.getFullYear() + 1);
+          else until.setMonth(until.getMonth() + 1);
+          await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${sub.user_id}`, {
+            method: 'PATCH', headers: { ...subHeaders, Prefer: 'return=minimal' },
+            body: JSON.stringify({ is_pro: true, pro_tier: sub.tier, pro_plan: sub.plan, pro_until: until.toISOString() }),
+          }).catch(() => {});
+          console.log(`[fena-webhook] Pro ACTIVE user=${sub.user_id} tier=${sub.tier} until=${until.toISOString()}`);
+        } else if (ended) {
+          await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${sub.user_id}`, {
+            method: 'PATCH', headers: { ...subHeaders, Prefer: 'return=minimal' },
+            body: JSON.stringify({ is_pro: false }),
+          }).catch(() => {});
+          console.log(`[fena-webhook] Pro DOWNGRADED user=${sub.user_id} (status=${status})`);
+        }
+      }
+      // Subscribe-&-save per-cycle order creation is handled by a scheduled
+      // reconciliation worker (banks don't reliably webhook each standing-order
+      // charge). Here we only mirror status. TODO: api/recovery/sub-fulfil-run.js
+      return new Response('OK', { status: 200 });
+    }
+  }
+
   if (!SUCCESS_STATUSES.has(status)) {
     console.log(`[fena-webhook] status "${status}" not a success event — acknowledging`);
     return new Response('OK', { status: 200 });
