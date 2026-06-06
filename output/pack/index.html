@@ -87,18 +87,24 @@
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
   // ── PIN unlock ──
+  var unlocking = false;
   async function unlock(){
-    var pin = $('#pin').value.trim();
+    if(unlocking) return;                       // ignore double-taps while a check is in flight
+    var pin = (($('#pin').value)||'').replace(/\s+/g,'');  // strip any spaces the keypad/autofill adds
     $('#lockmsg').textContent = '';
     if(!pin){ $('#lockmsg').textContent='Enter your PIN.'; return; }
+    var btn = $('#unlock');
+    unlocking = true; btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Checking…';
+    function reset(){ unlocking=false; btn.disabled=false; btn.textContent=orig; }
     try{
       var r = await fetch('/api/pack/auth', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pin:pin}) });
       var d = await r.json().catch(function(){return{};});
-      if(!r.ok || !d.token){ $('#lockmsg').textContent = d.error || 'Wrong PIN'; return; }
+      if(!r.ok || !d.token){ $('#lockmsg').textContent = d.error || 'Wrong PIN'; reset(); return; }
       token = d.token;
       $('#lock').hidden = true; $('#hdr').hidden = false; $('#app').hidden = false;
+      reset();
       load(); loadStock();
-    }catch(e){ $('#lockmsg').textContent = 'Network error — try again.'; }
+    }catch(e){ $('#lockmsg').textContent = 'Network error — try again.'; reset(); }
   }
   $('#unlock').addEventListener('click', unlock);
   $('#pin').addEventListener('keydown', function(e){ if(e.key==='Enter') unlock(); });
