@@ -349,6 +349,7 @@
     loadAffiliates();
     loadActions();
     loadXeroStatus();
+    loadGmailStatus();
     loadClickDropStatus();
     loadAnalytics();
     loadHealth();
@@ -1006,6 +1007,49 @@
     } catch (e) {
       if (btn) { btn.disabled = false; btn.textContent = 'Connect Xero'; }
       alert('Could not start Xero connection.');
+    }
+  }
+
+  // ── GMAIL (support inbox) connection (Settings) ─────────────────────────────
+  async function loadGmailStatus() {
+    var statusEl = document.getElementById('gmail-status');
+    var btn = document.getElementById('gmail-connect-btn');
+    if (btn && !btn._wired) { btn._wired = true; btn.addEventListener('click', connectGmail); }
+    var qp = new URLSearchParams(window.location.search).get('gmail');
+    if (qp && statusEl) {
+      if (qp === 'connected') statusEl.innerHTML = '<span style="color:#01D3A0">✓ Just connected.</span>';
+      else if (qp === 'norefresh') statusEl.innerHTML = '<span style="color:#f87171">Google didn\'t return offline access. Click Connect and choose "Allow" again.</span>';
+      else statusEl.innerHTML = '<span style="color:#f87171">Connection ' + esc(qp) + '. Try again.</span>';
+    }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/gmail/status', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json();
+      if (!statusEl) return;
+      if (d && d.connected) {
+        statusEl.innerHTML = '<span style="color:#01D3A0">✓ Connected — inbox triaged 24/7</span>';
+        if (btn) btn.textContent = 'Reconnect';
+      } else if (!qp) {
+        statusEl.textContent = d && d.configured === false ? 'Not configured — add Google OAuth keys in Vercel.' : 'Not connected.';
+      }
+    } catch (e) { if (statusEl && !qp) statusEl.textContent = 'Status unavailable.'; }
+  }
+
+  async function connectGmail() {
+    var btn = document.getElementById('gmail-connect-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/gmail/connect', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json();
+      if (r.ok && d.url) { window.location.href = d.url; return; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Connect Gmail'; }
+      alert(d.error || 'Could not start Gmail connection.');
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Connect Gmail'; }
+      alert('Could not start Gmail connection.');
     }
   }
 
