@@ -97,3 +97,42 @@
   });
 
 }());
+
+/* Velox Peps subscribe-&-save — adds a monthly auto-reorder button to the PDP buy box. */
+(function () {
+  function init() {
+    var form = document.querySelector('form.cp-order-form[data-compound]');
+    var addBtn = document.getElementById('add-to-order-btn');
+    if (!form || !addBtn || document.getElementById('vp-subscribe-btn')) return;
+    var slug = form.getAttribute('data-compound');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.id = 'vp-subscribe-btn';
+    b.className = 'cp-order-btn';
+    b.style.cssText = 'margin-top:10px;background:transparent;border:1px solid #01D3A0;color:#01D3A0';
+    b.textContent = 'Subscribe & save — deliver monthly';
+    addBtn.insertAdjacentElement('afterend', b);
+    b.addEventListener('click', async function () {
+      var ack = form.querySelector('input[name="ack"]');
+      if (ack && !ack.checked) { b.textContent = 'Please confirm research use above'; return; }
+      var sizeEl = form.querySelector('input[name="size"]:checked');
+      if (!sizeEl) { b.textContent = 'Select a size first'; return; }
+      b.disabled = true; b.textContent = 'Setting up subscription…';
+      var tok = null;
+      try { var r = localStorage.getItem('sb-stkjdtyhaxejxqmbzyua-auth-token'); tok = r ? (JSON.parse(r) || {}).access_token : null; } catch (e) {}
+      if (!tok) { location.href = '/account/?next=' + encodeURIComponent(location.pathname); return; }
+      try {
+        var resp = await fetch('/api/create-fena-recurring', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+          body: JSON.stringify({ kind: 'reorder', items: [{ slug: slug, size: sizeEl.value, qty: 1 }] })
+        });
+        var d = await resp.json();
+        if (resp.ok && d.paymentUrl) { location.href = d.paymentUrl; return; }
+        b.disabled = false; b.textContent = 'Could not subscribe — ' + (d.error || 'try again');
+      } catch (e) { b.disabled = false; b.textContent = 'Network error — try again'; }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}());

@@ -5,6 +5,10 @@
       "schedule": "*/5 * * * *"
     },
     {
+      "path": "/api/recovery/sub-fulfil-run",
+      "schedule": "0 7 * * *"
+    },
+    {
       "path": "/api/recovery/reorder-run",
       "schedule": "0 10 * * *"
     },
