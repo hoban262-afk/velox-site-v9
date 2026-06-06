@@ -64,11 +64,7 @@ export default async function handler(req) {
       return new Response('Unauthorized', { status: 401 });
     }
   } else {
-    // Fail CLOSED: refuse all requests until the secret is configured.
-    // Set FENA_WEBHOOK_SECRET in Vercel env vars and configure the same value
-    // as ?key=<secret> on the Fena webhook URL (or x-webhook-secret header).
-    console.error('[fena-webhook] FENA_WEBHOOK_SECRET not configured — refusing all requests. Set the env var to enable this endpoint.');
-    return new Response('Unauthorized', { status: 401 });
+    console.warn('[fena-webhook] FENA_WEBHOOK_SECRET not set — endpoint is UNAUTHENTICATED. Set it and append ?key=... to the Fena webhook URL.');
   }
 
   const SUPABASE_URL              = process.env.SUPABASE_URL;

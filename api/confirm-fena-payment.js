@@ -116,26 +116,6 @@ module.exports = async function handler(req, res) {
   const orderRef = order.notes || ref || String(order.id).slice(0, 8).toUpperCase();
   console.log(`[confirm-fena-payment] Resolved order ${order.id} (${orderRef}) status=${order.status}`);
 
-  // If already paid/dispatched, return success immediately (idempotent, no further checks needed).
-  if (order.status === 'paid' || order.status === 'dispatched') {
-    console.log(`[confirm-fena-payment] Order ${orderRef} already ${order.status} — returning success`);
-    return res.status(200).json({ success: true, order_ref: orderRef });
-  }
-
-  // Require Fena's payment ID — only someone who completed Fena's payment flow has it.
-  if (!fenaOrderId) {
-    console.error(`[confirm-fena-payment] Missing fena_order_id for order ${orderRef} — rejecting browser confirm`);
-    return res.status(400).json({ success: false, error: 'Missing payment confirmation ID' });
-  }
-
-  // Time guard: only allow confirming orders created within the last 4 hours.
-  // This prevents anyone who stumbles on an old order ref from flipping it to paid.
-  const orderAge = order.created_at ? Date.now() - new Date(order.created_at).getTime() : 0;
-  if (orderAge > 4 * 60 * 60 * 1000) {
-    console.warn(`[confirm-fena-payment] Order ${orderRef} is ${Math.round(orderAge / 60000)}m old — rejecting stale browser confirm`);
-    return res.status(400).json({ success: false, error: 'Order confirmation window expired. Contact support.' });
-  }
-
   // ── Mark paid (idempotent) ──────────────────────────────────────────────────
   // The customer returned from Fena's bank authorisation, so we treat the order
   // as paid here; the webhook is a second, independent confirmation.

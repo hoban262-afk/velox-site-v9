@@ -41,8 +41,8 @@ export default async function handler(req) {
 
   const { orderId, reference, metadata } = body;
 
-  // Amount: start from client value; overridden server-side when we know all DB prices (see price guard below).
-  let amountStr = (body.amount_pence != null)
+  // Amount: accept pence (from checkout) or a pounds value; Fena wants a 2-dp string
+  const amountStr = (body.amount_pence != null)
     ? (Number(body.amount_pence) / 100).toFixed(2)
     : (body.amount != null ? parseFloat(body.amount).toFixed(2) : null);
 
@@ -100,21 +100,10 @@ export default async function handler(req) {
           dbSubtotal += dbp * (Number(it.qty) || 1);
         }
         dbSubtotal = Math.round(dbSubtotal * 100) / 100;
-        if (allKnown) {
-          if (n(meta.subtotal) + 0.01 < dbSubtotal) {
-            console.warn(`[create-fena-payment] PRICE GUARD: client subtotal £${n(meta.subtotal)} below DB £${dbSubtotal} — rejecting`);
-            return new Response(JSON.stringify({ error: 'Your basket prices are out of date. Please refresh the page and try again.' }),
-              { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
-          }
-          // Server-side amount derivation: ignore client-supplied amount_pence.
-          // Shipping: free over £80 (matches cart.js FREE_THRESHOLD), else £3.80 flat.
-          // Discount: capped at 35% of DB subtotal (covers all valid promo tiers + codes).
-          const serverShipping  = dbSubtotal >= 80 ? 0 : 3.80;
-          const clientDiscount  = Math.max(0, n(meta.discount_saving) || 0);
-          const cappedDiscount  = Math.min(clientDiscount, Math.round(dbSubtotal * 0.35 * 100) / 100);
-          const serverTotal     = Math.max(0.01, Math.round((dbSubtotal + serverShipping - cappedDiscount) * 100) / 100);
-          amountStr = serverTotal.toFixed(2);
-          console.log(`[create-fena-payment] Server-computed amount: £${amountStr} (sub=£${dbSubtotal} ship=£${serverShipping} disc=£${cappedDiscount})`);
+        if (allKnown && n(meta.subtotal) + 0.01 < dbSubtotal) {
+          console.warn(`[create-fena-payment] PRICE GUARD: client subtotal £${n(meta.subtotal)} below DB £${dbSubtotal} — rejecting`);
+          return new Response(JSON.stringify({ error: 'Your basket prices are out of date. Please refresh the page and try again.' }),
+            { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
         }
       }
     } catch (e) {

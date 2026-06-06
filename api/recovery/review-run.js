@@ -10,7 +10,6 @@
 
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
-const { recordRun } = require('../../lib/worker-log');
 const { REVIEW_WINDOW, buildReviewRequestEmail } = require('../../lib/review-request-email');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -114,6 +113,5 @@ module.exports = async function handler(req, res) {
   }
 
   console.log('[review-run] done', JSON.stringify(summary));
-  await recordRun('review', summary.errors === 0, summary);
   return res.status(200).json({ ok: true, ...summary });
 };

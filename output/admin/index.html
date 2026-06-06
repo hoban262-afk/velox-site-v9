@@ -78,36 +78,6 @@
     .sb-user-mail { font-size:11px; color:var(--t3,#6b7280); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .sb-logout { background:none; border:none; color:var(--t3,#6b7280); cursor:pointer; padding:5px; border-radius:6px; flex:0 0 auto; }
     .sb-logout:hover { color:#fff; background:rgba(255,255,255,.05); }
-    .sb-collapse { margin-left:auto; background:none; border:none; color:var(--t3,#6b7280); cursor:pointer; padding:4px; border-radius:6px; flex:0 0 auto; }
-    .sb-collapse:hover { color:#fff; background:rgba(255,255,255,.05); }
-    /* Collapsed icon-rail */
-    .admin-sidebar.collapsed { flex-basis:62px; width:62px; }
-    .admin-sidebar.collapsed .sb-item { font-size:0; justify-content:center; gap:0; padding:10px 0; }
-    .admin-sidebar.collapsed .sb-item svg { width:20px; height:20px; }
-    .admin-sidebar.collapsed .sb-sec { font-size:0; padding:7px 0; height:1px; }
-    .admin-sidebar.collapsed .sb-brand-name, .admin-sidebar.collapsed .sb-brand-sub, .admin-sidebar.collapsed .sb-user-meta, .admin-sidebar.collapsed #actions-badge { display:none !important; }
-    .admin-sidebar.collapsed .sb-brand { justify-content:center; padding:18px 0; }
-    .admin-sidebar.collapsed .sb-collapse { display:none; }
-    .admin-sidebar.collapsed .sb-user { justify-content:center; padding:12px 0; }
-    /* Command palette */
-    .cmdk-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:400; display:none; align-items:flex-start; justify-content:center; padding-top:12vh; }
-    .cmdk-overlay.open { display:flex; }
-    .cmdk-box { width:min(560px,92vw); background:#0d1117; border:1px solid var(--brd,#1a1a1a); border-radius:12px; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.6); }
-    .cmdk-input { width:100%; box-sizing:border-box; background:none; border:none; border-bottom:1px solid var(--brd,#1a1a1a); color:#fff; font:inherit; font-size:15px; padding:15px 18px; outline:none; }
-    .cmdk-list { max-height:50vh; overflow-y:auto; padding:6px; }
-    .cmdk-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; color:var(--t2,#9ca3af); font-size:13.5px; cursor:pointer; }
-    .cmdk-item.sel { background:rgba(1,211,160,.12); color:#01D3A0; }
-    .cmdk-empty { padding:16px; color:var(--t3,#6b7280); font-size:13px; text-align:center; }
-    .cmdk-hint { padding:8px 14px; font-size:11px; color:var(--t3,#6b7280); border-top:1px solid var(--brd,#1a1a1a); }
-    /* Customer profile drawer */
-    .cust-drawer-ov { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:390; display:none; }
-    .cust-drawer-ov.open { display:block; }
-    .cust-drawer { position:fixed; top:0; right:0; height:100vh; width:min(440px,94vw); background:#0d1117; border-left:1px solid var(--brd,#1a1a1a); box-shadow:-20px 0 60px rgba(0,0,0,.5); transform:translateX(100%); transition:transform .2s ease; overflow-y:auto; z-index:391; }
-    .cust-drawer.open { transform:translateX(0); }
-    .cust-dh { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:20px 22px 16px; border-bottom:1px solid var(--brd,#1a1a1a); }
-    .cust-close { background:none; border:none; color:var(--t3,#6b7280); cursor:pointer; font-size:22px; line-height:1; padding:0 6px; }
-    .cust-close:hover { color:#fff; }
-    .seg-badge { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; }
 
     .admin-panel     { display:none; padding:28px 24px; }
     .admin-panel.active { display:block; }
@@ -269,7 +239,6 @@
       <div class="admin-login-logo">Velox Peptides</div>
       <h1>Admin login</h1>
       <p>Sign in with your admin credentials to access the dashboard.</p>
-      <input class="f-inp" id="admin-email" type="email" placeholder="Email" autocomplete="username">
       <input class="f-inp" id="admin-pw" type="password" placeholder="Password" autocomplete="current-password">
       <button class="btn-p" id="admin-signin" type="button">Sign in</button>
       <div class="admin-err" id="admin-err"></div>
@@ -285,7 +254,6 @@
       <div class="sb-brand">
         <div class="sb-brand-mark">V</div>
         <div><div class="sb-brand-name">Velox Admin</div><div class="sb-brand-sub">veloxpeps.com</div></div>
-        <button class="sb-collapse" title="Collapse sidebar" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
       </div>
       <nav class="sb-nav">
         <div class="sb-sec">Main</div>
@@ -406,10 +374,6 @@
 
     <!-- Overview -->
     <div class="admin-panel active" id="panel-overview">
-      <div class="adm-section">
-        <div class="adm-sec-hdr"><div class="adm-sec-title">At a glance</div><div style="font-size:12px;color:var(--t3,#6b7280)" id="cockpit-date"></div></div>
-        <div class="stat-grid" id="cockpit-stats"><div class="adm-loading">Loading&hellip;</div></div>
-      </div>
       <div class="adm-section">
         <div class="adm-sec-hdr">
           <div style="display:flex;align-items:center;gap:12px">
@@ -718,9 +682,8 @@
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('reorder','Replenishment')">Replenishment</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('review','Review request')">Review request</button>
         </div>
-        <div style="margin-top:16px;font-size:13px;color:var(--t3,#6b7280);line-height:1.5">Or send a single <strong style="color:#fff">test copy</strong> to the address below — renders the real email with sample data, sends to no one else:</div>
-        <div style="margin-top:8px"><input id="mkt-test-to" type="email" value="veloxpeps@gmail.com" placeholder="you@example.com" class="f-inp" style="max-width:320px;width:100%;box-sizing:border-box" /></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <div style="margin-top:16px;font-size:13px;color:var(--t3,#6b7280);line-height:1.5">Or send a single <strong style="color:#fff">test copy to support@veloxpeps.com only</strong> — renders the real email with sample data, sends to no one else:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('restock','Back in stock')">Test: Back in stock</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('welcome','Welcome series')">Test: Welcome</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('abandoned','Abandoned #1 · 30 min',1)">Test: Abandoned #1 (30m)</button>
@@ -757,7 +720,7 @@ Read the full summary in the research library below. As always, batch documentat
 For in vitro research use only. Not for human or veterinary consumption.</textarea>
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="btn-p" id="camp-send" style="width:auto;padding:11px 24px">Send campaign</button>
-          <button class="status-select" type="button" style="cursor:pointer;padding:11px 18px" onclick="veloxSendTestCampaign()">Send test to my inbox</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:11px 18px" onclick="veloxSendTestCampaign()">Send test to support@veloxpeps.com</button>
         </div>
         <div class="acc-msg" id="camp-msg" style="font-size:13px;margin-top:10px"></div>
       </div>
@@ -781,13 +744,6 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
 
     <!-- Settings / Integrations -->
     <div class="admin-panel" id="panel-settings">
-      <div class="adm-section">
-        <div class="adm-sec-hdr"><div class="adm-sec-title">System health</div><button class="status-select" id="health-refresh" type="button" style="cursor:pointer;padding:6px 14px;font-size:12px">Refresh</button></div>
-        <div style="margin:4px 0 8px;font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.05em">Background workers</div>
-        <div id="health-workers"><div class="adm-loading">Loading&hellip;</div></div>
-        <div style="margin:18px 0 8px;font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.05em">Integrations</div>
-        <div id="health-integrations"></div>
-      </div>
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">Order alerts on this device</div></div>
         <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 14px;line-height:1.5">
@@ -845,19 +801,6 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
 
     </div><!-- /admin-main -->
    </div><!-- /admin-shell -->
-
-    <!-- Command palette (Cmd/Ctrl + K) -->
-    <div class="cmdk-overlay" id="cmdk" onclick="if(event.target===this)closeCmd()">
-      <div class="cmdk-box">
-        <input class="cmdk-input" id="cmdk-input" placeholder="Jump to… (orders, margins, deal, campaigns)" autocomplete="off" spellcheck="false">
-        <div class="cmdk-list" id="cmdk-list"></div>
-        <div class="cmdk-hint">&uarr;&darr; to move &middot; &crarr; to open &middot; esc to close</div>
-      </div>
-    </div>
-
-    <!-- Customer profile drawer -->
-    <div class="cust-drawer-ov" id="cust-drawer-ov" onclick="closeCustomer()"></div>
-    <aside class="cust-drawer" id="cust-drawer"></aside>
   </div><!-- /admin-dash -->
 </div><!-- /admin-wrap -->
 

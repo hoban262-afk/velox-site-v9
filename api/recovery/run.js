@@ -18,7 +18,6 @@
 
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
-const { recordRun } = require('../../lib/worker-log');
 const { STAGES, buildRecoveryEmail } = require('../../lib/recovery-emails');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -200,6 +199,5 @@ module.exports = async function handler(req, res) {
   }
 
   console.log('[recovery/run] done', JSON.stringify(summary));
-  await recordRun('abandoned', summary.errors === 0, summary);
   return res.status(200).json({ ok: true, ...summary });
 };

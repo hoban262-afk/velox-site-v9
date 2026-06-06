@@ -18,8 +18,7 @@ module.exports = async function handler(req, res) {
   var body  = req.body || {};
   var code  = (body.code  || '').toString().trim().toUpperCase();
   var email = (body.email || '').toString().trim().toLowerCase();
-  if (!code)  return res.status(400).json({ valid: false, reason: 'missing_code' });
-  if (!email) return res.status(400).json({ valid: false, reason: 'missing_email' });
+  if (!code) return res.status(400).json({ valid: false, reason: 'missing_code' });
 
   try {
     var r = await fetch(
@@ -47,7 +46,7 @@ module.exports = async function handler(req, res) {
     if (rec.unsubscribed_at)                         return res.status(200).json({ valid: false, reason: 'inactive' });
     if (rec.used_at)                                 return res.status(200).json({ valid: false, reason: 'already_used' });
     if (new Date(rec.expires_at) < new Date())       return res.status(200).json({ valid: false, reason: 'expired' });
-    if (rec.email.toLowerCase() !== email)            return res.status(200).json({ valid: false, reason: 'email_mismatch' });
+    if (email && rec.email.toLowerCase() !== email)  return res.status(200).json({ valid: false, reason: 'email_mismatch' });
 
     return res.status(200).json({ valid: true, type: 'percentage', value: pct, code: code });
   } catch (e) {

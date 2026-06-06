@@ -17,11 +17,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ANON         = process.env.SUPABASE_ANON_KEY;
 const SITE         = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloxpeps.com';
-// Where preview copies land. support@veloxpeps.com is ONLY a Gmail "send-as"
-// alias with no inbox, so tests sent there silently disappear. Default to the
-// real monitored mailbox; the admin UI can override per send.
-const DEFAULT_TEST_TO = process.env.TEST_EMAIL_TO || 'veloxpeps@gmail.com';
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TEST_TO      = 'support@veloxpeps.com';
 
 const KNOWN_ADMIN_EMAILS = new Set([
   (process.env.ADMIN_EMAIL || '').toLowerCase(),
@@ -40,10 +36,10 @@ async function isAdmin(req) {
 }
 
 // Representative data so every template renders with real-looking content.
-function sample(to) {
+function sample() {
   const order = {
     customer_name: 'Test Researcher',
-    customer_email: to,
+    customer_email: TEST_TO,
     total: 89.97,
     items: [
       { name: 'Retatrutide', slug: 'retatrutide', size: '10mg', qty: 1, price: 59.99 },
@@ -86,13 +82,11 @@ module.exports = async function handler(req, res) {
   const type = String(body.type || '').trim();
   // Abandoned-cart sequence stage: 1 (30 min), 2 (3 h), 3 (12 h, carries 15% code).
   const stage = Math.min(3, Math.max(1, parseInt(body.stage, 10) || 1));
-  const reqTo = String(body.to || '').toLowerCase().trim();
-  const testTo = EMAIL_RE.test(reqTo) ? reqTo : DEFAULT_TEST_TO;
-  const { order, links } = sample(testTo);
+  const { order, links } = sample();
 
   let email;
   try {
-    if (type === 'welcome')        email = buildWelcomeEmail(2, { email: testTo }, links);
+    if (type === 'welcome')        email = buildWelcomeEmail(2, { email: TEST_TO }, links);
     else if (type === 'abandoned') {
       // Only stage 3 shows a discount code; stages 1 & 2 must never carry one
       // (an incentive that early just trains customers to abandon).
@@ -112,14 +106,14 @@ module.exports = async function handler(req, res) {
 
   try {
     const r = await sendMail({
-      to: testTo,
+      to: TEST_TO,
       subject: '[TEST] ' + email.subject,
       html: email.html,
       text: email.text,
       flow: 'test',     // excluded from marketing analytics
       track: false,     // don't rewrite links for a preview
     });
-    return res.status(200).json({ ok: !!(r && r.ok), to: testTo, type, stage: type === 'abandoned' ? stage : undefined, subject: '[TEST] ' + email.subject });
+    return res.status(200).json({ ok: !!(r && r.ok), to: TEST_TO, type, stage: type === 'abandoned' ? stage : undefined, subject: '[TEST] ' + email.subject });
   } catch (e) {
     console.error('[admin/send-test send]', e.message);
     return res.status(500).json({ error: 'Send failed: ' + e.message });
