@@ -97,7 +97,8 @@
     var rate = discQty >= 4 ? 0.15 : (discQty === 3 ? 0.10 : (discQty === 2 ? 0.05 : 0));
     var volSaving = Math.round(discBase * rate * 100) / 100;
     var discSub = Math.max(0, subtotal - volSaving);
-    var shipping = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    var isMember = (window.VELOX_MEMBER_PCT || 0) > 0;   // Velox Peps Pro = free shipping
+    var shipping = (isMember || discSub >= FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
     var total = discSub + shipping;
 
     if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
@@ -144,11 +145,14 @@
       n.style.cssText = 'margin:0 0 18px;padding:12px 16px;border:1px solid #1a1a1a;border-radius:8px;background:#0d0d0d;font-size:13px;color:#9CA3AF';
       itemsEl.parentNode.insertBefore(n, itemsEl);
     }
+    var memberFree = (window.VELOX_MEMBER_PCT || 0) > 0;
     var remaining = FREE_THRESHOLD - subtotal;
-    var pct = Math.max(0, Math.min(100, (subtotal / FREE_THRESHOLD) * 100));
-    var msg = remaining > 0
-      ? 'You’re <strong style="color:#fff">' + fmt(remaining) + '</strong> away from <strong style="color:#01D3A0">free UK shipping</strong>'
-      : '<strong style="color:#01D3A0">✓ You’ve unlocked free UK shipping</strong>';
+    var pct = memberFree ? 100 : Math.max(0, Math.min(100, (subtotal / FREE_THRESHOLD) * 100));
+    var msg = memberFree
+      ? '<strong style="color:#01D3A0">✓ Free UK shipping included with Velox Peps Pro</strong>'
+      : (remaining > 0
+        ? 'You’re <strong style="color:#fff">' + fmt(remaining) + '</strong> away from <strong style="color:#01D3A0">free UK shipping</strong>'
+        : '<strong style="color:#01D3A0">✓ You’ve unlocked free UK shipping</strong>');
     n.innerHTML = '<div style="margin-bottom:8px">' + msg + '</div>' +
       '<div style="height:6px;background:#1a1a1a;border-radius:99px;overflow:hidden">' +
       '<div style="height:100%;width:' + pct.toFixed(0) + '%;background:#01D3A0;border-radius:99px;transition:width .3s"></div></div>';
@@ -163,5 +167,8 @@
   }
 
   render();
+  // Re-render once Velox Peps Pro status resolves (free shipping + member prices
+  // appear without a manual refresh).
+  try { window.addEventListener('velox:member', render); } catch (e) {}
 
 }());

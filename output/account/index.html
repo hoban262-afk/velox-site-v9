@@ -159,6 +159,11 @@
         <div class="pts-card"><div class="pts-label" id="ov-next-label">To next tier</div><div class="pts-value" id="ov-next">—</div><div class="prog"><div class="prog-bar" id="ov-prog" style="width:0%"></div></div></div>
       </div>
 
+      <div class="card" id="pro-card" style="display:none">
+        <h3>Velox Peps Pro</h3>
+        <div id="pro-card-body"></div>
+      </div>
+
       <div class="card">
         <h3>How your points work</h3>
         <ul style="margin:0;padding-left:18px;color:#9CA3AF;font-size:13px;line-height:1.95">
@@ -239,5 +244,52 @@
 <script src="/assets/js/core.js"></script>
 <script src="/assets/js/account.js"></script>
   <script src="/assets/js/search.js" defer></script>
+  <script>
+  /* Velox Peps Pro membership card (Overview) — self-contained. */
+  (function () {
+    var SB = 'https://stkjdtyhaxejxqmbzyua.supabase.co';
+    var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
+    var NAMES = { solo: 'Solo Researcher', group: 'Group Researchers', lab: 'Lab Researchers' };
+    var DISC = { solo: 5, group: 10, lab: 25 };
+    async function renderPro() {
+      try {
+        if (!window._sb || !window._sb.auth) return;
+        var s = await window._sb.auth.getSession();
+        var tok = s && s.data && s.data.session && s.data.session.access_token;
+        var uid = s && s.data && s.data.session && s.data.session.user && s.data.session.user.id;
+        if (!tok || !uid) return;
+        var r = await fetch(SB + '/rest/v1/profiles?id=eq.' + uid + '&select=is_pro,pro_tier,pro_plan,pro_until', { headers: { apikey: ANON, Authorization: 'Bearer ' + tok } });
+        var p = r.ok ? (await r.json())[0] : null;
+        var card = document.getElementById('pro-card'), body = document.getElementById('pro-card-body');
+        if (!card || !body) return;
+        card.style.display = '';
+        var active = p && p.is_pro && p.pro_tier && (!p.pro_until || new Date(p.pro_until) > new Date());
+        if (active) {
+          var until = p.pro_until ? new Date(p.pro_until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+          body.innerHTML =
+            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+              '<span class="tier-badge tier-Platinum">' + (NAMES[p.pro_tier] || p.pro_tier) + '</span>' +
+              '<span style="color:#01D3A0;font-weight:700">' + (DISC[p.pro_tier] || '') + '% off everything</span></div>' +
+            '<p style="font-size:13px;color:#9CA3AF;margin:12px 0 6px">Your member pricing + free UK shipping apply automatically across the site' + (p.pro_plan ? (' &middot; billed ' + p.pro_plan) : '') + (until ? (' &middot; active until ' + until) : '') + '.</p>' +
+            '<button class="btn-o danger" id="pro-cancel" style="margin-top:8px">Cancel membership</button>' +
+            '<div class="acc-msg" id="pro-cancel-msg"></div>';
+          var cb = document.getElementById('pro-cancel');
+          if (cb) cb.addEventListener('click', function () {
+            var m = document.getElementById('pro-cancel-msg');
+            if (m) m.innerHTML = 'Pro is billed by a bank standing order, so you cancel it in your <strong style="color:#fff">banking app</strong> (look under standing orders for &ldquo;Velox&rdquo;). Your Pro pricing stays active until ' + (until || 'the end of your billing period') + '. Need a hand? Email <a href="mailto:support@veloxpeps.com" style="color:#01D3A0">support@veloxpeps.com</a>.';
+          });
+        } else {
+          body.innerHTML =
+            '<p style="font-size:13px;color:#9CA3AF;margin:0 0 12px">Get an automatic discount on every order, free tracked UK shipping and first dibs on restocks.</p>' +
+            '<a class="btn-p" href="/pro/" style="display:inline-block;width:auto;padding:11px 22px;text-decoration:none">Explore Velox Peps Pro &rarr;</a>';
+        }
+      } catch (e) {}
+    }
+    if (window._sb && window._sb.auth && window._sb.auth.onAuthStateChange) {
+      window._sb.auth.onAuthStateChange(function () { renderPro(); });
+    }
+    setTimeout(renderPro, 800);
+  }());
+  </script>
 </body>
 </html>

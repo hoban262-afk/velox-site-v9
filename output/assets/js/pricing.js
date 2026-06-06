@@ -85,6 +85,8 @@
 
   getMemberPct().then(function (p) {
     MEMBER_PCT = Number(p) || 0;
+    // Expose for the cart (free shipping) + let it re-render once we know.
+    try { window.VELOX_MEMBER_PCT = MEMBER_PCT; window.dispatchEvent(new Event('velox:member')); } catch (e) {}
     if (MEMBER_PCT > 0) showMemberBanner(MEMBER_PCT);
     hydrateAll();
   });
