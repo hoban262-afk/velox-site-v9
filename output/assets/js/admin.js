@@ -993,6 +993,47 @@
     } catch (e) { if (statusEl && !qp) statusEl.textContent = 'Status unavailable.'; }
   }
 
+  // Wire the backfill button once the status has loaded
+  (function wireXeroBackfill() {
+    var btn = document.getElementById('xero-backfill-btn');
+    if (!btn || btn._wired) return;
+    btn._wired = true;
+    btn.addEventListener('click', async function () {
+      var msg = document.getElementById('xero-backfill-msg');
+      function setMsg(t, ok) { if (msg) { msg.textContent = t; msg.style.color = ok === false ? '#f87171' : ok ? '#01D3A0' : 'var(--t3,#6b7280)'; } }
+      btn.disabled = true; setMsg('Finding unsynced orders…');
+      try {
+        var s = await window._sb.auth.getSession();
+        var token = s && s.data && s.data.session && s.data.session.access_token;
+        // Fetch all paid/dispatched orders with no Xero invoice
+        var { data: rows, error } = await window._sb
+          .from('orders')
+          .select('id, notes')
+          .in('status', ['paid', 'dispatched'])
+          .is('xero_invoice_id', null);
+        if (error) throw new Error(error.message);
+        if (!rows || !rows.length) { setMsg('All orders already synced ✓', true); btn.disabled = false; return; }
+        setMsg('Syncing ' + rows.length + ' order(s)…');
+        var ok = 0, fail = 0;
+        for (var i = 0; i < rows.length; i++) {
+          try {
+            var r = await fetch('/api/xero/create-invoice', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ order_id: rows[i].id }),
+            });
+            var d = await r.json();
+            if (r.ok && d.ok) { ok++; } else { fail++; console.warn('[xero backfill] order', rows[i].notes, d); }
+          } catch (e) { fail++; console.error('[xero backfill]', rows[i].notes, e.message); }
+        }
+        setMsg(ok + ' synced' + (fail ? ', ' + fail + ' failed (see console)' : ' ✓'), fail === 0);
+      } catch (e) {
+        setMsg('Error: ' + e.message, false);
+      }
+      btn.disabled = false;
+    });
+  }());
+
   async function connectXero() {
     var btn = document.getElementById('xero-connect-btn');
     if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
