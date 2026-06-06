@@ -43,6 +43,14 @@
     {
       "path": "/api/agents/support-autoreply",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/agents/daily-briefing",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/agents/weekly-finance",
+      "schedule": "0 9 * * 1"
     }
   ],
   "redirects": [
