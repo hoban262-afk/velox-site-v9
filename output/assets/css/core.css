@@ -5822,21 +5822,21 @@ a.nl[href="/guides/"]::before {
 .cp-hero-main .cp-lede { order: 2; margin-top: 18px; }
 .cp-hero-main .disc-inline { order: 3; margin-top: 14px; }
 
-/* ── Retatrutide flagship card — animated edge shimmer (matches Velox Pro) ── */
+/* ── Retatrutide flagship card — animated edge shimmer (matches Velox Pro).
+   Implemented as a masked ::after ring so it NEVER touches the card's own
+   background or its scroll-reveal animation (which controls opacity). ── */
 @property --proang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
 @keyframes vpProSpin { to { --proang:360deg; } }
-@keyframes vpProGlow { 0%,100%{ box-shadow:0 8px 30px -12px rgba(1,211,160,.30); } 50%{ box-shadow:0 0 22px 1px rgba(1,211,160,.16), 0 12px 38px -10px rgba(1,211,160,.45); } }
-.cc:has(a[href*="compounds/retatrutide"]){
-  border:1.5px solid transparent;
-  background:
-    var(--bg3) padding-box,
-    conic-gradient(from var(--proang),
-      rgba(1,211,160,.20) 0deg, rgba(1,211,160,.20) 80deg,
-      #01D3A0 120deg, #d8fff4 148deg, #ffffff 152deg, #d8fff4 156deg, #01D3A0 184deg,
-      rgba(1,211,160,.20) 232deg, rgba(1,211,160,.20) 360deg) border-box;
-  animation: vpProSpin 3.5s linear infinite, vpProGlow 3s ease-in-out infinite;
+.cc:has(a[href*="compounds/retatrutide"]){ border-color:transparent; box-shadow:0 0 24px -6px rgba(1,211,160,.45); }
+.cc:has(a[href*="compounds/retatrutide"])::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; padding:1.6px; pointer-events:none; z-index:4;
+  background:conic-gradient(from var(--proang),
+    rgba(1,211,160,.18) 0deg, rgba(1,211,160,.18) 80deg,
+    #01D3A0 120deg, #d8fff4 148deg, #ffffff 152deg, #d8fff4 156deg, #01D3A0 184deg,
+    rgba(1,211,160,.18) 232deg, rgba(1,211,160,.18) 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  animation:vpProSpin 3.5s linear infinite;
 }
-.cc:has(a[href*="compounds/retatrutide"]):hover{ border-color:transparent; transform:translateY(-3px); }
-@media (prefers-reduced-motion: reduce){
-  .cc:has(a[href*="compounds/retatrutide"]){ animation:none; box-shadow:0 0 0 1.5px #01D3A0; }
-}
+.cc:has(a[href*="compounds/retatrutide"]):hover{ transform:translateY(-3px); }
+@media (prefers-reduced-motion: reduce){ .cc:has(a[href*="compounds/retatrutide"])::after{ animation:none; } }
