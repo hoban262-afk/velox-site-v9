@@ -42,6 +42,17 @@
   #lock button{ width:220px; background:var(--g); color:#04140f; flex:none; }
   #lockmsg{ color:var(--err); font-size:13px; min-height:16px; }
   .spin{ text-align:center; color:var(--mut); padding:40px; }
+  .vtab{ background:none; border:0; color:var(--mut); font-weight:700; font-size:15px; padding:4px 2px; flex:none; width:auto; cursor:pointer; }
+  .vtab-on{ color:var(--txt); border-bottom:2px solid var(--g); border-radius:0; }
+  .srow{ display:flex; align-items:center; gap:10px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .srow .si{ flex:1; min-width:0; }
+  .srow .si b{ font-size:15px; } .srow .si span{ display:block; font-size:12px; color:var(--mut); }
+  .qty{ font-size:14px; font-weight:800; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .qty.tracked{ background:rgba(1,211,160,.14); color:var(--g); }
+  .qty.low{ background:rgba(240,162,59,.16); color:var(--warn); }
+  .qty.untr{ background:#1d2a2c; color:var(--mut); }
+  .recv{ width:64px; text-align:center; font-size:15px; padding:9px 6px; border-radius:9px; border:1px solid var(--line); background:var(--bg); color:var(--txt); }
+  .b-add{ flex:none; width:auto; padding:9px 14px; background:var(--g); color:#04140f; }
 </style>
 </head>
 <body>
@@ -54,12 +65,19 @@
 </div>
 
 <header hidden id="hdr">
-  <b>Packing</b>
+  <button class="vtab vtab-on" id="tab-pack" type="button">Packing</button>
+  <button class="vtab" id="tab-stock" type="button">Stock</button>
   <span class="pill" id="count">—</span>
 </header>
 <div class="wrap" id="app" hidden>
-  <div id="list"><div class="spin">Loading orders…</div></div>
-  <button class="b-print b-full" id="refresh" style="margin-top:6px">↻ Refresh</button>
+  <div id="view-pack">
+    <div id="list"><div class="spin">Loading orders…</div></div>
+    <button class="b-print b-full" id="refresh" style="margin-top:6px">↻ Refresh</button>
+  </div>
+  <div id="view-stock" hidden>
+    <p style="font-size:13px;color:var(--mut);margin:0 0 14px">When supplier stock arrives, add what you received here. Products with a number are tracked; the count drops automatically as orders ship.</p>
+    <div id="stocklist"><div class="spin">Loading stock…</div></div>
+  </div>
 </div>
 
 <script>
@@ -79,7 +97,7 @@
       if(!r.ok || !d.token){ $('#lockmsg').textContent = d.error || 'Wrong PIN'; return; }
       token = d.token;
       $('#lock').hidden = true; $('#hdr').hidden = false; $('#app').hidden = false;
-      load();
+      load(); loadStock();
     }catch(e){ $('#lockmsg').textContent = 'Network error — try again.'; }
   }
   $('#unlock').addEventListener('click', unlock);
@@ -133,6 +151,43 @@
   function setMsg(id, text, ok){ var el=$('#m-'+cssid(id)); if(el){ el.textContent=text; el.className='msg '+(ok?'ok':'er'); } }
   function cssid(s){ return String(s).replace(/[^a-zA-Z0-9_-]/g,''); }
 
+  // ── Tab switching (Packing / Stock) ──
+  $('#tab-pack').addEventListener('click', function(){ showView('pack'); });
+  $('#tab-stock').addEventListener('click', function(){ showView('stock'); });
+  function showView(v){
+    var pack = v==='pack';
+    $('#view-pack').hidden = !pack; $('#view-stock').hidden = pack;
+    $('#tab-pack').classList.toggle('vtab-on', pack);
+    $('#tab-stock').classList.toggle('vtab-on', !pack);
+    $('#count').style.display = pack ? '' : 'none';
+  }
+
+  // ── Stock / goods-in ──
+  async function loadStock(){
+    try{
+      var r = await api('variants');
+      if(r.status===401){ relock(); return; }
+      var d = await r.json();
+      renderStock(d.variants||[]);
+    }catch(e){ $('#stocklist').innerHTML='<div class="empty">Could not load stock.</div>'; }
+  }
+  function stockKey(slug,size){ return cssid(slug)+'__'+cssid(size); }
+  function renderStock(vs){
+    if(!vs.length){ $('#stocklist').innerHTML='<div class="empty">No products found.</div>'; return; }
+    $('#stocklist').innerHTML = vs.map(function(v){
+      var k = stockKey(v.slug, v.size||'');
+      var tracked = v.stock_qty!==null && v.stock_qty!==undefined;
+      var qcls = !tracked ? 'untr' : (v.low_stock ? 'low' : 'tracked');
+      var qtxt = !tracked ? 'untracked' : (v.stock_qty + ' in stock');
+      return '<div class="srow">'+
+        '<div class="si"><b>'+esc(v.name||v.slug)+'</b><span>'+esc(v.size||'')+'</span></div>'+
+        '<span class="qty '+qcls+'" id="q-'+k+'">'+esc(qtxt)+'</span>'+
+        '<input class="recv" id="r-'+k+'" type="number" min="1" inputmode="numeric" placeholder="+qty">'+
+        '<button class="b-add" onclick="PK.receive(this,\''+esc(v.slug)+'\',\''+esc(v.size||'')+'\')">Add</button>'+
+      '</div>';
+    }).join('');
+  }
+
   window.PK = {
     label: async function(btn, id){
       btn.disabled = true; setMsg(id,'Sending to Click & Drop…',true);
@@ -156,6 +211,24 @@
         if(r.ok && d.ok){ var c=btn.closest('.card'); if(c){ c.style.opacity=.45; } setMsg(id,'Dispatched ✓ customer emailed.',true); setTimeout(load, 900); }
         else { setMsg(id, d.error||'Could not dispatch.', false); btn.disabled=false; }
       }catch(e){ setMsg(id,'Network error.',false); btn.disabled=false; }
+    },
+    receive: async function(btn, slug, size){
+      var k = stockKey(slug, size);
+      var inp = $('#r-'+k);
+      var qty = parseInt(inp && inp.value, 10);
+      if(!qty || qty<=0){ if(inp){ inp.focus(); } return; }
+      btn.disabled = true;
+      try{
+        var r = await api('receive', { method:'POST', body:JSON.stringify({slug:slug, size:size, qty:qty}) });
+        if(r.status===401){ relock(); return; }
+        var d = await r.json().catch(function(){return{};});
+        if(r.ok && d.ok){
+          var q = $('#q-'+k);
+          if(q){ q.textContent = d.stock_qty + ' in stock'; q.className = 'qty ' + (d.low_stock ? 'low' : 'tracked'); }
+          if(inp){ inp.value=''; }
+        } else { window.alert(d.error||'Could not add stock.'); }
+      }catch(e){ window.alert('Network error.'); }
+      btn.disabled = false;
     }
   };
 })();

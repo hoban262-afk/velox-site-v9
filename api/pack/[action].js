@@ -116,6 +116,49 @@ module.exports = async function handler(req, res) {
     return res.status(out.ok ? 200 : 502).json(out);
   }
 
+  // ── variants: current stock levels (for the goods-in screen) ──
+  if (action === 'variants') {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/product_variants?select=slug,name,size,stock_qty,low_stock_threshold,in_stock,low_stock&order=name.asc,size.asc`,
+      { headers: sbHeaders }
+    );
+    const rows = r.ok ? await r.json() : [];
+    return res.status(200).json({ variants: Array.isArray(rows) ? rows : [] });
+  }
+
+  // ── receive: goods-in — add received stock to a variant ──
+  if (action === 'receive') {
+    if (req.method !== 'POST') return res.status(405).end();
+    const slug = String((req.body && req.body.slug) || '').trim();
+    const size = String((req.body && req.body.size) || '').trim();
+    const qty  = parseInt((req.body && req.body.qty), 10);
+    if (!slug || !Number.isFinite(qty) || qty <= 0) return res.status(400).json({ error: 'Pick a product and a positive quantity.' });
+
+    // Load the variant to compute the new stock level + flags.
+    const vr = await fetch(
+      `${SUPABASE_URL}/rest/v1/product_variants?slug=eq.${encodeURIComponent(slug)}&size=eq.${encodeURIComponent(size)}&select=stock_qty,low_stock_threshold&limit=1`,
+      { headers: sbHeaders }
+    );
+    const vrows = vr.ok ? await vr.json() : [];
+    const variant = Array.isArray(vrows) ? vrows[0] : null;
+    if (!variant) return res.status(404).json({ error: 'Product not found.' });
+
+    const threshold = Number(variant.low_stock_threshold);
+    const newQty = (Number(variant.stock_qty) || 0) + qty;
+    const patch = {
+      stock_qty: newQty,
+      low_stock: newQty <= threshold,
+      in_stock: newQty > 0,
+      updated_at: new Date().toISOString(),
+    };
+    const ur = await fetch(
+      `${SUPABASE_URL}/rest/v1/product_variants?slug=eq.${encodeURIComponent(slug)}&size=eq.${encodeURIComponent(size)}`,
+      { method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' }, body: JSON.stringify(patch) }
+    );
+    if (!ur.ok) return res.status(502).json({ error: 'Could not update stock.' });
+    return res.status(200).json({ ok: true, stock_qty: newQty, low_stock: patch.low_stock });
+  }
+
   // ── dispatch: manual fallback — mark dispatched + email customer ──
   if (action === 'dispatch') {
     if (req.method !== 'POST') return res.status(405).end();
