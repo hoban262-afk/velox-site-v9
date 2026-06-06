@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -598,6 +610,21 @@
           <p>In studies on cells and animals, BPC-157 is linked to more VEGFR2 (think of it as a &ldquo;docking point&rdquo; on a cell that tells it to start building new blood vessels) and to a chain of signals called Akt&ndash;eNOS. Together these help endothelial cells (the cells lining the inside of blood vessels) form tiny tubes and help blood flow come back after it has been cut off (ischaemia). BPC-157 is also studied for fine-tuning nitric oxide (a small molecule that helps blood vessels relax and form) and for protecting the gut lining. This focus on building blood supply is why it has so many studies in tendon, ligament, and muscle-healing models. These are research observations only, not therapeutic effects.</p>
           <h3 class="rl-h3">TB-500 &mdash; actin sequestration and cell migration</h3>
           <p>TB-500 comes from Thymosin &beta;4, which grabs hold of loose actin (the &ldquo;scaffolding&rdquo; protein cells use to move) and keeps a ready supply of it on hand. Moving cells use that supply to build the front-edge parts that pull them forward. In wound-healing studies, this is linked to faster movement of skin-building cells (keratinocytes) and blood-vessel-lining cells into the wound. So TB-500 is mostly about <em>cells moving</em>, not about blood-vessel signals.</p>
+          <div class="rl-fig"><svg viewBox="0 0 660 220" role="img" aria-label="Side by side: BPC-157 acts via VEGFR2-Akt-eNOS angiogenesis signalling, TB-500 acts via actin sequestration to drive cell migration">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="20" y="16" width="290" height="40" rx="8" fill="#01D3A0"/><text x="165" y="41" fill="#021" font-size="13" font-weight="700">BPC-157</text>
+              <rect x="350" y="16" width="290" height="40" rx="8" fill="#01D3A0"/><text x="495" y="41" fill="#021" font-size="13" font-weight="700">TB-500</text>
+              <path d="M165 56 V82" stroke="#2a2f3a" stroke-width="2"/><path d="M165 82 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <path d="M495 56 V82" stroke="#2a2f3a" stroke-width="2"/><path d="M495 82 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <rect x="20" y="84" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="165" y="109" fill="#9CA3AF" font-size="12">VEGFR2&ndash;Akt&ndash;eNOS / NO</text>
+              <rect x="350" y="84" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="495" y="109" fill="#9CA3AF" font-size="12">Actin sequestration</text>
+              <path d="M165 124 V150" stroke="#2a2f3a" stroke-width="2"/><path d="M165 150 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <path d="M495 124 V150" stroke="#2a2f3a" stroke-width="2"/><path d="M495 150 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <rect x="20" y="152" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="165" y="177" fill="#9CA3AF" font-size="12">Angiogenesis / blood supply</text>
+              <rect x="350" y="152" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="495" y="177" fill="#9CA3AF" font-size="12">Cell migration / wound closure</text>
+            </g>
+          </svg><div class="rl-fig-cap">Fig 1 — divergent mechanisms: angiogenic signalling vs actin-driven cell movement</div></div>
+
           <h3 class="rl-h3">The verdict on mechanism</h3>
           <p>They do not compete &mdash; they fit together. In studies, BPC-157 helps build the blood vessels, and TB-500 helps move the cells. If a research model needs both, that is exactly when researchers study them together.</p>
         </section>
@@ -616,6 +643,11 @@
                 <tr><td>CAS number</td><td>137525-51-0</td><td>77591-33-4</td></tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="rl-cmp" role="group" aria-label="BPC-157 versus TB-500 attribute cards">
+            <div class="rl-dcard"><h4>BPC-157</h4><p><strong>Origin:</strong> gastric-juice protein fragment<br><strong>Class:</strong> pentadecapeptide (15&nbsp;aa)<br><strong>Mechanism:</strong> VEGFR2&ndash;Akt&ndash;eNOS / NO<br><strong>Focus:</strong> blood-vessel formation, GI protection, tendon/ligament<br><strong>CAS:</strong> 137525-51-0</p></div>
+            <div class="rl-dcard"><h4>TB-500</h4><p><strong>Origin:</strong> Thymosin &beta;4 fragment<br><strong>Class:</strong> actin-binding peptide<br><strong>Mechanism:</strong> actin sequestration &rarr; migration<br><strong>Focus:</strong> cell migration, wound closure, broad repair<br><strong>CAS:</strong> 77591-33-4</p></div>
           </div>
         </section>
 
@@ -653,6 +685,15 @@
           <p><strong>Pick TB-500</strong> when the research is about how cells move, how the actin &ldquo;scaffolding&rdquo; behaves, or how wounds close across many kinds of tissue.</p>
           <p><strong>Study both together</strong> when the model needs blood supply and cell movement at the same time &mdash; which is the reason for the combined research blend.</p>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="BPC-157 vs TB-500 research-choice summary">
+          <div class="rl-carousel-h">Choosing for a research question</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Study BPC-157 for</h4><p>Angiogenesis, the VEGFR2&ndash;eNOS / nitric-oxide signals, GI-lining protection, and tendon, ligament and muscle models.</p></div>
+            <div class="rl-dcard"><h4>Study TB-500 for</h4><p>How cells move, how the actin scaffolding behaves, and how wounds close across many kinds of tissue.</p></div>
+            <div class="rl-dcard"><h4>Study both together</h4><p>When a model needs blood supply and cell movement at once &mdash; the rationale behind the combined research blend.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>

@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Figures / diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -578,6 +590,37 @@
           <h2 class="rl-h2" id="sec-what">What is DSIP?</h2>
           <p><strong>DSIP (short for Delta Sleep-Inducing Peptide) is a peptide &mdash; a short chain of amino acids, the building blocks that make up proteins. It is made of 9 of these building blocks (so scientists call it a nonapeptide; "nona" just means nine), and its order is Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu.</strong> In animal studies, researchers have looked at how it relates to deep sleep and to how the body handles stress. It is sold only as a research reagent (a chemical for lab tests), for in vitro use (test-tube / lab work only) &mdash; never for use in humans or animals.</p>
           <p>Scientists first found DSIP in the blood of rabbits during sleep experiments. Its name comes from "delta waves" &mdash; the slow brain waves your brain makes during deep sleep. DSIP is an endogenous peptide, which just means the body makes it naturally. That makes it a useful tool for studying how small peptides take part in sleep and in the body's hormone signals.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 170" role="img" aria-label="Structure of DSIP: the endogenous nonapeptide Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu, a chain of nine amino acids">
+              <text x="20" y="30" fill="#6B7280" font-family="DM Mono, monospace" font-size="11" letter-spacing="0.08em">NONAPEPTIDE &middot; 9 RESIDUES &middot; ENDOGENOUS</text>
+              <g font-family="DM Mono, monospace" font-size="13" font-weight="700">
+                <g><rect x="20" y="50" width="68" height="48" rx="7" fill="#01D3A0"/><text x="54" y="79" text-anchor="middle" fill="#030407">Trp</text></g>
+                <g><rect x="96" y="50" width="68" height="48" rx="7" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="130" y="79" text-anchor="middle" fill="#D1D5DB">Ala</text></g>
+                <g><rect x="172" y="50" width="68" height="48" rx="7" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="206" y="79" text-anchor="middle" fill="#D1D5DB">Gly</text></g>
+                <g><rect x="248" y="50" width="68" height="48" rx="7" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="282" y="79" text-anchor="middle" fill="#D1D5DB">Gly</text></g>
+                <g><rect x="324" y="50" width="68" height="48" rx="7" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="358" y="79" text-anchor="middle" fill="#D1D5DB">Asp</text></g>
+                <g><rect x="400" y="50" width="68" height="48" rx="7" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="434" y="79" text-anchor="middle" fill="#D1D5DB">Ala</text></g>
+                <g><rect x="476" y="50" width="68" height="48" rx="7" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="510" y="79" text-anchor="middle" fill="#D1D5DB">Ser</text></g>
+                <g><rect x="552" y="50" width="68" height="48" rx="7" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="586" y="79" text-anchor="middle" fill="#D1D5DB">Gly</text></g>
+                <g><rect x="628" y="50" width="68" height="48" rx="7" fill="#01D3A0"/><text x="662" y="79" text-anchor="middle" fill="#030407">Glu</text></g>
+              </g>
+              <g stroke="#2a2f3a" stroke-width="2">
+                <line x1="88" y1="74" x2="96" y2="74"/>
+                <line x1="164" y1="74" x2="172" y2="74"/>
+                <line x1="240" y1="74" x2="248" y2="74"/>
+                <line x1="316" y1="74" x2="324" y2="74"/>
+                <line x1="392" y1="74" x2="400" y2="74"/>
+                <line x1="468" y1="74" x2="476" y2="74"/>
+                <line x1="544" y1="74" x2="552" y2="74"/>
+                <line x1="620" y1="74" x2="628" y2="74"/>
+              </g>
+              <text x="54" y="125" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="10">N-terminus</text>
+              <text x="662" y="125" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="10">C-terminus</text>
+              <text x="358" y="150" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="12" font-weight="700">Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — DSIP is the endogenous nonapeptide Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu</div>
+          </div>
           <p>Even after many years of study, no one is fully sure exactly how DSIP works or which receptor (the "lock" a molecule fits into to send a signal) it acts on. One review even called it a "still unresolved riddle." That unanswered question is part of why scientists keep studying it.</p>
         </section>
         <section class="rl-section" aria-labelledby="sec-mech">
@@ -589,6 +632,51 @@
 
           <h3 class="rl-h3">Sleep-related growth hormone and neuroendocrine signalling</h3>
           <p>DSIP has also been studied for its links to hormones that get released during sleep, including growth hormone (GH), which helps the body grow and repair. Research has described DSIP affecting a signal called somatostatin through a dopamine-based pathway &mdash; one way a sleep-linked peptide could connect to the growth-hormone system. This makes it a handy tool for studying how sleep and hormone release are tied together.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 270" role="img" aria-label="Pathway map of DSIP research associations: slow-wave (delta) sleep modulation; a dopamine-to-somatostatin route linked to sleep-related growth hormone; and stress-response and homeostatic effects, all studied in preclinical models">
+              <!-- DSIP node (active) -->
+              <g font-family="DM Mono, monospace">
+                <rect x="20" y="106" width="118" height="58" rx="10" fill="#01D3A0"/>
+                <text x="79" y="140" text-anchor="middle" fill="#030407" font-size="15" font-weight="700">DSIP</text>
+              </g>
+              <!-- three branches -->
+              <g stroke="#2a2f3a" stroke-width="2" fill="none">
+                <path d="M138 120 C 190 90, 210 56, 250 56"/>
+                <path d="M138 135 L 250 135"/>
+                <path d="M138 150 C 190 180, 210 214, 250 214"/>
+              </g>
+              <path d="M250 56 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <path d="M250 135 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <path d="M250 214 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <!-- branch 1: slow-wave sleep -->
+              <g font-family="DM Mono, monospace">
+                <rect x="255" y="30" width="180" height="52" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="345" y="55" text-anchor="middle" fill="#F9FAFB" font-size="13" font-weight="700">slow-wave (delta) sleep</text>
+                <text x="345" y="72" text-anchor="middle" fill="#6B7280" font-size="10">+ REM in rodent models</text>
+              </g>
+              <!-- branch 2: dopamine -> somatostatin -> GH -->
+              <g font-family="DM Mono, monospace">
+                <rect x="255" y="109" width="118" height="52" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="314" y="132" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">dopamine &rarr;</text>
+                <text x="314" y="150" text-anchor="middle" fill="#D1D5DB" font-size="11">somatostatin</text>
+              </g>
+              <g stroke="#2a2f3a" stroke-width="2" fill="none"><path d="M373 135 L 520 135"/></g>
+              <path d="M520 135 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <g font-family="DM Mono, monospace">
+                <rect x="525" y="109" width="170" height="52" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="610" y="132" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">growth hormone</text>
+                <text x="610" y="150" text-anchor="middle" fill="#6B7280" font-size="10">sleep-related release</text>
+              </g>
+              <!-- branch 3: stress / homeostasis -->
+              <g font-family="DM Mono, monospace">
+                <rect x="255" y="188" width="180" height="52" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="345" y="211" text-anchor="middle" fill="#F9FAFB" font-size="13" font-weight="700">stress &amp; homeostasis</text>
+                <text x="345" y="228" text-anchor="middle" fill="#6B7280" font-size="10">antioxidant / balance</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 — DSIP research associations: sleep, a dopamine&ndash;somatostatin route to GH, and stress/homeostasis</div>
+          </div>
 
           <h3 class="rl-h3">Stress, antioxidant and homeostatic effects</h3>
           <p>Apart from sleep, DSIP has been looked at for how it relates to calming the body's stress response, to antioxidant activity (mopping up cell-damaging particles), and to keeping the body's internal systems in balance, all in animal studies. Together, these make DSIP a research reagent useful for studying how a peptide can affect several of the body's natural rhythms.</p>
@@ -627,6 +715,28 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies DSIP as a lyophilised (freeze-dried) powder. Each batch is tested by HPLC (a lab method that measures how pure something is) and comes out at 98.7% pure or higher. A batch certificate of analysis (a lab report for that exact batch) is available if you ask. To mix the powder back into a liquid (called reconstituting it), see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Sold only as a research reagent for in vitro (lab-only) use.</p>
         </section>
+        <div class="rl-carousel" aria-label="DSIP research summary">
+          <div class="rl-carousel-h">DSIP at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard">
+              <h4>Structure</h4>
+              <p>The endogenous nonapeptide Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu — nine amino acids, first isolated in sleep experiments.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Best-known association</h4>
+              <p>Linked in rodent and rabbit studies to slow-wave (delta) sleep modulation, with stabilised analogues also raising REM sleep.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Wider research</h4>
+              <p>Sleep-related growth-hormone signalling via a dopamine&ndash;somatostatin route, plus stress-response, antioxidant and homeostatic effects.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Open question</h4>
+              <p>Its precise receptor and mechanism remain incompletely defined — part of why DSIP is still studied. Lyophilised, &ge;98.7% HPLC, in vitro use only.</p>
+            </div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs"><h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>
             <li>&ldquo;Evidence for a role of delta-sleep-inducing peptide in slow-wave sleep and sleep-related growth hormone release in the rat.&rdquo; 1988. PMID: <a href="https://pubmed.ncbi.nlm.nih.gov/3368469/" target="_blank" rel="noopener noreferrer">3368469</a></li>

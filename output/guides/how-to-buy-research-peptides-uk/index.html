@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── On-page diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -572,6 +584,40 @@
           <h2 class="rl-h2" id="sec-short">The short answer</h2>
           <p><strong>Buying research peptides safely in the UK comes down to three checks. First, make sure the seller has every batch tested by an outside lab and gives you a Certificate of Analysis (a lab report proving what is in the vial). Second, make sure they are based in the UK, ship with tracking, and use safe payment. Third, make sure the products are sold only as research chemicals for in vitro use (test-tube / lab work only).</strong> Everything below explains how to check each one. (A peptide is a short chain of amino acids, the building blocks that make up proteins.)</p>
           <p>Quality is very different from seller to seller. The goal is to buy from one who proves what is in the vial &mdash; not one who just says "trust us."</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 160" role="img" aria-label="The three checks from this page: check 1 third-party HPLC testing and a batch certificate of analysis; check 2 UK-based tracked dispatch and secure payment; check 3 research-use-only compliance.">
+              <g font-family="DM Mono, monospace">
+                <!-- check 1 -->
+                <rect x="16" y="46" width="200" height="74" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="1.5"/>
+                <circle cx="44" cy="70" r="13" fill="#06140f" stroke="#01D3A0" stroke-width="1.5"/>
+                <text x="44" y="74" text-anchor="middle" fill="#01D3A0" font-size="11" font-weight="700">1</text>
+                <text x="66" y="68" fill="#01D3A0" font-size="11" font-weight="700">VERIFY TESTING</text>
+                <text x="32" y="95" fill="#9CA3AF" font-size="9.5">Third-party HPLC +</text>
+                <text x="32" y="109" fill="#9CA3AF" font-size="9.5">batch-specific CoA</text>
+                <!-- check 2 -->
+                <rect x="260" y="46" width="200" height="74" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="1.5"/>
+                <circle cx="288" cy="70" r="13" fill="#06140f" stroke="#01D3A0" stroke-width="1.5"/>
+                <text x="288" y="74" text-anchor="middle" fill="#01D3A0" font-size="11" font-weight="700">2</text>
+                <text x="310" y="68" fill="#01D3A0" font-size="11" font-weight="700">UK + PAYMENT</text>
+                <text x="276" y="95" fill="#9CA3AF" font-size="9.5">UK dispatch, tracked</text>
+                <text x="276" y="109" fill="#9CA3AF" font-size="9.5">courier, secure payment</text>
+                <!-- check 3 -->
+                <rect x="504" y="46" width="200" height="74" rx="8" fill="#0d1117" stroke="#01D3A0" stroke-width="1.5"/>
+                <circle cx="532" cy="70" r="13" fill="#06140f" stroke="#01D3A0" stroke-width="1.5"/>
+                <text x="532" y="74" text-anchor="middle" fill="#01D3A0" font-size="11" font-weight="700">3</text>
+                <text x="554" y="68" fill="#01D3A0" font-size="11" font-weight="700">RESEARCH USE</text>
+                <text x="520" y="95" fill="#9CA3AF" font-size="9.5">Sold for in vitro use</text>
+                <text x="520" y="109" fill="#9CA3AF" font-size="9.5">only, not human/animal</text>
+                <!-- arrows -->
+                <g fill="#2a2f3a">
+                  <path d="M220 83 L256 83 L249 77 L249 89 Z M221 80 L250 80 L250 86 L221 86 Z"/>
+                  <path d="M464 83 L500 83 L493 77 L493 89 Z M465 80 L494 80 L494 86 L465 86 Z"/>
+                </g>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — the buyer's three checks, in order</div>
+          </div>
         </section>
         <section class="rl-section" aria-labelledby="sec-test">
           <h2 class="rl-h2" id="sec-test">Check 1 &mdash; third-party HPLC testing and a CoA</h2>
@@ -591,7 +637,25 @@
           <h2 class="rl-h2" id="sec-redflags">Red flags to avoid</h2>
           <p>Be careful with sellers who: make medical claims, give dosing advice, or talk about human use; can't give you a CoA for your exact batch; show no outside lab testing; have no clear UK address or shipping info; or push you to type card details into an unsafe checkout page. Any one of these is a reason to shop somewhere else.</p>
           <p>A good order, on the other hand, turns up fast and tracked, with a CoA showing the HPLC purity and the mass-spec identity check for your exact batch &mdash; just what you need to trust what you are working with. You can see this on any Velox product page, such as <a href="/compounds/retatrutide/">Retatrutide</a> or <a href="/compounds/bpc-157/">BPC-157</a>, both shipped with batch paperwork. For a look at the most-studied compounds, see the <a href="/guides/most-popular-research-peptides-uk/">most popular research peptides in the UK</a>.</p>
+
+          <div class="rl-cards" role="group" aria-label="What to look for in a good seller">
+            <div class="rl-dcard"><h4>A batch-specific CoA</h4><p>A lab report for the exact batch you receive, showing HPLC purity and mass-spectrometry identity — not just a general statement about the product.</p></div>
+            <div class="rl-dcard"><h4>Independent lab testing</h4><p>Each batch checked by a separate, outside lab using HPLC (how pure) and mass spectrometry (that it is the right peptide).</p></div>
+            <div class="rl-dcard"><h4>UK base and tracked dispatch</h4><p>A clear UK address, stated shipping times, and a tracked courier — avoiding customs delays and import uncertainty.</p></div>
+            <div class="rl-dcard"><h4>Secure payment</h4><p>Methods where you don't type card details into an unfamiliar site, such as Pay by Bank approved inside your own banking app.</p></div>
+            <div class="rl-dcard"><h4>Clear research-use framing</h4><p>The seller states plainly that products are sold for in vitro use only, for trained researchers, never for use in humans or animals.</p></div>
+          </div>
         </section>
+        <div class="rl-carousel" role="group" aria-label="Buying checklist summary">
+          <div class="rl-carousel-h">The buyer's checklist, summarised</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>1 — Verify testing</h4><p>Look for third-party HPLC testing and a batch-specific Certificate of Analysis for the exact lot you receive. Velox tests every batch to 99%+ and includes the CoA.</p></div>
+            <div class="rl-dcard"><h4>2 — Check UK dispatch &amp; payment</h4><p>UK-based, tracked courier, and secure payment that doesn't store card details. Velox ships within 24 hours via Royal Mail Tracked 24 and uses Pay by Bank.</p></div>
+            <div class="rl-dcard"><h4>3 — Confirm research-use compliance</h4><p>Products must be sold as research chemicals for in vitro use only, for trained researchers — the lawful way these compounds are sold in the UK.</p></div>
+            <div class="rl-dcard"><h4>Walk away from red flags</h4><p>Medical or dosing claims, no CoA for your batch, no outside testing, no clear UK address, or an unsafe checkout are all reasons to shop elsewhere.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section" aria-labelledby="sec-faq">
           <h2 class="rl-h2" id="sec-faq">Frequently asked questions</h2>
           <div class="rl-faq-item"><div class="rl-faq-q">How do I know research peptides are pure?</div><div class="rl-faq-a">Look for a batch-specific Certificate of Analysis showing third-party HPLC purity and mass-spectrometry identity confirmation. Velox Peptides HPLC-tests every batch to &ge;99% and includes the CoA with each order.</div></div>

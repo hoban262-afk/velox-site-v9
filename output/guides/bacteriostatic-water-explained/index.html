@@ -476,6 +476,17 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
+    @media (max-width:480px){.rl-cmp{grid-template-columns:1fr}}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -594,17 +605,91 @@
           <p><strong>Distilled</strong> water has been boiled into steam and condensed back into liquid to remove minerals and impurities. It is very pure in terms of dissolved salts, but distillation does not make it sterile and it has no preservative &mdash; so it can still carry or grow microbes.</p>
           <h3 class="rl-h3">Bacteriostatic water</h3>
           <p>Bacteriostatic water is sterile <em>and</em> preserved with benzyl alcohol. It is the only one of the three that resists bacterial growth after opening, which is why it is the usual choice for a multi-use lab vial.</p>
+
+          <div class="rl-cmp">
+            <div class="rl-dcard">
+              <h4>Bacteriostatic water</h4>
+              <p>Sterile and preserved with 0.9% benzyl alcohol. Resists bacterial growth after opening, so it suits a multi-use vial.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Sterile water</h4>
+              <p>Free of living microbes when made, but no preservative. Generally treated as single-use once opened.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Distilled water</h4>
+              <p>Boiled and condensed to remove minerals. Pure in salts, but not sterile and unpreserved &mdash; can still carry microbes.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>The deciding factor</h4>
+              <p>Only bacteriostatic water is both sterile and preserved, the combination researchers want for a reusable lab solvent.</p>
+            </div>
+          </div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-why">
           <h2 class="rl-h2" id="sec-why">Why It's Used to Reconstitute Lyophilised Peptides</h2>
           <p>Research peptides are supplied as a <strong>lyophilised</strong> (freeze-dried) powder. To use one on the bench, a researcher must <strong>reconstitute</strong> it &mdash; mix the dry powder back into a liquid. Bacteriostatic water is a common choice for this in vitro step for two reasons: it is sterile, so it will not introduce contamination, and its preservative keeps the resulting solution cleaner for longer, which extends how long the prepared sample stays usable in the lab. Our <a href="/tools/reconstitution-calculator/">reconstitution calculator</a> helps work out how much water to add to reach a target concentration, and you can read the wider context in <a href="/guides/peptide-storage-and-handling/">Peptide Storage &amp; Handling</a>.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 200" role="img" aria-label="Reconstitution flow: lyophilised peptide powder plus bacteriostatic water gives a clear solution">
+              <!-- Vial of powder -->
+              <g transform="translate(40,36)">
+                <rect x="18" y="22" width="48" height="92" rx="6" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/>
+                <rect x="24" y="78" width="36" height="36" rx="3" fill="#01D3A0" opacity="0.18"/>
+                <rect x="22" y="6" width="40" height="16" rx="3" fill="#2a2f3a"/>
+                <rect x="30" y="0" width="24" height="9" rx="2" fill="#3a4150"/>
+                <text x="42" y="138" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="13" font-weight="600">peptide vial</text>
+                <text x="42" y="156" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="11">lyophilised</text>
+              </g>
+              <text x="150" y="92" text-anchor="middle" fill="#01D3A0" font-size="30" font-weight="700">+</text>
+              <!-- BAC water -->
+              <g transform="translate(178,36)">
+                <rect x="18" y="22" width="48" height="92" rx="6" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/>
+                <rect x="24" y="44" width="36" height="70" rx="3" fill="#3b82f6" opacity="0.22"/>
+                <rect x="22" y="6" width="40" height="16" rx="3" fill="#2a2f3a"/>
+                <text x="42" y="138" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="13" font-weight="600">BAC water</text>
+                <text x="42" y="156" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="11">sterile + preserved</text>
+              </g>
+              <!-- Arrow -->
+              <g transform="translate(300,84)">
+                <line x1="0" y1="6" x2="70" y2="6" stroke="#01D3A0" stroke-width="2.5"/>
+                <path d="M70 6 L60 1 L60 11 Z" fill="#01D3A0"/>
+                <text x="35" y="-6" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="11">swirl gently</text>
+              </g>
+              <!-- Result -->
+              <g transform="translate(420,36)">
+                <rect x="18" y="22" width="48" height="92" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <rect x="24" y="40" width="36" height="74" rx="3" fill="#01D3A0" opacity="0.28"/>
+                <rect x="22" y="6" width="40" height="16" rx="3" fill="#2a2f3a"/>
+                <text x="42" y="138" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="13" font-weight="700">clear solution</text>
+                <text x="42" y="156" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="11">ready to draw</text>
+              </g>
+              <!-- Note -->
+              <g transform="translate(520,52)">
+                <rect x="0" y="0" width="150" height="84" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="75" y="30" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">preservative keeps</text>
+                <text x="75" y="48" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">the vial usable</text>
+                <text x="75" y="66" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">across many draws</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 &mdash; powder + bacteriostatic water &rarr; a clear, reusable in vitro solution</div>
+          </div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-handling">
           <h2 class="rl-h2" id="sec-handling">Handling &amp; Storage</h2>
           <p>As general lab practice, bacteriostatic water is stored at room temperature away from direct light unless the product label says otherwise. Wipe the rubber stopper with an alcohol swab before drawing from it, and use a clean tip or needle each time to avoid introducing contamination. Once a vial is opened, the preservative limits but does not permanently prevent spoilage, so an opened vial is commonly used within about 28 days &mdash; always follow the instructions on the specific product. Velox supplies <a href="/supplies/bacteriostatic-water/">bacteriostatic water</a> for in vitro laboratory use.</p>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="Bacteriostatic water summary">
+          <p class="rl-carousel-h">In short</p>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>What it is</h4><p>Sterile water with 0.9% benzyl alcohol, a preservative that stops introduced bacteria from multiplying.</p></div>
+            <div class="rl-dcard"><h4>Why it wins</h4><p>It is the only common option that is both sterile and preserved, so a single vial stays usable across many draws.</p></div>
+            <div class="rl-dcard"><h4>How it is used</h4><p>It reconstitutes lyophilised research peptides &mdash; mixing the dry powder back into a clear in vitro solution.</p></div>
+            <div class="rl-dcard"><h4>Handling</h4><p>Store at room temperature away from light, swab the stopper, use a clean tip, and follow the product label.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section" aria-labelledby="sec-faq">
           <h2 class="rl-h2" id="sec-faq">Frequently Asked Questions</h2>

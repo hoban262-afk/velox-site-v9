@@ -476,6 +476,15 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig{background:#0a0d12;border:1px solid #1a1d24;border-radius:8px;padding:22px 20px 16px;margin:24px 0}
+    .rl-fig svg{width:100%;height:auto;display:block}
+    .rl-fig-cap{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#4B5563;margin-top:14px;text-align:center}
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -627,6 +636,25 @@
             </table>
           </div>
           <p>Each one builds on the last. Tirzepatide does what semaglutide does (acts on GLP-1) and adds a second receptor, GIP. Retatrutide does both of those and adds a third, glucagon. In animal studies, the glucagon receptor has been linked to how the liver handles sugar and how much energy the body burns. These are research observations only, not therapeutic effects.</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 680 200" role="img" aria-label="Single, dual and triple receptor agonism: semaglutide activates GLP-1 only, tirzepatide activates GLP-1 and GIP, retatrutide activates GLP-1, GIP and glucagon">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="20" y="40" width="200" height="130" rx="10" fill="#0d1117" stroke="#2a2f3a"/>
+              <text x="120" y="66" fill="#D1D5DB" font-size="13" font-weight="700">Semaglutide</text>
+              <text x="120" y="85" fill="#6B7280" font-size="10">single agonist</text>
+              <rect x="50" y="104" width="140" height="22" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="119" fill="#01D3A0" font-size="11">GLP-1</text>
+              <rect x="240" y="40" width="200" height="130" rx="10" fill="#0d1117" stroke="#2a2f3a"/>
+              <text x="340" y="66" fill="#D1D5DB" font-size="13" font-weight="700">Tirzepatide</text>
+              <text x="340" y="85" fill="#6B7280" font-size="10">dual agonist</text>
+              <rect x="270" y="100" width="140" height="20" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="340" y="114" fill="#01D3A0" font-size="11">GLP-1</text>
+              <rect x="270" y="126" width="140" height="20" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="340" y="140" fill="#01D3A0" font-size="11">GIP</text>
+              <rect x="460" y="40" width="200" height="130" rx="10" fill="#06140f" stroke="#01D3A0"/>
+              <text x="560" y="66" fill="#fff" font-size="13" font-weight="700">Retatrutide</text>
+              <text x="560" y="85" fill="#01D3A0" font-size="10">triple agonist</text>
+              <rect x="490" y="94" width="140" height="18" rx="4" fill="#01D3A0"/><text x="560" y="107" fill="#021" font-size="10" font-weight="700">GLP-1</text>
+              <rect x="490" y="116" width="140" height="18" rx="4" fill="#01D3A0"/><text x="560" y="129" fill="#021" font-size="10" font-weight="700">GIP</text>
+              <rect x="490" y="138" width="140" height="18" rx="4" fill="#01D3A0"/><text x="560" y="151" fill="#021" font-size="10" font-weight="700">Glucagon</text>
+            </g></svg><div class="rl-fig-cap">Single &rarr; dual &rarr; triple receptor agonism</div></div>
         </section>
 
         <!-- ── What the clinical trials reported ── -->
@@ -727,6 +755,17 @@
           <h2 class="rl-h2" id="sec-reta">Retatrutide — triple GLP-1 / GIP / glucagon agonist</h2>
           <p>Retatrutide (also called LY3437943) takes the two-receptor model and adds a third receptor: glucagon. On its own, switching on the glucagon receptor raises blood sugar — the opposite of what GLP-1 does. So why combine them? The idea researchers are testing is that all three together might burn more energy and affect fat handling more than two receptors alone, while the insulin released by the GLP-1 and GIP pathways at the same time helps keep blood sugar in check.<span class="rl-cite"><a href="#ref-1">[1]</a></span> Because it acts on all three receptors at once, retatrutide is the go-to choice for researchers studying combined receptor effects that you cannot get from one- or two-receptor compounds. These are research observations only, not therapeutic effects.</p>
           <p>For more on how retatrutide works, what studies have found, and how to handle it in the lab, see the full <a href="/guides/retatrutide/">Retatrutide research overview</a>, or view the <a href="/compounds/retatrutide/">Retatrutide product page</a> for HPLC-verified supply details.</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 640 220" role="img" aria-label="Retatrutide is a single molecule that activates the GLP-1, GIP and glucagon receptors at the same time">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="40" y="30" width="160" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="58" fill="#01D3A0" font-size="14">GLP-1 R</text>
+              <rect x="40" y="90" width="160" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="118" fill="#01D3A0" font-size="14">GIP R</text>
+              <rect x="40" y="150" width="160" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="178" fill="#01D3A0" font-size="14">Glucagon R</text>
+              <rect x="430" y="86" width="170" height="54" rx="10" fill="#01D3A0"/><text x="515" y="118" fill="#021" font-size="15" font-weight="700">RETATRUTIDE</text>
+              <path d="M200 53 H360 V108 H430" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M200 113 H430" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M200 173 H360 V118 H430" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+            </g></svg><div class="rl-fig-cap">One molecule, three receptor targets</div></div>
         </section>
 
         <!-- ── Choosing ── -->
@@ -734,6 +773,15 @@
           <h2 class="rl-h2" id="sec-choose">Choosing a compound for a research model</h2>
           <p>Which one to pick depends on the question you are asking. To study the GLP-1 pathway on its own, semaglutide is the cleanest single-receptor choice. To see how GIP changes the way GLP-1 signals, tirzepatide gives you the two-receptor case. To look at all three receptors working together — including glucagon — retatrutide is the only one of the three that fits. Velox Peptides supplies all of these compounds as HPLC-verified lyophilised (freeze-dried) reagents, each with a batch certificate of analysis (a lab report proving what is in the vial). Browse the full <a href="/compounds/metabolic/">incretin &amp; receptor research</a> category for the complete range.</p>
         </section>
+
+        <div class="rl-carousel"><div class="rl-carousel-h">Three generations at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Semaglutide &mdash; single agonist</h4><p>Activates GLP-1 only. Published trial reported ~14.9% body-weight reduction at 2.4 mg over 68 weeks.</p></div>
+            <div class="rl-dcard"><h4>Tirzepatide &mdash; dual agonist</h4><p>Activates GLP-1 + GIP. Published trial reported ~22.5% body-weight reduction at 15 mg over 72 weeks.</p></div>
+            <div class="rl-dcard"><h4>Retatrutide &mdash; triple agonist</h4><p>Activates GLP-1 + GIP + glucagon. Published trial reported 28.3% body-weight reduction at 12 mg over 80 weeks.</p></div>
+            <div class="rl-dcard"><h4>Research framing</h4><p>Figures are published clinical-trial observations, not therapeutic claims. Compounds are supplied for in vitro research use only.</p></div>
+          </div>
+        </div>
 
         <!-- ── References ── -->
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">

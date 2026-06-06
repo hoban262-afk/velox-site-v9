@@ -141,6 +141,15 @@
     .rl-sb-related-cat { font-size: 0.68rem; font-family: 'DM Mono', monospace; color: #4B5563; letter-spacing: 0.06em; }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig{background:#0a0d12;border:1px solid #1a1d24;border-radius:8px;padding:22px 20px 16px;margin:24px 0}
+    .rl-fig svg{width:100%;height:auto;display:block}
+    .rl-fig-cap{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#4B5563;margin-top:14px;text-align:center}
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -296,6 +305,19 @@
 
           <p>On its own, glucagon receptor agonism raises blood glucose — which appears contradictory for a metabolic research compound. The mechanistic rationale for including it in a triple agonist is that when the GLP-1 and GIP components simultaneously stimulate insulin secretion (which lowers blood glucose), the glucose-raising effect of the glucagon component is counterbalanced. What remains, researchers hypothesise, is the energy-expenditure and hepatic fat-modulating effects of glucagon receptor activation — without the net hyperglycaemic effect seen with isolated glucagon agonism.</p>
           <p>This hypothesis was first tested systematically by Day et al. (2009) in a co-agonist framework in rodent models,<span class="rl-cite"><a href="#ref-4">[4]</a></span> and subsequently by Pocai et al. (2012) and others. Retatrutide represents the first triple GIP/GLP-1/glucagon receptor agonist to be studied in this framework at clinical trial scale — making the glucagon receptor the distinguishing feature that differentiates it from tirzepatide (which does not engage the glucagon receptor).</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 560 180" role="img" aria-label="Tirzepatide is a dual agonist engaging GLP-1 and GIP, while retatrutide adds the glucagon receptor as a third pathway">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="20" y="30" width="240" height="120" rx="10" fill="#0d1117" stroke="#2a2f3a"/>
+              <text x="140" y="54" fill="#D1D5DB" font-size="13" font-weight="700">Tirzepatide (dual)</text>
+              <rect x="50" y="74" width="180" height="22" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="140" y="89" fill="#01D3A0" font-size="11">GLP-1</text>
+              <rect x="50" y="104" width="180" height="22" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="140" y="119" fill="#01D3A0" font-size="11">GIP</text>
+              <rect x="300" y="30" width="240" height="120" rx="10" fill="#06140f" stroke="#01D3A0"/>
+              <text x="420" y="54" fill="#fff" font-size="13" font-weight="700">Retatrutide (triple)</text>
+              <rect x="330" y="66" width="180" height="20" rx="4" fill="#01D3A0"/><text x="420" y="80" fill="#021" font-size="10" font-weight="700">GLP-1</text>
+              <rect x="330" y="90" width="180" height="20" rx="4" fill="#01D3A0"/><text x="420" y="104" fill="#021" font-size="10" font-weight="700">GIP</text>
+              <rect x="330" y="114" width="180" height="20" rx="4" fill="#01D3A0"/><text x="420" y="128" fill="#021" font-size="10" font-weight="700">Glucagon</text>
+            </g></svg><div class="rl-fig-cap">The glucagon receptor is what sets retatrutide apart from dual agonists</div></div>
         </section>
 
         <!-- Section 6: Why three together -->
@@ -334,6 +356,17 @@
 
           <p>Coskun et al. (2022) characterised the full receptor profile of LY3437943 and concluded that adding the glucagon receptor component to the GIP/GLP-1 framework produced measurable additional effects in preclinical models beyond what was seen with the GIP/GLP-1 dual framework alone. The authors proposed that the glucagon receptor agonism introduced an energy-expenditure axis that contributed to outcomes in the diet-induced obese mouse model studied.<span class="rl-cite"><a href="#ref-1">[1]</a></span></p>
           <p>It is important to note that these are preclinical observations in rodent models. Whether the mechanistic interactions translate comparably to in vitro human cell systems or clinical outcomes is a separate research question — one that Phase 2 and planned Phase 3 trials are designed to investigate.</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 660 230" role="img" aria-label="Retatrutide is a single molecule that simultaneously activates the GLP-1, GIP and glucagon receptors, with each pathway contributing a distinct research-model effect">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="30" y="24" width="180" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="45" fill="#01D3A0" font-size="13">GLP-1 R</text><text x="120" y="62" fill="#6B7280" font-size="9">insulin / appetite</text>
+              <rect x="30" y="92" width="180" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="113" fill="#01D3A0" font-size="13">GIP R</text><text x="120" y="130" fill="#6B7280" font-size="9">insulin / adipose</text>
+              <rect x="30" y="160" width="180" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="181" fill="#01D3A0" font-size="13">Glucagon R</text><text x="120" y="198" fill="#6B7280" font-size="9">energy expenditure</text>
+              <rect x="450" y="91" width="180" height="56" rx="10" fill="#01D3A0"/><text x="540" y="124" fill="#021" font-size="15" font-weight="700">RETATRUTIDE</text>
+              <path d="M210 47 H380 V112 H450" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M210 115 H450" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M210 183 H380 V124 H450" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+            </g></svg><div class="rl-fig-cap">One molecule engaging three receptor pathways</div></div>
         </section>
 
         <!-- Section 7: Key published research -->
@@ -373,6 +406,15 @@
           </div>
           <p style="font-size:0.82rem;color:#6B7280;">Supplied as a research reagent only. Not a medicine. Not evaluated by the MHRA or FDA. Not for human or veterinary use. See our <a href="/legal/research-use-policy/">Research Use Policy</a>.</p>
         </section>
+
+        <div class="rl-carousel"><div class="rl-carousel-h">Mechanism at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>GLP-1 receptor</h4><p>In research models, linked to glucose-dependent insulin secretion, appetite signalling and slower gastric emptying. Shared with tirzepatide.</p></div>
+            <div class="rl-dcard"><h4>GIP receptor</h4><p>Linked to amplified insulin secretion and adipose-tissue signalling in preclinical models. Also shared with tirzepatide.</p></div>
+            <div class="rl-dcard"><h4>Glucagon receptor</h4><p>Linked to energy expenditure (thermogenesis) and hepatic glucose/lipid signalling &mdash; the pathway unique to retatrutide among these compounds.</p></div>
+            <div class="rl-dcard"><h4>Triple agonist</h4><p>Retatrutide (LY3437943) engages all three receptors with one molecule. Supplied for in vitro research use only.</p></div>
+          </div>
+        </div>
 
         <!-- Section 9: References -->
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">

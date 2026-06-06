@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -590,11 +602,39 @@
           <h2 class="rl-h2" id="sec-what-is">What is GHK-Cu?</h2>
           <p><strong>GHK-Cu</strong> (also called copper-tripeptide-1) is a peptide &mdash; a short chain of amino acids, the building blocks that make up proteins. This one is made of just 3 of those building blocks (<strong>glycine, histidine and lysine</strong>), so it is called a tripeptide ("tri" means three). It is joined to a single copper ion, which is what the "Cu" stands for (Cu is the chemical symbol for copper). The "Cu" copper part is why scientists call it GHK-Cu. It was first found in human blood plasma (the liquid part of blood) in the 1970s by two researchers, Pickart and Thaler. In lab dish tests, they saw it could change how liver cells from older donors behaved.<span class="rl-cite"><a href="#ref-1">[1]</a></span></p>
           <p>The amount of GHK in our blood drops as we get older. That is one reason scientists keep studying it as a research tool in models of tissue repair (the body fixing damage), skin-cell biology, and antioxidant pathways (the systems that mop up cell-damaging particles). The lab-made version used for research is chemically the same as the natural one, with the copper part still attached.</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 660 150" role="img" aria-label="GHK-Cu tripeptide structure: glycine, histidine and lysine joined in a chain and bound to a copper ion">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="40" y="54" width="110" height="44" rx="22" fill="#0d1117" stroke="#1a1d24"/><text x="95" y="74" fill="#9CA3AF" font-size="12">Glycine</text><text x="95" y="89" fill="#6B7280" font-size="11">(Gly)</text>
+              <line x1="150" y1="76" x2="186" y2="76" stroke="#2a2f3a" stroke-width="2"/>
+              <rect x="186" y="54" width="110" height="44" rx="22" fill="#0d1117" stroke="#1a1d24"/><text x="241" y="74" fill="#9CA3AF" font-size="12">Histidine</text><text x="241" y="89" fill="#6B7280" font-size="11">(His)</text>
+              <line x1="296" y1="76" x2="332" y2="76" stroke="#2a2f3a" stroke-width="2"/>
+              <rect x="332" y="54" width="110" height="44" rx="22" fill="#0d1117" stroke="#1a1d24"/><text x="387" y="74" fill="#9CA3AF" font-size="12">Lysine</text><text x="387" y="89" fill="#6B7280" font-size="11">(Lys)</text>
+              <path d="M442 64 C 500 40, 520 40, 560 56" stroke="#2a2f3a" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+              <path d="M241 54 C 320 20, 480 20, 560 52" stroke="#2a2f3a" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+              <circle cx="588" cy="76" r="34" fill="#01D3A0"/><text x="588" y="74" fill="#021" font-size="14" font-weight="700">Cu</text><text x="588" y="90" fill="#021" font-size="10" font-weight="700">(II)</text>
+            </g>
+          </svg><div class="rl-fig-cap">The Gly&ndash;His&ndash;Lys tripeptide chain bound to a single copper(II) ion</div></div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-mechanisms">
           <h2 class="rl-h2" id="sec-mechanisms">Mechanisms Studied in Preclinical Research</h2>
           <p>In lab-dish (in vitro) and animal studies, GHK-Cu has been linked to several body pathways &mdash; the chains of signals cells use to do their jobs. The points below are things researchers have observed in studies only, not effects in people.</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 660 190" role="img" aria-label="GHK-Cu research pathways: collagen and elastin gene expression, antioxidant and copper transport, and wound-response and angiogenesis models">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="16" y="72" width="150" height="46" rx="8" fill="#01D3A0"/><text x="91" y="100" fill="#021" font-size="13" font-weight="700">GHK-Cu</text>
+              <line x1="192" y1="40" x2="192" y2="150" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M166 95 H192" stroke="#2a2f3a" stroke-width="2" fill="none"/>
+              <path d="M192 40 H234" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M234 40 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <path d="M192 95 H234" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M234 95 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <path d="M192 150 H234" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M234 150 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <rect x="236" y="20" width="280" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="376" y="44" fill="#9CA3AF" font-size="12">Collagen &amp; elastin gene expression</text>
+              <rect x="236" y="75" width="280" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="376" y="99" fill="#9CA3AF" font-size="12">Antioxidant &amp; copper transport</text>
+              <rect x="236" y="130" width="280" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="376" y="154" fill="#9CA3AF" font-size="12">Wound-response &amp; angiogenesis</text>
+            </g>
+          </svg><div class="rl-fig-cap">Fig 1 — pathway areas studied in preclinical GHK-Cu research</div></div>
+
           <h3 class="rl-h3">Collagen &amp; elastin gene expression</h3>
           <p>In studies on skin cells called dermal fibroblasts (the cells that build the support structure of skin), GHK-Cu was linked to switching on genes for <strong>type I collagen, elastin, decorin and glycosaminoglycans</strong>. These are the materials that give skin and other connective tissue its strength and stretchiness. (A gene being "expressed" just means the cell is using its instructions to make that material.)<span class="rl-cite"><a href="#ref-2">[2]</a></span></p>
           <h3 class="rl-h3">Antioxidant &amp; copper-transport activity</h3>
@@ -633,6 +673,16 @@
             <li><strong>Verification:</strong> every batch is third-party HPLC-tested; batch documentation available on request.</li>
           </ul>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="GHK-Cu research focus areas summary">
+          <div class="rl-carousel-h">GHK-Cu research focus areas</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Collagen &amp; elastin expression</h4><p>In dermal fibroblasts, linked to genes for type I collagen, elastin, decorin and glycosaminoglycans.</p></div>
+            <div class="rl-dcard"><h4>Antioxidant &amp; copper transport</h4><p>Used to study copper movement in tissue and links to antioxidant enzymes under oxidative-stress conditions.</p></div>
+            <div class="rl-dcard"><h4>Wound-response &amp; angiogenesis</h4><p>Observed in repair models alongside new-vessel growth, fibroblast movement and matrix rebuilding.</p></div>
+            <div class="rl-dcard"><h4>Copper-binding tripeptide</h4><p>A Gly&ndash;His&ndash;Lys chain bound to a copper(II) ion &mdash; the deep-blue colour is characteristic of the compound.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References</h2>

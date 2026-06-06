@@ -476,6 +476,15 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -587,6 +596,32 @@
           <h3 class="rl-h3">Redox metabolism and the NAD+/NADH cycle</h3>
           <p>When a cell breaks down food for energy &mdash; through steps with names like glycolysis, the citric-acid cycle, and oxidative phosphorylation &mdash; NAD+ grabs energy bits (electrons) to become NADH, then drops them off and turns back into NAD+. "Redox" just means these reactions that pass electrons back and forth. The balance between how much NAD+ and how much NADH a cell has tells scientists a lot about the cell&rsquo;s energy state, so they use it in research as a quick read on energy balance.</p>
 
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 200" role="img" aria-label="The NAD plus to NADH redox cycle: NAD plus accepts electrons during fuel breakdown to become NADH, then releases them in oxidative phosphorylation to return to NAD plus">
+              <!-- NAD+ node -->
+              <g transform="translate(70,70)">
+                <rect x="0" y="0" width="150" height="60" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                <text x="75" y="30" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="18" font-weight="700">NAD+</text>
+                <text x="75" y="48" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">oxidised</text>
+              </g>
+              <!-- NADH node -->
+              <g transform="translate(480,70)">
+                <rect x="0" y="0" width="150" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="75" y="30" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="18" font-weight="700">NADH</text>
+                <text x="75" y="48" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">reduced</text>
+              </g>
+              <!-- top arrow: NAD+ -> NADH (accepts electrons) -->
+              <path d="M225 88 C 320 50, 380 50, 475 88" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M475 88 L463 82 L466 93 Z" fill="#2a2f3a"/>
+              <text x="350" y="48" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">+ electrons (fuel breakdown)</text>
+              <!-- bottom arrow: NADH -> NAD+ (releases electrons) -->
+              <path d="M475 112 C 380 150, 320 150, 225 112" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M225 112 L237 106 L234 117 Z" fill="#2a2f3a"/>
+              <text x="350" y="168" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">&minus; electrons (oxidative phosphorylation)</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — the NAD+/NADH redox cycle: a quick read on a cell's energy state</div>
+          </div>
+
           <h3 class="rl-h3">Sirtuin signalling</h3>
           <p>Sirtuins are a family of enzymes that need NAD+ to work. They help link the way proteins are tagged with chemical labels to metabolism, stress responses, and ageing. Every time a sirtuin does its job, it <em>uses up</em> a bit of NAD+. So the amount of NAD+ a cell has directly limits how active its sirtuins can be &mdash; which is why, in animal studies, the size of a cell&rsquo;s NAD+ supply is studied as a control knob for sirtuin-driven activity.</p>
 
@@ -595,6 +630,60 @@
 
           <h3 class="rl-h3">Age-related decline and the precursor rationale</h3>
           <p>In lab animals, the amount of NAD+ in cells is reported to drop as they get older. Scientists think this drop may help explain why energy-making and the cell&rsquo;s tiny power plants (mitochondria) work less well with age. So a lot of research looks at NAD+ precursors &mdash; smaller molecules like NMN and NR that the cell turns into NAD+ &mdash; to see whether topping NAD+ back up changes sirtuin activity and mitochondrial function. NAD+ itself is used as the reference reagent (the standard to compare against) in this work.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 280" role="img" aria-label="NAD plus as a central cellular hub: precursors NMN and NR feed into NAD plus, which supplies the redox cycle, sirtuin enzymes, PARP DNA-repair enzymes, and mitochondrial function">
+              <!-- precursors -->
+              <g transform="translate(40,115)">
+                <rect x="0" y="0" width="120" height="50" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="60" y="24" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="13" font-weight="700">NMN / NR</text>
+                <text x="60" y="40" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">precursors</text>
+              </g>
+              <path d="M160 140 L250 140" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M250 140 L238 134 L238 146 Z" fill="#2a2f3a"/>
+              <!-- central NAD+ hub -->
+              <g transform="translate(255,108)">
+                <rect x="0" y="0" width="130" height="64" rx="10" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2.5"/>
+                <text x="65" y="32" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="20" font-weight="700">NAD+</text>
+                <text x="65" y="50" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">central coenzyme</text>
+              </g>
+              <!-- four downstream/branch nodes -->
+              <g font-family="DM Mono, monospace">
+                <!-- redox -->
+                <g transform="translate(470,30)">
+                  <rect x="0" y="0" width="190" height="46" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                  <text x="95" y="20" text-anchor="middle" fill="#D1D5DB" font-size="13" font-weight="700">Redox / energy</text>
+                  <text x="95" y="36" text-anchor="middle" fill="#6B7280" font-size="10">NAD+/NADH balance</text>
+                </g>
+                <!-- sirtuins -->
+                <g transform="translate(470,90)">
+                  <rect x="0" y="0" width="190" height="46" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                  <text x="95" y="20" text-anchor="middle" fill="#D1D5DB" font-size="13" font-weight="700">Sirtuins</text>
+                  <text x="95" y="36" text-anchor="middle" fill="#6B7280" font-size="10">NAD+-dependent enzymes</text>
+                </g>
+                <!-- PARP -->
+                <g transform="translate(470,150)">
+                  <rect x="0" y="0" width="190" height="46" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                  <text x="95" y="20" text-anchor="middle" fill="#D1D5DB" font-size="13" font-weight="700">PARPs</text>
+                  <text x="95" y="36" text-anchor="middle" fill="#6B7280" font-size="10">DNA repair</text>
+                </g>
+                <!-- mitochondria -->
+                <g transform="translate(470,210)">
+                  <rect x="0" y="0" width="190" height="46" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                  <text x="95" y="20" text-anchor="middle" fill="#D1D5DB" font-size="13" font-weight="700">Mitochondria</text>
+                  <text x="95" y="36" text-anchor="middle" fill="#6B7280" font-size="10">energy production</text>
+                </g>
+              </g>
+              <!-- hub to branches -->
+              <g fill="none" stroke="#2a2f3a" stroke-width="2">
+                <path d="M385 130 C 425 90, 440 60, 468 53"/>
+                <path d="M385 138 C 430 130, 440 120, 468 113"/>
+                <path d="M385 146 C 430 150, 440 165, 468 173"/>
+                <path d="M385 152 C 425 200, 440 225, 468 233"/>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 — NAD+ as a shared substrate feeding the redox, sirtuin, PARP and mitochondrial pathways the page describes</div>
+          </div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-studies">
@@ -622,6 +711,16 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies NAD+ as a lyophilised powder (freeze-dried into a dry powder) at &ge;99.5% HPLC-verified purity. HPLC is a lab test that checks how pure something is, and a batch certificate of analysis (the test report for that batch) is available on request. To mix the powder back into a liquid, see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a> (reconstitution just means mixing a powder back into a liquid). Supplied strictly as a research reagent for in vitro use.</p>
         </section>
+        <div class="rl-carousel">
+          <div class="rl-carousel-h">NAD+ at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Redox carrier</h4><p>NAD+ accepts electrons to become NADH and releases them to return to NAD+. The NAD+/NADH balance is used as a read on a cell's energy state.</p></div>
+            <div class="rl-dcard"><h4>Sirtuin fuel</h4><p>Sirtuins are NAD+-dependent enzymes; each reaction consumes NAD+, so the cell's NAD+ supply limits how active sirtuins can be.</p></div>
+            <div class="rl-dcard"><h4>PARP demand</h4><p>PARP enzymes also run on NAD+ during DNA repair, creating a tug-of-war for the same NAD+ pool under cellular stress.</p></div>
+            <div class="rl-dcard"><h4>Precursor rationale</h4><p>Cellular NAD+ is reported to decline with age in models; precursors such as NMN and NR are studied for whether topping NAD+ back up changes sirtuin and mitochondrial function.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs"><h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>
             <li>Imai S, Guarente L. &ldquo;It takes two to tango: NAD+ and sirtuins in aging/longevity control.&rdquo; <em>npj Aging and Mechanisms of Disease</em>, 2016. PMID: <a href="https://pubmed.ncbi.nlm.nih.gov/28721271/" target="_blank" rel="noopener noreferrer">28721271</a></li>

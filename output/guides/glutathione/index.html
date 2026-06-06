@@ -476,6 +476,15 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -578,6 +587,36 @@
           <h2 class="rl-h2" id="sec-what">What is Glutathione?</h2>
           <p><strong>Glutathione (GSH) is a peptide &mdash; a short chain of amino acids, the building blocks that make up proteins. It is made of 3 of them (glutamate, cysteine and glycine), so it is a tripeptide ("tri" means three). It is the most common antioxidant inside our cells. An antioxidant is a molecule that mops up cell-damaging particles.</strong> Scientists study it as a key part of how cells stay balanced and as the helper that lets a group of cleaning-up enzymes do their work. It is sold only as a research reagent (a chemical for lab tests) for in vitro use (test-tube / lab work only), never for use in humans or animals.</p>
           <p>Its full chemical name is L-&gamma;-glutamyl-L-cysteinyl-glycine. The part that does the work is a sulphur-containing piece (called a thiol, written &minus;SH) on its cysteine building block. That piece lets glutathione hand out electrons to neutralise reactive oxygen species (unstable particles that can damage cells). When it does this, it switches between its "fresh" form (GSH) and its "used-up" form (GSSG).</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 170" role="img" aria-label="The glutathione tripeptide structure: glutamate joined to cysteine joined to glycine, with the reactive thiol minus S H group on the cysteine residue">
+              <!-- three residues -->
+              <g font-family="DM Mono, monospace">
+                <g transform="translate(45,55)">
+                  <rect x="0" y="0" width="150" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                  <text x="75" y="28" text-anchor="middle" fill="#D1D5DB" font-size="15" font-weight="700">Glu</text>
+                  <text x="75" y="46" text-anchor="middle" fill="#6B7280" font-size="10">glutamate (&gamma;)</text>
+                </g>
+                <g transform="translate(275,55)">
+                  <rect x="0" y="0" width="150" height="60" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                  <text x="75" y="28" text-anchor="middle" fill="#01D3A0" font-size="15" font-weight="700">Cys</text>
+                  <text x="75" y="46" text-anchor="middle" fill="#6B7280" font-size="10">cysteine &middot; &minus;SH</text>
+                </g>
+                <g transform="translate(505,55)">
+                  <rect x="0" y="0" width="150" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                  <text x="75" y="28" text-anchor="middle" fill="#D1D5DB" font-size="15" font-weight="700">Gly</text>
+                  <text x="75" y="46" text-anchor="middle" fill="#6B7280" font-size="10">glycine</text>
+                </g>
+              </g>
+              <!-- peptide bonds -->
+              <line x1="195" y1="85" x2="275" y2="85" stroke="#2a2f3a" stroke-width="2"/>
+              <line x1="425" y1="85" x2="505" y2="85" stroke="#2a2f3a" stroke-width="2"/>
+              <!-- thiol callout -->
+              <line x1="350" y1="115" x2="350" y2="140" stroke="#2a2f3a" stroke-width="2"/>
+              <text x="350" y="155" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">reactive thiol (&minus;SH) does the antioxidant work</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — the Glu–Cys–Gly tripeptide; the cysteine thiol is the reactive group</div>
+          </div>
           <p>Glutathione is found in nearly every cell and is often called the cell's "master antioxidant." It is so important that scientists measure the ratio of fresh (GSH) to used-up (GSSG) glutathione as a quick way to tell how much stress a cell is under. This makes glutathione both something worth studying on its own and a reliable reference chemical for oxidative-stress studies (tests on cell damage from unstable particles).</p>
         </section>
         <section class="rl-section" aria-labelledby="sec-mech">
@@ -586,6 +625,33 @@
 
           <h3 class="rl-h3">The GSH/GSSG redox cycle</h3>
           <p>Glutathione protects cells by handing out electrons to neutralise reactive oxygen species (unstable, cell-damaging particles). When it does this, it turns into its used-up form, GSSG. Then a helper enzyme called glutathione reductase recycles GSSG back into the fresh form, GSH, using an energy-carrying molecule called NADPH. This keeps the cell topped up with antioxidant power. This non-stop loop is the heart of how cells defend themselves.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 230" role="img" aria-label="The glutathione redox cycle: reduced GSH neutralises reactive oxygen species and becomes oxidised GSSG, which glutathione reductase recycles back to GSH using NADPH">
+              <!-- GSH node -->
+              <g transform="translate(80,90)">
+                <rect x="0" y="0" width="160" height="60" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                <text x="80" y="30" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="17" font-weight="700">GSH</text>
+                <text x="80" y="48" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">reduced (fresh)</text>
+              </g>
+              <!-- GSSG node -->
+              <g transform="translate(460,90)">
+                <rect x="0" y="0" width="160" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="80" y="30" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="17" font-weight="700">GSSG</text>
+                <text x="80" y="48" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">oxidised (used-up)</text>
+              </g>
+              <!-- top arrow GSH -> GSSG -->
+              <path d="M245 105 C 330 65, 380 65, 458 105" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M458 105 L446 99 L449 110 Z" fill="#2a2f3a"/>
+              <text x="352" y="58" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">neutralises ROS</text>
+              <!-- bottom arrow GSSG -> GSH (reductase + NADPH) -->
+              <path d="M458 135 C 380 178, 330 178, 245 135" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M245 135 L257 129 L254 140 Z" fill="#2a2f3a"/>
+              <text x="352" y="190" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">glutathione reductase</text>
+              <text x="352" y="206" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">+ NADPH</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 — the GSH &harr; GSSG redox cycle recycled by glutathione reductase</div>
+          </div>
 
           <h3 class="rl-h3">Glutathione peroxidase and enzymatic defence</h3>
           <p>Glutathione is the fuel that a group of enzymes called glutathione peroxidases (GPx) use to break down harmful substances &mdash; like hydrogen peroxide and damaged fats &mdash; into safe ones. Through these enzymes, glutathione sits right at the centre of the cell's defence against the kind of damage studied in many cell-stress experiments.</p>
@@ -622,6 +688,16 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies Glutathione (the fresh form, GSH) as a lyophilised (freeze-dried) powder. Each batch is tested by HPLC (a lab method that measures how pure something is) and comes out at 99.2% pure or higher. A batch certificate of analysis (a lab report for that exact batch) is available if you ask. To mix the powder back into a liquid (reconstitute it), see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Sold only as a research reagent for in vitro (lab-only) use.</p>
         </section>
+        <div class="rl-carousel">
+          <div class="rl-carousel-h">Glutathione at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Tripeptide structure</h4><p>A short chain of three amino acids &mdash; glutamate, cysteine and glycine (&gamma;-Glu-Cys-Gly) &mdash; with the reactive thiol (&minus;SH) sitting on the cysteine.</p></div>
+            <div class="rl-dcard"><h4>Redox cycle</h4><p>Reduced GSH donates electrons to neutralise reactive oxygen species and becomes oxidised GSSG; glutathione reductase recycles it back using NADPH.</p></div>
+            <div class="rl-dcard"><h4>Enzymatic defence &amp; detox</h4><p>It is the substrate for glutathione-peroxidase enzymes and, with glutathione S-transferases, tags foreign substances for clearance.</p></div>
+            <div class="rl-dcard"><h4>Oxidative-stress marker</h4><p>The GSH/GSSG ratio shifts measurably under stress, so researchers use it as a read on a cell's oxidative state.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs"><h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>
             <li>Meister A, Anderson ME. &ldquo;Glutathione.&rdquo; <em>Annual Review of Biochemistry</em>, 1983.</li>

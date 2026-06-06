@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── On-page diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -573,6 +585,43 @@
           <h2 class="rl-h2" id="sec-intro">The most-studied research peptides, by research area</h2>
           <p><strong>The most popular research peptides (short chains of amino acids, the building blocks of proteins) in the UK in 2026 fall into five research groups: tissue repair (BPC-157, TB-500), incretin &amp; metabolic, which means how the body handles fuel and energy (Retatrutide, MOTS-C), neuropeptides, which act on the brain and nerves (Semax, Selank), the growth-hormone group (Tesamorelin, CJC-1295), and oxidative pathways, meaning how cells deal with cell-damaging molecules (GHK-Cu, Glutathione, NAD+).</strong> Below, each one is sorted by the body system it is studied for, with a link to its product page and, where we have one, a research overview. Every item listed has had its purity checked by an outside lab using HPLC (a method that measures how pure a sample is), and all are sold strictly for in vitro (lab-only) research use.</p>
           <p>&ldquo;Popular&rdquo; here just means most-searched and most-studied by researchers &mdash; it is not a recommendation. Pick the one that matches the pathway your work is about, and always check the <a href="/guides/reading-a-certificate-of-analysis/">certificate of analysis</a> (a lab report that proves what is in the vial).</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 470" role="img" aria-label="Category map of the research peptides named on this page, grouped into five research areas: tissue repair (BPC-157, TB-500, KPV), incretin and metabolic (Retatrutide, MOTS-C, NAD+), neuropeptide (Semax, Selank, DSIP), growth-hormone axis (Tesamorelin, CJC-1295) and oxidative pathway (GHK-Cu, Glutathione, Melanotan II).">
+              <g font-family="DM Mono, monospace">
+                <!-- group 1 -->
+                <rect x="16" y="20" width="688" height="80" rx="10" fill="#0a0d12" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="32" y="46" fill="#01D3A0" font-size="12" font-weight="700">TISSUE REPAIR &amp; ANGIOGENIC</text>
+                <rect x="32" y="58" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="92" y="76" text-anchor="middle" fill="#D1D5DB" font-size="11">BPC-157</text>
+                <rect x="166" y="58" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="226" y="76" text-anchor="middle" fill="#D1D5DB" font-size="11">TB-500</text>
+                <rect x="300" y="58" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="360" y="76" text-anchor="middle" fill="#D1D5DB" font-size="11">KPV</text>
+                <!-- group 2 -->
+                <rect x="16" y="110" width="688" height="80" rx="10" fill="#0a0d12" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="32" y="136" fill="#01D3A0" font-size="12" font-weight="700">INCRETIN &amp; METABOLIC</text>
+                <rect x="32" y="148" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="92" y="166" text-anchor="middle" fill="#D1D5DB" font-size="11">Retatrutide</text>
+                <rect x="166" y="148" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="226" y="166" text-anchor="middle" fill="#D1D5DB" font-size="11">MOTS-C</text>
+                <rect x="300" y="148" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="360" y="166" text-anchor="middle" fill="#D1D5DB" font-size="11">NAD+</text>
+                <!-- group 3 -->
+                <rect x="16" y="200" width="688" height="80" rx="10" fill="#0a0d12" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="32" y="226" fill="#01D3A0" font-size="12" font-weight="700">NEUROPEPTIDE</text>
+                <rect x="32" y="238" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="92" y="256" text-anchor="middle" fill="#D1D5DB" font-size="11">Semax</text>
+                <rect x="166" y="238" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="226" y="256" text-anchor="middle" fill="#D1D5DB" font-size="11">Selank</text>
+                <rect x="300" y="238" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="360" y="256" text-anchor="middle" fill="#D1D5DB" font-size="11">DSIP</text>
+                <!-- group 4 -->
+                <rect x="16" y="290" width="688" height="80" rx="10" fill="#0a0d12" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="32" y="316" fill="#01D3A0" font-size="12" font-weight="700">GROWTH-HORMONE AXIS</text>
+                <rect x="32" y="328" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="92" y="346" text-anchor="middle" fill="#D1D5DB" font-size="11">Tesamorelin</text>
+                <rect x="166" y="328" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="226" y="346" text-anchor="middle" fill="#D1D5DB" font-size="11">CJC-1295</text>
+                <!-- group 5 -->
+                <rect x="16" y="380" width="688" height="80" rx="10" fill="#0a0d12" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="32" y="406" fill="#01D3A0" font-size="12" font-weight="700">OXIDATIVE PATHWAY &amp; ANTI-AGEING</text>
+                <rect x="32" y="418" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="92" y="436" text-anchor="middle" fill="#D1D5DB" font-size="11">GHK-Cu</text>
+                <rect x="166" y="418" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="226" y="436" text-anchor="middle" fill="#D1D5DB" font-size="11">Glutathione</text>
+                <rect x="300" y="418" width="120" height="28" rx="6" fill="#06140f" stroke="#01D3A0" stroke-width="1.2"/><text x="360" y="436" text-anchor="middle" fill="#D1D5DB" font-size="11">Melanotan II</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — category map of the compounds named on this page, by research area</div>
+          </div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-repair">
@@ -614,6 +663,17 @@
           <h2 class="rl-h2" id="sec-choose">How to choose &mdash; and buy safely</h2>
           <p>Pick the peptide that matches the pathway your research is about, then check the quality before you order. Look for three things: purity testing by an outside lab using HPLC (a method that measures how pure a sample is), a certificate of analysis for that exact batch (a lab report proving what is in the vial), and a UK supplier that sends orders with tracking. Our guides on <a href="/guides/how-to-buy-research-peptides-uk/">buying research peptides in the UK safely</a> and <a href="/guides/reading-a-certificate-of-analysis/">reading a certificate of analysis</a> walk through the checks that matter. Our <a href="/stacks/">research bundles</a> put peptides that are often studied together into one order.</p>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="Research areas summary">
+          <div class="rl-carousel-h">Five research areas at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Tissue repair &amp; angiogenic</h4><p>BPC-157, TB-500 and KPV — studied in wound-repair, blood-vessel and gut-lining models.</p></div>
+            <div class="rl-dcard"><h4>Incretin &amp; metabolic</h4><p>Retatrutide, MOTS-C and NAD+ — studied for how cells and the body handle fuel and energy.</p></div>
+            <div class="rl-dcard"><h4>Neuropeptide</h4><p>Semax, Selank and DSIP — studied for brain and nerve signalling, stress and sleep models.</p></div>
+            <div class="rl-dcard"><h4>Growth-hormone axis</h4><p>Tesamorelin and CJC-1295 — studied for how growth hormone is released in bursts.</p></div>
+            <div class="rl-dcard"><h4>Oxidative pathway</h4><p>GHK-Cu, Glutathione and Melanotan II — studied around oxidative stress and cellular protection. All for in vitro research only.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section" aria-labelledby="sec-faq">
           <h2 class="rl-h2" id="sec-faq">Frequently asked questions</h2>

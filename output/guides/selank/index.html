@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Figures / diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -578,6 +590,34 @@
           <h2 class="rl-h2" id="sec-what">What is Selank?</h2>
           <p><strong>Selank is a lab-made peptide — a short chain of amino acids, the building blocks of proteins. It is made of seven of them (so scientists call it a heptapeptide, &ldquo;hepta&rdquo; meaning seven), with the sequence Thr-Lys-Pro-Arg-Pro-Gly-Pro.</strong> It is a neuropeptide (a peptide that acts on nerve cells) and is copied from a natural immune-system peptide called tuftsin. In animal studies, researchers have looked at how it calms anxiety-like behaviour (an anxiolytic effect) while affecting the GABA system, which is a calming signal in the brain. These are research observations only, not therapeutic effects. It is supplied strictly as a research reagent for in vitro (test-tube / lab work only) use, not for human or veterinary use.</p>
           <p>Selank was made in Russia at the Institute of Molecular Genetics. Scientists took the natural peptide tuftsin (Thr-Lys-Pro-Arg) and added a short Pro-Gly-Pro tail. That tail makes the peptide last much longer before the body&rsquo;s enzymes break it down. Because it comes from tuftsin, researchers study it not just for behaviour but also for how it affects the immune system and brain chemistry.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 200" role="img" aria-label="Structure of Selank: the tuftsin sequence Thr-Lys-Pro-Arg joined to a stabilising Pro-Gly-Pro tail, forming the heptapeptide Thr-Lys-Pro-Arg-Pro-Gly-Pro">
+              <text x="20" y="30" fill="#6B7280" font-family="DM Mono, monospace" font-size="11" letter-spacing="0.08em">TUFTSIN SEQUENCE</text>
+              <text x="700" y="30" text-anchor="end" fill="#6B7280" font-family="DM Mono, monospace" font-size="11" letter-spacing="0.08em">PRO-GLY-PRO TAIL</text>
+              <g font-family="DM Mono, monospace" font-size="14" font-weight="700">
+                <g><rect x="20" y="50" width="84" height="50" rx="8" fill="#01D3A0"/><text x="62" y="80" text-anchor="middle" fill="#030407">Thr</text></g>
+                <g><rect x="116" y="50" width="84" height="50" rx="8" fill="#01D3A0"/><text x="158" y="80" text-anchor="middle" fill="#030407">Lys</text></g>
+                <g><rect x="212" y="50" width="84" height="50" rx="8" fill="#01D3A0"/><text x="254" y="80" text-anchor="middle" fill="#030407">Pro</text></g>
+                <g><rect x="308" y="50" width="84" height="50" rx="8" fill="#01D3A0"/><text x="350" y="80" text-anchor="middle" fill="#030407">Arg</text></g>
+                <g><rect x="420" y="50" width="84" height="50" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="462" y="80" text-anchor="middle" fill="#D1D5DB">Pro</text></g>
+                <g><rect x="516" y="50" width="84" height="50" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="558" y="80" text-anchor="middle" fill="#D1D5DB">Gly</text></g>
+                <g><rect x="612" y="50" width="84" height="50" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/><text x="654" y="80" text-anchor="middle" fill="#D1D5DB">Pro</text></g>
+              </g>
+              <g stroke="#2a2f3a" stroke-width="2">
+                <line x1="104" y1="75" x2="116" y2="75"/>
+                <line x1="200" y1="75" x2="212" y2="75"/>
+                <line x1="296" y1="75" x2="308" y2="75"/>
+                <line x1="392" y1="75" x2="420" y2="75"/>
+                <line x1="504" y1="75" x2="516" y2="75"/>
+                <line x1="600" y1="75" x2="612" y2="75"/>
+              </g>
+              <text x="206" y="135" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="11">parent immune peptide</text>
+              <text x="558" y="135" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">slows enzymatic breakdown</text>
+              <text x="360" y="175" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="13" font-weight="700">Thr-Lys-Pro-Arg-Pro-Gly-Pro &middot; heptapeptide</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — Selank is the tuftsin sequence extended with a stabilising Pro-Gly-Pro tail</div>
+          </div>
           <p>Like Semax, the peptide it is often paired with, Selank comes from a long line of Eastern European research. Scientists use it as a tool to study how short peptides change anxiety-like behaviour, brain chemical messengers, and stress responses in animals.</p>
         </section>
         <section class="rl-section" aria-labelledby="sec-mech">
@@ -586,6 +626,41 @@
 
           <h3 class="rl-h3">GABAergic modulation</h3>
           <p>The most studied thing about Selank is how it affects the GABA system. GABA is the brain&rsquo;s main &ldquo;calming&rdquo; chemical messenger, and it is the usual target for anti-anxiety compounds. Here is the key point: Selank does not lock onto the same spot that benzodiazepines (common sedative drugs) use. Instead, studies describe it changing how the GABA-A receptor is built and how strongly it responds to GABA — an indirect (allosteric) way of nudging the receptor. Researchers think this is why animal studies show a calming effect <em>without</em> the heavy sedation and clumsy movement you get with benzodiazepines. These are research observations only, not therapeutic effects.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 250" role="img" aria-label="Pathway map: Selank does not bind the benzodiazepine site of the GABA-A receptor; it is associated with indirect allosteric modulation of GABA-A subunit and gene expression, linked to anxiolytic activity in preclinical models">
+              <!-- Selank node (active) -->
+              <g font-family="DM Mono, monospace">
+                <rect x="20" y="98" width="120" height="56" rx="10" fill="#01D3A0"/>
+                <text x="80" y="131" text-anchor="middle" fill="#030407" font-size="15" font-weight="700">Selank</text>
+              </g>
+              <!-- arrow to GABA-A -->
+              <g stroke="#2a2f3a" stroke-width="2" fill="none"><path d="M140 126 L 250 126"/></g>
+              <path d="M250 126 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <text x="195" y="116" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="10">allosteric</text>
+              <!-- GABA-A node -->
+              <g font-family="DM Mono, monospace">
+                <rect x="255" y="92" width="150" height="68" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="330" y="120" text-anchor="middle" fill="#F9FAFB" font-size="14" font-weight="700">GABA-A receptor</text>
+                <text x="330" y="140" text-anchor="middle" fill="#6B7280" font-size="10">subunit / gene expression</text>
+              </g>
+              <!-- NOT benzodiazepine site -->
+              <g font-family="DM Mono, monospace">
+                <rect x="255" y="186" width="150" height="44" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2" stroke-dasharray="5 4"/>
+                <text x="330" y="206" text-anchor="middle" fill="#6B7280" font-size="11">benzodiazepine site</text>
+                <text x="330" y="222" text-anchor="middle" fill="#374151" font-size="10">&times; not bound</text>
+              </g>
+              <!-- arrow to outcome -->
+              <g stroke="#2a2f3a" stroke-width="2" fill="none"><path d="M405 126 L 520 126"/></g>
+              <path d="M520 126 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <g font-family="DM Mono, monospace">
+                <rect x="525" y="92" width="170" height="68" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="610" y="120" text-anchor="middle" fill="#D1D5DB" font-size="12">anxiolytic effect</text>
+                <text x="610" y="140" text-anchor="middle" fill="#6B7280" font-size="10">without heavy sedation</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 — Selank&rsquo;s proposed indirect (non-benzodiazepine) GABA-A modulation in rodents</div>
+          </div>
 
           <h3 class="rl-h3">BDNF and monoamine signalling</h3>
           <p>In rodent studies, Selank has also been linked to more BDNF (brain-derived neurotrophic factor, a protein that helps brain cells grow and survive) in the hippocampus, a part of the brain tied to memory. It has also been linked to serotonin signalling (serotonin is a chemical messenger involved in mood). These pathways relate to memory, mood and coping with stress. This mix of calming and brain-growth effects sets Selank apart from compounds that only sedate.</p>
@@ -626,6 +701,28 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies Selank as a lyophilised (freeze-dried) powder at &ge;98.9% HPLC-verified purity, with a batch certificate of analysis (a lab report proving what is in the vial) available on request. To work out how to reconstitute it (mix the powder back into a liquid), see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Supplied strictly as a research reagent for in vitro use.</p>
         </section>
+        <div class="rl-carousel" aria-label="Selank research summary">
+          <div class="rl-carousel-h">Selank at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard">
+              <h4>Structure</h4>
+              <p>The heptapeptide Thr-Lys-Pro-Arg-Pro-Gly-Pro — the tuftsin sequence extended with a stabilising Pro-Gly-Pro tail.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Key pathway</h4>
+              <p>Most associated with indirect (allosteric) GABA-A modulation, distinct from the benzodiazepine binding site.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Research areas</h4>
+              <p>Anxiolytic behaviour, hippocampal BDNF and serotonergic signalling, plus enkephalin and immune-system effects from its tuftsin origin.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Supply</h4>
+              <p>Lyophilised powder, &ge;98.9% HPLC-verified. For in vitro research use only — not for human or veterinary use.</p>
+            </div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs"><h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>
             <li>Seredenin SB, Kozlovskaya MM et al. Selank anxiolytic activity in rodent anxiety models. PMID: <a href="https://pubmed.ncbi.nlm.nih.gov/19916388/" target="_blank" rel="noopener noreferrer">19916388</a></li>

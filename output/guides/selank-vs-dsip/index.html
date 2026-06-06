@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Figures / diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -600,6 +612,51 @@
           <p>DSIP&rsquo;s standout feature in animal models is its link to delta-wave (deep) sleep activity. Preclinical work has also looked at how it interacts with the stress-response system and with antioxidant pathways &mdash; the cell&rsquo;s defences against harmful, reactive molecules. So DSIP is the tool for studying sleep, stress and oxidative pathways. These are research observations only, not therapeutic effects.</p>
           <h3 class="rl-h3">The verdict on mechanism</h3>
           <p>The two cover neighbouring ground: Selank leans toward easing anxiety-like behaviour, DSIP leans toward sleep and the stress response. A study that spans both anxiety and sleep or stress is the classic reason to look at them side by side.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 250" role="img" aria-label="Two parallel research pathways: Selank associated with GABAergic and BDNF anxiolytic signalling; DSIP associated with delta-wave sleep, stress-response and antioxidant pathways, in preclinical models">
+              <g font-family="DM Mono, monospace">
+                <!-- Selank -->
+                <rect x="20" y="44" width="150" height="54" rx="10" fill="#01D3A0"/>
+                <text x="95" y="68" text-anchor="middle" fill="#030407" font-size="14" font-weight="700">Selank</text>
+                <text x="95" y="86" text-anchor="middle" fill="#022" font-size="10">tuftsin analogue</text>
+                <!-- DSIP -->
+                <rect x="20" y="152" width="150" height="54" rx="10" fill="#01D3A0"/>
+                <text x="95" y="176" text-anchor="middle" fill="#030407" font-size="14" font-weight="700">DSIP</text>
+                <text x="95" y="194" text-anchor="middle" fill="#022" font-size="10">nonapeptide</text>
+              </g>
+              <g stroke="#2a2f3a" stroke-width="2" fill="none">
+                <path d="M170 71 L 290 71"/>
+                <path d="M170 179 L 290 179"/>
+              </g>
+              <path d="M290 71 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <path d="M290 179 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <g font-family="DM Mono, monospace">
+                <rect x="295" y="44" width="170" height="54" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="380" y="68" text-anchor="middle" fill="#F9FAFB" font-size="13" font-weight="700">GABA / BDNF</text>
+                <text x="380" y="86" text-anchor="middle" fill="#6B7280" font-size="10">anxiolytic pathways</text>
+                <rect x="295" y="152" width="170" height="54" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="380" y="172" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">delta-wave sleep,</text>
+                <text x="380" y="190" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">stress / antioxidant</text>
+              </g>
+              <g stroke="#2a2f3a" stroke-width="2" fill="none">
+                <path d="M465 71 L 560 71"/>
+                <path d="M465 179 L 560 179"/>
+              </g>
+              <path d="M560 71 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <path d="M560 179 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <g font-family="DM Mono, monospace">
+                <rect x="565" y="44" width="140" height="54" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="635" y="68" text-anchor="middle" fill="#D1D5DB" font-size="11">anxiety-like</text>
+                <text x="635" y="84" text-anchor="middle" fill="#D1D5DB" font-size="11">behaviour</text>
+                <rect x="565" y="152" width="140" height="54" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="635" y="172" text-anchor="middle" fill="#D1D5DB" font-size="11">sleep &amp; stress</text>
+                <text x="635" y="190" text-anchor="middle" fill="#D1D5DB" font-size="11">research</text>
+              </g>
+              <text x="380" y="128" text-anchor="middle" fill="#4B5563" font-family="DM Mono, monospace" font-size="11">neighbouring research areas</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — Selank&rsquo;s anxiolytic pathways alongside DSIP&rsquo;s sleep / stress pathways</div>
+          </div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-table">
@@ -616,6 +673,23 @@
                 <tr><td>Often studied alongside</td><td>Semax, other neuropeptides</td><td>Selank, Epitalon and other neuropeptides</td></tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="rl-cmp">
+            <div class="rl-dcard">
+              <h4>Selank</h4>
+              <p><strong style="color:#01D3A0;">Type:</strong> synthetic heptapeptide (7 aa)<br>
+              <strong style="color:#01D3A0;">Origin:</strong> analogue of tuftsin<br>
+              <strong style="color:#01D3A0;">Pathways:</strong> GABAergic / BDNF<br>
+              <strong style="color:#01D3A0;">Models:</strong> rodent anxiety (e.g. elevated-plus-maze)</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>DSIP</h4>
+              <p><strong style="color:#01D3A0;">Type:</strong> endogenous nonapeptide (9 aa)<br>
+              <strong style="color:#01D3A0;">Origin:</strong> isolated from sleeping rabbit brain<br>
+              <strong style="color:#01D3A0;">Pathways:</strong> delta-wave sleep, stress, antioxidant<br>
+              <strong style="color:#01D3A0;">Models:</strong> rodent sleep, stress, oxidative-stress</p>
+            </div>
           </div>
         </section>
 
@@ -654,6 +728,28 @@
           <p><strong>Study Selank</strong> when the research question is about anxiety-like behaviour, the GABA system, or BDNF signalling in rodent models.</p>
           <p><strong>Study DSIP</strong> when the research question is about delta-wave (deep) sleep, the stress-response system, or antioxidant pathways in animal models.</p>
         </section>
+
+        <div class="rl-carousel" aria-label="Selank vs DSIP summary">
+          <div class="rl-carousel-h">Selank vs DSIP at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard">
+              <h4>Selank — anxiolytic focus</h4>
+              <p>Synthetic tuftsin analogue (Thr-Lys-Pro-Arg-Pro-Gly-Pro) studied for GABAergic and BDNF anxiety-related pathways in rodents.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>DSIP — sleep &amp; stress focus</h4>
+              <p>Endogenous nonapeptide (Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu) studied for delta-wave sleep, stress-response and antioxidant pathways.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Neighbouring fields</h4>
+              <p>Both sit in calming-and-stress research, so studies spanning anxiety, sleep and stress sometimes examine them side by side.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Supply</h4>
+              <p>Both lyophilised and HPLC-verified to &ge;99%. For in vitro research use only — not for human or veterinary use.</p>
+            </div>
+          </div>
+        </div>
 
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References &amp; key literature</h2>

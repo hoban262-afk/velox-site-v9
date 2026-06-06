@@ -476,6 +476,17 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
+    @media (max-width:480px){.rl-cmp{grid-template-columns:1fr}}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -588,12 +599,81 @@
           <h2 class="rl-h2" id="sec-hplc">HPLC: Measuring Purity</h2>
           <p><strong>HPLC</strong> stands for <strong>high-performance liquid chromatography</strong>. That is a mouthful, so here is the plain idea. Imagine pouring a mixture through a long, tightly packed tube. Different molecules travel through the tube at different speeds, so they come out the far end at different times and get separated &mdash; a bit like runners spreading out along a track. A detector at the end records each component as a peak on a chart.</p>
           <p>The size of each peak tells you how much of that component is present. The big peak is your target peptide; any small extra peaks are impurities such as chains that are slightly too short or too long. <strong>HPLC purity</strong> is simply the target peak expressed as a percentage of everything detected. So "99% purity" means 99 parts in 100 are the correct compound. This is the headline number researchers look at first.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 200" role="img" aria-label="HPLC process flow: sample is injected, passes through a packed column where components separate, reaches a detector, and is recorded as a chromatogram with one large target peak and small impurity peaks">
+              <g font-family="DM Mono, monospace">
+                <!-- sample -->
+                <rect x="14" y="66" width="96" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="62" y="92" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">sample</text>
+                <text x="62" y="110" text-anchor="middle" fill="#9CA3AF" font-size="10">injected</text>
+                <path d="M110 96 L140 96" stroke="#2a2f3a" stroke-width="2"/><path d="M140 96 L132 91 L132 101 Z" fill="#2a2f3a"/>
+                <!-- column -->
+                <rect x="144" y="60" width="120" height="72" rx="8" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="204" y="86" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">column</text>
+                <text x="204" y="104" text-anchor="middle" fill="#9CA3AF" font-size="10">components</text>
+                <text x="204" y="118" text-anchor="middle" fill="#9CA3AF" font-size="10">separate by speed</text>
+                <path d="M264 96 L294 96" stroke="#2a2f3a" stroke-width="2"/><path d="M294 96 L286 91 L286 101 Z" fill="#2a2f3a"/>
+                <!-- detector -->
+                <rect x="298" y="66" width="96" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="346" y="92" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">detector</text>
+                <text x="346" y="110" text-anchor="middle" fill="#9CA3AF" font-size="10">records peaks</text>
+                <path d="M394 96 L424 96" stroke="#2a2f3a" stroke-width="2"/><path d="M424 96 L416 91 L416 101 Z" fill="#2a2f3a"/>
+                <!-- chromatogram -->
+                <rect x="428" y="40" width="258" height="120" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="557" y="60" text-anchor="middle" fill="#9CA3AF" font-size="10">chromatogram</text>
+                <line x1="446" y1="140" x2="668" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
+                <line x1="446" y1="72" x2="446" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
+                <!-- big target peak + small impurity peaks -->
+                <path d="M456 140 L470 140 L478 82 L486 140 L500 140" fill="none" stroke="#01D3A0" stroke-width="2.5"/>
+                <path d="M520 140 L526 124 L532 140" fill="none" stroke="#6B7280" stroke-width="2"/>
+                <path d="M560 140 L566 130 L572 140" fill="none" stroke="#6B7280" stroke-width="2"/>
+                <text x="482" y="78" text-anchor="middle" fill="#01D3A0" font-size="9">target</text>
+                <text x="600" y="135" text-anchor="middle" fill="#6B7280" font-size="9">impurities</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 &mdash; HPLC: sample &rarr; column &rarr; detector &rarr; a chromatogram of separated peaks</div>
+          </div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-ms">
           <h2 class="rl-h2" id="sec-ms">Mass Spectrometry: Confirming Identity</h2>
           <p>HPLC tells you <em>how pure</em> a sample is, but not <em>what</em> the main peak actually is. That is the job of <strong>mass spectrometry</strong> (often shortened to "mass spec"). A mass spectrometer measures the <strong>molecular weight</strong> of a molecule &mdash; essentially how heavy it is &mdash; with great precision.</p>
           <p>Every peptide has an expected molecular weight you can calculate from its sequence. If the measured weight matches the expected weight, you have confirmation that the right molecule was actually made. If it is off, something is wrong &mdash; perhaps an amino acid is missing or out of place. In short: HPLC answers "how pure?", mass spec answers "is it really the right compound?". Together they cover both purity and identity.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 200" role="img" aria-label="Mass spectrometry process flow: sample is ionised, the analyser sorts ions by mass, and a mass spectrum is recorded whose peak position is compared with the expected molecular weight">
+              <g font-family="DM Mono, monospace">
+                <!-- sample -->
+                <rect x="14" y="66" width="96" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="62" y="92" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">sample</text>
+                <text x="62" y="110" text-anchor="middle" fill="#9CA3AF" font-size="10">molecules in</text>
+                <path d="M110 96 L140 96" stroke="#2a2f3a" stroke-width="2"/><path d="M140 96 L132 91 L132 101 Z" fill="#2a2f3a"/>
+                <!-- ionise -->
+                <rect x="144" y="60" width="110" height="72" rx="8" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="199" y="86" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">ionise</text>
+                <text x="199" y="104" text-anchor="middle" fill="#9CA3AF" font-size="10">give molecules</text>
+                <text x="199" y="118" text-anchor="middle" fill="#9CA3AF" font-size="10">a charge</text>
+                <path d="M254 96 L284 96" stroke="#2a2f3a" stroke-width="2"/><path d="M284 96 L276 91 L276 101 Z" fill="#2a2f3a"/>
+                <!-- analyser -->
+                <rect x="288" y="66" width="110" height="60" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="343" y="90" text-anchor="middle" fill="#F9FAFB" font-size="12" font-weight="700">analyser</text>
+                <text x="343" y="108" text-anchor="middle" fill="#9CA3AF" font-size="10">sort by mass</text>
+                <path d="M398 96 L428 96" stroke="#2a2f3a" stroke-width="2"/><path d="M428 96 L420 91 L420 101 Z" fill="#2a2f3a"/>
+                <!-- mass spectrum -->
+                <rect x="432" y="40" width="254" height="120" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="559" y="60" text-anchor="middle" fill="#9CA3AF" font-size="10">mass spectrum</text>
+                <line x1="450" y1="140" x2="668" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
+                <line x1="450" y1="72" x2="450" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
+                <line x1="556" y1="140" x2="556" y2="82" stroke="#01D3A0" stroke-width="3"/>
+                <line x1="500" y1="140" x2="500" y2="124" stroke="#6B7280" stroke-width="2"/>
+                <line x1="610" y1="140" x2="610" y2="128" stroke="#6B7280" stroke-width="2"/>
+                <text x="556" y="78" text-anchor="middle" fill="#01D3A0" font-size="9">measured weight</text>
+                <text x="559" y="156" text-anchor="middle" fill="#6B7280" font-size="9">compare with expected</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 &mdash; mass spec: sample &rarr; ionise &rarr; a mass spectrum, checked against the expected weight</div>
+          </div>
         </section>
 
         <section class="rl-section" aria-labelledby="sec-appearance">
@@ -610,6 +690,16 @@
           <h2 class="rl-h2" id="sec-velox">How Velox Batches Are Tested</h2>
           <p>Velox Peptides batches are tested by an independent third-party laboratory, <strong>Janoshik Analytical</strong>, using HPLC for purity and mass spectrometry for identity. Batch documentation, including the certificate of analysis, is available on request before ordering &mdash; email <a href="mailto:support@veloxpeps.com?subject=CoA request">support@veloxpeps.com</a>. You can also read more about our approach on the <a href="/about/quality-and-testing/">Quality &amp; Testing</a> page.</p>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="How peptides are tested summary">
+          <p class="rl-carousel-h">Testing at a glance</p>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Third-party</h4><p>An independent lab that does not sell the product runs the tests, so the report carries no conflict of interest.</p></div>
+            <div class="rl-dcard"><h4>HPLC &mdash; purity</h4><p>Separates the sample and measures the target peak as a percentage of everything detected.</p></div>
+            <div class="rl-dcard"><h4>Mass spec &mdash; identity</h4><p>Measures molecular weight and checks it against the weight expected from the sequence.</p></div>
+            <div class="rl-dcard"><h4>Appearance + CoA</h4><p>A visual check complements the instruments; all results are recorded on the batch certificate of analysis.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section" aria-labelledby="sec-faq">
           <h2 class="rl-h2" id="sec-faq">Frequently Asked Questions</h2>

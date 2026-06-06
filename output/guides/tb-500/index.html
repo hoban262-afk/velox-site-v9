@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -579,10 +591,38 @@
           <p><strong>TB-500 is a lab-made peptide — a short chain of amino acids, the building blocks of proteins. It is based on a natural protein called Thymosin &beta;4. In lab and animal studies, researchers have looked at how it relates to cell migration (cells moving from one place to another), angiogenesis (the growing of new blood vessels), and tissue repair (the body fixing damage).</strong> It is supplied strictly as a research reagent for in vitro (test-tube / lab work only) use, not for human or veterinary use.</p>
           <p>Thymosin &beta;4 is a natural protein made of 43 amino acids. It is found in almost every cell in mammals, and there is a lot of it in platelets (the cells that help blood clot) and in the fluid around a wound — the first things to show up when there is an injury. The name &ldquo;TB-500&rdquo; refers to a lab-made version built around the active part of Thymosin &beta;4. Researchers use it as a clean, well-defined tool for studying how cells move and how tissue is rebuilt.</p>
           <p>Here is the key idea: actin (a protein that forms the &ldquo;scaffolding&rdquo; cells use to move and hold their shape) comes in two forms — loose single pieces (G-actin) and long chains (F-actin). Thymosin &beta;4 grabs the loose pieces and keeps them in reserve, helping control the balance between the two. Almost every cell that moves — cells building new blood vessels, skin cells closing a wound, repair cells travelling to damaged tissue — has to quickly rebuild its actin scaffolding to do so. That one job is why Thymosin &beta;4 sits at the centre of so much tissue-repair research. These are research observations only, not therapeutic effects.</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 660 180" role="img" aria-label="Thymosin beta-4 actin binding: it sequesters loose G-actin monomers, controlling the balance with F-actin filaments that cells use to move">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="14" y="68" width="150" height="46" rx="8" fill="#01D3A0"/><text x="89" y="89" fill="#021" font-size="11" font-weight="700">Thymosin &#946;4</text><text x="89" y="104" fill="#021" font-size="10" font-weight="700">(TB-500)</text>
+              <path d="M164 91 H206" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M206 91 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <rect x="208" y="44" width="180" height="44" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="298" y="64" fill="#9CA3AF" font-size="12">G-actin (loose</text><text x="298" y="80" fill="#9CA3AF" font-size="12">monomers) held</text>
+              <rect x="208" y="96" width="180" height="44" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="298" y="116" fill="#9CA3AF" font-size="12">F-actin (filament</text><text x="298" y="132" fill="#9CA3AF" font-size="12">scaffolding)</text>
+              <path d="M388 66 C 410 66, 410 114, 388 114" stroke="#2a2f3a" stroke-width="2" fill="none"/><text x="430" y="96" fill="#6B7280" font-size="11">balance</text>
+              <path d="M470 91 H512" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M512 91 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <rect x="514" y="68" width="136" height="46" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="582" y="88" fill="#9CA3AF" font-size="12">Cell movement</text><text x="582" y="104" fill="#9CA3AF" font-size="12">&amp; repair</text>
+            </g>
+          </svg><div class="rl-fig-cap">Fig 1 — actin sequestration: Thymosin &beta;4 holds G-actin, balancing the supply cells draw on to move</div></div>
         </section>
         <section class="rl-section" aria-labelledby="sec-mech">
           <h2 class="rl-h2" id="sec-mech">Mechanisms studied in preclinical models</h2>
           <p>TB-500 / Thymosin &beta;4 research falls into four main areas, all coming from its actin job. The parts below explain how each is studied in cell cultures and animals. All of this is research observations only, not therapeutic effects.</p>
+
+          <div class="rl-fig"><svg viewBox="0 0 660 190" role="img" aria-label="TB-500 research areas branching from actin binding: cytoskeleton, cell migration and angiogenesis, inflammation and matrix remodelling, and cardiac and corneal models">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="16" y="72" width="158" height="46" rx="8" fill="#01D3A0"/><text x="95" y="93" fill="#021" font-size="11" font-weight="700">Actin-binding</text><text x="95" y="108" fill="#021" font-size="11" font-weight="700">peptide</text>
+              <line x1="200" y1="34" x2="200" y2="156" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M174 95 H200" stroke="#2a2f3a" stroke-width="2" fill="none"/>
+              <path d="M200 34 H242" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M242 34 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <path d="M200 74 H242" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M242 74 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <path d="M200 115 H242" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M242 115 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <path d="M200 156 H242" stroke="#2a2f3a" stroke-width="2" fill="none"/><path d="M242 156 l-9 -4 v8 z" fill="#2a2f3a"/>
+              <rect x="244" y="16" width="280" height="36" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="384" y="39" fill="#9CA3AF" font-size="12">Cytoskeleton &amp; lamellipodia</text>
+              <rect x="244" y="57" width="280" height="36" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="384" y="80" fill="#9CA3AF" font-size="12">Cell migration &amp; angiogenesis</text>
+              <rect x="244" y="98" width="280" height="36" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="384" y="121" fill="#9CA3AF" font-size="12">Inflammation &amp; matrix remodelling</text>
+              <rect x="244" y="139" width="280" height="36" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="384" y="162" fill="#9CA3AF" font-size="12">Cardiac &amp; corneal tissue models</text>
+            </g>
+          </svg><div class="rl-fig-cap">Fig 2 — the four research areas branch from the peptide&rsquo;s core actin-binding role</div></div>
 
           <h3 class="rl-h3">Actin sequestration and the cytoskeleton</h3>
           <p>By holding onto loose actin pieces, Thymosin &beta;4 keeps a ready supply that a cell can use to quickly build its &ldquo;feet&rdquo; — the front-edge parts (called lamellipodia and filopodia) that pull a cell forward. In wound-healing studies, having this supply on hand is linked to skin cells and blood-vessel cells moving into the wound faster. This is the root of nearly every other effect the peptide is known for.</p>
@@ -628,6 +668,16 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies TB-500 as a lyophilised (freeze-dried) powder at &ge;99% HPLC-verified purity, tested by an outside lab, with a batch certificate of analysis (a lab report proving what is in the vial) available on request. To work out how much liquid to use when you reconstitute it (mix the powder back into a liquid), see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Supplied strictly as a research reagent for in vitro use.</p>
         </section>
+        <div class="rl-carousel" role="group" aria-label="TB-500 research focus areas summary">
+          <div class="rl-carousel-h">TB-500 research focus areas</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Actin sequestration</h4><p>Holds loose G-actin in reserve, supplying the scaffolding cells rebuild to form lamellipodia and filopodia.</p></div>
+            <div class="rl-dcard"><h4>Cell migration &amp; angiogenesis</h4><p>Studied for blood-vessel cell movement, tube formation and new-vessel growth in rodent wound models.</p></div>
+            <div class="rl-dcard"><h4>Inflammation &amp; matrix remodelling</h4><p>Examined for effects on cytokine/chemokine output and matrix-metalloproteinase activity during healing.</p></div>
+            <div class="rl-dcard"><h4>Cardiac &amp; corneal models</h4><p>The migration-and-survival theme extended to heart-muscle and corneal tissue-repair research.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>

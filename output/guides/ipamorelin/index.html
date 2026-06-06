@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Diagrams & carousel ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -587,8 +599,48 @@
           <p>Ipamorelin&rsquo;s defining feature in the literature is <em>selectivity</em>. Many earlier growth hormone secretagogues also nudged up other pituitary hormones; Ipamorelin was characterised as releasing growth hormone cleanly.</p>
           <h3 class="rl-h3">Ghrelin-receptor agonism</h3>
           <p>Ipamorelin binds the ghrelin receptor (GHS-R1a) on somatotroph cells in the pituitary &mdash; a small gland at the base of the brain that makes growth hormone. Activating that receptor prompts those cells to release stored growth hormone in a burst. Because it works one step before growth hormone (prompting the gland rather than supplying the hormone directly), the gland&rsquo;s own feedback controls remain in the loop in research models.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 640 180" role="img" aria-label="Ipamorelin acts on the ghrelin receptor on pituitary somatotrophs to release growth hormone, a different receptor from the GHRH analogues">
+              <g font-family="DM Mono, monospace" text-anchor="middle">
+                <rect x="14" y="64" width="160" height="48" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="94" y="86" fill="#9CA3AF" font-size="12">Ipamorelin</text>
+                <text x="94" y="103" fill="#6B7280" font-size="10">pentapeptide</text>
+                <path d="M174 88 H224" stroke="#2a2f3a" stroke-width="2"/><path d="M224 88 l-8 -4 v8 z" fill="#2a2f3a"/>
+                <rect x="224" y="64" width="180" height="48" rx="8" fill="#01D3A0"/>
+                <text x="314" y="84" fill="#021" font-size="12" font-weight="700">Pituitary somatotroph</text>
+                <text x="314" y="101" fill="#063" font-size="10">ghrelin receptor (GHS-R1a)</text>
+                <path d="M404 88 H454" stroke="#2a2f3a" stroke-width="2"/><path d="M454 88 l-8 -4 v8 z" fill="#2a2f3a"/>
+                <rect x="454" y="64" width="150" height="48" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="529" y="92" fill="#9CA3AF" font-size="12">GH release</text>
+                <text x="314" y="34" fill="#01D3A0" font-size="11" font-weight="700">different receptor from GHRH analogues</text>
+                <path d="M314 38 V58" stroke="#01D3A0" stroke-width="1.5" stroke-dasharray="3 3"/>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Ipamorelin acts via the ghrelin receptor, not the GHRH receptor</div>
+          </div>
+
           <h3 class="rl-h3">The selectivity finding</h3>
           <p>In the original 1998 characterisation, Ipamorelin released growth hormone with potency comparable to GHRP-6, but &mdash; unlike GHRP-6 and GHRP-2 &mdash; did <em>not</em> significantly raise ACTH or cortisol (stress-axis hormones) at growth-hormone-releasing doses. This clean profile is the basis for the &ldquo;first selective growth hormone secretagogue&rdquo; description. These are research observations only.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 640 200" role="img" aria-label="Selectivity: Ipamorelin releases growth hormone without significantly raising ACTH or cortisol, unlike the earlier secretagogues GHRP-2 and GHRP-6">
+              <g font-family="DM Mono, monospace" text-anchor="middle">
+                <rect x="170" y="18" width="300" height="42" rx="8" fill="#01D3A0"/>
+                <text x="320" y="44" fill="#021" font-size="13" font-weight="700">Ipamorelin (selective)</text>
+                <path d="M250 60 L160 96" stroke="#01D3A0" stroke-width="2"/><path d="M160 96 l10 -2 l-5 -7 z" fill="#01D3A0"/>
+                <path d="M390 60 L480 96" stroke="#374151" stroke-width="2" stroke-dasharray="4 4"/>
+                <rect x="60" y="100" width="200" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/>
+                <text x="160" y="122" fill="#F9FAFB" font-size="12" font-weight="700">GH release</text>
+                <text x="160" y="138" fill="#9CA3AF" font-size="10">switched on</text>
+                <rect x="380" y="100" width="200" height="46" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="480" y="122" fill="#6B7280" font-size="12">ACTH / cortisol</text>
+                <text x="480" y="138" fill="#6B7280" font-size="10">not significantly raised</text>
+                <text x="320" y="178" fill="#6B7280" font-size="10">unlike GHRP-2 and GHRP-6</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">The selective profile: GH released, stress-axis hormones left largely unchanged</div>
+          </div>
           <h3 class="rl-h3">Relationship to GHRH analogues</h3>
           <p>Because Ipamorelin (ghrelin receptor) and GHRH analogues (GHRH receptor) act through different pathways, they are studied as complementary tools for probing how the growth-hormone axis is switched on. Duration figures sometimes quoted for Ipamorelin are not well-documented in the primary peer-reviewed literature, so they should be treated cautiously.</p>
         </section>
@@ -635,6 +687,16 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies Ipamorelin as a lyophilised (freeze-dried) powder, tested by HPLC (a lab method that checks how pure a sample is) with a batch certificate of analysis available on request. To turn the powder back into a liquid for lab work, see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Common storage conventions (keep the sealed powder cold and dry; refrigerate any reconstituted solution and avoid repeated freeze-thaw) are handling guidance, not study-derived specifications. Sold only as a research chemical for in vitro use.</p>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="Ipamorelin research summary">
+          <div class="rl-carousel-h">Ipamorelin at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Selective GH secretagogue</h4><p>A synthetic pentapeptide (Aib-His-D-2-Nal-D-Phe-Lys-NH2) studied for prompting the body to release its own growth hormone.</p></div>
+            <div class="rl-dcard"><h4>Ghrelin-receptor agonist</h4><p>Acts on the ghrelin receptor (GHS-R1a) on pituitary somatotrophs &mdash; a different target from the GHRH analogues.</p></div>
+            <div class="rl-dcard"><h4>The selectivity finding</h4><p>In its 1998 characterisation it released GH without significantly raising ACTH or cortisol, unlike GHRP-2 and GHRP-6.</p></div>
+            <div class="rl-dcard"><h4>Mostly preclinical evidence</h4><p>The published literature is predominantly in vitro and rodent work covering GH release, selectivity, bone and gut-motility models.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section rl-refs" aria-labelledby="sec-refs"><h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>

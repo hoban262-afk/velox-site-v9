@@ -476,6 +476,17 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
+    @media (max-width:480px){.rl-cmp{grid-template-columns:1fr}}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -577,10 +588,70 @@
           <h2 class="rl-h2" id="sec-solvent">Choosing a solvent: bacteriostatic water</h2>
           <p>The liquid most people use to reconstitute research peptides is <a href="/supplies/bacteriostatic-water/">bacteriostatic water</a> &mdash; clean (sterile) water that has 0.9% benzyl alcohol in it. That small amount of benzyl alcohol stops bacteria from growing, so a mixed vial keeps for longer than it would with plain sterile water. A few peptides do not dissolve well in water (low "solubility" means they do not mix easily). Those may need a tiny bit of a second liquid first, which depends on the exact compound.</p>
           <p>Always add the liquid slowly. Aim it at the inside wall of the vial instead of squirting it straight onto the powder, and let the peptide dissolve gently &mdash; do not shake it hard.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 160" role="img" aria-label="Reconstitution step flow: equilibrate, sanitise, add slowly, swirl, then store">
+              <g font-family="DM Mono, monospace">
+                <!-- step 1 -->
+                <rect x="8" y="40" width="118" height="62" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="67" y="62" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">1 &middot; equilibrate</text>
+                <text x="67" y="80" text-anchor="middle" fill="#9CA3AF" font-size="10">reach room</text>
+                <text x="67" y="93" text-anchor="middle" fill="#9CA3AF" font-size="10">temperature</text>
+                <path d="M126 71 L150 71" stroke="#2a2f3a" stroke-width="2"/><path d="M150 71 L142 66 L142 76 Z" fill="#2a2f3a"/>
+                <!-- step 2 -->
+                <rect x="150" y="40" width="118" height="62" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="209" y="62" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">2 &middot; sanitise</text>
+                <text x="209" y="80" text-anchor="middle" fill="#9CA3AF" font-size="10">swab the</text>
+                <text x="209" y="93" text-anchor="middle" fill="#9CA3AF" font-size="10">rubber top</text>
+                <path d="M268 71 L292 71" stroke="#2a2f3a" stroke-width="2"/><path d="M292 71 L284 66 L284 76 Z" fill="#2a2f3a"/>
+                <!-- step 3 -->
+                <rect x="292" y="40" width="118" height="62" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="351" y="62" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">3 &middot; add slowly</text>
+                <text x="351" y="80" text-anchor="middle" fill="#9CA3AF" font-size="10">down the</text>
+                <text x="351" y="93" text-anchor="middle" fill="#9CA3AF" font-size="10">vial wall</text>
+                <path d="M410 71 L434 71" stroke="#2a2f3a" stroke-width="2"/><path d="M434 71 L426 66 L426 76 Z" fill="#2a2f3a"/>
+                <!-- step 4 -->
+                <rect x="434" y="40" width="118" height="62" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="493" y="62" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">4 &middot; swirl</text>
+                <text x="493" y="80" text-anchor="middle" fill="#9CA3AF" font-size="10">gently until</text>
+                <text x="493" y="93" text-anchor="middle" fill="#9CA3AF" font-size="10">clear, no shaking</text>
+                <path d="M552 71 L576 71" stroke="#2a2f3a" stroke-width="2"/><path d="M576 71 L568 66 L568 76 Z" fill="#2a2f3a"/>
+                <!-- step 5 -->
+                <rect x="576" y="40" width="118" height="62" rx="8" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="635" y="62" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">5 &middot; store</text>
+                <text x="635" y="80" text-anchor="middle" fill="#9CA3AF" font-size="10">2&ndash;8&deg;C, dark,</text>
+                <text x="635" y="93" text-anchor="middle" fill="#9CA3AF" font-size="10">labelled</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 &mdash; the clean reconstitution sequence, start to finish</div>
+          </div>
         </section>
         <section class="rl-section" aria-labelledby="sec-calc">
           <h2 class="rl-h2" id="sec-calc">Concentration calculations</h2>
           <p>Concentration (how strong the solution is) is just the amount of peptide divided by the amount of liquid you add. For example, mixing a 10&nbsp;mg vial with 2&nbsp;mL of bacteriostatic water gives 5&nbsp;mg/mL. So the amount of liquid you choose sets the strength &mdash; less liquid makes a stronger solution.</p>
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 150" role="img" aria-label="Concentration relationship: peptide milligrams divided by millilitres of water equals milligrams per millilitre, shown with a 10 milligram vial and 2 millilitres giving 5 milligrams per millilitre">
+              <g font-family="DM Mono, monospace">
+                <!-- mg node -->
+                <rect x="20" y="28" width="150" height="64" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="95" y="52" text-anchor="middle" fill="#F9FAFB" font-size="13" font-weight="700">peptide</text>
+                <text x="95" y="74" text-anchor="middle" fill="#9CA3AF" font-size="12">10 mg in vial</text>
+                <text x="200" y="66" text-anchor="middle" fill="#01D3A0" font-size="26" font-weight="700">&divide;</text>
+                <!-- ml node -->
+                <rect x="232" y="28" width="150" height="64" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="307" y="52" text-anchor="middle" fill="#F9FAFB" font-size="13" font-weight="700">water added</text>
+                <text x="307" y="74" text-anchor="middle" fill="#9CA3AF" font-size="12">2 mL</text>
+                <text x="412" y="66" text-anchor="middle" fill="#01D3A0" font-size="26" font-weight="700">=</text>
+                <!-- result node -->
+                <rect x="444" y="20" width="220" height="80" rx="8" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="554" y="48" text-anchor="middle" fill="#01D3A0" font-size="13" font-weight="700">concentration</text>
+                <text x="554" y="74" text-anchor="middle" fill="#01D3A0" font-size="18" font-weight="700">5 mg/mL</text>
+                <text x="350" y="128" text-anchor="middle" fill="#6B7280" font-size="11">less water &rarr; stronger solution &middot; more water &rarr; weaker</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 &mdash; mg &divide; mL = mg/mL: the amount of liquid you choose sets the strength</div>
+          </div>
+
           <p>The <a href="/tools/reconstitution-calculator/">reconstitution calculator</a> works both ways: type in your vial size and the strength you want to get the amount of liquid, or type in the amount of liquid to get the strength it gives.</p>
         </section>
         <section class="rl-section" aria-labelledby="sec-handle">
@@ -588,6 +659,16 @@
           <p>Keep everything clean while you work: wipe the rubber top of the vial with an alcohol swab before you put a needle through it, use a fresh sterile syringe, and do not touch the needle or the rubber top. Once mixed, peptides are usually kept in a fridge at 2&ndash;8&deg;C and out of the light. Un-mixed freeze-dried vials last longer and are usually kept cold and dry (desiccated means kept dry) for long-term storage.</p>
           <p>How long a mixed solution stays good depends on the compound. Bacteriostatic water makes it last longer than plain water would, but a mixed solution should still be used within the time that suits that peptide. Try not to freeze and thaw it over and over.</p>
         </section>
+        <div class="rl-carousel" role="group" aria-label="Reconstitution summary">
+          <p class="rl-carousel-h">Reconstitution at a glance</p>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>The solvent</h4><p>Bacteriostatic water &mdash; sterile water with 0.9% benzyl alcohol &mdash; keeps a mixed vial usable longer than plain water.</p></div>
+            <div class="rl-dcard"><h4>The maths</h4><p>Concentration = peptide (mg) &divide; water (mL). A 10&nbsp;mg vial with 2&nbsp;mL gives 5&nbsp;mg/mL.</p></div>
+            <div class="rl-dcard"><h4>The method</h4><p>Equilibrate, sanitise, add slowly down the wall, swirl gently until clear, then label and store.</p></div>
+            <div class="rl-dcard"><h4>The storage</h4><p>Keep mixed solution at 2&ndash;8&deg;C, out of light, and avoid repeated freeze&ndash;thaw cycles.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section" aria-labelledby="sec-faq"><h2 class="rl-h2" id="sec-faq">Frequently asked questions</h2>
           <div class="rl-faq-item"><div class="rl-faq-q">What is bacteriostatic water?</div><div class="rl-faq-a">Sterile water containing 0.9% benzyl alcohol, which inhibits bacterial growth and allows a reconstituted vial to be stored longer than plain sterile water permits.</div></div>
           <div class="rl-faq-item"><div class="rl-faq-q">How do I calculate peptide concentration?</div><div class="rl-faq-a">Concentration = mass of peptide ÷ volume of solvent. A 10&nbsp;mg vial in 2&nbsp;mL gives 5&nbsp;mg/mL. The reconstitution calculator does this automatically.</div></div>

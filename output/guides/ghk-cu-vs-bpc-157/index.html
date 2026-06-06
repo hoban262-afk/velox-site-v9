@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -598,6 +610,21 @@
           <p>The most studied thing about GHK-Cu is its activity in dermal fibroblast models (skin cells that build connective tissue). Preclinical work has looked at how it relates to the genes for collagen and elastin (the proteins that give skin strength and stretch) and to antioxidant pathways &mdash; the cell&rsquo;s defences against harmful, reactive molecules. So GHK-Cu is the tool for studying skin remodelling, collagen/elastin gene expression and antioxidant pathways. These are research observations only, not therapeutic effects.</p>
           <h3 class="rl-h3">BPC-157 &mdash; angiogenesis, tendon/ligament and gut-lining models</h3>
           <p>BPC-157&rsquo;s standout feature in animal and cell models is its link to angiogenesis &mdash; the growing of new blood vessels. It has also been studied in tendon and ligament fibroblast models (connective-tissue cells) and in gastrointestinal mucosal models (the gut lining). So BPC-157 is the tool for studying blood-vessel growth, connective tissue and the gut lining. These are research observations only, not therapeutic effects.</p>
+          <div class="rl-fig"><svg viewBox="0 0 660 220" role="img" aria-label="Side by side: GHK-Cu studied in dermal fibroblast collagen, elastin and antioxidant remodelling, BPC-157 studied in angiogenesis, connective tissue and gut-lining models">
+            <g font-family="DM Mono, monospace" text-anchor="middle">
+              <rect x="20" y="16" width="290" height="40" rx="8" fill="#01D3A0"/><text x="165" y="41" fill="#021" font-size="13" font-weight="700">GHK-Cu</text>
+              <rect x="350" y="16" width="290" height="40" rx="8" fill="#01D3A0"/><text x="495" y="41" fill="#021" font-size="13" font-weight="700">BPC-157</text>
+              <path d="M165 56 V82" stroke="#2a2f3a" stroke-width="2"/><path d="M165 82 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <path d="M495 56 V82" stroke="#2a2f3a" stroke-width="2"/><path d="M495 82 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <rect x="20" y="84" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="165" y="109" fill="#9CA3AF" font-size="12">Collagen/elastin &amp; antioxidant</text>
+              <rect x="350" y="84" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="495" y="109" fill="#9CA3AF" font-size="12">Angiogenesis signalling</text>
+              <path d="M165 124 V150" stroke="#2a2f3a" stroke-width="2"/><path d="M165 150 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <path d="M495 124 V150" stroke="#2a2f3a" stroke-width="2"/><path d="M495 150 l-4 -9 h8 z" fill="#2a2f3a"/>
+              <rect x="20" y="152" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="165" y="177" fill="#9CA3AF" font-size="12">Dermal/skin remodelling</text>
+              <rect x="350" y="152" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="495" y="177" fill="#9CA3AF" font-size="12">Connective tissue &amp; gut lining</text>
+            </g>
+          </svg><div class="rl-fig-cap">Fig 1 — divergent research focus: skin/collagen/antioxidant vs angiogenesis/connective tissue</div></div>
+
           <h3 class="rl-h3">The verdict on mechanism</h3>
           <p>They cover different corners of repair research: GHK-Cu leans toward skin, collagen and antioxidant remodelling, BPC-157 leans toward blood vessels, connective tissue and the gut lining. A study spanning broad tissue-repair questions is the classic reason to look at both side by side.</p>
         </section>
@@ -616,6 +643,11 @@
                 <tr><td>Often studied alongside</td><td>BPC-157, TB-500 and other tissue-research peptides</td><td>GHK-Cu, TB-500 and other tissue-research peptides</td></tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="rl-cmp" role="group" aria-label="GHK-Cu versus BPC-157 attribute cards">
+            <div class="rl-dcard"><h4>GHK-Cu</h4><p><strong>Class:</strong> copper tripeptide (3&nbsp;aa, Gly-His-Lys + Cu)<br><strong>Origin:</strong> naturally-occurring; human blood plasma<br><strong>Pathways:</strong> collagen/elastin expression, antioxidant remodelling<br><strong>Models:</strong> dermal fibroblast / skin<br><strong>Form:</strong> blue lyophilised powder</p></div>
+            <div class="rl-dcard"><h4>BPC-157</h4><p><strong>Class:</strong> pentadecapeptide (15&nbsp;aa)<br><strong>Origin:</strong> synthetic; gastric-juice protein fragment<br><strong>Pathways:</strong> angiogenesis &amp; tissue-repair signalling<br><strong>Models:</strong> tendon/ligament, GI mucosa<br><strong>Form:</strong> white lyophilised powder</p></div>
           </div>
         </section>
 
@@ -654,6 +686,15 @@
           <p><strong>Study GHK-Cu</strong> when the research question is about dermal (skin) fibroblasts, collagen/elastin gene expression, or antioxidant tissue-remodelling pathways.</p>
           <p><strong>Study BPC-157</strong> when the research question is about angiogenesis (new blood-vessel growth), tendon/ligament fibroblasts, or gastrointestinal mucosal models.</p>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="GHK-Cu vs BPC-157 research-choice summary">
+          <div class="rl-carousel-h">Choosing for a research question</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Study GHK-Cu for</h4><p>Skin remodelling, collagen/elastin gene expression and antioxidant pathways in dermal fibroblast models.</p></div>
+            <div class="rl-dcard"><h4>Study BPC-157 for</h4><p>Angiogenesis, tendon and ligament connective-tissue models, and gastrointestinal mucosal research.</p></div>
+            <div class="rl-dcard"><h4>Study both together</h4><p>For broad tissue-repair questions spanning skin, blood vessels and connective tissue side by side.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References &amp; key literature</h2>

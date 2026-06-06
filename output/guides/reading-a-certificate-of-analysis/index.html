@@ -476,6 +476,17 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
+    @media (max-width:480px){.rl-cmp{grid-template-columns:1fr}}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -582,12 +593,87 @@
           <h2 class="rl-h2" id="sec-ms">Why mass spectrometry confirmation matters</h2>
           <p>HPLC tells you <em>how much</em> of the sample is one single compound, but not <em>which</em> compound it is. Mass spectrometry (MS) answers that. It is a lab test that weighs the peptide molecule (its molecular weight) and checks that the weight matches what the correct peptide should weigh.</p>
           <p>A CoA that gives you both the HPLC purity <em>and</em> an MS-confirmed weight gives you two separate proofs: that the material is pure, and that it is the right molecule. Purity on its own, without checking the identity, is only half the story.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 170" role="img" aria-label="Two separate proofs on a certificate of analysis: HPLC answers how pure the sample is, mass spectrometry answers which molecule it is">
+              <g font-family="DM Mono, monospace">
+                <rect x="20" y="30" width="200" height="100" rx="9" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="120" y="58" text-anchor="middle" fill="#01D3A0" font-size="14" font-weight="700">HPLC</text>
+                <text x="120" y="84" text-anchor="middle" fill="#F9FAFB" font-size="12">answers</text>
+                <text x="120" y="104" text-anchor="middle" fill="#9CA3AF" font-size="12">&ldquo;how pure?&rdquo;</text>
+                <rect x="250" y="30" width="200" height="100" rx="9" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="350" y="58" text-anchor="middle" fill="#01D3A0" font-size="14" font-weight="700">Mass spec</text>
+                <text x="350" y="84" text-anchor="middle" fill="#F9FAFB" font-size="12">answers</text>
+                <text x="350" y="104" text-anchor="middle" fill="#9CA3AF" font-size="12">&ldquo;which molecule?&rdquo;</text>
+                <path d="M450 80 L486 80" stroke="#2a2f3a" stroke-width="2"/><path d="M486 80 L478 75 L478 85 Z" fill="#2a2f3a"/>
+                <rect x="490" y="30" width="190" height="100" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="585" y="62" text-anchor="middle" fill="#F9FAFB" font-size="13" font-weight="700">two proofs</text>
+                <text x="585" y="86" text-anchor="middle" fill="#9CA3AF" font-size="11">pure AND</text>
+                <text x="585" y="104" text-anchor="middle" fill="#9CA3AF" font-size="11">the right compound</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 &mdash; purity and identity are two separate questions; a full CoA answers both</div>
+          </div>
         </section>
         <section class="rl-section" aria-labelledby="sec-check">
           <h2 class="rl-h2" id="sec-check">What to check on any CoA</h2>
           <p>Look for these things: a specific batch or lot number; the name of the lab that did the testing (ideally an outside, independent lab); the HPLC purity number with the chromatogram graph shown; an MS-confirmed molecular weight; what it looks like and its form (for example, white lyophilised, or freeze-dried, powder); and the date it was tested. Be careful with any report that has no batch number, names no lab, or shows a number with no graph behind it.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 360" role="img" aria-label="Anatomy of a certificate of analysis, with labelled fields: compound name and batch, HPLC purity percentage, mass spectrometry weight, appearance and form, testing lab and date">
+              <g font-family="DM Mono, monospace">
+                <!-- document frame -->
+                <rect x="40" y="20" width="360" height="320" rx="10" fill="#0d1117" stroke="#1a1d24" stroke-width="1.5"/>
+                <text x="60" y="50" fill="#6B7280" font-size="11">CERTIFICATE OF ANALYSIS</text>
+                <line x1="60" y1="60" x2="380" y2="60" stroke="#1a1d24" stroke-width="1"/>
+                <!-- compound row -->
+                <rect x="60" y="74" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="74" y="91" fill="#9CA3AF" font-size="10">Compound</text>
+                <text x="74" y="107" fill="#F9FAFB" font-size="12" font-weight="700">Peptide name + batch / lot no.</text>
+                <!-- purity row -->
+                <rect x="60" y="124" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="74" y="141" fill="#9CA3AF" font-size="10">HPLC purity</text>
+                <text x="74" y="157" fill="#F9FAFB" font-size="12" font-weight="700">&ge; percentage + chromatogram</text>
+                <!-- MS row -->
+                <rect x="60" y="174" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="74" y="191" fill="#9CA3AF" font-size="10">Mass spec</text>
+                <text x="74" y="207" fill="#F9FAFB" font-size="12" font-weight="700">Confirmed molecular weight</text>
+                <!-- appearance row -->
+                <rect x="60" y="224" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="74" y="241" fill="#9CA3AF" font-size="10">Appearance / form</text>
+                <text x="74" y="257" fill="#F9FAFB" font-size="12" font-weight="700">e.g. white lyophilised powder</text>
+                <!-- lab row -->
+                <rect x="60" y="274" width="320" height="50" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <text x="74" y="293" fill="#9CA3AF" font-size="10">Testing lab + date</text>
+                <text x="74" y="310" fill="#F9FAFB" font-size="12" font-weight="700">Independent lab, test date</text>
+                <!-- annotation callouts -->
+                <path d="M380 94 L430 94" stroke="#2a2f3a" stroke-width="1.5"/>
+                <text x="436" y="98" fill="#9CA3AF" font-size="11">what it is + which batch</text>
+                <path d="M380 144 L430 144" stroke="#2a2f3a" stroke-width="1.5"/>
+                <text x="436" y="148" fill="#9CA3AF" font-size="11">how pure (with graph)</text>
+                <path d="M380 194 L430 194" stroke="#2a2f3a" stroke-width="1.5"/>
+                <text x="436" y="198" fill="#9CA3AF" font-size="11">confirms identity</text>
+                <path d="M380 244 L430 244" stroke="#2a2f3a" stroke-width="1.5"/>
+                <text x="436" y="248" fill="#9CA3AF" font-size="11">visual / physical form</text>
+                <path d="M380 299 L430 299" stroke="#2a2f3a" stroke-width="1.5"/>
+                <text x="436" y="296" fill="#9CA3AF" font-size="11">who tested it,</text>
+                <text x="436" y="311" fill="#9CA3AF" font-size="11">and when</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 &mdash; the fields a complete CoA should carry, and what each one tells a researcher</div>
+          </div>
           <p>You can review Velox Peptides batch documentation in the <a href="/about/coa-library/">CoA library</a>, or read more about our testing process on the <a href="/about/quality-and-testing/">Quality &amp; Testing</a> page. New to ordering research peptides? See our guide to <a href="/guides/how-to-buy-research-peptides-uk/">buying research peptides in the UK safely</a>.</p>
         </section>
+        <div class="rl-carousel" role="group" aria-label="Certificate of analysis summary">
+          <p class="rl-carousel-h">Reading a CoA, in short</p>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Tied to a batch</h4><p>A real CoA links to a specific batch or lot number, not just the product in general.</p></div>
+            <div class="rl-dcard"><h4>HPLC purity</h4><p>The percentage that is the target compound &mdash; shown with a chromatogram, not just a bare number.</p></div>
+            <div class="rl-dcard"><h4>Mass spec identity</h4><p>A confirmed molecular weight proves it is the right molecule, not only that it is pure.</p></div>
+            <div class="rl-dcard"><h4>Lab and date</h4><p>An independent testing lab named, with the test date &mdash; treat reports with no lab or no graph cautiously.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section" aria-labelledby="sec-faq"><h2 class="rl-h2" id="sec-faq">Frequently asked questions</h2>
           <div class="rl-faq-item"><div class="rl-faq-q">What does HPLC purity mean on a CoA?</div><div class="rl-faq-a">It is the percentage of the sample that is the target compound, as measured by High-Performance Liquid Chromatography. &ge;98% means at least 98% of the material is the intended peptide.</div></div>
           <div class="rl-faq-item"><div class="rl-faq-q">Why does mass spectrometry matter?</div><div class="rl-faq-a">HPLC shows how pure a sample is but not what it is. Mass spectrometry confirms the molecular weight matches the target sequence, verifying identity.</div></div>

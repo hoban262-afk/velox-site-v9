@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Diagrams & carousel ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -587,8 +599,50 @@
           <h3 class="rl-h3">Receptor binding and the cAMP cascade</h3>
           <p>Tesamorelin fits the GHRH receptor on cells in the pituitary called somatotrophs (the cells that make growth hormone). When the receptor switches on, it raises a tiny &ldquo;messenger&rdquo; molecule inside the cell called cAMP. That rise in cAMP makes the cell both build and release growth hormone. Because it works through the cell&rsquo;s own machinery, researchers use Tesamorelin to test how well these cells respond and whether the GHRH signalling is working properly.</p>
 
+          <div class="rl-fig">
+            <svg viewBox="0 0 640 180" role="img" aria-label="GH axis: Tesamorelin binds the GHRH receptor on pituitary somatotrophs, raises cAMP and triggers pulsatile growth hormone release, which drives IGF-1">
+              <g font-family="DM Mono, monospace" text-anchor="middle">
+                <rect x="14" y="64" width="150" height="48" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="89" y="86" fill="#9CA3AF" font-size="12">GHRH signal</text>
+                <text x="89" y="103" fill="#6B7280" font-size="10">natural rhythm</text>
+                <path d="M164 88 H214" stroke="#2a2f3a" stroke-width="2"/><path d="M214 88 l-8 -4 v8 z" fill="#2a2f3a"/>
+                <rect x="214" y="64" width="170" height="48" rx="8" fill="#01D3A0"/>
+                <text x="299" y="84" fill="#021" font-size="12" font-weight="700">Pituitary somatotroph</text>
+                <text x="299" y="101" fill="#063" font-size="10">GHRH receptor &rarr; cAMP</text>
+                <path d="M384 88 H434" stroke="#2a2f3a" stroke-width="2"/><path d="M434 88 l-8 -4 v8 z" fill="#2a2f3a"/>
+                <rect x="434" y="42" width="150" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="509" y="67" fill="#9CA3AF" font-size="12">GH release</text>
+                <rect x="434" y="96" width="150" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="509" y="121" fill="#9CA3AF" font-size="12">&rarr; IGF-1</text>
+                <text x="299" y="34" fill="#01D3A0" font-size="11" font-weight="700">Tesamorelin acts here</text>
+                <path d="M299 38 V58" stroke="#01D3A0" stroke-width="1.5" stroke-dasharray="3 3"/>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Where Tesamorelin acts on the GH axis studied in research</div>
+          </div>
+
           <h3 class="rl-h3">Pulsatile release vs direct growth hormone</h3>
           <p>The key point is that Tesamorelin works one step earlier. It asks the pituitary to release the body&rsquo;s own growth hormone in its natural rhythm of bursts, keeping the body&rsquo;s normal feedback controls in place. Giving growth hormone directly skips the pituitary completely and gives a flat, steady level instead of natural bursts. For researchers studying how the growth-hormone system is controlled, keeping those natural bursts is exactly what makes a GHRH analogue a truer tool than plain growth hormone.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 640 190" role="img" aria-label="Tesamorelin asks the pituitary to release growth hormone in natural bursts, keeping feedback in the loop; direct growth hormone bypasses the pituitary and gives a flat steady level">
+              <line x1="55" y1="95" x2="305" y2="95" stroke="#2a2f3a" stroke-width="1.5"/>
+              <line x1="55" y1="22" x2="55" y2="95" stroke="#2a2f3a" stroke-width="1.5"/>
+              <path d="M55 93 C 75 35, 95 35, 110 93 C 130 35, 150 35, 165 93 C 185 35, 205 35, 220 93" fill="none" stroke="#01D3A0" stroke-width="2.5"/>
+              <g font-family="DM Mono, monospace" text-anchor="middle">
+                <text x="180" y="118" fill="#F9FAFB" font-size="12" font-weight="700">Tesamorelin</text>
+                <text x="180" y="135" fill="#9CA3AF" font-size="10">pulsatile GH, feedback kept</text>
+              </g>
+              <line x1="345" y1="95" x2="595" y2="95" stroke="#2a2f3a" stroke-width="1.5"/>
+              <line x1="345" y1="22" x2="345" y2="95" stroke="#2a2f3a" stroke-width="1.5"/>
+              <path d="M345 60 H585" fill="none" stroke="#6B7280" stroke-width="2.5"/>
+              <g font-family="DM Mono, monospace" text-anchor="middle">
+                <text x="470" y="118" fill="#F9FAFB" font-size="12" font-weight="700">Direct GH</text>
+                <text x="470" y="135" fill="#9CA3AF" font-size="10">flat level, pituitary bypassed</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Pulsatile GHRH-receptor stimulation versus a flat direct-GH level</div>
+          </div>
 
           <h3 class="rl-h3">Downstream GH and the IGF-1 axis</h3>
           <p>The growth hormone that Tesamorelin helps release then acts on the body&rsquo;s tissues and triggers IGF-1 (insulin-like growth factor 1), the messenger behind many of growth hormone&rsquo;s effects. So research with Tesamorelin reaches past the pituitary to the wider growth-hormone/IGF-1 system and how it affects metabolism.</p>
@@ -621,6 +675,16 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies Tesamorelin as a lyophilised (freeze-dried) powder at &ge;99% HPLC-verified purity, with a batch certificate of analysis (a lab report proving what is in the vial) available on request. To work out how to reconstitute it (mix the powder back into a liquid), see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Supplied strictly as a research reagent for in vitro use.</p>
         </section>
+        <div class="rl-carousel" role="group" aria-label="Tesamorelin research summary">
+          <div class="rl-carousel-h">Tesamorelin at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Full-length GHRH analogue</h4><p>The complete 44-amino-acid human GHRH with a trans-3-hexenoyl cap that resists DPP-IV, so it lasts longer than plain GHRH.</p></div>
+            <div class="rl-dcard"><h4>GHRH-receptor signalling</h4><p>Binds the GHRH receptor on pituitary somatotrophs and raises cAMP, prompting synthesis and release of growth hormone.</p></div>
+            <div class="rl-dcard"><h4>Pulsatile, not direct GH</h4><p>Acts one step before growth hormone, keeping the natural burst rhythm and the body&rsquo;s own feedback controls in research models.</p></div>
+            <div class="rl-dcard"><h4>Metabolic research focus</h4><p>Studied most for downstream GH/IGF-1 signalling and effects on visceral fat and how the body handles fats.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>

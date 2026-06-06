@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Figures / diagrams ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -578,6 +590,59 @@
           <h2 class="rl-h2" id="sec-what">What is Semax?</h2>
           <p><strong>Semax is a lab-made peptide — a short chain of amino acids, the building blocks of proteins. It is made of seven of them (a heptapeptide, &ldquo;hepta&rdquo; meaning seven), with the sequence Met-Glu-His-Phe-Pro-Gly-Pro.</strong> It is a neuropeptide (a peptide that acts on nerve cells) and is copied from a small piece of a natural hormone called ACTH. In lab and animal studies, researchers have looked at how it relates to BDNF (brain-derived neurotrophic factor, a protein that helps brain cells grow and survive) and to protecting nerve cells. These are research observations only, not therapeutic effects. It is supplied strictly as a research reagent for in vitro (test-tube / lab work only) use, not for human or veterinary use.</p>
           <p>Semax takes the active piece of ACTH (called the ACTH(4&ndash;7) fragment) and adds a Pro-Gly-Pro tail. That tail slows down how fast the body&rsquo;s enzymes break it apart, so Semax lasts much longer than the plain fragment. Here is the useful part: this piece of ACTH still sends nerve-related signals, but <em>without</em> the part of the full hormone that triggers stress hormones. That makes it a clean research tool — scientists can study these nerve signals on their own, away from the body&rsquo;s stress-hormone system.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 200" role="img" aria-label="Structure of Semax: the ACTH(4-7) fragment Met-Glu-His-Phe joined to a stabilising Pro-Gly-Pro tail, forming the heptapeptide Met-Glu-His-Phe-Pro-Gly-Pro">
+              <text x="20" y="30" fill="#6B7280" font-family="DM Mono, monospace" font-size="11" letter-spacing="0.08em">ACTH(4&ndash;7) CORE</text>
+              <text x="700" y="30" text-anchor="end" fill="#6B7280" font-family="DM Mono, monospace" font-size="11" letter-spacing="0.08em">PRO-GLY-PRO TAIL</text>
+              <g font-family="DM Mono, monospace" font-size="14" font-weight="700">
+                <!-- core residues (active node fill) -->
+                <g>
+                  <rect x="20" y="50" width="84" height="50" rx="8" fill="#01D3A0"/>
+                  <text x="62" y="80" text-anchor="middle" fill="#030407">Met</text>
+                </g>
+                <g>
+                  <rect x="116" y="50" width="84" height="50" rx="8" fill="#01D3A0"/>
+                  <text x="158" y="80" text-anchor="middle" fill="#030407">Glu</text>
+                </g>
+                <g>
+                  <rect x="212" y="50" width="84" height="50" rx="8" fill="#01D3A0"/>
+                  <text x="254" y="80" text-anchor="middle" fill="#030407">His</text>
+                </g>
+                <g>
+                  <rect x="308" y="50" width="84" height="50" rx="8" fill="#01D3A0"/>
+                  <text x="350" y="80" text-anchor="middle" fill="#030407">Phe</text>
+                </g>
+                <!-- tail residues (inactive node fill) -->
+                <g>
+                  <rect x="420" y="50" width="84" height="50" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/>
+                  <text x="462" y="80" text-anchor="middle" fill="#D1D5DB">Pro</text>
+                </g>
+                <g>
+                  <rect x="516" y="50" width="84" height="50" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/>
+                  <text x="558" y="80" text-anchor="middle" fill="#D1D5DB">Gly</text>
+                </g>
+                <g>
+                  <rect x="612" y="50" width="84" height="50" rx="8" fill="#0d1117" stroke="#2a2f3a" stroke-width="2"/>
+                  <text x="654" y="80" text-anchor="middle" fill="#D1D5DB">Pro</text>
+                </g>
+              </g>
+              <!-- peptide bonds -->
+              <g stroke="#2a2f3a" stroke-width="2">
+                <line x1="104" y1="75" x2="116" y2="75"/>
+                <line x1="200" y1="75" x2="212" y2="75"/>
+                <line x1="296" y1="75" x2="308" y2="75"/>
+                <line x1="392" y1="75" x2="420" y2="75"/>
+                <line x1="504" y1="75" x2="516" y2="75"/>
+                <line x1="600" y1="75" x2="612" y2="75"/>
+              </g>
+              <!-- bracket labels -->
+              <text x="206" y="135" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="11">neuro-regulatory fragment</text>
+              <text x="558" y="135" text-anchor="middle" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="11">slows enzymatic breakdown</text>
+              <text x="360" y="175" text-anchor="middle" fill="#D1D5DB" font-family="DM Mono, monospace" font-size="13" font-weight="700">Met-Glu-His-Phe-Pro-Gly-Pro &middot; heptapeptide</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — Semax is the ACTH(4&ndash;7) core extended with a stabilising Pro-Gly-Pro tail</div>
+          </div>
           <p>Semax comes from a long line of Eastern European research and was studied there over many decades. In the lab it is used as a neuropeptide research tool, mainly to study how short peptides change brain-growth proteins, nerve-protecting gene activity, and learning in cell cultures and rodents.</p>
         </section>
         <section class="rl-section" aria-labelledby="sec-mech">
@@ -586,6 +651,58 @@
 
           <h3 class="rl-h3">Neurotrophic factor (BDNF/NGF) expression</h3>
           <p>The most studied thing about Semax is that it has been linked to more BDNF and NGF (nerve growth factor) in the brain. These are proteins that help nerve cells survive, grow, and form new connections (this connection-forming is called synaptic plasticity). In rodent studies, BDNF levels rose quickly in certain brain areas after Semax was given, along with changes in TrkB (the receptor that BDNF locks onto). Gene studies tracked how NGF and BDNF activity changed over time across different brain regions — and found the effect depends on the region and can go up or down, rather than being one simple uniform change.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 720 260" role="img" aria-label="Pathway map: Semax associated with increased BDNF and NGF expression; BDNF acts on the TrkB receptor, linked to neurotrophic signalling, synaptic plasticity and neuroprotection in preclinical models">
+              <!-- Semax node (active) -->
+              <g font-family="DM Mono, monospace">
+                <rect x="20" y="100" width="110" height="56" rx="10" fill="#01D3A0"/>
+                <text x="75" y="133" text-anchor="middle" fill="#030407" font-size="15" font-weight="700">Semax</text>
+              </g>
+              <!-- arrows to BDNF / NGF -->
+              <g stroke="#2a2f3a" stroke-width="2" fill="none">
+                <path d="M130 116 C 175 96, 195 80, 235 80"/>
+                <path d="M130 140 C 175 160, 195 176, 235 176"/>
+              </g>
+              <path d="M235 80 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <path d="M235 176 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <!-- BDNF node -->
+              <g font-family="DM Mono, monospace">
+                <rect x="240" y="54" width="120" height="52" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="300" y="79" text-anchor="middle" fill="#F9FAFB" font-size="14" font-weight="700">BDNF</text>
+                <text x="300" y="96" text-anchor="middle" fill="#6B7280" font-size="10">expression &uarr;</text>
+              </g>
+              <!-- NGF node -->
+              <g font-family="DM Mono, monospace">
+                <rect x="240" y="150" width="120" height="52" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="300" y="175" text-anchor="middle" fill="#F9FAFB" font-size="14" font-weight="700">NGF</text>
+                <text x="300" y="192" text-anchor="middle" fill="#6B7280" font-size="10">expression &uarr;</text>
+              </g>
+              <!-- BDNF -> TrkB -->
+              <g stroke="#2a2f3a" stroke-width="2" fill="none">
+                <path d="M360 80 L 430 80"/>
+              </g>
+              <path d="M430 80 l-11 -4 l3 8 Z" fill="#2a2f3a"/>
+              <g font-family="DM Mono, monospace">
+                <rect x="435" y="54" width="120" height="52" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="495" y="79" text-anchor="middle" fill="#F9FAFB" font-size="14" font-weight="700">TrkB</text>
+                <text x="495" y="96" text-anchor="middle" fill="#6B7280" font-size="10">receptor</text>
+              </g>
+              <!-- converge to outcomes -->
+              <g stroke="#2a2f3a" stroke-width="2" fill="none">
+                <path d="M555 80 C 600 80, 600 128, 600 128"/>
+                <path d="M360 176 C 560 176, 560 138, 596 130"/>
+              </g>
+              <path d="M600 128 l-4 -11 l8 3 Z" fill="#2a2f3a"/>
+              <g font-family="DM Mono, monospace">
+                <rect x="540" y="130" width="160" height="86" rx="9" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="620" y="156" text-anchor="middle" fill="#D1D5DB" font-size="11">synaptic plasticity</text>
+                <text x="620" y="176" text-anchor="middle" fill="#D1D5DB" font-size="11">neuroprotection</text>
+                <text x="620" y="196" text-anchor="middle" fill="#6B7280" font-size="10">(preclinical models)</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 — Semax and the BDNF / NGF neurotrophic pathway studied in rodents</div>
+          </div>
 
           <h3 class="rl-h3">Neuroprotection and ischaemia models</h3>
           <p>Semax has been tested in rodent models of stroke (where blood flow to part of the brain is cut off, called ischaemia) and oxidative stress (damage from harmful molecules). Researchers looked at how it relates to nerve cells surviving and to the activity of nerve-growth genes after injury. In these stroke models, Semax (and a smaller piece it breaks down into, Pro-Gly-Pro) was linked to switching on nerve-growth genes and dialling down genes tied to inflammation and cell death. This is why it is used as a research tool for studying how nerve cells can be protected. These are research observations only, not therapeutic effects.</p>
@@ -626,6 +743,28 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies Semax as a lyophilised (freeze-dried) powder at &ge;99.0% HPLC-verified purity, with a batch certificate of analysis (a lab report proving what is in the vial) available on request. To work out how to reconstitute it (mix the powder back into a liquid), see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Supplied strictly as a research reagent for in vitro use.</p>
         </section>
+        <div class="rl-carousel" aria-label="Semax research summary">
+          <div class="rl-carousel-h">Semax at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard">
+              <h4>Structure</h4>
+              <p>The heptapeptide Met-Glu-His-Phe-Pro-Gly-Pro — the ACTH(4&ndash;7) fragment extended with a stabilising Pro-Gly-Pro tail.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Key pathway</h4>
+              <p>Most associated in preclinical models with increased BDNF and NGF expression and TrkB receptor signalling.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Research areas</h4>
+              <p>Neurotrophic factor expression, neuroprotection in rodent ischaemia models, and attention/monoamine systems.</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Supply</h4>
+              <p>Lyophilised powder, &ge;99.0% HPLC-verified. For in vitro research use only — not for human or veterinary use.</p>
+            </div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>

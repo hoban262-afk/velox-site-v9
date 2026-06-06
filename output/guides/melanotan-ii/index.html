@@ -476,6 +476,15 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -587,11 +596,105 @@
           <h3 class="rl-h3">Non-selective melanocortin agonism</h3>
           <p>An agonist is something that turns a receptor "on". MT-2 turns on four melanocortin switches &mdash; MC1R, MC3R, MC4R and MC5R &mdash; and mostly skips the fifth (MC2R). This is the main feature researchers study, because each switch controls a different job in the body and MT-2 hits several of them at the same time.</p>
 
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 300" role="img" aria-label="Melanotan II receptor selectivity map: MT-2 acts as an agonist at MC1R, MC3R, MC4R and MC5R, with no significant activity at MC2R">
+              <!-- MT-2 source -->
+              <g transform="translate(40,119)">
+                <rect x="0" y="0" width="150" height="62" rx="10" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2.5"/>
+                <text x="75" y="30" text-anchor="middle" fill="#01D3A0" font-family="DM Mono, monospace" font-size="16" font-weight="700">MT-2</text>
+                <text x="75" y="48" text-anchor="middle" fill="#6B7280" font-family="DM Mono, monospace" font-size="10">&alpha;-MSH analogue</text>
+              </g>
+              <!-- receptor nodes -->
+              <g font-family="DM Mono, monospace" font-size="14" font-weight="700">
+                <!-- MC1R active -->
+                <g transform="translate(440,18)">
+                  <rect x="0" y="0" width="220" height="44" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                  <text x="20" y="28" fill="#01D3A0">MC1R</text>
+                  <text x="210" y="28" text-anchor="end" fill="#6B7280" font-size="10" font-weight="400">pigmentation</text>
+                </g>
+                <!-- MC3R active -->
+                <g transform="translate(440,72)">
+                  <rect x="0" y="0" width="220" height="44" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                  <text x="20" y="28" fill="#01D3A0">MC3R</text>
+                  <text x="210" y="28" text-anchor="end" fill="#6B7280" font-size="10" font-weight="400">central pathways</text>
+                </g>
+                <!-- MC4R active -->
+                <g transform="translate(440,126)">
+                  <rect x="0" y="0" width="220" height="44" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                  <text x="20" y="28" fill="#01D3A0">MC4R</text>
+                  <text x="210" y="28" text-anchor="end" fill="#6B7280" font-size="10" font-weight="400">central pathways</text>
+                </g>
+                <!-- MC5R active -->
+                <g transform="translate(440,180)">
+                  <rect x="0" y="0" width="220" height="44" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                  <text x="20" y="28" fill="#01D3A0">MC5R</text>
+                  <text x="210" y="28" text-anchor="end" fill="#6B7280" font-size="10" font-weight="400">agonist</text>
+                </g>
+                <!-- MC2R inactive -->
+                <g transform="translate(440,234)">
+                  <rect x="0" y="0" width="220" height="44" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                  <text x="20" y="28" fill="#4B5563">MC2R</text>
+                  <text x="210" y="28" text-anchor="end" fill="#4B5563" font-size="10" font-weight="400">no significant activity</text>
+                </g>
+              </g>
+              <!-- connectors from MT-2 -->
+              <g fill="none" stroke="#2a2f3a" stroke-width="2">
+                <path d="M190 140 C 300 90, 360 45, 438 40"/>
+                <path d="M190 144 C 300 110, 360 95, 438 94"/>
+                <path d="M190 150 C 300 150, 360 148, 438 148"/>
+                <path d="M190 156 C 300 190, 360 200, 438 202"/>
+              </g>
+              <g fill="#2a2f3a">
+                <path d="M438 40 L426 35 L427 46 Z"/>
+                <path d="M438 94 L426 89 L427 100 Z"/>
+                <path d="M438 148 L426 143 L427 154 Z"/>
+                <path d="M438 202 L426 197 L427 208 Z"/>
+              </g>
+              <!-- dashed (inactive) connector to MC2R -->
+              <path d="M190 162 C 300 240, 360 252, 438 256" fill="none" stroke="#1a1d24" stroke-width="2" stroke-dasharray="5 5"/>
+            </svg>
+            <div class="rl-fig-cap">Fig 1 — MT-2 receptor map: agonist at MC1R, MC3R, MC4R, MC5R; little activity at MC2R</div>
+          </div>
+
           <h3 class="rl-h3">MC1R and the pigmentation pathway</h3>
           <p>MC1R is a switch found on melanocytes &mdash; the cells that make melanin, the pigment that gives skin and hair its colour. In cell and animal studies, scientists use MT-2 to turn on MC1R so they can watch how this switch controls pigment production. These are research observations only, not therapeutic or cosmetic effects in people.</p>
 
           <h3 class="rl-h3">MC3R / MC4R and central pathways</h3>
           <p>MC3R and MC4R are switches found in the brain and nerves. Researchers study them for their part in energy use and feeding (how and when animals eat). In rodent studies, MT-2 has been used to test what these switches do for appetite, which makes it a tool for taking apart how the brain&rsquo;s melanocortin signals work. Again, these are research observations only, not effects in humans.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 700 220" role="img" aria-label="The receptor pathways studied with Melanotan II: MC1R on melanocytes for pigment production, and MC3R and MC4R in the brain for energy use and feeding. Preclinical research observations only.">
+              <!-- MC1R -->
+              <g transform="translate(40,80)" font-family="DM Mono, monospace">
+                <rect x="0" y="0" width="150" height="56" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                <text x="75" y="26" text-anchor="middle" fill="#01D3A0" font-size="15" font-weight="700">MC1R</text>
+                <text x="75" y="44" text-anchor="middle" fill="#6B7280" font-size="10">on melanocytes</text>
+              </g>
+              <path d="M190 108 L300 108" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M300 108 L288 103 L288 113 Z" fill="#2a2f3a"/>
+              <g transform="translate(305,80)" font-family="DM Mono, monospace">
+                <rect x="0" y="0" width="230" height="56" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="115" y="26" text-anchor="middle" fill="#D1D5DB" font-size="13" font-weight="700">Pigment production</text>
+                <text x="115" y="44" text-anchor="middle" fill="#6B7280" font-size="10">melanin &mdash; research observation only</text>
+              </g>
+              <!-- MC3R/MC4R -->
+              <g transform="translate(40,150)" font-family="DM Mono, monospace">
+                <rect x="0" y="0" width="150" height="56" rx="8" fill="#01D3A0" opacity="0.16" stroke="#01D3A0" stroke-width="2"/>
+                <text x="75" y="26" text-anchor="middle" fill="#01D3A0" font-size="14" font-weight="700">MC3R / MC4R</text>
+                <text x="75" y="44" text-anchor="middle" fill="#6B7280" font-size="10">brain &amp; nerves</text>
+              </g>
+              <path d="M190 178 L300 178" fill="none" stroke="#2a2f3a" stroke-width="2"/>
+              <path d="M300 178 L288 173 L288 183 Z" fill="#2a2f3a"/>
+              <g transform="translate(305,150)" font-family="DM Mono, monospace">
+                <rect x="0" y="0" width="230" height="56" rx="8" fill="#0d1117" stroke="#1a1d24" stroke-width="2"/>
+                <text x="115" y="26" text-anchor="middle" fill="#D1D5DB" font-size="13" font-weight="700">Energy use &amp; feeding</text>
+                <text x="115" y="44" text-anchor="middle" fill="#6B7280" font-size="10">rodent studies &mdash; research observation only</text>
+              </g>
+              <text x="305" y="40" fill="#9CA3AF" font-family="DM Mono, monospace" font-size="12" font-weight="700">Receptor pathways studied with MT-2</text>
+              <text x="305" y="58" fill="#4B5563" font-family="DM Mono, monospace" font-size="10">No effects in humans claimed; not for cosmetic or tanning use</text>
+            </svg>
+            <div class="rl-fig-cap">Fig 2 — the pigment (MC1R) and central (MC3R/MC4R) pathways studied with MT-2 as a tool</div>
+          </div>
 
           <h3 class="rl-h3">A reference agonist for receptor-selectivity research</h3>
           <p>Because MT-2 turns on several switches at once, scientists often use it as a "yardstick" chemical. They compare newer chemicals that target just MC3R or just MC4R against MT-2 to see how those narrower ones behave. This makes it an important lab reference in melanocortin research.</p>
@@ -619,6 +722,16 @@
           <h2 class="rl-h2" id="sec-supply">Velox Peptides supply information</h2>
           <p>Velox Peptides supplies Melanotan II as a lyophilised (freeze-dried) powder at &ge;99.3% purity, checked by HPLC (a lab method that measures how pure a sample is). A batch certificate of analysis is available on request. To work out how to mix the powder back into a liquid (reconstitute it), see the <a href="/tools/reconstitution-calculator/">reconstitution calculator</a>. Supplied strictly as a research chemical for in vitro (lab-only) use &mdash; not for human, cosmetic, tanning or veterinary use.</p>
         </section>
+        <div class="rl-carousel">
+          <div class="rl-carousel-h">Melanotan II at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Cyclic &alpha;-MSH analogue</h4><p>A synthetic peptide joined into a ring shape, making it more stable and longer-lasting than the natural &alpha;-MSH hormone it copies.</p></div>
+            <div class="rl-dcard"><h4>Non-selective agonist</h4><p>Turns on four of the five melanocortin switches &mdash; MC1R, MC3R, MC4R and MC5R &mdash; while mostly skipping MC2R.</p></div>
+            <div class="rl-dcard"><h4>Pathways studied</h4><p>MC1R on melanocytes is studied for pigment production; MC3R/MC4R in the brain are studied for energy use and feeding in rodent models. Research observations only.</p></div>
+            <div class="rl-dcard"><h4>Reference agonist</h4><p>Because it hits several receptors at once, MT-2 is used as a yardstick to compare narrower MC3R- or MC4R-selective compounds against in melanocortin research.</p></div>
+          </div>
+        </div>
+
         <section class="rl-section rl-refs" aria-labelledby="sec-refs"><h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
           <ol>
             <li>Hadley ME, Dorr RT. &ldquo;Melanocortin peptide therapeutics: historical milestones, clinical studies and commercialization.&rdquo; <em>Peptides</em>, 2006.</li>

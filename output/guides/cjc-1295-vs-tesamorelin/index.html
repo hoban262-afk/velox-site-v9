@@ -476,6 +476,18 @@
     }
     .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
     .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+
+    /* ── Diagrams & carousel ── */
+    .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
+    .rl-fig svg { width: 100%; height: auto; display: block; }
+    .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
+    .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
+    .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-left:3px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
+    .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -596,6 +608,29 @@
           <p><strong>Why it matters:</strong> both peptides switch on the exact same pathway, so the real research difference is the <em>shape</em> of the growth-hormone response &mdash; a quick burst versus a longer, steadier one.</p>
           <h3 class="rl-h3">Shared receptor cascade</h3>
           <p>Both CJC-1295 and Tesamorelin dock onto the GHRH receptor (the matching &ldquo;lock&rdquo; for these peptides) on somatotroph cells in the pituitary &mdash; the cells that make growth hormone. Docking there starts a chain of steps: it switches on an enzyme called adenylyl cyclase, raises a cell messenger called cAMP, and gets the cells to make and release growth hormone &mdash; which in turn raises IGF-1, a protein the body makes in response to growth hormone. The target and the steps are the same for both.</p>
+
+          <div class="rl-fig">
+            <svg viewBox="0 0 640 180" role="img" aria-label="Both CJC-1295 and Tesamorelin dock the same GHRH receptor on pituitary somatotrophs, raising cAMP to release growth hormone, which drives IGF-1">
+              <g font-family="DM Mono, monospace" text-anchor="middle">
+                <rect x="14" y="40" width="160" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="94" y="64" fill="#9CA3AF" font-size="12">CJC-1295 (no DAC)</text>
+                <rect x="14" y="96" width="160" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="94" y="120" fill="#9CA3AF" font-size="12">Tesamorelin</text>
+                <path d="M174 60 L222 80" stroke="#2a2f3a" stroke-width="2"/>
+                <path d="M174 116 L222 96" stroke="#2a2f3a" stroke-width="2"/>
+                <rect x="224" y="64" width="180" height="48" rx="8" fill="#01D3A0"/>
+                <text x="314" y="84" fill="#021" font-size="12" font-weight="700">GHRH receptor</text>
+                <text x="314" y="101" fill="#063" font-size="10">somatotroph &rarr; cAMP</text>
+                <path d="M404 88 H452" stroke="#2a2f3a" stroke-width="2"/><path d="M452 88 l-8 -4 v8 z" fill="#2a2f3a"/>
+                <rect x="452" y="42" width="170" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="537" y="67" fill="#9CA3AF" font-size="12">GH release</text>
+                <rect x="452" y="96" width="170" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/>
+                <text x="537" y="121" fill="#9CA3AF" font-size="12">&rarr; IGF-1</text>
+                <text x="314" y="30" fill="#01D3A0" font-size="11" font-weight="700">same target for both</text>
+              </g>
+            </svg>
+            <div class="rl-fig-cap">Both peptides switch on the same GHRH-receptor pathway</div>
+          </div>
           <h3 class="rl-h3">Duration and pulse shape</h3>
           <p>The difference is about timing. CJC-1295 without DAC acts for only about half an hour and is linked to a sharp, separate burst of growth hormone that looks like the body&rsquo;s natural rhythm. Tesamorelin lasts longer, so it is a tool for studying a steadier, more drawn-out switching-on of the target. Researchers pick between them based on whether the study needs a quick burst or a longer exposure. These are research observations only, not therapeutic effects.</p>
         </section>
@@ -614,6 +649,17 @@
                 <tr><td>CAS / designation</td><td>Modified GRF(1-29)</td><td>218949-48-5</td></tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="rl-cmp" role="group" aria-label="CJC-1295 versus Tesamorelin two-column comparison">
+            <div class="rl-dcard">
+              <h4>CJC-1295 (no DAC)</h4>
+              <p>Based on the GHRH(1&ndash;29) fragment. Stabilised by four amino-acid substitutions. Short duration (~30 min). Sharp, pulse-like GH response. Designation: Modified GRF(1-29).</p>
+            </div>
+            <div class="rl-dcard">
+              <h4>Tesamorelin</h4>
+              <p>Based on full GHRH(1&ndash;44). Stabilised by a trans-3-hexenoyl N-terminus. Longer functional half-life. More sustained GH response. CAS 218949-48-5.</p>
+            </div>
           </div>
         </section>
 
@@ -645,6 +691,16 @@
           <p><strong>Pick Tesamorelin</strong> when the study needs a longer-lasting, well-studied full-length GHRH-like peptide, or wants to follow growth hormone and IGF-1 over a longer stretch of time.</p>
           <p>Both are available within the <a href="/compounds/growth/">somatotropic research</a> category and alongside the <a href="/stacks/gh-peptide/">GH peptide research stack</a>.</p>
         </section>
+
+        <div class="rl-carousel" role="group" aria-label="CJC-1295 vs Tesamorelin summary">
+          <div class="rl-carousel-h">CJC-1295 vs Tesamorelin at a glance</div>
+          <div class="rl-cards">
+            <div class="rl-dcard"><h4>Same target</h4><p>Both are GHRH-receptor agonists acting on pituitary somatotrophs, raising cAMP to release the body&rsquo;s own growth hormone.</p></div>
+            <div class="rl-dcard"><h4>Different structure</h4><p>CJC-1295 copies GHRH(1&ndash;29) with four substitutions; Tesamorelin copies full GHRH(1&ndash;44) with a trans-3-hexenoyl cap.</p></div>
+            <div class="rl-dcard"><h4>Different duration</h4><p>CJC-1295 without DAC is short-acting (~30 min) with a sharp pulse; Tesamorelin has a longer functional half-life and a more sustained response.</p></div>
+            <div class="rl-dcard"><h4>Complementary research tools</h4><p>Because they share a pathway but differ in timing, they are typically studied as comparative tools within somatotropic research.</p></div>
+          </div>
+        </div>
 
         <section class="rl-section rl-refs" aria-labelledby="sec-refs">
           <h2 class="rl-h2" id="sec-refs">References &amp; further reading</h2>
