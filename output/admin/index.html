@@ -682,7 +682,8 @@
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('reorder','Replenishment')">Replenishment</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="runFlow('review','Review request')">Review request</button>
         </div>
-        <div style="margin-top:16px;font-size:13px;color:var(--t3,#6b7280);line-height:1.5">Or send a single <strong style="color:#fff">test copy to support@veloxpeps.com only</strong> — renders the real email with sample data, sends to no one else:</div>
+        <div style="margin-top:16px;font-size:13px;color:var(--t3,#6b7280);line-height:1.5">Or send a single <strong style="color:#fff">test copy</strong> to the address below — renders the real email with sample data, sends to no one else:</div>
+        <div style="margin-top:8px"><input id="mkt-test-to" type="email" value="veloxpeps@gmail.com" placeholder="you@example.com" class="f-inp" style="max-width:320px;width:100%;box-sizing:border-box" /></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('restock','Back in stock')">Test: Back in stock</button>
           <button class="status-select" type="button" style="cursor:pointer;padding:9px 14px" onclick="veloxSendTest('welcome','Welcome series')">Test: Welcome</button>
@@ -720,7 +721,7 @@ Read the full summary in the research library below. As always, batch documentat
 For in vitro research use only. Not for human or veterinary consumption.</textarea>
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="btn-p" id="camp-send" style="width:auto;padding:11px 24px">Send campaign</button>
-          <button class="status-select" type="button" style="cursor:pointer;padding:11px 18px" onclick="veloxSendTestCampaign()">Send test to support@veloxpeps.com</button>
+          <button class="status-select" type="button" style="cursor:pointer;padding:11px 18px" onclick="veloxSendTestCampaign()">Send test to my inbox</button>
         </div>
         <div class="acc-msg" id="camp-msg" style="font-size:13px;margin-top:10px"></div>
       </div>

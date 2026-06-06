@@ -131,15 +131,20 @@
   window.veloxSendTest = async function (type, label, stage) {
     var out = document.getElementById('mkt-run-result');
     label = label || type;
-    if (out) { out.style.display = 'block'; out.textContent = 'Sending test “' + label + '” to support@veloxpeps.com…'; }
+    var toEl = document.getElementById('mkt-test-to');
+    var to = ((toEl && toEl.value) || '').trim();
+    var dest = to || 'the default inbox';
+    if (out) { out.style.display = 'block'; out.textContent = 'Sending test “' + label + '” to ' + dest + '…'; }
     var payload = { type: type };
     if (stage) payload.stage = stage;
+    if (to) payload.to = to;
     var r = await apiPost('/api/admin/send-test', payload);
     var ok = r && r.ok && r.d && r.d.ok;
+    var sentTo = (r && r.d && r.d.to) || dest;
     if (out) out.textContent = ok
-      ? '✓ Test “' + label + '” sent to support@veloxpeps.com — check that inbox.'
+      ? '✓ Test “' + label + '” sent to ' + sentTo + ' — check that inbox.'
       : 'Test failed: ' + ((r && r.d && r.d.error) || 'unknown error');
-    if (window.showToast) showToast(ok ? 'Test sent to support@veloxpeps.com' : 'Test failed', ok ? 'ok' : 'err');
+    if (window.showToast) showToast(ok ? ('Test sent to ' + sentTo) : 'Test failed', ok ? 'ok' : 'err');
   };
 
   window.veloxSendTestCampaign = async function () {
@@ -149,11 +154,17 @@
     var m = document.getElementById('camp-msg');
     function set(t, ok) { if (m) { m.style.color = ok ? '#01D3A0' : '#f87171'; m.textContent = t; } }
     if (!subj || !msg) { set('Add a subject and message first.', false); return; }
-    set('Sending test to support@veloxpeps.com…', true); if (m) m.style.color = '#9ca3af';
-    var r = await apiPost('/api/admin/marketing', { action: 'campaign', test: true, subject: subj, body: msg, segment: seg });
+    var toEl = document.getElementById('mkt-test-to');
+    var to = ((toEl && toEl.value) || '').trim();
+    var dest = to || 'your inbox';
+    set('Sending test to ' + dest + '…', true); if (m) m.style.color = '#9ca3af';
+    var payload = { action: 'campaign', test: true, subject: subj, body: msg, segment: seg };
+    if (to) payload.testTo = to;
+    var r = await apiPost('/api/admin/marketing', payload);
     var ok = r && r.ok && r.d && r.d.sent > 0;
-    set(ok ? '✓ Test sent to support@veloxpeps.com — check that inbox.' : ('Test failed: ' + ((r && r.d && r.d.error) || 'unknown error')), ok);
-    if (window.showToast) showToast(ok ? 'Test sent to support@veloxpeps.com' : 'Test failed', ok ? 'ok' : 'err');
+    var sentTo = (r && r.d && r.d.to) || dest;
+    set(ok ? ('✓ Test sent to ' + sentTo + ' — check that inbox.') : ('Test failed: ' + ((r && r.d && r.d.error) || 'unknown error')), ok);
+    if (window.showToast) showToast(ok ? ('Test sent to ' + sentTo) : 'Test failed', ok ? 'ok' : 'err');
   };
 
   async function loadData() {

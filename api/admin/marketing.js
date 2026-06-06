@@ -190,9 +190,13 @@ module.exports = async function handler(req, res) {
     const segment = b.segment === 'customers' ? 'customers' : 'all';
     if (!subject || !message) return res.status(400).json({ error: 'Subject and message are required' });
 
-    // Test send: render the real campaign email but deliver only to support@.
+    // Test send: render the real campaign email but deliver only to the admin.
     if (b.test) {
-      const TEST_TO = 'support@veloxpeps.com';
+      // support@veloxpeps.com is a send-as alias with no inbox; default to the
+      // real mailbox and allow a validated override from the admin UI.
+      const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const reqTo = String(b.testTo || '').toLowerCase().trim();
+      const TEST_TO = EMAIL_RE.test(reqTo) ? reqTo : (process.env.TEST_EMAIL_TO || 'veloxpeps@gmail.com');
       const unsub = `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubToken(TEST_TO))}`;
       const r = await sendMail({
         to: TEST_TO, subject: '[TEST] ' + subject,
