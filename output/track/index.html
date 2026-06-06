@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Track Your Order | Velox Peptides</title>
+  <meta name="description" content="Track your Velox Peptides order. Enter your order reference and email to see your current order status and Royal Mail tracking.">
+  <link rel="canonical" href="https://veloxpeps.com/track/">
+  <meta name="robots" content="noindex,follow">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#030407">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/css/core.css">
+  <style>
+    body{ background:#030407; color:#eef3f2; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; margin:0; }
+    .thd{ border-bottom:1px solid #14181f; padding:16px 20px; display:flex; align-items:center; gap:14px; }
+    .thd a.logo{ display:flex; }
+    .thd img{ height:30px; width:auto; }
+    .thd .back{ margin-left:auto; font-size:13px; color:#8aa0a0; text-decoration:none; }
+    .thd .back:hover{ color:#01D3A0; }
+    .wrap{ max-width:560px; margin:0 auto; padding:38px 20px 60px; }
+    h1{ font-family:"Space Grotesk",sans-serif; font-size:28px; margin:0 0 6px; }
+    .sub{ color:#8aa0a0; font-size:15px; margin:0 0 26px; line-height:1.5; }
+    .form{ background:#0a0d12; border:1px solid #1a1d24; border-radius:14px; padding:20px; }
+    label{ display:block; font-size:13px; font-weight:600; color:#b7c4c4; margin:0 0 6px; }
+    input{ width:100%; box-sizing:border-box; background:#05070a; border:1px solid #222833; color:#eef3f2; font-size:16px; padding:12px 13px; border-radius:10px; margin:0 0 16px; font-family:inherit; }
+    input:focus{ outline:none; border-color:#01D3A0; }
+    button{ width:100%; background:#01D3A0; color:#04140f; border:0; border-radius:10px; padding:14px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; }
+    button:disabled{ opacity:.6; }
+    .hint{ font-size:12px; color:#6b7a7a; margin:14px 0 0; line-height:1.5; }
+    .result{ margin-top:22px; }
+    .rcard{ background:#0a0d12; border:1px solid #1a1d24; border-radius:14px; padding:22px; }
+    .rref{ font-size:12px; color:#8aa0a0; letter-spacing:.05em; text-transform:uppercase; }
+    .rstat{ font-family:"Space Grotesk",sans-serif; font-size:22px; font-weight:700; margin:4px 0 4px; color:#01D3A0; }
+    .rnote{ font-size:14px; color:#c6d2d2; line-height:1.55; margin:0 0 16px; }
+    .steps{ display:flex; gap:6px; margin:18px 0; }
+    .step{ flex:1; height:6px; border-radius:6px; background:#1a1d24; }
+    .step.on{ background:#01D3A0; }
+    .steplabels{ display:flex; justify-content:space-between; font-size:11px; color:#6b7a7a; margin:-8px 0 18px; }
+    .track-btn{ display:block; text-align:center; background:#11181a; border:1px solid #1f2a2c; color:#01D3A0; text-decoration:none; padding:13px; border-radius:10px; font-weight:700; font-size:15px; margin-top:6px; }
+    .items{ border-top:1px dashed #1a1d24; margin-top:16px; padding-top:14px; }
+    .it{ display:flex; justify-content:space-between; font-size:14px; color:#c6d2d2; padding:3px 0; }
+    .it .q{ color:#01D3A0; font-weight:700; }
+    .miss{ background:#0a0d12; border:1px solid #2a1d1d; border-radius:14px; padding:20px; color:#e9b7b7; font-size:14px; line-height:1.55; }
+    .miss a{ color:#01D3A0; }
+    .msg{ font-size:13px; color:#f06363; min-height:16px; margin-top:6px; }
+    footer{ border-top:1px solid #14181f; padding:22px 20px; text-align:center; color:#6b7a7a; font-size:12px; line-height:1.6; }
+    footer a{ color:#8aa0a0; }
+  </style>
+</head>
+<body>
+<div class="thd">
+  <a class="logo" href="/" aria-label="Velox Peptides"><img src="/assets/images/veloxpeps2.png" alt="Velox Peptides"></a>
+  <a class="back" href="/compounds/">Back to shop →</a>
+</div>
+
+<div class="wrap">
+  <h1>Track your order</h1>
+  <p class="sub">Enter the order reference from your confirmation email plus the email you ordered with.</p>
+
+  <div class="form">
+    <label for="ref">Order reference</label>
+    <input id="ref" type="text" autocomplete="off" placeholder="e.g. VP2026060554">
+    <label for="email">Email address</label>
+    <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+    <button id="go">Check status</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <p class="hint">Can't find your reference? It's in the subject line and body of your order confirmation email. Still stuck? Email <a href="mailto:support@veloxpeps.com" style="color:#8aa0a0">support@veloxpeps.com</a>.</p>
+</div>
+
+<footer>
+  Velox Peptides &middot; CRP Labs Ltd (NI738125) &middot; Holywood, Northern Ireland<br>
+  All products sold for research use only. Not for human consumption.
+</footer>
+
+<script>
+(function(){
+  var $ = function(s){ return document.querySelector(s); };
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // Prefill ref from ?ref= so dispatch/confirmation emails can deep-link here.
+  try{ var p=new URLSearchParams(location.search); if(p.get('ref')) $('#ref').value=p.get('ref'); if(p.get('email')) $('#email').value=p.get('email'); }catch(e){}
+
+  function stepsHtml(step){
+    var labels=['Received','Paid','Dispatched','Delivered'];
+    var bars = labels.map(function(_,i){ return '<div class="step'+(step>=i+1?' on':'')+'"></div>'; }).join('');
+    var lbl = labels.map(function(l){ return '<span>'+l+'</span>'; }).join('');
+    return '<div class="steps">'+bars+'</div><div class="steplabels">'+lbl+'</div>';
+  }
+
+  function fmt(d){ if(!d) return ''; try{ return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+
+  async function go(){
+    var ref=$('#ref').value.trim(), email=$('#email').value.trim();
+    $('#msg').textContent=''; $('#result').innerHTML='';
+    if(!ref||!email){ $('#msg').textContent='Enter both your order reference and email.'; return; }
+    var btn=$('#go'); btn.disabled=true; btn.textContent='Checking…';
+    try{
+      var r=await fetch('/api/order-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref:ref,email:email})});
+      var d=await r.json().catch(function(){return{};});
+      if(!r.ok){ $('#msg').textContent=d.error||'Something went wrong. Try again.'; }
+      else if(!d.found){
+        $('#result').innerHTML='<div class="miss">We couldn\'t find an order matching that reference and email. Double-check both match your confirmation email exactly — or email <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a> and we\'ll help.</div>';
+      } else { renderResult(d); }
+    }catch(e){ $('#msg').textContent='Network error — please try again.'; }
+    btn.disabled=false; btn.textContent='Check status';
+  }
+
+  function renderResult(d){
+    var items=(d.items||[]).map(function(it){ return '<div class="it"><span>'+esc(it.name)+'</span><span class="q">×'+esc(it.qty)+'</span></div>'; }).join('');
+    var html='<div class="rcard">'+
+      '<div class="rref">Order '+esc(d.ref)+'</div>'+
+      '<div class="rstat">'+esc(d.label)+'</div>'+
+      '<div class="rnote">'+esc(d.note)+'</div>'+
+      stepsHtml(d.step)+
+      (d.tracking_url ? '<a class="track-btn" href="'+esc(d.tracking_url)+'" target="_blank" rel="noopener">Track parcel with Royal Mail'+(d.tracking_number?' · '+esc(d.tracking_number):'')+'</a>' : '')+
+      (items ? '<div class="items">'+items+'</div>' : '')+
+    '</div>';
+    $('#result').innerHTML=html;
+  }
+
+  $('#go').addEventListener('click', go);
+  $('#email').addEventListener('keydown', function(e){ if(e.key==='Enter') go(); });
+  $('#ref').addEventListener('keydown', function(e){ if(e.key==='Enter') $('#email').focus(); });
+})();
+</script>
+</body>
+</html>
