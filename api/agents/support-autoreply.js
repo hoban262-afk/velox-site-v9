@@ -56,6 +56,10 @@ function firstName(from) {
   return namePart.split(/\s+/)[0];
 }
 
+// Automated / no-reply / known-provider senders we never act on, as a backstop.
+const SYSTEM_SENDER = /((^|[._-])(no-?reply|noreply|do-?not-?reply|notifications?|mailer-daemon|postmaster|bounce|automated|alerts?)@)|(@(.*\.)?(vercel|supabase|resend|stripe|google|googlemail|github|fena|royalmail|paypal|gocardless|cloudflare|namecheap)\.)/i;
+function isSystemSender(email) { return SYSTEM_SENDER.test(String(email || '')); }
+
 async function findOrder(email) {
   try {
     const r = await fetch(
@@ -74,26 +78,42 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ ok: true, skipped: 'gmail-not-connected' });
   }
 
-  let seenLabel;
-  try { seenLabel = await g.ensureLabel('AI-Seen'); }
-  catch (e) { return res.status(502).json({ error: 'Gmail label error: ' + e.message }); }
+  let seenLabel, supportLabel;
+  try {
+    seenLabel = await g.ensureLabel('AI-Seen');
+    supportLabel = await g.ensureLabel('Support');
+  } catch (e) { return res.status(502).json({ error: 'Gmail label error: ' + e.message }); }
 
-  let msgs = [];
-  try { msgs = await g.listMessages('in:inbox newer_than:3d -label:AI-Seen', 25); }
-  catch (e) { return res.status(502).json({ error: 'Gmail list error: ' + e.message }); }
+  // SCOPE: only ever look at the Primary tab (this excludes Promotions, Updates,
+  // Forums and Social — most newsletters, receipts and system noise), PLUS anything
+  // you manually drop into the "Support" label. Everything else in the inbox
+  // (suppliers, Vercel/Supabase/bank alerts, personal mail) is never touched.
+  let candidates = [];
+  try {
+    const a = await g.listMessages('in:inbox category:primary newer_than:3d -label:AI-Seen', 25);
+    const b = await g.listMessages('label:Support newer_than:3d -label:AI-Seen', 25);
+    const seen = new Set();
+    candidates = [...a, ...b].filter((m) => { if (!m || !m.id || seen.has(m.id)) return false; seen.add(m.id); return true; });
+  } catch (e) { return res.status(502).json({ error: 'Gmail list error: ' + e.message }); }
 
   let autoSent = 0, carded = 0, skipped = 0;
-  for (const m of msgs) {
+  for (const m of candidates) {
     try {
       const meta = await g.getMessageMeta(m.id);
-      // Skip our own outbound, empty senders, and anything in Sent.
-      if (!meta.fromEmail || meta.fromEmail.endsWith('@veloxpeps.com') || (meta.labelIds || []).includes('SENT')) {
-        await g.modifyThread(meta.threadId, { add: [seenLabel] });
-        skipped++; continue;
+      const labels = meta.labelIds || [];
+      // Never touch our own outbound, empty senders, Sent, or automated/no-reply mail.
+      if (!meta.fromEmail || meta.fromEmail.endsWith('@veloxpeps.com') || labels.includes('SENT') || isSystemSender(meta.fromEmail)) {
+        skipped++; continue; // leave it completely alone — no label, no card
       }
 
+      const hasSupportLabel = labels.includes(supportLabel);
+      const order = await findOrder(meta.fromEmail);
+
+      // GATE — only act on real customers (already in your orders) or anything you've
+      // manually labelled "Support". Anyone else (suppliers, personal, etc.) is ignored.
+      if (!hasSupportLabel && !order) { skipped++; continue; }
+
       const isStatus = looksLikeOrderStatus(`${meta.subject} ${meta.snippet}`);
-      const order = isStatus ? await findOrder(meta.fromEmail) : null;
 
       if (isStatus && order) {
         // AUTO-SEND order status (the only thing we ever send without a human).
