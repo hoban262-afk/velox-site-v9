@@ -55,6 +55,14 @@
     {
       "path": "/api/agents/compliance-audit",
       "schedule": "0 7 * * 0"
+    },
+    {
+      "path": "/api/agents/health-monitor",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/agents/backup-run",
+      "schedule": "0 5 * * 1"
     }
   ],
   "redirects": [
