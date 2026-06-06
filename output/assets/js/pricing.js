@@ -74,9 +74,12 @@
       if (document.getElementById('vp-pro-banner')) return;
       var b = document.createElement('div');
       b.id = 'vp-pro-banner';
-      b.style.cssText = 'position:sticky;top:0;z-index:9999;background:#01D3A0;color:#021;font:600 13px/1.4 Arial,Helvetica,sans-serif;text-align:center;padding:7px 12px';
+      b.style.cssText = 'background:#01D3A0;color:#021;font:600 13px/1.4 Arial,Helvetica,sans-serif;text-align:center;padding:7px 12px';
       b.textContent = '✓ Pro pricing active — ' + p + '% off applied across the site';
-      if (document.body) document.body.insertBefore(b, document.body.firstChild);
+      // Place it directly BELOW the site header, not above it.
+      var hdr = document.querySelector('header.site-header') || document.querySelector('header');
+      if (hdr && hdr.insertAdjacentElement) hdr.insertAdjacentElement('afterend', b);
+      else if (document.body) document.body.insertBefore(b, document.body.firstChild);
     } catch (e) {}
   }
 
