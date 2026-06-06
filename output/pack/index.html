@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Velox — Packing</title>
+<style>
+  :root{ --bg:#0b0f0e; --card:#12181a; --line:#1f2a2c; --txt:#eaf2f0; --mut:#8aa0a0; --g:#01D3A0; --gd:#02a17a; --warn:#f0a23b; --err:#f06363; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+  body{ padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 24px); }
+  header{ position:sticky; top:0; z-index:5; background:rgba(11,15,14,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:14px 16px; display:flex; align-items:center; gap:10px; }
+  header b{ font-size:16px; letter-spacing:.02em; }
+  header .pill{ margin-left:auto; font-size:12px; color:var(--mut); }
+  .wrap{ max-width:620px; margin:0 auto; padding:16px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:0 0 14px; }
+  .ref{ font-size:13px; color:var(--g); font-weight:800; letter-spacing:.04em; }
+  .nm{ font-size:17px; font-weight:700; margin:2px 0 8px; }
+  .addr{ font-size:14px; line-height:1.5; color:var(--txt); white-space:pre-line; }
+  .items{ margin:12px 0 0; padding:12px 0 0; border-top:1px dashed var(--line); }
+  .it{ display:flex; justify-content:space-between; gap:10px; font-size:14px; padding:3px 0; }
+  .it .q{ color:var(--g); font-weight:800; white-space:nowrap; }
+  .row{ display:flex; gap:10px; margin-top:14px; }
+  button{ font:inherit; border:0; border-radius:11px; padding:13px 14px; font-weight:700; cursor:pointer; flex:1; }
+  .b-print{ background:#1d2a2c; color:var(--txt); border:1px solid var(--line); }
+  .b-disp{ background:var(--g); color:#04140f; }
+  .b-disp:active,.b-print:active{ transform:translateY(1px); }
+  .b-full{ width:100%; }
+  .tag{ display:inline-block; font-size:11px; font-weight:800; padding:3px 9px; border-radius:20px; margin-left:8px; vertical-align:middle; }
+  .tag.ok{ background:rgba(1,211,160,.16); color:var(--g); }
+  .tag.no{ background:rgba(240,162,59,.16); color:var(--warn); }
+  .tag.er{ background:rgba(240,99,99,.16); color:var(--err); }
+  .empty{ text-align:center; color:var(--mut); padding:48px 16px; font-size:15px; }
+  .msg{ font-size:13px; margin-top:8px; min-height:16px; }
+  .msg.ok{ color:var(--g); } .msg.er{ color:var(--err); }
+  /* PIN screen */
+  #lock{ position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; z-index:20; }
+  #lock h1{ font-size:20px; margin:0; }
+  #lock p{ color:var(--mut); font-size:14px; margin:0; text-align:center; }
+  #pin{ width:220px; text-align:center; font-size:30px; letter-spacing:.4em; padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--txt); }
+  #lock button{ width:220px; background:var(--g); color:#04140f; flex:none; }
+  #lockmsg{ color:var(--err); font-size:13px; min-height:16px; }
+  .spin{ text-align:center; color:var(--mut); padding:40px; }
+</style>
+</head>
+<body>
+<div id="lock">
+  <h1>Velox Packing</h1>
+  <p>Enter your packing PIN to see today's orders.</p>
+  <input id="pin" type="tel" inputmode="numeric" autocomplete="off" placeholder="••••" aria-label="PIN">
+  <button id="unlock">Unlock</button>
+  <div id="lockmsg"></div>
+</div>
+
+<header hidden id="hdr">
+  <b>Packing</b>
+  <span class="pill" id="count">—</span>
+</header>
+<div class="wrap" id="app" hidden>
+  <div id="list"><div class="spin">Loading orders…</div></div>
+  <button class="b-print b-full" id="refresh" style="margin-top:6px">↻ Refresh</button>
+</div>
+
+<script>
+(function(){
+  var token = null;
+  var $ = function(s){ return document.querySelector(s); };
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // ── PIN unlock ──
+  async function unlock(){
+    var pin = $('#pin').value.trim();
+    $('#lockmsg').textContent = '';
+    if(!pin){ $('#lockmsg').textContent='Enter your PIN.'; return; }
+    try{
+      var r = await fetch('/api/pack/auth', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pin:pin}) });
+      var d = await r.json().catch(function(){return{};});
+      if(!r.ok || !d.token){ $('#lockmsg').textContent = d.error || 'Wrong PIN'; return; }
+      token = d.token;
+      $('#lock').hidden = true; $('#hdr').hidden = false; $('#app').hidden = false;
+      load();
+    }catch(e){ $('#lockmsg').textContent = 'Network error — try again.'; }
+  }
+  $('#unlock').addEventListener('click', unlock);
+  $('#pin').addEventListener('keydown', function(e){ if(e.key==='Enter') unlock(); });
+
+  function api(path, opts){
+    opts = opts || {};
+    opts.headers = Object.assign({ 'x-pack-token': token, 'Content-Type':'application/json' }, opts.headers||{});
+    return fetch('/api/pack/'+path, opts);
+  }
+
+  // ── Load queue ──
+  async function load(){
+    $('#list').innerHTML = '<div class="spin">Loading orders…</div>';
+    try{
+      var r = await api('queue');
+      if(r.status===401){ relock(); return; }
+      var d = await r.json();
+      render(d.orders||[]);
+    }catch(e){ $('#list').innerHTML = '<div class="empty">Could not load. Tap refresh.</div>'; }
+  }
+  $('#refresh').addEventListener('click', load);
+
+  function relock(){ token=null; $('#lock').hidden=false; $('#hdr').hidden=true; $('#app').hidden=true; $('#pin').value=''; $('#lockmsg').textContent='Session expired — enter PIN.'; }
+
+  function render(orders){
+    $('#count').textContent = orders.length + (orders.length===1?' order':' orders');
+    if(!orders.length){ $('#list').innerHTML = '<div class="empty">🎉 All caught up — nothing to pack.</div>'; return; }
+    $('#list').innerHTML = orders.map(function(o){
+      var addr = [o.ship.name, o.ship.line1, o.ship.line2, o.ship.city, o.ship.postcode, o.ship.country]
+        .filter(function(x){return x && String(x).trim();}).join('\n');
+      var items = o.items.map(function(it){
+        return '<div class="it"><span>'+esc(it.name)+(it.size?' · '+esc(it.size):'')+'</span><span class="q">×'+esc(it.qty)+'</span></div>';
+      }).join('');
+      var labelTag = o.has_label ? '<span class="tag ok">label ready</span>'
+        : (o.label_error ? '<span class="tag er">label error</span>' : '<span class="tag no">no label</span>');
+      return '<div class="card" data-id="'+esc(o.id)+'">'+
+        '<div class="ref">'+esc(o.ref)+labelTag+'</div>'+
+        '<div class="nm">'+esc(o.customer_name)+'</div>'+
+        '<div class="addr">'+esc(addr)+(o.ship.phone?'\n☎ '+esc(o.ship.phone):'')+'</div>'+
+        '<div class="items">'+items+'</div>'+
+        '<div class="row">'+
+          '<button class="b-print" onclick="PK.label(this,\''+esc(o.id)+'\')">'+(o.has_label?'Re-check label':'Create label')+'</button>'+
+          '<button class="b-disp" onclick="PK.dispatch(this,\''+esc(o.id)+'\')">Mark dispatched</button>'+
+        '</div>'+
+        '<div class="msg" id="m-'+esc(o.id)+'"></div>'+
+      '</div>';
+    }).join('');
+  }
+
+  function setMsg(id, text, ok){ var el=$('#m-'+cssid(id)); if(el){ el.textContent=text; el.className='msg '+(ok?'ok':'er'); } }
+  function cssid(s){ return String(s).replace(/[^a-zA-Z0-9_-]/g,''); }
+
+  window.PK = {
+    label: async function(btn, id){
+      btn.disabled = true; setMsg(id,'Sending to Click & Drop…',true);
+      try{
+        var r = await api('label', { method:'POST', body:JSON.stringify({order_id:id}) });
+        if(r.status===401){ relock(); return; }
+        var d = await r.json().catch(function(){return{};});
+        if(r.ok && d.ok!==false){ setMsg(id, d.skipped?'Label already created — open Click & Drop to print.':'Label created — open Click & Drop to print.', true); }
+        else { setMsg(id, d.error||'Could not create label.', false); }
+      }catch(e){ setMsg(id,'Network error.',false); }
+      btn.disabled = false;
+    },
+    dispatch: async function(btn, id){
+      var tracking = window.prompt('Tracking number (optional — leave blank if none):','');
+      if(tracking===null) return;
+      btn.disabled = true; setMsg(id,'Marking dispatched…',true);
+      try{
+        var r = await api('dispatch', { method:'POST', body:JSON.stringify({order_id:id, tracking:tracking.trim()}) });
+        if(r.status===401){ relock(); return; }
+        var d = await r.json().catch(function(){return{};});
+        if(r.ok && d.ok){ var c=btn.closest('.card'); if(c){ c.style.opacity=.45; } setMsg(id,'Dispatched ✓ customer emailed.',true); setTimeout(load, 900); }
+        else { setMsg(id, d.error||'Could not dispatch.', false); btn.disabled=false; }
+      }catch(e){ setMsg(id,'Network error.',false); btn.disabled=false; }
+    }
+  };
+})();
+</script>
+</body>
+</html>
