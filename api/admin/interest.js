@@ -7,6 +7,7 @@
  *        product that it's now available, marks them notified. Returns { ok, sent }.
  */
 const { Resend } = require('resend');
+const { renderEmail, emailParagraph } = require('../../lib/email-layout');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -42,17 +43,13 @@ async function isAdmin(req) {
 const sbHeaders = { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json' };
 
 function notifyHtml(name) {
-  const url = `https://veloxpeps.com/compounds/`;
-  return `<!DOCTYPE html><html><body style="margin:0;background:#030407;font-family:Arial,Helvetica,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#030407"><tr><td align="center" style="padding:32px 16px">
-<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;overflow:hidden">
-  <tr><td style="background:#01D3A0;height:4px;font-size:0;line-height:0">&nbsp;</td></tr>
-  <tr><td align="center" style="padding:32px 40px 8px"><img src="https://veloxpeps.com/assets/images/veloxpeps2.png" alt="Velox Peptides" width="160" style="display:block;border:0"></td></tr>
-  <tr><td align="center" style="padding:0 40px 8px"><h1 style="margin:0;font-size:24px;color:#fff">${name} is now available</h1></td></tr>
-  <tr><td align="center" style="padding:0 40px 24px"><p style="margin:0;font-size:15px;color:#9CA3AF;line-height:1.6">You asked to be told when <strong style="color:#fff">${name}</strong> was in stock for research. It&rsquo;s now live on the Velox Peptides catalogue.</p></td></tr>
-  <tr><td align="center" style="padding:0 40px 28px"><a href="${url}" style="display:inline-block;background:#01D3A0;color:#030407;font-weight:700;font-size:15px;padding:14px 32px;border-radius:6px;text-decoration:none">View the catalogue &rarr;</a></td></tr>
-  <tr><td style="border-top:1px solid #1a1a1a;padding:18px 40px"><p style="margin:0;font-size:11px;color:#555;line-height:1.6">Velox Peptides &mdash; CRP Labs Ltd &mdash; Company no. NI738125. For in vitro research use only. Not for human or veterinary consumption. You received this because you registered interest at veloxpeps.com.</p></td></tr>
-</table></td></tr></table></body></html>`;
+  return renderEmail({
+    kicker: 'Back in stock',
+    heading: `${name} is now available`,
+    bodyHtml: emailParagraph(`You asked to be told when <strong style="color:#fff">${name}</strong> was in stock for research. It&rsquo;s now live on the Velox Peptides catalogue.`),
+    cta: { href: 'https://veloxpeps.com/compounds/', label: 'VIEW THE CATALOGUE →' },
+    preheader: `${name} is now available at Velox Peptides.`,
+  });
 }
 
 module.exports = async function handler(req, res) {

@@ -13,6 +13,7 @@
  */
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
+const { renderEmail } = require('../../lib/email-layout');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -54,17 +55,12 @@ function bodyToHtml(message) {
 }
 function wrapCampaign(bodyHtml, email) {
   const unsub = `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubToken(email))}`;
-  return '<div style="margin:0;padding:0;background:#030407;font-family:Arial,Helvetica,sans-serif">' +
-    '<table width="100%" cellpadding="0" cellspacing="0" style="background:#030407"><tr><td style="padding:32px 16px">' +
-    '<table align="center" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#0d1117;border:1px solid rgba(1,211,160,.2);border-radius:12px;overflow:hidden">' +
-      '<tr><td style="background:#01D3A0;height:4px;font-size:0;line-height:0">&nbsp;</td></tr>' +
-      '<tr><td style="padding:30px 32px 8px"><div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:.04em">VELOX PEPTIDES</div>' +
-        '<div style="font-size:11px;color:#01D3A0;letter-spacing:.14em;text-transform:uppercase;margin-top:4px">Research Bulletin</div></td></tr>' +
-      `<tr><td style="padding:16px 32px 8px">${bodyHtml}</td></tr>` +
-      `<tr><td style="padding:8px 32px 28px"><a href="${SITE}/compounds/" style="display:inline-block;background:#01D3A0;color:#021;text-decoration:none;font-weight:700;font-size:14px;padding:12px 26px;border-radius:8px">Shop the catalogue</a></td></tr>` +
-      '<tr><td style="border-top:1px solid #1a1a1a;padding:18px 32px">' +
-        `<p style="font-size:11px;color:#6B7280;line-height:1.6;margin:0">Velox Peptides &middot; CRP Labs Ltd, Northern Ireland. For research use only. Not for human or veterinary consumption. You receive this because you subscribed at veloxpeps.com. <a href="${unsub}" style="color:#6B7280;text-decoration:underline">Unsubscribe</a>.</p></td></tr>` +
-    '</table></td></tr></table></div>';
+  return renderEmail({
+    kicker: 'Research Bulletin',
+    bodyHtml,
+    cta: { href: `${SITE}/compounds/`, label: 'SHOP THE CATALOGUE →' },
+    unsubscribeUrl: unsub,
+  });
 }
 
 function emptyStat() { return { sends: 0, opens: 0, clicks: 0, revenue: 0, orders: 0 }; }

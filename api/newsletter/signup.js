@@ -10,6 +10,7 @@
 const crypto = require('crypto');
 const { Resend } = require('resend');
 const { sendWhatsApp } = require('../../lib/notify-whatsapp');
+const { renderEmail, emailParagraph, emailCodeBox } = require('../../lib/email-layout');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -42,44 +43,22 @@ function sb(path, opts) {
 function welcomeEmailHtml(code, email) {
   var base = 'https://veloxpeps.com';
   var unsub = base + '/api/newsletter/unsubscribe?token=' + encodeURIComponent(unsubToken(email));
-  return '' +
-  '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><style>:root{color-scheme:dark;supported-color-schemes:dark}</style></head><body style="margin:0;padding:0">' +
-  '<div style="margin:0;padding:0;background:#030407;font-family:Arial,Helvetica,sans-serif">' +
-    '<table width="100%" cellpadding="0" cellspacing="0" style="background:#030407"><tr><td style="padding:32px 16px">' +
-    '<table align="center" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#0d1117;border:1px solid rgba(1,211,160,.2);border-radius:12px;overflow:hidden">' +
-      '<tr><td style="background:#01D3A0;height:4px;font-size:0;line-height:0">&nbsp;</td></tr>' +
-      '<tr><td style="padding:32px 32px 8px">' +
-        '<div style="font-size:20px;font-weight:800;color:#ffffff;letter-spacing:.04em">VELOX PEPTIDES</div>' +
-        '<div style="font-size:11px;color:#01D3A0;letter-spacing:.14em;text-transform:uppercase;margin-top:4px">Research Community</div>' +
-      '</td></tr>' +
-      '<tr><td style="padding:16px 32px 0">' +
-        '<h1 style="font-size:22px;color:#ffffff;margin:0 0 10px">Welcome to the Velox research community.</h1>' +
-        '<p style="font-size:14px;color:#9CA3AF;line-height:1.6;margin:0 0 24px">Your free <strong style="color:#fff">Researcher&rsquo;s Handbook</strong> is below, along with a one-time code for <strong style="color:#fff">10% off your first order</strong>.</p>' +
-      '</td></tr>' +
-      '<tr><td style="padding:0 32px">' +
-        '<div style="background:#030407;border:1px solid rgba(1,211,160,.35);border-radius:10px;padding:22px;text-align:center">' +
-          '<div style="font-size:11px;color:#6B7280;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">YOUR CODE</div>' +
-          '<div style="font-family:\'Courier New\',monospace;font-size:30px;font-weight:700;color:#01D3A0;letter-spacing:.08em">' + code + '</div>' +
-        '</div>' +
-        '<p style="font-size:14px;color:#9CA3AF;line-height:1.6;margin:20px 0 4px">Apply it at checkout for 10% off your first order.</p>' +
-        '<p style="font-size:13px;color:#6B7280;margin:0 0 24px">Valid for 30 days.</p>' +
-      '</td></tr>' +
-      '<tr><td style="padding:0 32px 8px">' +
-        '<div style="background:#030407;border:1px solid #1a1a1a;border-radius:10px;padding:18px 20px">' +
-          '<div style="font-size:13px;font-weight:700;color:#ffffff;margin-bottom:4px">Your free Researcher&rsquo;s Handbook</div>' +
-          '<div style="font-size:13px;color:#9CA3AF;line-height:1.6;margin-bottom:14px">A practical PDF reference: reconstitution, storage &amp; handling, and how to read a Certificate of Analysis.</div>' +
-          '<a href="' + base + '/assets/velox-researchers-handbook.pdf" style="display:inline-block;background:transparent;color:#01D3A0;border:1px solid rgba(1,211,160,.5);text-decoration:none;font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px">Download the handbook (PDF)</a>' +
-        '</div>' +
-      '</td></tr>' +
-      '<tr><td style="padding:16px 32px 28px"><a href="' + base + '/compounds/" style="display:inline-block;background:#01D3A0;color:#021;text-decoration:none;font-weight:700;font-size:14px;padding:13px 28px;border-radius:8px">Shop now</a></td></tr>' +
-      '<tr><td style="border-top:1px solid #1a1a1a;padding:20px 32px">' +
-        '<p style="font-size:11px;color:#6B7280;line-height:1.6;margin:0">For research use only. Not for human or veterinary consumption. ' +
-        'You are receiving this because you subscribed at veloxpeps.com. ' +
-        '<a href="' + unsub + '" style="color:#6B7280;text-decoration:underline">Unsubscribe</a>.</p>' +
-      '</td></tr>' +
-    '</table></td></tr></table>' +
-  '</div>' +
-  '</body></html>';
+  var body =
+    emailParagraph('Your free <strong style="color:#fff">Researcher&rsquo;s Handbook</strong> is below, along with a one-time code for <strong style="color:#fff">10% off your first order</strong>.') +
+    emailCodeBox(code, 'Apply it at checkout for 10% off your first order. Valid for 30 days.') +
+    '<div style="background:#030407;border:1px solid #1a1a1a;border-radius:10px;padding:18px 20px;margin:0 0 8px">' +
+      '<div style="font-size:13px;font-weight:700;color:#ffffff;margin-bottom:4px">Your free Researcher&rsquo;s Handbook</div>' +
+      '<div style="font-size:13px;color:#9CA3AF;line-height:1.6;margin-bottom:14px">A practical PDF reference: reconstitution, storage &amp; handling, and how to read a Certificate of Analysis.</div>' +
+      '<a href="' + base + '/assets/velox-researchers-handbook.pdf" style="display:inline-block;background:transparent;color:#01D3A0;border:1px solid rgba(1,211,160,.5);text-decoration:none;font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px">Download the handbook (PDF)</a>' +
+    '</div>';
+  return renderEmail({
+    kicker: 'Research Community',
+    heading: 'Welcome to the Velox research community',
+    bodyHtml: body,
+    cta: { href: base + '/compounds/', label: 'SHOP NOW →' },
+    unsubscribeUrl: unsub,
+    preheader: 'Your 10% welcome code + free Researcher’s Handbook inside.',
+  });
 }
 
 module.exports = async function handler(req, res) {

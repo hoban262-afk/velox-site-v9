@@ -11,6 +11,7 @@
  */
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
+const { renderEmail, emailParagraph } = require('../../lib/email-layout');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -56,20 +57,14 @@ async function isUnsubscribed(email) {
 
 function restockHtml(name, slug, unsubUrl) {
   const url = `${SITE}/compounds/${slug}/`;
-  return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"></head>' +
-  '<body style="margin:0;padding:0;background:#030407;font-family:Arial,Helvetica,sans-serif">' +
-  '<table width="100%" cellpadding="0" cellspacing="0" style="background:#030407"><tr><td style="padding:32px 16px">' +
-  '<table align="center" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#0d1117;border:1px solid rgba(1,211,160,.2);border-radius:12px;overflow:hidden">' +
-    '<tr><td style="background:#01D3A0;height:4px;font-size:0;line-height:0">&nbsp;</td></tr>' +
-    '<tr><td style="padding:30px 32px 6px"><div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:.04em">VELOX PEPTIDES</div>' +
-      '<div style="font-size:11px;color:#01D3A0;letter-spacing:.14em;text-transform:uppercase;margin-top:4px">Back in stock</div></td></tr>' +
-    '<tr><td style="padding:16px 32px 8px"><h1 style="font-size:23px;color:#fff;margin:0 0 10px">' + name + ' is back in stock</h1>' +
-      '<p style="font-size:14px;color:#9CA3AF;line-height:1.65;margin:0 0 20px">You asked to be told when <strong style="color:#fff">' + name + '</strong> was available again. It&rsquo;s live now &mdash; HPLC-verified with a batch-specific CoA. Stock can move fast, so don&rsquo;t wait too long.</p>' +
-      '<a href="' + url + '" style="display:inline-block;background:#01D3A0;color:#021;text-decoration:none;font-weight:700;font-size:14px;padding:13px 28px;border-radius:8px">Shop ' + name + ' &rarr;</a></td></tr>' +
-    '<tr><td style="border-top:1px solid #1a1a1a;padding:18px 32px;margin-top:18px">' +
-      '<p style="font-size:11px;color:#6B7280;line-height:1.6;margin:0">Velox Peptides &middot; CRP Labs Ltd, Northern Ireland (NI738125). For research use only. Not for human or veterinary consumption. ' +
-      '<a href="' + unsubUrl + '" style="color:#6B7280;text-decoration:underline">Unsubscribe</a>.</p></td></tr>' +
-  '</table></td></tr></table></body></html>';
+  return renderEmail({
+    kicker: 'Back in stock',
+    heading: name + ' is back in stock',
+    bodyHtml: emailParagraph('You asked to be told when <strong style="color:#fff">' + name + '</strong> was available again. It&rsquo;s live now &mdash; HPLC-verified with a batch-specific CoA. Stock can move fast, so don&rsquo;t wait too long.'),
+    cta: { href: url, label: 'SHOP ' + name.toUpperCase() + ' →' },
+    unsubscribeUrl: unsubUrl,
+    preheader: name + ' is back in stock at Velox Peptides.',
+  });
 }
 
 module.exports = async function handler(req, res) {
