@@ -3,6 +3,7 @@
 
   <!-- Homepage -->
   <url><loc>https://veloxpeps.com/</loc><lastmod>2026-06-06</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://veloxpeps.com/pro/</loc><lastmod>2026-06-06</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
 
   <!-- Compounds hub -->
   <url><loc>https://veloxpeps.com/compounds/</loc><lastmod>2026-05-31</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
