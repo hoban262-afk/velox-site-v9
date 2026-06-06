@@ -106,7 +106,7 @@
 
   // ── Tab switching + bottom nav + sheet + toasts ─────────────────────────────
   var TAB_TITLES = {
-    overview: 'Overview', actions: 'Fulfilment', orders: 'Orders', margins: 'Margins',
+    overview: 'Overview', actions: 'Approvals', orders: 'Orders', margins: 'Margins',
     interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
     campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings',
     deal: 'Deal of the Day', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing'
@@ -934,27 +934,36 @@
     }).join('');
   }
 
-  window.actionApprove = function (id) {
+  // Approve/Dismiss now go through /api/admin/action — the server actually EXECUTES
+  // the approved action (sends the email, etc.) with the service role, then records
+  // the outcome. The old client-side status flip could never *do* anything.
+  async function postDecision(id, decision) {
+    var s = await window._sb.auth.getSession();
+    var token = s && s.data && s.data.session && s.data.session.access_token;
+    var r = await fetch('/api/admin/action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ id: id, decision: decision })
+    });
+    return r.json().catch(function () { return {}; });
+  }
+
+  window.actionApprove = async function (id) {
     if (!window._sb) return;
-    window._sb.from('agent_actions')
-      .update({ status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by: 'admin' })
-      .eq('id', id)
-      .then(function (r) {
-        if (r.error) { console.error('[admin] approve failed:', r.error.message); return; }
-        loadActions();
-      });
+    var d = await postDecision(id, 'approve');
+    if (d && d.status === 'failed') {
+      window.alert('Approved, but the action could not complete: ' + ((d.result && d.result.error) || 'unknown error') + '. It has been marked failed.');
+    } else if (d && d.ok === false) {
+      window.alert('Could not approve: ' + (d.error || 'unknown error'));
+    }
+    loadActions();
   };
 
-  window.actionDismiss = function (id) {
+  window.actionDismiss = async function (id) {
     if (!window._sb) return;
     if (!window.confirm('Dismiss this item? It will be removed from the inbox.')) return;
-    window._sb.from('agent_actions')
-      .update({ status: 'dismissed', reviewed_at: new Date().toISOString(), reviewed_by: 'admin' })
-      .eq('id', id)
-      .then(function (r) {
-        if (r.error) { console.error('[admin] dismiss failed:', r.error.message); return; }
-        loadActions();
-      });
+    await postDecision(id, 'dismiss');
+    loadActions();
   };
 
   // ── XERO connection (Settings) ──────────────────────────────────────────────
