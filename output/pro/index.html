@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Velox Peps Pro — Member Pricing for Researchers | Velox Peptides</title>
+  <meta name="description" content="Join Velox Peps Pro: 5–25% off every order, free tracked UK shipping, first dibs on restocks, subscribe-&-save and more. Solo, Group and Lab membership tiers.">
+  <link rel="canonical" href="https://veloxpeps.com/pro/">
+  <meta name="robots" content="index,follow">
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #030407; color: #e7e9ec; font-family: Arial, Helvetica, sans-serif; line-height: 1.6; }
+    a { color: #01D3A0; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid #14181d; }
+    .brand { font-size: 18px; font-weight: 800; letter-spacing: .04em; color: #fff; text-decoration: none; }
+    .hero { text-align: center; padding: 54px 0 26px; }
+    .hero .eyebrow { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #01D3A0; font-weight: 700; }
+    .hero h1 { font-size: 38px; line-height: 1.15; margin: 12px 0 10px; color: #fff; }
+    .hero p { color: #9aa3ad; max-width: 620px; margin: 0 auto; font-size: 16px; }
+    .toggle { display: inline-flex; background: #0d1117; border: 1px solid #1f262d; border-radius: 999px; padding: 4px; margin: 26px auto 8px; }
+    .toggle button { border: 0; background: transparent; color: #9aa3ad; font: 600 14px Arial; padding: 9px 20px; border-radius: 999px; cursor: pointer; }
+    .toggle button.on { background: #01D3A0; color: #021; }
+    .save-note { font-size: 12px; color: #9aa3ad; margin-bottom: 28px; }
+    .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding-bottom: 40px; }
+    @media (max-width: 820px) { .tiers { grid-template-columns: 1fr; } .hero h1 { font-size: 30px; } }
+    .tier { background: #0d1117; border: 1px solid #1f262d; border-radius: 14px; padding: 26px 22px; display: flex; flex-direction: column; }
+    .tier.featured { border-color: #01D3A0; box-shadow: 0 0 0 1px #01D3A0 inset; }
+    .tier .badge { align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #021; background: #01D3A0; border-radius: 999px; padding: 3px 10px; margin-bottom: 12px; }
+    .tier h2 { margin: 0 0 4px; font-size: 21px; color: #fff; }
+    .tier .disc { font-size: 13px; color: #01D3A0; font-weight: 700; }
+    .tier .price { margin: 16px 0 2px; font-size: 34px; font-weight: 800; color: #fff; }
+    .tier .price small { font-size: 14px; font-weight: 600; color: #9aa3ad; }
+    .tier .annual-eq { font-size: 12px; color: #9aa3ad; min-height: 16px; }
+    .tier ul { list-style: none; padding: 0; margin: 18px 0 22px; flex: 1; }
+    .tier li { padding: 6px 0 6px 24px; position: relative; font-size: 14px; color: #cdd3d9; }
+    .tier li:before { content: "✓"; position: absolute; left: 0; color: #01D3A0; font-weight: 700; }
+    .tier button.cta { border: 0; border-radius: 9px; padding: 13px; font: 700 15px Arial; cursor: pointer; background: #01D3A0; color: #021; }
+    .tier.featured button.cta { background: #01D3A0; }
+    .tier:not(.featured) button.cta { background: #161c22; color: #fff; border: 1px solid #2a323a; }
+    .msg { text-align: center; min-height: 22px; color: #9aa3ad; font-size: 13px; padding-bottom: 10px; }
+    .foot { border-top: 1px solid #14181d; padding: 22px 0 40px; color: #6b7280; font-size: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="/">VELOX PEPTIDES</a>
+      <a href="/compounds/" style="font-size:14px;text-decoration:none">Shop compounds →</a>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Velox Peps Pro</div>
+      <h1>Better pricing for serious researchers</h1>
+      <p>Members get an automatic discount on <strong style="color:#fff">every item</strong> the moment they log in — plus free tracked UK shipping, first dibs on restocks, and subscribe-&-save. Choose the tier that fits your volume.</p>
+
+      <div class="toggle" id="billing-toggle">
+        <button data-plan="monthly" class="on">Monthly</button>
+        <button data-plan="annual">Annual <span style="opacity:.8">(2 months free)</span></button>
+      </div>
+      <div class="save-note">Cancel anytime in your bank. Membership is billed by secure Pay-by-Bank standing order.</div>
+    </section>
+
+    <section class="tiers" id="tiers"><!-- rendered by JS --></section>
+    <div class="msg" id="msg"></div>
+
+    <div class="foot">
+      For in vitro research use only. Not for human or veterinary consumption.<br>
+      Velox Peptides is a trading name of CRP Labs Ltd (NI738125).
+    </div>
+  </div>
+
+  <script src="/assets/js/supabase-client.js"></script>
+  <script>
+  (function () {
+    var SB_URL = 'https://stkjdtyhaxejxqmbzyua.supabase.co';
+    var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
+
+    // Per-tier feature lists (display only; prices/discount come from the DB).
+    var FEATURES = {
+      solo: ['5% off every item, always on', 'Free Royal Mail Tracked 24', 'Subscribe-&-save auto-reorder', '2× loyalty points', 'First dibs on restocks', 'Full CoA / batch documentation', 'Pro reconstitution & storage tools', 'Priority email support'],
+      group: ['10% off every item, always on', 'Everything in Solo, plus:', 'Free shipping, no threshold', 'Up to 3 team seats + addresses', '3× loyalty points', 'Earlier restock access', 'Saved team stacks + spend dashboard', 'Priority support queue'],
+      lab: ['25% off every item, always on', 'Everything in Group, plus:', 'Free next-day + cold-chain shipping', 'Unlimited seats + business account', 'VAT invoices & PO support', 'Reserved stock + pre-launch access', 'Named account manager', 'Net-7 terms (on approval)']
+    };
+    var ORDER = ['solo', 'group', 'lab'];
+    var FEATURED = 'group';
+    var plan = 'monthly';
+    var tiers = [];
+
+    function money(p) { var v = p / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
+    function setMsg(t, ok) { var m = document.getElementById('msg'); if (m) { m.textContent = t || ''; m.style.color = ok ? '#01D3A0' : '#9aa3ad'; } }
+
+    function render() {
+      var el = document.getElementById('tiers');
+      el.innerHTML = tiers.map(function (t) {
+        var price = plan === 'annual' ? t.annual_price_pence : t.monthly_price_pence;
+        var perMo = plan === 'annual' ? '/yr' : '/mo';
+        var eq = plan === 'annual' ? ('≈ ' + money(Math.round(t.annual_price_pence / 12)) + '/mo') : '';
+        var feats = (FEATURES[t.key] || []).map(function (f) { return '<li>' + f + '</li>'; }).join('');
+        return '<div class="tier' + (t.key === FEATURED ? ' featured' : '') + '">' +
+          (t.key === FEATURED ? '<span class="badge">Most popular</span>' : '') +
+          '<h2>' + t.name + '</h2>' +
+          '<div class="disc">' + t.discount_pct + '% off everything</div>' +
+          '<div class="price">' + money(price) + '<small>' + perMo + '</small></div>' +
+          '<div class="annual-eq">' + eq + '</div>' +
+          '<ul>' + feats + '</ul>' +
+          '<button class="cta" data-tier="' + t.key + '">Join ' + t.name + '</button>' +
+        '</div>';
+      }).join('');
+      el.querySelectorAll('button.cta').forEach(function (b) {
+        b.addEventListener('click', function () { subscribe(b.getAttribute('data-tier')); });
+      });
+    }
+
+    async function subscribe(tier) {
+      setMsg('Setting up your membership…', true);
+      var token = null;
+      try { var s = window._sb && (await window._sb.auth.getSession()); token = s && s.data && s.data.session && s.data.session.access_token; } catch (e) {}
+      if (!token) { setMsg('Please sign in or create an account first — redirecting…'); setTimeout(function () { location.href = '/account/?next=/pro/'; }, 1200); return; }
+      try {
+        var r = await fetch('/api/create-fena-recurring', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ kind: 'pro', tier: tier, plan: plan })
+        });
+        var d = await r.json();
+        if (!r.ok || !d.paymentUrl) { setMsg('Could not start membership: ' + (d.error || ('HTTP ' + r.status))); return; }
+        location.href = d.paymentUrl;
+      } catch (e) { setMsg('Network error — please try again.'); }
+    }
+
+    document.getElementById('billing-toggle').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-plan]'); if (!b) return;
+      plan = b.getAttribute('data-plan');
+      this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      render();
+    });
+
+    fetch(SB_URL + '/rest/v1/membership_tiers?active=eq.true&order=sort_order&select=*', { headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON } })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (rows) {
+        tiers = (rows && rows.length) ? rows : ORDER.map(function (k, i) { return { key: k, name: FEATURES[k] && k, discount_pct: [5, 10, 25][i], monthly_price_pence: [699, 1999, 4999][i], annual_price_pence: [5900, 17900, 44900][i] }; });
+        render();
+      })
+      .catch(function () { setMsg('Could not load membership plans — please refresh.'); });
+  }());
+  </script>
+</body>
+</html>
