@@ -19,7 +19,9 @@ const { markOrderDispatched } = require('../../lib/dispatch');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const PACKER_PIN   = (process.env.PACKER_PIN || '').trim();
+// Trim whitespace AND strip accidental wrapping quotes ("1234" / '1234'),
+// a common Vercel env-var mistake that would otherwise never match the typed PIN.
+const PACKER_PIN   = (process.env.PACKER_PIN || '').trim().replace(/^["']|["']$/g, '');
 const TOKEN_TTL_MS = 12 * 60 * 60 * 1000;
 
 const sbHeaders = { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json' };
