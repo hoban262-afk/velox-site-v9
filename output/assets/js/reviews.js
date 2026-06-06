@@ -206,17 +206,25 @@
     if (!chosen)        { msg.className = 'rv-msg err'; msg.textContent = 'Please choose a star rating.'; return; }
     if (!name)          { msg.className = 'rv-msg err'; msg.textContent = 'Please add your name.'; return; }
     if (body.length < 4){ msg.className = 'rv-msg err'; msg.textContent = 'Please write a short review.'; return; }
-    if (!window._sb)    { msg.className = 'rv-msg err'; msg.textContent = 'Reviews are temporarily unavailable.'; return; }
 
     var btn = document.getElementById('rv-submit');
     btn.disabled = true; btn.textContent = 'Submitting…';
 
-    window._sb.from('reviews').insert([{
-      product_slug: slug, product_name: productName,
-      author_name: name, rating: chosen, title: title || null, body: body
-    }]).then(function (r) {
-      if (r.error) {
-        msg.className = 'rv-msg err'; msg.textContent = 'Could not submit — please try again.';
+    // Submit via the server endpoint (service-role) — same pattern as orders,
+    // newsletter and interest. Avoids anon-client/RLS fragility.
+    fetch('/api/review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        product_slug: slug, product_name: productName,
+        author_name: name, rating: chosen, title: title || null, body: body
+      })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, d: d }; });
+    }).then(function (res) {
+      if (!res.ok) {
+        msg.className = 'rv-msg err';
+        msg.textContent = (res.d && res.d.error) || 'Could not submit — please try again.';
         btn.disabled = false; btn.textContent = 'Submit review';
       } else {
         msg.className = 'rv-msg ok';
@@ -226,6 +234,9 @@
         document.getElementById('rv-body').value = '';
         btn.textContent = 'Submitted ✓';
       }
+    }).catch(function () {
+      msg.className = 'rv-msg err'; msg.textContent = 'Could not submit — please try again.';
+      btn.disabled = false; btn.textContent = 'Submit review';
     });
   });
 
