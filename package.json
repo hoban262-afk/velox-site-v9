@@ -1,6 +1,9 @@
 {
   "name": "velox-peptides",
   "version": "1.0.0",
+  "scripts": {
+    "compliance": "node scripts/compliance-check.js"
+  },
   "dependencies": {
     "form-data": "^4.0.5",
     "gocardless-nodejs": "^8.1.0",

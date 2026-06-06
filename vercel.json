@@ -51,6 +51,10 @@
     {
       "path": "/api/agents/weekly-finance",
       "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/agents/compliance-audit",
+      "schedule": "0 7 * * 0"
     }
   ],
   "redirects": [
