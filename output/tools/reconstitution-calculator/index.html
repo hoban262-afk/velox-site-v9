@@ -181,6 +181,42 @@
       </div>
     </div>
 
+    <div id="syr-wrap" style="margin-top:8px">
+      <style>
+        .syr-card{background:#0d1117;border:1px solid #1f262d;border-radius:12px;padding:20px 22px;margin-top:6px}
+        .syr-card-hdr{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#01D3A0;margin-bottom:14px}
+        .syr-pro-pill{font-size:10px;font-weight:800;letter-spacing:.1em;background:#01D3A0;color:#021;border-radius:3px;padding:2px 7px}
+        .syr-svg{width:100%;height:auto;max-width:500px;display:block;margin:0 auto}
+        .syr-fill{transition:width .6s cubic-bezier(.4,0,.2,1)}
+        .syr-plunger{transition:x1 .6s cubic-bezier(.4,0,.2,1),x2 .6s cubic-bezier(.4,0,.2,1)}
+        .syr-readout{text-align:center;margin-top:12px;font-size:15px;color:#cdd3d9}
+        .syr-readout b{color:#01D3A0}
+        .syr-warn{color:#fbbf24;font-size:12px;text-align:center;margin-top:4px;min-height:14px}
+        .syr-locked-box{background:#0d1117;border:1px dashed rgba(1,211,160,.4);border-radius:12px;padding:24px;text-align:center;margin-top:6px}
+      </style>
+
+      <div class="syr-card" id="syr-panel" style="display:none">
+        <div class="syr-card-hdr"><span class="syr-pro-pill">Pro</span> Visual draw guide</div>
+        <svg class="syr-svg" viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg" aria-label="Syringe draw level">
+          <g id="syr-ticks"></g>
+          <rect x="30" y="52" width="360" height="40" rx="5" fill="#05070a" stroke="#2a323a" stroke-width="2"/>
+          <rect class="syr-fill" id="syr-fill" x="31" y="53" width="0" height="38" rx="3" fill="#01D3A0" fill-opacity="0.85"/>
+          <line class="syr-plunger" id="syr-plunger" x1="31" y1="46" x2="31" y2="98" stroke="#e7e9ec" stroke-width="3"/>
+          <rect x="6" y="64" width="24" height="16" rx="2" fill="#161c22" stroke="#2a323a"/>
+          <rect x="390" y="70" width="14" height="4" fill="#2a323a"/>
+          <line x1="404" y1="72" x2="478" y2="72" stroke="#9aa3ad" stroke-width="2"/>
+        </svg>
+        <div class="syr-readout" id="syr-readout">Draw to <b>&mdash;</b></div>
+        <div class="syr-warn" id="syr-warn"></div>
+      </div>
+
+      <div class="syr-locked-box" id="syr-locked" style="display:none">
+        <div style="font-size:14px;color:#fff;font-weight:700;margin-bottom:6px">&#128274; Visual draw guide &mdash; a Velox Peps Pro feature</div>
+        <p style="font-size:13px;color:#9aa3ad;margin:0 0 14px">Watch an animated syringe fill to your exact draw level as you calculate. Included with every Pro membership.</p>
+        <a href="/pro/" class="btn-p" style="display:inline-block;width:auto;padding:10px 22px;text-decoration:none">Unlock with Pro &rarr;</a>
+      </div>
+    </div>
+
     <div class="calc-notes">
       <h2 class="sec-t-sm">Notes</h2>
       <ul>
@@ -316,5 +352,72 @@
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/newsletter-popup.js"></script>
   <script src="/assets/js/search.js" defer></script>
+<script>
+/* Velox Peps Pro — animated syringe draw guide (gated to members). */
+(function () {
+  var SB = 'https://stkjdtyhaxejxqmbzyua.supabase.co';
+  var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
+  var BX = 31, BW = 358, MAXU = 100;   // barrel x, barrel width, 100 units = full 1ml syringe
+  function el(id) { return document.getElementById(id); }
+  function num(id) { var v = parseFloat((el(id) || {}).value); return isFinite(v) ? v : 0; }
+
+  function buildTicks() {
+    var g = el('syr-ticks'); if (!g) return; var s = '';
+    for (var u = 0; u <= 100; u += 10) {
+      var x = BX + (u / 100) * BW;
+      s += '<line x1="' + x + '" y1="46" x2="' + x + '" y2="52" stroke="#3a434d" stroke-width="1"/>';
+      if (u % 20 === 0) s += '<text x="' + x + '" y="40" fill="#6b7280" font-size="9" font-family="monospace" text-anchor="middle">' + u + '</text>';
+    }
+    g.innerHTML = s;
+  }
+
+  function update() {
+    var pep = num('calc-pep'), water = num('calc-water'), dose = num('calc-dose');
+    var fill = el('syr-fill'), plunger = el('syr-plunger'), readout = el('syr-readout'), warn = el('syr-warn');
+    if (!fill) return;
+    if (pep <= 0 || water <= 0 || dose <= 0) {
+      fill.setAttribute('width', 0);
+      if (plunger) { plunger.setAttribute('x1', BX); plunger.setAttribute('x2', BX); }
+      if (readout) readout.innerHTML = 'Enter values above';
+      if (warn) warn.textContent = '';
+      return;
+    }
+    var conc = pep * 1000 / water;   // mcg per ml
+    var vol = dose / conc;           // ml per application
+    var units = vol * 100;           // U-100 insulin units
+    var w = (Math.min(units, MAXU) / MAXU) * BW;
+    fill.setAttribute('width', w.toFixed(1));
+    var px = (BX + w).toFixed(1);
+    if (plunger) { plunger.setAttribute('x1', px); plunger.setAttribute('x2', px); }
+    if (readout) readout.innerHTML = 'Draw to <b>' + units.toFixed(units < 10 ? 1 : 0) + ' units</b> (' + vol.toFixed(3) + ' ml)';
+    if (warn) warn.textContent = units > 100 ? ('Exceeds one 1 ml syringe — split into ' + Math.ceil(units / 100) + ' draws') : '';
+  }
+
+  function isMember() {
+    return new Promise(function (res) {
+      try {
+        var raw = localStorage.getItem('sb-stkjdtyhaxejxqmbzyua-auth-token');
+        var tok = raw ? (JSON.parse(raw) || {}).access_token : null;
+        if (!tok) return res(false);
+        fetch(SB + '/rest/v1/profiles?select=is_pro,pro_until', { headers: { apikey: ANON, Authorization: 'Bearer ' + tok } })
+          .then(function (r) { return r.ok ? r.json() : []; })
+          .then(function (rows) { var p = rows && rows[0]; res(!!(p && p.is_pro && (!p.pro_until || new Date(p.pro_until) > new Date()))); })
+          .catch(function () { res(false); });
+      } catch (e) { res(false); }
+    });
+  }
+
+  isMember().then(function (pro) {
+    if (pro) {
+      var panel = el('syr-panel'); if (panel) panel.style.display = '';
+      buildTicks();
+      ['calc-pep', 'calc-water', 'calc-dose'].forEach(function (id) { var e = el(id); if (e) e.addEventListener('input', update); });
+      update();
+    } else {
+      var locked = el('syr-locked'); if (locked) locked.style.display = '';
+    }
+  });
+}());
+</script>
 </body>
 </html>
