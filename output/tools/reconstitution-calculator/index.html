@@ -381,34 +381,45 @@
 
   function buildTicks() {
     var g = el('syr-ticks'); if (!g) return; var s = '';
-    for (var u = 0; u <= 100; u += 10) {
-      var x = BX + (u / 100) * BW;
-      s += '<line x1="' + x + '" y1="46" x2="' + x + '" y2="52" stroke="#3a434d" stroke-width="1"/>';
-      if (u % 20 === 0) s += '<text x="' + x + '" y="40" fill="#6b7280" font-size="9" font-family="monospace" text-anchor="middle">' + u + '</text>';
+    for (var u = 0; u <= 100; u++) {            // a line for every 1 unit
+      var x = (BX + (u / 100) * BW).toFixed(1);
+      var major = (u % 5 === 0);                // a bigger notch every 5 units
+      s += '<line x1="' + x + '" y1="' + (major ? 43 : 48) + '" x2="' + x + '" y2="52" stroke="' + (major ? '#5a6570' : '#2a323a') + '" stroke-width="1"/>';
+      if (u % 10 === 0) s += '<text x="' + x + '" y="37" fill="#6b7280" font-size="9" font-family="monospace" text-anchor="middle">' + u + '</text>';
     }
     g.innerHTML = s;
   }
 
+  // Smoothly tween the fill, plunger, meniscus, clip + the unit number together.
+  var animW = 0, animU = 0, raf = null;
   function update() {
     var pep = num('calc-pep'), water = num('calc-water'), dose = num('calc-dose');
-    var fill = el('syr-fill'), plunger = el('syr-plunger'), readout = el('syr-readout'), warn = el('syr-warn');
-    if (!fill) return;
-    if (pep <= 0 || water <= 0 || dose <= 0) {
-      fill.setAttribute('width', 0);
-      if (plunger) { plunger.setAttribute('x1', BX); plunger.setAttribute('x2', BX); }
-      if (readout) readout.innerHTML = 'Enter values above';
-      if (warn) warn.textContent = '';
-      return;
+    var warn = el('syr-warn'), readout = el('syr-readout');
+    var valid = pep > 0 && water > 0 && dose > 0;
+    var units = valid ? (dose / (pep * 1000 / water)) * 100 : 0;   // U-100 insulin units
+    var targetW = (Math.min(units, MAXU) / MAXU) * BW;
+    if (warn) warn.textContent = (valid && units > 100) ? ('Exceeds one 1 ml syringe — split into ' + Math.ceil(units / 100) + ' draws') : '';
+
+    if (raf) cancelAnimationFrame(raf);
+    var w0 = animW, u0 = animU, t0 = null, dur = 650;
+    function ease(p) { return 1 - Math.pow(1 - p, 3); }
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur), e = ease(p);
+      animW = w0 + (targetW - w0) * e;
+      animU = u0 + (units - u0) * e;
+      var fill = el('syr-fill'), clip = el('syr-clip'), men = el('syr-men'), pl = el('syr-plunger');
+      if (fill) fill.setAttribute('width', animW.toFixed(1));
+      if (clip) clip.setAttribute('width', animW.toFixed(1));
+      var px = (BX + animW).toFixed(1);
+      if (men) men.setAttribute('cx', px);
+      if (pl) { pl.setAttribute('x1', px); pl.setAttribute('x2', px); }
+      if (readout) readout.innerHTML = valid
+        ? ('Draw to <b>' + animU.toFixed(animU < 10 ? 1 : 0) + ' units</b> (' + (animU / 100).toFixed(3) + ' ml)')
+        : 'Enter values above';
+      if (p < 1) raf = requestAnimationFrame(step);
     }
-    var conc = pep * 1000 / water;   // mcg per ml
-    var vol = dose / conc;           // ml per application
-    var units = vol * 100;           // U-100 insulin units
-    var w = (Math.min(units, MAXU) / MAXU) * BW;
-    fill.setAttribute('width', w.toFixed(1));
-    var px = (BX + w).toFixed(1);
-    if (plunger) { plunger.setAttribute('x1', px); plunger.setAttribute('x2', px); }
-    if (readout) readout.innerHTML = 'Draw to <b>' + units.toFixed(units < 10 ? 1 : 0) + ' units</b> (' + vol.toFixed(3) + ' ml)';
-    if (warn) warn.textContent = units > 100 ? ('Exceeds one 1 ml syringe — split into ' + Math.ceil(units / 100) + ' draws') : '';
+    raf = requestAnimationFrame(step);
   }
 
   function isMember() {
