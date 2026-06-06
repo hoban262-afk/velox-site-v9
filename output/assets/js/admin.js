@@ -30,10 +30,6 @@
 
   var loginWrap   = document.getElementById('admin-login');
   var dashWrap    = document.getElementById('admin-dash');
-<<<<<<< HEAD
-  var emailInput  = document.getElementById('admin-email');
-=======
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
   var pwInput     = document.getElementById('admin-pw');
   var signInBtn   = document.getElementById('admin-signin');
   var errEl       = document.getElementById('admin-err');
@@ -44,15 +40,12 @@
   function showDash() {
     if (loginWrap) loginWrap.style.display = 'none';
     if (dashWrap)  dashWrap.style.display  = 'block';
-<<<<<<< HEAD
     try {
       var savedTab = localStorage.getItem('vx_admin_tab');
       if (savedTab && TAB_TITLES[savedTab]) switchTab(savedTab);
       var sb = document.querySelector('.admin-sidebar');
       if (sb && localStorage.getItem('vx_admin_sb') === '1') sb.classList.add('collapsed');
     } catch (e) {}
-=======
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
     loadAllData();
   }
 
@@ -77,23 +70,13 @@
   // Sign in
   function doSignIn() {
     if (!window._sb) return;
-<<<<<<< HEAD
-    var em = emailInput ? emailInput.value.trim() : '';
     var pw = pwInput ? pwInput.value : '';
-    if (!em) { if (errEl) errEl.textContent = 'Please enter your email.'; return; }
-=======
-    var pw = pwInput ? pwInput.value : '';
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
     if (!pw) { if (errEl) errEl.textContent = 'Please enter your password.'; return; }
     if (errEl) errEl.textContent = 'Signing in…';
     if (signInBtn) signInBtn.disabled = true;
 
     window._sb.auth.signInWithPassword({
-<<<<<<< HEAD
-      email:    em,
-=======
       email:    'veloxpeps@gmail.com',
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
       password: pw,
     }).then(function (r) {
       if (signInBtn) signInBtn.disabled = false;
@@ -168,10 +151,7 @@
     document.querySelectorAll('.sb-item').forEach(function (b) {
       b.classList.toggle('active', b.dataset.tab === tab);
     });
-<<<<<<< HEAD
     try { localStorage.setItem('vx_admin_tab', tab); } catch (e) {}
-=======
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
     document.querySelectorAll('.admin-panel').forEach(function (panel) {
       panel.classList.toggle('active', panel.id === 'panel-' + tab);
     });
@@ -213,7 +193,6 @@
   }
   window.showToast = showToast;
 
-<<<<<<< HEAD
   // ── Collapsible sidebar ─────────────────────────────────────────────────────
   window.toggleSidebar = function () {
     var sb = document.querySelector('.admin-sidebar'); if (!sb) return;
@@ -355,8 +334,6 @@
     }).join('');
   }
 
-=======
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
   // ── Data loaders ──────────────────────────────────────────────────────────
 
   function loadAllData() {
@@ -374,10 +351,7 @@
     loadXeroStatus();
     loadClickDropStatus();
     loadAnalytics();
-<<<<<<< HEAD
     loadHealth();
-=======
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
     loadDeal();
     registerSW();
     wirePush();
@@ -879,17 +853,12 @@
       slug: parts[0], size: parts[1], discount_pct: pct,
       headline: (document.getElementById('deal-headline') || {}).value || '',
       ends_at: endsVal ? new Date(endsVal).toISOString() : null,
-<<<<<<< HEAD
       // Saving a Deal of the Day always publishes it live as a REAL discount —
       // that's the whole point. Use "Clear deal" to take it down. (Previously
       // these read checkboxes that defaulted UNCHECKED whenever the prior deal
       // was inactive, so every save silently stayed hidden and un-discounted.)
       active: true,
       apply: true,
-=======
-      active: !!(document.getElementById('deal-active') || {}).checked,
-      apply: !!(document.getElementById('deal-apply') || {}).checked,
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
     };
     if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Saving…'; }
     try {
@@ -1257,10 +1226,7 @@
         renderRecentOrders(ordersCache.slice(0, 5));
         updateStats(ordersCache);
         renderDashboard(ordersCache);
-<<<<<<< HEAD
         renderCockpit(ordersCache);
-=======
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
         renderCustomers(ordersCache);
         wireAdminExtras();
       });
@@ -1649,7 +1615,6 @@
     var cs = document.getElementById('cust-search'); if (cs) cs.addEventListener('input', function () { renderCustomers(ordersCache); });
   }
 
-<<<<<<< HEAD
   function miniSpark(vals) {
     var max = Math.max.apply(null, vals.concat([1]));
     return '<div style="display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:8px">' + vals.map(function (v) {
@@ -1697,8 +1662,6 @@
     });
   }
 
-=======
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
   function renderDashboard(orders) {
     var el = document.getElementById('dash-stats');
     if (!el) return;
@@ -1780,11 +1743,7 @@
     var m = {};
     paid.forEach(function (o) {
       var key = (o.customer_email || o.customer_name || 'unknown').toLowerCase();
-<<<<<<< HEAD
       if (!m[key]) m[key] = { key: key, name: o.customer_name || '—', email: o.customer_email || '', orders: 0, spend: 0, last: o.created_at };
-=======
-      if (!m[key]) m[key] = { name: o.customer_name || '—', email: o.customer_email || '', orders: 0, spend: 0, last: o.created_at };
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
       m[key].orders++; m[key].spend += parseFloat(o.total) || 0;
       if (new Date(o.created_at) > new Date(m[key].last)) m[key].last = o.created_at;
       if (!m[key].name || m[key].name === '—') m[key].name = o.customer_name || m[key].name;
@@ -1799,11 +1758,7 @@
     if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers yet.</div>'; return; }
     wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' +
       list.map(function (c) {
-<<<<<<< HEAD
         return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
-=======
-        return '<tr><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
->>>>>>> 636aca9d7d2ad2cc78603fa120b4baf82647fad4
           '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
           '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
           '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
