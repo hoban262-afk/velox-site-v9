@@ -91,9 +91,18 @@
 
     /* ── Featured card — animated, glowing, elevated ────── */
     @property --proang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
-    .tier.featured { z-index:2; border:1.5px solid transparent; transform:translateY(-8px) scale(1.04); background:linear-gradient(180deg,#0e141b,#0a0e13) padding-box, conic-gradient(from var(--proang), rgba(1,211,160,.20) 0deg, rgba(1,211,160,.20) 80deg, #01D3A0 120deg, #d8fff4 148deg, #ffffff 152deg, #d8fff4 156deg, #01D3A0 184deg, rgba(1,211,160,.20) 232deg, rgba(1,211,160,.20) 360deg) border-box; animation:proFloat 5s ease-in-out infinite, proGlow 3s ease-in-out infinite, proSpin 3.5s linear infinite; }
-    .tier.featured::after { content:""; position:absolute; inset:0; border-radius:16px; pointer-events:none; background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.07) 50%, transparent 65%); background-size:280% 100%; animation:proShimmer 5s ease-in-out infinite; }
-    .tier.featured .badge { animation:proBadge 2.4s ease-in-out infinite; }
+    .tier.featured { z-index:2; border:0; overflow:hidden; color:#053a2c; transform:translateY(-8px) scale(1.04); background:linear-gradient(165deg,#1ef0bd 0%,#01D3A0 55%,#00b489 100%); animation:proFloat 5s ease-in-out infinite, proGlow 3s ease-in-out infinite; }
+    .tier.featured h2 { color:#03150f; }
+    .tier.featured .disc { color:#054636; }
+    .tier.featured .price { color:#03150f; }
+    .tier.featured .price small { color:#0a4636; }
+    .tier.featured .annual-eq { color:#0a4636; }
+    .tier.featured li { color:#053a2c; }
+    .tier.featured li:before { color:#03150f; }
+    .tier.featured .badge { background:#03150f; color:#01D3A0; box-shadow:0 4px 14px -4px rgba(0,0,0,.45); }
+    .tier.featured button.cta { background:#03150f; color:#fff; }
+    .tier.featured button.cta:hover { background:#000; filter:none; box-shadow:0 10px 24px -8px rgba(0,0,0,.5); }
+    .tier.featured::after { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.22) 50%, transparent 65%); background-size:280% 100%; animation:proShimmer 4.5s ease-in-out infinite; }
 
     @keyframes proSpin { to { --proang:360deg; } }
     @keyframes proFloat { 0%,100%{ transform:translateY(-8px) scale(1.04); } 50%{ transform:translateY(-14px) scale(1.05); } }
