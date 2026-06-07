@@ -143,12 +143,17 @@
     .dl-js .dl-win.reveal .dl-seq span{ animation:dlFade2 .36s ease forwards; }
     @keyframes dlFade2{ to{ opacity:1; transform:none; } }
 
+    .dl-real{ grid-template-columns:repeat(3,1fr); }
+    .dl-real a{ transition:border-color .2s,transform .2s; }
+    .dl-real a:hover{ border-color:var(--dl-g)!important; transform:translateY(-2px); }
     @media(max-width:820px){
       .dl-stats-g{ grid-template-columns:repeat(2,1fr); }
       .dl-steps{ grid-template-columns:1fr; }
       .dl-diff{ grid-template-columns:1fr; }
       .dl-tiers{ grid-template-columns:1fr 1fr; }
+      .dl-real{ grid-template-columns:1fr 1fr; }
     }
+    @media(max-width:480px){ .dl-real{ grid-template-columns:1fr; } }
     @media(max-width:480px){ .dl-tiers{ grid-template-columns:1fr; } }
     @media (prefers-reduced-motion: reduce){
       .dl-stream,.dl-badge-dot,.dl-seqprev .aa{ animation:none; } .dl-seqprev .aa{ opacity:1; }
@@ -210,10 +215,10 @@
     <div class="dl-hero-in">
       <div class="dl-badge"><span class="dl-badge-dot"></span> BETA &middot; FREE TIER AVAILABLE &middot; A VELOX PEPTIDES PRODUCT</div>
       <h1 class="dl-h1">Design novel<br><span class="ac">research peptides.</span><br><span class="dim">Powered by AI.</span></h1>
-      <p class="dl-sub">Every shop sells the same handful of peptides discovered decades ago. Velox Design Lab is the first tool that lets you invent new ones. Tell it what you're trying to study in plain English, and in under a minute you get three brand-new peptide designs — each one explained simply, graded, and checked to confirm it has never been made before.</p>
+      <p class="dl-sub">Every shop sells the same handful of peptides discovered decades ago. Velox Design Lab is the first tool that lets you invent new ones. Describe what you're studying in plain English, and in under a minute you get three brand-new peptide designs — each graded, novelty-checked, and matched to the closest compound you can order today.</p>
       <div class="dl-cta-row">
         <a class="dl-btn dl-btn-p" href="/design-lab/app/">Try your first design free →</a>
-        <a class="dl-btn dl-btn-s" href="/pro/">See Pro usage tiers</a>
+        <a class="dl-btn dl-btn-s" href="/design-lab/r/2380db8d-d1ee-45f0-b2f6-af25be9c90b7">See a real design →</a>
       </div>
       <p class="dl-note">For in vitro research use only &middot; <a href="#how" style="color:var(--dl-mut)">how it works ↓</a></p>
       <div class="dl-seqprev" id="dlSeqPrev"></div>
@@ -252,8 +257,8 @@
         <div class="dl-step">
           <div class="dl-step-n">03 &middot; IT GRADES AND CHECKS THEM</div>
           <div class="dl-step-ic">📊</div>
-          <h3>See the best, then order it</h3>
-          <p>Each design gets a score for things like how easy it is to make, how well it should dissolve, and how sturdy it is. It also checks every one against peptides that already exist, so you know which are truly new — before spending a penny. Order the best from Velox.</p>
+          <h3>See the best — and what to order</h3>
+          <p>Each design is graded on how easy it is to make, how well it should dissolve and how sturdy it is, and checked against peptides that already exist so you know which are truly new. Then we name the <strong style="color:#fff">closest compound you can order today</strong> — HPLC-verified and shipped from the UK — to benchmark your design against.</p>
         </div>
       </div>
     </div>
@@ -287,6 +292,51 @@
     </div>
   </section>
 
+  <!-- Real designs (live shared runs) -->
+  <section class="dl-sec">
+    <div class="dl-wrap">
+      <p class="dl-eyebrow">Real designs</p>
+      <h2 class="dl-h2">See what it has<br>actually designed.</h2>
+      <p class="dl-secsub">Real runs from the Lab — open any one to see its scored, novelty-checked sequences and the closest compound you can order today.</p>
+      <div style="display:grid;gap:16px;margin-top:42px" class="dl-real">
+        <a href="/design-lab/r/5c10f445-a5a3-42f0-aec8-85a2e65ee3c0" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">METABOLIC · GLP-CLASS</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Triple-incretin triad</div>
+          <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A GLP-1 / GIP / glucagon triple agonist optimised for synthesisability.</div>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: Retatrutide →</span>
+        </a>
+        <a href="/design-lab/r/2380db8d-d1ee-45f0-b2f6-af25be9c90b7" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">TISSUE REPAIR</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Repair scaffold, hardened</div>
+          <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A BPC-157-inspired repair peptide, hardened against protease cleavage.</div>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: BPC-157 →</span>
+        </a>
+        <a href="/design-lab/r/3f040be0-5890-4f56-b06a-e96fe9cb8649" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">COGNITIVE</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">BBB-friendly nootropic</div>
+          <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A short, blood-brain-barrier-friendly neuroprotective peptide.</div>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: Semax →</span>
+        </a>
+        <a href="/design-lab/r/687903f5-330c-45ac-810b-736ef2065314" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">GROWTH HORMONE</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Long-acting GH releaser</div>
+          <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A GHRH analogue designed for an extended half-life.</div>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: CJC-1295 →</span>
+        </a>
+        <a href="/design-lab/r/914c3337-ecb9-4548-99bb-03cf4c7a8f7c" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">MITOCHONDRIAL</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Mitochondrial stress peptide</div>
+          <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A mitochondrial-derived peptide for cellular stress resistance.</div>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: MOTS-c →</span>
+        </a>
+        <a href="/design-lab/app/" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;background:rgba(1,211,160,.05);border:1px dashed rgba(1,211,160,.4);border-radius:12px;padding:22px;min-height:120px">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--dl-g);margin-bottom:4px">Design your own →</div>
+          <div style="font-size:12px;color:var(--dl-mut)">Free · one design to start</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Why -->
   <section class="dl-sec alt">
     <div class="dl-wrap">
@@ -297,7 +347,7 @@
         <div class="dl-dcard hl"><div class="dl-dic">🧬</div><h3>Truly new, not recycled</h3><p>Every design is checked against 30+ peptides that already exist. If it looks brand-new, you'll see it flagged straight away — before you spend £150 making it.</p></div>
         <div class="dl-dcard"><div class="dl-dic">🎯</div><h3>Three real ideas, not three copies</h3><p>Built-in rules make sure every run gives you a genuine range — different shapes, sizes and behaviours — instead of three near-identical designs.</p></div>
         <div class="dl-dcard"><div class="dl-dic">📐</div><h3>Graded seven different ways</h3><p>Each design is scored on how easy it is to make, how well it should dissolve, how sturdy it is, its size, its mix of parts and more — all worked out before you order.</p></div>
-        <div class="dl-dcard hl"><div class="dl-dic">⚗️</div><h3>From idea to order in one place</h3><p>Design it in Velox Design Lab, then have Velox make it. From "I've got an idea" to a peptide ready to order — without leaving the site.</p></div>
+        <div class="dl-dcard hl"><div class="dl-dic">⚗️</div><h3>Design → the closest orderable compound</h3><p>Every result names the closest in-stock Velox compound to your design — with the reason it's the match — so you can order HPLC-verified material to benchmark against, without leaving the site.</p></div>
       </div>
     </div>
   </section>
