@@ -147,6 +147,7 @@
     <div class="acc-tabs">
       <button class="acc-tab active" data-t="overview"  onclick="accTab('overview')">Overview</button>
       <button class="acc-tab"        data-t="orders"    onclick="accTab('orders')">Orders</button>
+      <button class="acc-tab"        data-t="designs"   onclick="accTab('designs')">My Designs</button>
       <button class="acc-tab"        data-t="addresses" onclick="accTab('addresses')">Addresses</button>
       <button class="acc-tab"        data-t="settings"  onclick="accTab('settings')">Settings</button>
     </div>
@@ -224,6 +225,18 @@
         </div>
         <button class="btn-o" id="addr-add-btn" style="margin-top:8px">+ Add address</button>
         <div class="acc-msg" id="addr-msg"></div>
+      </div>
+    </div>
+
+    <!-- My Designs (Design Lab) -->
+    <div class="acc-panel" id="panel-designs">
+      <div class="card">
+        <h3>My Design Lab Runs</h3>
+        <p style="font-size:13px;color:var(--t3);margin:0 0 16px">Peptide designs you've saved in <a href="/design-lab/app/" style="color:var(--g)">Design Lab</a>. Load any design to view its candidates, share it, or order synthesis.</p>
+        <div id="designs-list"><div style="color:var(--t3);font-size:13px">Loading your designs…</div></div>
+        <div style="margin-top:16px">
+          <a href="/design-lab/app/" style="display:inline-block;background:var(--g);color:#04140f;font-size:14px;font-weight:800;padding:10px 20px;border-radius:8px;text-decoration:none">✨ Design a new peptide →</a>
+        </div>
       </div>
     </div>
 

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Request Synthesis — Velox Design Lab | Velox Peptides</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <meta name="theme-color" content="#030407">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <style>
+    :root{ --g:#01D3A0; --g2:#6cf7d6; --bg:#030407; --bg2:#0a0d12; --bg3:#0e141b; --brd:#1a2230; --mut:#8aa0a0; --dim:#475262; --vio:#7b8cff; --amber:#f0b03b; --red:#f0637e; }
+    *{ box-sizing:border-box; }
+    body{ margin:0; background:var(--bg); color:#eef3f2; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+
+    /* Header */
+    .dlh{ border-bottom:1px solid #11181f; padding:13px 20px; display:flex; align-items:center; gap:14px; }
+    .dlh img{ height:26px; }
+    .dlh .nm{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; letter-spacing:.5px; font-size:17px; }
+    .dlh .nm span{ color:var(--g); }
+    .dlh .acc{ margin-left:auto; font-size:13px; color:var(--mut); text-decoration:none; }
+    .dlh .acc:hover{ color:var(--g); }
+
+    /* Wrap */
+    .wrap{ max-width:700px; margin:0 auto; padding:36px 20px 80px; }
+    h1{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:36px; letter-spacing:-.5px; margin:0 0 6px; line-height:1.05; }
+    h1 span{ color:var(--g); }
+    .lede{ color:var(--mut); font-size:15px; margin:0 0 28px; line-height:1.6; }
+
+    /* Sequence preview */
+    .seq-preview{ background:var(--bg2); border:1px solid rgba(1,211,160,.3); border-radius:12px; padding:18px 20px; margin-bottom:28px; }
+    .seq-preview .sp-label{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--g); margin-bottom:6px; }
+    .seq-preview .sp-name{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:#fff; margin-bottom:6px; }
+    .seq-preview .sp-seq{ font-family:'DM Mono',monospace; font-size:16px; letter-spacing:4px; color:#eef3f2; word-break:break-all; }
+    .seq-preview .sp-len{ font-family:'DM Mono',monospace; font-size:11px; color:var(--dim); margin-top:5px; }
+
+    /* Form */
+    .form-card{ background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:28px; }
+    .field{ margin-bottom:22px; }
+    .field label{ display:block; font-size:14px; font-weight:700; color:#dfe6e4; margin-bottom:6px; }
+    .field .hint{ font-size:12px; color:var(--mut); margin-bottom:8px; line-height:1.5; }
+    .field input, .field textarea, .field select{
+      width:100%; background:#05070a; border:1px solid #222833; color:#eef3f2; font-size:15px;
+      padding:12px 14px; border-radius:9px; font-family:inherit; transition:border-color .15s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus{ outline:none; border-color:var(--g); }
+    .field select option{ background:#0e141b; }
+    .field textarea{ resize:vertical; min-height:90px; line-height:1.55; }
+    .field input.seq-field{ font-family:'DM Mono',monospace; font-size:15px; letter-spacing:3px; }
+
+    /* Quantity + purity row */
+    .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media(max-width:480px){ .two-col{ grid-template-columns:1fr; } }
+
+    /* Purity option cards */
+    .purity-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    @media(max-width:540px){ .purity-grid{ grid-template-columns:repeat(2,1fr); } }
+    .purity-opt{ background:#05070a; border:1px solid #222833; border-radius:9px; padding:13px 10px; cursor:pointer; text-align:center; transition:.15s; user-select:none; }
+    .purity-opt:hover{ border-color:rgba(1,211,160,.5); }
+    .purity-opt.selected{ border-color:var(--g); background:rgba(1,211,160,.08); }
+    .purity-opt .po-val{ font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:20px; color:#fff; }
+    .purity-opt .po-lbl{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); margin-top:2px; }
+    .purity-opt.selected .po-val{ color:var(--g); }
+
+    /* Modification chips */
+    .mod-grid{ display:flex; gap:8px; flex-wrap:wrap; }
+    .mod-chip{ display:flex; align-items:center; gap:6px; background:#05070a; border:1px solid #222833; border-radius:7px; padding:7px 11px; cursor:pointer; transition:.15s; user-select:none; }
+    .mod-chip:hover{ border-color:rgba(1,211,160,.4); }
+    .mod-chip.on{ border-color:var(--g); background:rgba(1,211,160,.08); }
+    .mod-chip .mc-chk{ width:14px; height:14px; border:1.5px solid var(--brd); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:10px; color:transparent; transition:.12s; }
+    .mod-chip.on .mc-chk{ background:var(--g); border-color:var(--g); color:#04140f; }
+    .mod-chip .mc-nm{ font-size:13px; font-weight:600; color:#cdd6d4; }
+    .mod-chip.on .mc-nm{ color:var(--g); }
+
+    /* Disclaimer */
+    .disclaimer{ background:rgba(240,176,59,.06); border:1px solid rgba(240,176,59,.22); border-radius:10px; padding:14px 16px; margin-bottom:22px; font-size:13px; color:var(--amber); line-height:1.55; }
+
+    /* Submit */
+    .submit-btn{ width:100%; background:var(--g); color:#04140f; border:0; border-radius:10px; padding:15px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; position:relative; overflow:hidden; transition:.15s; }
+    .submit-btn::after{ content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent); transform:skewX(-18deg); animation:btnShine 3.5s ease-in-out infinite; }
+    .submit-btn:disabled{ opacity:.6; cursor:default; }
+    .submit-btn:disabled::after{ animation:none; }
+    .submit-btn:not(:disabled):hover{ transform:translateY(-1px); box-shadow:0 14px 28px -12px rgba(1,211,160,.6); }
+    @keyframes btnShine{ 0%{ left:-60%; } 55%,100%{ left:130%; } }
+    .field-error{ color:var(--red); font-size:12px; margin-top:4px; }
+    .form-error{ color:var(--red); font-size:14px; margin-top:12px; }
+
+    /* Success state */
+    .success{ text-align:center; padding:50px 20px; animation:fadeUp .5s both; }
+    @keyframes fadeUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+    .success .s-icon{ font-size:50px; margin-bottom:14px; }
+    .success h2{ font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:28px; text-transform:uppercase; margin:0 0 8px; }
+    .success h2 span{ color:var(--g); }
+    .success p{ color:var(--mut); font-size:15px; margin:0 0 24px; line-height:1.6; }
+    .back-btn{ display:inline-block; background:var(--bg3); border:1px solid var(--brd); color:#cdd6d4; font-size:14px; font-weight:600; padding:12px 24px; border-radius:10px; text-decoration:none; margin:6px; }
+    .back-btn.primary{ background:var(--g); color:#04140f; border:none; }
+
+    /* Gate */
+    .gate{ text-align:center; padding:50px 20px; }
+    .gate .gbig{ font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:28px; text-transform:uppercase; margin:0 0 10px; }
+    .gate .gbig span{ color:var(--g); }
+    .gate p{ color:var(--mut); font-size:14px; margin:0 0 22px; }
+    .btn-g{ display:inline-block; background:var(--g); color:#04140f; font-size:15px; font-weight:800; padding:13px 28px; border-radius:10px; text-decoration:none; }
+
+    /* Spin */
+    .spin{ text-align:center; padding:60px 20px; color:var(--mut); font-family:'DM Mono',monospace; }
+
+    /* Footer */
+    .foot{ border-top:1px solid #11181f; padding:20px; text-align:center; color:var(--dim); font-size:11px; line-height:1.7; }
+    .foot a{ color:var(--mut); }
+  </style>
+</head>
+<body>
+<div class="dlh">
+  <a href="/" aria-label="Velox Peptides"><img src="/assets/images/veloxpeps2.png" alt="Velox Peptides"></a>
+  <span class="nm">VELOX <span>DESIGN LAB</span></span>
+  <a class="acc" href="/account/">My account</a>
+</div>
+
+<div class="wrap">
+  <h1>Request <span>synthesis</span></h1>
+  <p class="lede">Fill in the form below and our team will review your request and send a quote within 1–2 working days. All peptides are synthesised to research grade. For in vitro use only.</p>
+  <div id="main"><div class="spin">Loading…</div></div>
+</div>
+
+<div class="foot">
+  All peptide synthesis is for in vitro research use only. Not for human or veterinary use.<br>
+  CRP Labs Ltd &middot; NI738125 &middot; <a href="/design-lab/">Design Lab</a> &middot; <a href="/legal/research-use-policy/">Research Use Policy</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+var SB_URL='https://stkjdtyhaxejxqmbzyua.supabase.co';
+var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
+var sb=window.supabase.createClient(SB_URL,SB_ANON);
+var $=function(s){ return document.querySelector(s); };
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+var AA_POS=new Set('KRH'),AA_NEG=new Set('DE'),AA_HYD=new Set('AILMFWPV');
+function aaCol(a){ return AA_POS.has(a)?'#01D3A0':AA_NEG.has(a)?'#f0637e':AA_HYD.has(a)?'#7b8cff':'#8aa0a0'; }
+function seqHTML(seq){ return String(seq).split('').map(function(a){ return '<span style="color:'+aaCol(a)+'">'+esc(a)+'</span>'; }).join(''); }
+
+var params=new URLSearchParams(window.location.search);
+var preSeq=(params.get('seq')||'').toUpperCase().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g,'');
+var preName=params.get('name')||'';
+var token=null, userEmail='', userName='';
+var selectedPurity='95';
+var selectedMods=new Set();
+
+var MODS=[
+  {id:'acN',label:'N-term acetylation'},
+  {id:'amC',label:'C-term amidation'},
+  {id:'pegN',label:'PEG linker (N-term)'},
+  {id:'biotin',label:'Biotin label'},
+  {id:'fluor',label:'Fluorescent label'},
+  {id:'disulf',label:'Disulfide bridge'},
+];
+
+async function init(){
+  try{
+    var s=await sb.auth.getSession();
+    var sess=s&&s.data&&s.data.session;
+    if(!sess){ renderGate(); return; }
+    token=sess.access_token;
+    userEmail=sess.user.email||'';
+    var meta=sess.user.user_metadata||{};
+    userName=meta.full_name||meta.name||'';
+    renderForm();
+  }catch(e){ renderGate(); }
+}
+
+function renderGate(){
+  document.getElementById('main').innerHTML=
+    '<div class="gate">'+
+      '<div class="gbig">Sign in to <span>request synthesis</span></div>'+
+      '<p>You need an account to submit a synthesis request — it\'s free to create.</p>'+
+      '<a class="btn-g" href="/account/?next='+encodeURIComponent(window.location.href)+'">Sign in / create account →</a>'+
+    '</div>';
+}
+
+function renderForm(){
+  var seqDisplay=preSeq?
+    '<div class="seq-preview">'+
+      '<div class="sp-label">PEPTIDE TO SYNTHESISE</div>'+
+      (preName?'<div class="sp-name">'+esc(preName)+'</div>':'')+
+      '<div class="sp-seq">'+seqHTML(preSeq)+'</div>'+
+      '<div class="sp-len">'+preSeq.length+' amino acids · can be changed below</div>'+
+    '</div>':'';
+
+  var purityHTML=[
+    {val:'crude',label:'Crude',sub:'~50–70%'},
+    {val:'95',label:'≥95%',sub:'Standard'},
+    {val:'98',label:'≥98%',sub:'High purity'},
+    {val:'custom',label:'Custom',sub:'Discuss with us'},
+  ].map(function(p){
+    return '<div class="purity-opt'+(p.val===selectedPurity?' selected':'')+'" data-purity="'+p.val+'">'+
+      '<div class="po-val">'+p.label+'</div>'+
+      '<div class="po-lbl">'+p.sub+'</div>'+
+    '</div>';
+  }).join('');
+
+  var modHTML=MODS.map(function(m){
+    return '<div class="mod-chip" data-mod="'+m.id+'">'+
+      '<div class="mc-chk">✓</div>'+
+      '<div class="mc-nm">'+m.label+'</div>'+
+    '</div>';
+  }).join('');
+
+  document.getElementById('main').innerHTML=
+    seqDisplay+
+    '<div class="form-card">'+
+      '<div class="field">'+
+        '<label for="f-name">Your name</label>'+
+        '<input id="f-name" type="text" autocomplete="name" value="'+esc(userName)+'" placeholder="Dr Jane Smith">'+
+      '</div>'+
+      '<div class="field">'+
+        '<label for="f-email">Email address</label>'+
+        '<input id="f-email" type="email" autocomplete="email" value="'+esc(userEmail)+'" placeholder="you@lab.ac.uk">'+
+        '<div class="hint">We\'ll send your quote here.</div>'+
+      '</div>'+
+      '<div class="field">'+
+        '<label for="f-seq">Peptide sequence</label>'+
+        '<input id="f-seq" type="text" class="seq-field" value="'+esc(preSeq)+'" placeholder="GPQGPAGPK" maxlength="100" autocomplete="off" spellcheck="false">'+
+        '<div class="hint" id="seqHint">'+(preSeq?preSeq.length+' amino acids':'')+' Single-letter codes only, uppercase (A–Y, standard 20).</div>'+
+      '</div>'+
+      '<div class="two-col">'+
+        '<div class="field">'+
+          '<label for="f-qty">Quantity (mg)</label>'+
+          '<input id="f-qty" type="number" min="1" max="5000" placeholder="5" value="5">'+
+          '<div class="hint">Most in vitro studies start at 1–10 mg.</div>'+
+        '</div>'+
+        '<div class="field">'+
+          '<label>Purity required</label>'+
+          '<div class="purity-grid" id="purityGrid">'+purityHTML+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="field">'+
+        '<label>Modifications (optional)</label>'+
+        '<div class="hint">Common chemical modifications — select all that apply.</div>'+
+        '<div class="mod-grid" id="modGrid">'+modHTML+'</div>'+
+      '</div>'+
+      '<div class="field">'+
+        '<label for="f-notes">Notes for our team (optional)</label>'+
+        '<textarea id="f-notes" placeholder="Solvent preference, urgency, intended assay, or anything else that would help us quote accurately."></textarea>'+
+      '</div>'+
+      '<div class="disclaimer">'+
+        '⚠ This is a research synthesis request. All peptides are produced for in vitro laboratory use only. '+
+        'By submitting you confirm this compound will not be used in humans or animals. '+
+        'Velox Design Lab outputs are computational predictions — we make no efficacy or safety representations.'+
+      '</div>'+
+      '<button class="submit-btn" id="submitBtn">Send synthesis request →</button>'+
+      '<div class="form-error" id="formErr"></div>'+
+    '</div>';
+
+  // Purity selection
+  document.getElementById('purityGrid').addEventListener('click',function(e){
+    var opt=e.target.closest('.purity-opt'); if(!opt) return;
+    selectedPurity=opt.getAttribute('data-purity');
+    document.querySelectorAll('.purity-opt').forEach(function(o){ o.classList.toggle('selected',o.getAttribute('data-purity')===selectedPurity); });
+  });
+
+  // Modification chips
+  document.getElementById('modGrid').addEventListener('click',function(e){
+    var chip=e.target.closest('.mod-chip'); if(!chip) return;
+    var id=chip.getAttribute('data-mod');
+    if(selectedMods.has(id)){ selectedMods.delete(id); chip.classList.remove('on'); }
+    else{ selectedMods.add(id); chip.classList.add('on'); }
+  });
+
+  // Sequence live clean + length
+  var seqInput=document.getElementById('f-seq');
+  seqInput.addEventListener('input',function(){
+    var clean=seqInput.value.toUpperCase().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g,'');
+    if(seqInput.value!==clean) seqInput.value=clean;
+    var hint=document.getElementById('seqHint');
+    if(hint) hint.textContent=(clean.length?clean.length+' amino acids — ':'')+' single-letter codes only (A–Y, standard 20).';
+  });
+
+  document.getElementById('submitBtn').addEventListener('click',submit);
+}
+
+async function submit(){
+  var errEl=document.getElementById('formErr'); if(errEl) errEl.textContent='';
+  var name=(document.getElementById('f-name')||{}).value||''; name=name.trim();
+  var email=(document.getElementById('f-email')||{}).value||''; email=email.trim();
+  var seq=(document.getElementById('f-seq')||{}).value||''; seq=seq.trim().toUpperCase().replace(/[^ACDEFGHIKLMNPQRSTVWY]/g,'');
+  var qty=parseFloat((document.getElementById('f-qty')||{}).value||'0')||0;
+  var notes=(document.getElementById('f-notes')||{}).value||''; notes=notes.trim();
+
+  var errors=[];
+  if(!name) errors.push('Please enter your name.');
+  if(!email||!email.includes('@')) errors.push('Please enter a valid email address.');
+  if(!seq||seq.length<4) errors.push('Please enter a peptide sequence (at least 4 amino acids).');
+  if(!qty||qty<1) errors.push('Please enter a quantity of at least 1 mg.');
+  if(errors.length){ if(errEl) errEl.innerHTML=errors.map(function(e){ return esc(e); }).join('<br>'); return; }
+
+  var btn=document.getElementById('submitBtn'); btn.disabled=true; btn.textContent='Sending…';
+  try{
+    var mods=Array.from(selectedMods);
+    var headers={'Content-Type':'application/json'};
+    if(token) headers['Authorization']='Bearer '+token;
+    var r=await fetch('/api/design-lab/synthesis',{
+      method:'POST',
+      headers:headers,
+      body:JSON.stringify({
+        email:email,
+        full_name:name,
+        sequence:seq,
+        candidate_name:preName||seq,
+        quantity_mg:qty,
+        purity:selectedPurity,
+        modifications:mods,
+        notes:notes,
+      })
+    });
+    var d=await r.json().catch(function(){ return {}; });
+    if(!r.ok){ if(errEl) errEl.textContent=d.error||'Something went wrong — please try again.'; btn.disabled=false; btn.textContent='Send synthesis request →'; return; }
+    renderSuccess(email);
+  }catch(e){ if(errEl) errEl.textContent='Network error — please try again.'; btn.disabled=false; btn.textContent='Send synthesis request →'; }
+}
+
+function renderSuccess(email){
+  document.getElementById('main').innerHTML=
+    '<div class="success">'+
+      '<div class="s-icon">✅</div>'+
+      '<h2>Request <span>received!</span></h2>'+
+      '<p>We\'ll review your synthesis request and send a quote to <b>'+esc(email)+'</b> within 1–2 working days.<br>'+
+      'If you have questions in the meantime, reply to any email from us or visit the <a href="/contact/" style="color:var(--g)">contact page</a>.</p>'+
+      '<a class="back-btn" href="/design-lab/app/">← Design another peptide</a>'+
+      '<a class="back-btn primary" href="/account/">Go to my account →</a>'+
+    '</div>';
+}
+
+init();
+})();
+</script>
+</body>
+</html>

@@ -14,36 +14,137 @@
     :root{ --g:#01D3A0; --g2:#6cf7d6; --bg:#030407; --bg2:#0a0d12; --bg3:#0e141b; --brd:#1a2230; --mut:#8aa0a0; --dim:#475262; --vio:#7b8cff; --amber:#f0b03b; --red:#f0637e; }
     *{ box-sizing:border-box; }
     body{ margin:0; background:var(--bg); color:#eef3f2; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
-    .dlh{ border-bottom:1px solid #11181f; padding:14px 20px; display:flex; align-items:center; gap:14px; }
-    .dlh img{ height:28px; }
-    .dlh .nm{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; letter-spacing:.5px; font-size:18px; }
-    .dlh .nm span{ color:var(--g); }
-    .dlh .acc{ margin-left:auto; font-size:13px; color:var(--mut); text-decoration:none; }
-    .dlh .acc:hover{ color:var(--g); }
-    .wrap{ max-width:780px; margin:0 auto; padding:30px 20px 70px; }
-    h1{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:34px; letter-spacing:-.5px; margin:0 0 6px; }
-    h1 span{ color:var(--g); }
-    .lede{ color:var(--mut); font-size:15px; margin:0 0 22px; line-height:1.5; }
-    .quota{ display:inline-flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:12px; color:var(--g); border:1px solid rgba(1,211,160,.3); background:rgba(1,211,160,.06); padding:6px 13px; border-radius:20px; margin-bottom:22px; }
-    .card{ background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:20px; }
-    textarea{ width:100%; box-sizing:border-box; background:#05070a; border:1px solid #222833; color:#eef3f2; font-size:15px; padding:13px; border-radius:10px; font-family:inherit; resize:vertical; min-height:84px; }
-    textarea:focus{ outline:none; border-color:var(--g); }
-    .ex{ display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0; }
-    .ex button{ background:#101822; border:1px solid #283341; color:#9aa3ad; font-family:'DM Mono',monospace; font-size:11px; padding:6px 11px; border-radius:7px; cursor:pointer; }
-    .ex button:hover{ border-color:var(--g); color:var(--g); }
-    .run{ width:100%; margin-top:16px; background:var(--g); color:#04140f; border:0; border-radius:10px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; }
-    .run:disabled{ opacity:.6; cursor:default; }
-    .msg{ font-size:13px; color:var(--red); min-height:16px; margin-top:10px; }
-    .gate{ text-align:center; padding:40px 20px; }
-    .gate .run{ max-width:280px; display:inline-block; width:auto; padding:13px 28px; text-decoration:none; }
 
-    .brief{ margin-top:26px; background:var(--bg3); border:1px solid var(--brd); border-radius:12px; padding:18px; }
-    .brief .lbl{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); letter-spacing:1px; margin-bottom:8px; }
-    .brief p{ margin:0 0 8px; font-size:14px; line-height:1.55; }
+    /* Header */
+    .dlh{ border-bottom:1px solid #11181f; padding:13px 20px; display:flex; align-items:center; gap:14px; }
+    .dlh img{ height:26px; }
+    .dlh .nm{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; letter-spacing:.5px; font-size:17px; }
+    .dlh .nm span{ color:var(--g); }
+    .dlh-right{ margin-left:auto; display:flex; align-items:center; gap:12px; }
+    .dlh .acc{ font-size:13px; color:var(--mut); text-decoration:none; }
+    .dlh .acc:hover{ color:var(--g); }
+    .libBtn{ background:none; border:1px solid var(--brd); color:var(--mut); font-size:12px; padding:6px 12px; border-radius:8px; cursor:pointer; font-family:'DM Mono',monospace; display:flex; align-items:center; gap:7px; transition:.15s; }
+    .libBtn:hover{ border-color:var(--g); color:var(--g); }
+    #libCountBadge{ display:none; background:var(--g); color:#04140f; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px; }
+
+    /* Wrap */
+    .wrap{ max-width:820px; margin:0 auto; padding:32px 20px 80px; }
+
+    /* Hero */
+    h1{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:38px; letter-spacing:-.5px; margin:0 0 6px; line-height:1.05; }
+    h1 span{ color:var(--g); }
+    .lede{ color:var(--mut); font-size:15px; margin:0 0 22px; line-height:1.6; max-width:640px; }
+
+    /* Quota row */
+    .quotaRow{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+    .quota{ display:inline-flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:12px; color:var(--g); border:1px solid rgba(1,211,160,.3); background:rgba(1,211,160,.06); padding:6px 13px; border-radius:20px; }
+    .quota.refine{ color:var(--vio); border-color:rgba(123,140,255,.3); background:rgba(123,140,255,.06); }
+    .quota.warn{ color:var(--amber); border-color:rgba(240,176,59,.3); background:rgba(240,176,59,.06); }
+    .quota.empty{ color:var(--red); border-color:rgba(240,99,126,.3); background:rgba(240,99,126,.06); }
+
+    /* Template chips */
+    .tmpl-label{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.2px; color:var(--dim); text-transform:uppercase; margin-bottom:10px; }
+    .tmpl-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:18px; }
+    @media(max-width:580px){ .tmpl-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:380px){ .tmpl-grid{ grid-template-columns:1fr; } }
+    .tmpl{ background:var(--bg2); border:1px solid var(--brd); border-radius:10px; padding:11px 13px; cursor:pointer; text-align:left; transition:.15s; font-family:inherit; }
+    .tmpl:hover{ border-color:var(--g); background:rgba(1,211,160,.05); }
+    .tmpl .ti{ font-size:18px; margin-bottom:5px; display:block; }
+    .tmpl .tn{ font-size:13px; font-weight:700; color:#dfe6e4; display:block; margin-bottom:3px; }
+    .tmpl .ts{ font-size:11px; color:var(--dim); line-height:1.4; display:block; }
+
+    /* Input */
+    .input-wrap{ background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:18px; }
+    textarea{ width:100%; background:#05070a; border:1px solid #222833; color:#eef3f2; font-size:15px; padding:13px; border-radius:10px; font-family:inherit; resize:vertical; min-height:90px; transition:border-color .15s; line-height:1.55; }
+    textarea:focus{ outline:none; border-color:var(--g); }
+    .char-row{ display:flex; justify-content:flex-end; margin-top:5px; }
+    .char-cnt{ font-family:'DM Mono',monospace; font-size:10px; color:var(--dim); }
+    .char-cnt.near{ color:var(--amber); }
+    .run{ width:100%; margin-top:14px; background:var(--g); color:#04140f; border:0; border-radius:10px; padding:15px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; position:relative; overflow:hidden; }
+    .run::after{ content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-18deg); animation:runShine 3.4s ease-in-out infinite; }
+    .run:disabled{ opacity:.6; cursor:default; }
+    .run:disabled::after{ animation:none; }
+    .run:not(:disabled):hover{ transform:translateY(-1px); box-shadow:0 14px 30px -12px rgba(1,211,160,.7); transition:.15s; }
+    .run:not(:disabled):active{ transform:translateY(0) scale(.99); }
+    @keyframes runShine{ 0%{ left:-60%; } 55%,100%{ left:130%; } }
+    .msg{ font-size:13px; color:var(--red); min-height:16px; margin-top:10px; }
+
+    /* Gate */
+    .gate{ text-align:center; padding:50px 20px; }
+    .gate .gbig{ font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:28px; text-transform:uppercase; margin:0 0 8px; }
+    .gate .gbig span{ color:var(--g); }
+    .gate .gsub{ color:var(--mut); font-size:14px; margin:0 0 24px; }
+    .btn-g{ display:inline-block; background:var(--g); color:#04140f; font-size:15px; font-weight:800; padding:14px 30px; border-radius:10px; text-decoration:none; }
+
+    /* Save/share bar */
+    .save-bar{ background:var(--bg2); border:1px solid rgba(1,211,160,.28); border-radius:12px; padding:15px 18px; margin-top:18px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; animation:popIn .4s both; }
+    .save-bar .sb-lbl{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); white-space:nowrap; }
+    .save-bar input{ flex:1; min-width:160px; background:#05070a; border:1px solid #222833; color:#eef3f2; font-size:14px; padding:9px 12px; border-radius:8px; font-family:inherit; }
+    .save-bar input:focus{ outline:none; border-color:var(--g); }
+    .save-btn{ background:var(--g); color:#04140f; border:0; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap; }
+    .save-btn:disabled{ opacity:.6; }
+    .share-btn{ background:rgba(123,140,255,.1); border:1px solid rgba(123,140,255,.3); color:var(--vio); border-radius:8px; padding:9px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:.15s; }
+    .share-btn.active{ background:rgba(1,211,160,.1); border-color:rgba(1,211,160,.3); color:var(--g); }
+    .share-link{ font-family:'DM Mono',monospace; font-size:11px; color:var(--mut); background:#05070a; border:1px solid var(--brd); border-radius:6px; padding:7px 11px; cursor:pointer; word-break:break-all; flex-basis:100%; transition:.12s; }
+    .share-link:hover{ border-color:var(--g); color:var(--g); }
+
+    /* Library */
+    #libPanel{ display:none; background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:20px; margin-bottom:24px; }
+    #libPanel.open{ display:block; animation:popIn .3s both; }
+    .lib-hd{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .lib-hd h3{ margin:0; font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:20px; text-transform:uppercase; }
+    .lib-hd h3 span{ color:var(--g); }
+    .lib-close{ background:none; border:none; color:var(--mut); font-size:20px; cursor:pointer; padding:2px 6px; line-height:1; }
+    .lib-close:hover{ color:#fff; }
+    .lib-empty{ text-align:center; padding:28px; color:var(--dim); font-family:'DM Mono',monospace; font-size:12px; line-height:1.6; }
+    .lib-card{ background:var(--bg3); border:1px solid var(--brd); border-radius:10px; padding:13px 14px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; }
+    .lib-card-body{ flex:1; min-width:0; }
+    .lib-card-name{ font-size:14px; font-weight:700; color:#dfe6e4; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .lib-card-target{ font-size:12px; color:var(--mut); line-height:1.4; margin-bottom:5px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .lib-card-meta{ font-family:'DM Mono',monospace; font-size:10px; color:var(--dim); }
+    .lib-actions{ display:flex; gap:6px; align-items:center; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
+    .la-btn{ background:none; border:1px solid var(--brd); color:var(--mut); font-size:11px; padding:5px 9px; border-radius:6px; cursor:pointer; font-family:'DM Mono',monospace; transition:.12s; }
+    .la-btn:hover{ border-color:var(--g); color:var(--g); }
+    .la-btn.del:hover{ border-color:var(--red); color:var(--red); }
+    .la-btn.share.on{ border-color:var(--g); color:var(--g); background:rgba(1,211,160,.08); }
+
+    /* Progress stepper */
+    .prog{ margin-top:24px; background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:26px 22px; overflow:hidden; position:relative; }
+    .prog::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse at 50% -20%,rgba(1,211,160,.10),transparent 60%); pointer-events:none; }
+    .prog-rows{ position:relative; display:grid; gap:14px; }
+    .prog-row{ display:flex; align-items:center; gap:13px; opacity:.4; transition:opacity .4s; }
+    .prog-row.on,.prog-row.done{ opacity:1; }
+    .prog-ic{ width:30px; height:30px; flex-shrink:0; border-radius:50%; border:1.5px solid var(--brd); display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--mut); transition:.35s; }
+    .prog-row.on .prog-ic{ border-color:var(--g); color:var(--g); animation:progPulse 1.3s ease-out infinite; }
+    .prog-row.done .prog-ic{ border-color:var(--g); background:var(--g); color:#04140f; }
+    @keyframes progPulse{ 0%{ box-shadow:0 0 0 0 rgba(1,211,160,.5); } 100%{ box-shadow:0 0 0 12px rgba(1,211,160,0); } }
+    .prog-tx{ font-size:14px; font-weight:600; color:#dfe6e4; }
+    .prog-row.on .prog-tx::after{ content:"…"; }
+    .prog-bar{ position:relative; height:4px; background:var(--brd); border-radius:3px; margin-top:20px; overflow:hidden; }
+    .prog-bar i{ position:absolute; inset:0; width:0%; background:linear-gradient(90deg,var(--g2),var(--g)); border-radius:3px; transition:width .5s ease; }
+    .prog-bar i::after{ content:""; position:absolute; right:0; top:0; bottom:0; width:40px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5)); }
+
+    /* Results header */
+    .res-hd{ margin-top:30px; text-align:center; opacity:0; transform:translateY(8px); animation:popIn .5s cubic-bezier(.2,.9,.25,1) forwards; }
+    .res-hd .spark{ font-size:12px; font-family:'DM Mono',monospace; letter-spacing:2px; color:var(--g); }
+    .res-hd .big{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:30px; line-height:1.05; margin:4px 0 2px; }
+    .res-hd .big b{ color:var(--g); }
+    .res-hd .sub{ font-size:13px; color:var(--mut); }
+    @keyframes popIn{ to{ opacity:1; transform:none; } }
+
+    /* Brief card */
+    .brief-card{ background:var(--bg3); border:1px solid var(--brd); border-radius:12px; padding:16px 18px; margin-top:20px; animation:popIn .5s .05s both; }
+    .brief-card .bc-lbl{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); letter-spacing:1px; margin-bottom:8px; }
+    .brief-card p{ margin:0 0 8px; font-size:14px; line-height:1.55; }
     .tag{ display:inline-block; font-family:'DM Mono',monospace; font-size:10px; padding:3px 9px; border-radius:5px; margin:3px 4px 0 0; border:1px solid var(--brd); color:var(--mut); }
     .tag.g{ color:var(--g); border-color:rgba(1,211,160,.3); }
 
-    .cand{ margin-top:16px; background:var(--bg2); border:1px solid var(--brd); border-radius:12px; padding:18px; }
+    /* Candidate card */
+    .cand{ margin-top:16px; background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:20px; opacity:0; transform:translateY(14px) scale(.985); animation:cardIn .55s cubic-bezier(.2,.9,.25,1) forwards; transition:border-color .2s,box-shadow .2s,transform .2s; }
+    .cand:not(.open):hover{ border-color:#2a3645; box-shadow:0 18px 44px -28px rgba(0,0,0,.9); transform:translateY(-2px); }
+    @keyframes cardIn{ to{ opacity:1; transform:none; } }
+    .cand.top{ border-color:rgba(1,211,160,.55); box-shadow:0 0 0 1px rgba(1,211,160,.35) inset,0 22px 60px -30px rgba(1,211,160,.55); background:linear-gradient(180deg,rgba(1,211,160,.05),var(--bg2) 60%); }
+    .crown{ display:inline-flex; align-items:center; gap:6px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:#04140f; background:var(--g); padding:3px 10px; border-radius:6px; font-weight:700; margin-bottom:10px; }
     .cand-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
     .cand-id{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); }
     .cand-name{ font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700; color:#fff; margin:2px 0 8px; }
@@ -52,95 +153,31 @@
     .nov.novel{ background:rgba(1,211,160,.1); color:var(--g); border:1px solid rgba(1,211,160,.25); }
     .nov.partial{ background:rgba(240,176,59,.1); color:var(--amber); border:1px solid rgba(240,176,59,.25); }
     .nov.known{ background:rgba(240,99,126,.1); color:var(--red); border:1px solid rgba(240,99,126,.25); }
-    .seq{ font-family:'DM Mono',monospace; font-size:17px; letter-spacing:4px; padding:12px 14px; background:#05070a; border:1px solid var(--brd); border-radius:7px; margin:10px 0; overflow-x:auto; }
-    .bars{ display:grid; gap:6px; margin-top:8px; }
-    .bar{ display:flex; align-items:center; gap:10px; }
-    .bar-l{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); width:108px; flex-shrink:0; }
-    .bar-t{ flex:1; height:3px; background:var(--brd); border-radius:2px; }
-    .bar-f{ height:100%; border-radius:2px; }
-    .bar-v{ font-family:'DM Mono',monospace; font-size:10px; width:26px; text-align:right; }
-    .hyp{ margin-top:10px; padding:9px 11px; background:rgba(123,140,255,.08); border:1px solid rgba(123,140,255,.2); border-radius:6px; font-size:12px; color:var(--vio); line-height:1.5; }
-    .meta{ font-family:'DM Mono',monospace; font-size:10px; color:var(--dim); margin-top:8px; }
-
-    /* ── Expandable card ── */
+    .badge-amphi{ font-family:'DM Mono',monospace; font-size:10px; padding:3px 9px; border-radius:5px; margin-left:5px; background:rgba(123,140,255,.1); color:var(--vio); border:1px solid rgba(123,140,255,.25); }
     .seq-cap{ font-size:11px; color:var(--mut); margin:10px 0 4px; }
+    .seq{ font-family:'DM Mono',monospace; font-size:17px; letter-spacing:4px; padding:12px 14px; background:#05070a; border:1px solid var(--brd); border-radius:7px; margin:10px 0; overflow-x:auto; }
+    .seq span{ display:inline-block; opacity:0; transform:translateY(-6px); animation:aaIn .34s ease forwards; }
+    @keyframes aaIn{ to{ opacity:1; transform:none; } }
     .summary{ font-size:14px; color:#dfe6e4; line-height:1.55; margin:10px 0 2px; }
+
+    /* Toggle */
     .cand-toggle{ width:100%; margin-top:12px; background:#101822; border:1px solid #283341; color:#cdd6d4; font-family:Inter,sans-serif; font-size:13px; font-weight:600; padding:11px; border-radius:9px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:.15s; }
     .cand-toggle:hover{ border-color:var(--g); color:var(--g); }
     .cand-toggle .chev{ transition:transform .35s; font-size:11px; }
     .cand.open .cand-toggle .chev{ transform:rotate(180deg); }
-    .cand-more{ overflow:hidden; max-height:0; opacity:0; transition:max-height .5s ease, opacity .4s ease, margin-top .3s ease; }
-    .cand.open .cand-more{ max-height:2200px; opacity:1; margin-top:14px; }
+    .cand-more{ overflow:hidden; max-height:0; opacity:0; transition:max-height .5s ease,opacity .4s ease,margin-top .3s ease; }
+    .cand.open .cand-more{ max-height:3400px; opacity:1; margin-top:14px; }
+
+    /* Expanded blocks */
     .blk{ border-radius:10px; padding:13px 14px; margin-top:10px; font-size:13.5px; line-height:1.6; color:#cdd6d4; border:1px solid var(--brd); background:var(--bg3); }
     .blk h4{ margin:0 0 7px; font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:7px; }
     .blk.match{ background:rgba(1,211,160,.06); border-color:rgba(1,211,160,.22); }
     .blk.match h4{ color:var(--g); }
-    .blk.help{ background:rgba(1,211,160,.04); border-color:rgba(1,211,160,.18); }
-    .blk.help h4{ color:var(--g2); }
-    .blk.risk{ background:rgba(240,176,59,.05); border-color:rgba(240,176,59,.22); }
-    .blk.risk h4{ color:var(--amber); }
     .blk.brain h4{ color:#9fb0c9; }
     .blk ul{ margin:0; padding:0; list-style:none; display:grid; gap:8px; }
     .blk li{ position:relative; padding-left:20px; }
-    .blk.help li::before{ content:"✓"; position:absolute; left:0; color:var(--g); font-weight:700; }
-    .blk.risk li::before{ content:"!"; position:absolute; left:2px; color:var(--amber); font-weight:700; }
-    .bars-cap{ font-size:11px; color:var(--mut); margin:14px 0 6px; }
 
-    .upsell{ margin-top:18px; text-align:center; background:var(--bg3); border:1px solid rgba(1,211,160,.25); border-radius:12px; padding:22px; }
-    .upsell a{ color:var(--g); font-weight:700; text-decoration:none; }
-    .foot{ border-top:1px solid #11181f; padding:20px; text-align:center; color:var(--dim); font-size:11px; line-height:1.6; }
-    .foot a{ color:var(--mut); }
-    .spin{ text-align:center; color:var(--mut); padding:30px; font-family:'DM Mono',monospace; font-size:13px; }
-
-    /* ── Run button shimmer ── */
-    .run{ position:relative; overflow:hidden; }
-    .run::after{ content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-18deg); animation:runShine 3.4s ease-in-out infinite; }
-    .run:disabled::after{ animation:none; }
-    @keyframes runShine{ 0%{ left:-60%; } 55%,100%{ left:130%; } }
-    .run:not(:disabled):hover{ transform:translateY(-1px); box-shadow:0 14px 30px -12px rgba(1,211,160,.7); transition:.15s; }
-    .run:not(:disabled):active{ transform:translateY(0) scale(.99); }
-
-    /* ── Live progress stepper ── */
-    .prog{ margin-top:24px; background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:26px 22px; overflow:hidden; position:relative; }
-    .prog::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse at 50% -20%,rgba(1,211,160,.10),transparent 60%); pointer-events:none; }
-    .prog-rows{ position:relative; display:grid; gap:14px; }
-    .prog-row{ display:flex; align-items:center; gap:13px; opacity:.4; transition:opacity .4s; }
-    .prog-row.on{ opacity:1; }
-    .prog-row.done{ opacity:1; }
-    .prog-ic{ width:30px; height:30px; flex-shrink:0; border-radius:50%; border:1.5px solid var(--brd); display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--mut); transition:.35s; }
-    .prog-row.on .prog-ic{ border-color:var(--g); color:var(--g); box-shadow:0 0 0 0 rgba(1,211,160,.5); animation:progPulse 1.3s ease-out infinite; }
-    .prog-row.done .prog-ic{ border-color:var(--g); background:var(--g); color:#04140f; }
-    @keyframes progPulse{ 0%{ box-shadow:0 0 0 0 rgba(1,211,160,.5);} 100%{ box-shadow:0 0 0 12px rgba(1,211,160,0);} }
-    .prog-tx{ font-size:14px; font-weight:600; color:#dfe6e4; }
-    .prog-row.on .prog-tx::after{ content:"…"; }
-    .prog-bar{ position:relative; height:4px; background:var(--brd); border-radius:3px; margin-top:20px; overflow:hidden; }
-    .prog-bar i{ position:absolute; inset:0; width:0%; background:linear-gradient(90deg,var(--g2),var(--g)); border-radius:3px; transition:width .5s ease; }
-    .prog-bar i::after{ content:""; position:absolute; right:0; top:0; bottom:0; width:40px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5)); }
-
-    /* ── Results celebration header ── */
-    .res-hd{ margin-top:30px; text-align:center; opacity:0; transform:translateY(8px); animation:popIn .5s cubic-bezier(.2,.9,.25,1) forwards; }
-    .res-hd .spark{ font-size:13px; font-family:'DM Mono',monospace; letter-spacing:2px; color:var(--g); }
-    .res-hd .big{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:30px; line-height:1.05; margin:4px 0 2px; }
-    .res-hd .big b{ color:var(--g); }
-    .res-hd .sub{ font-size:13px; color:var(--mut); }
-
-    @keyframes popIn{ to{ opacity:1; transform:none; } }
-
-    /* ── Candidate card reveal + states ── */
-    .cand{ opacity:0; transform:translateY(14px) scale(.985); animation:cardIn .55s cubic-bezier(.2,.9,.25,1) forwards; transition:border-color .2s, box-shadow .2s, transform .2s; }
-    .cand:hover{ border-color:#2a3645; box-shadow:0 18px 44px -28px rgba(0,0,0,.9); transform:translateY(-2px); }
-    @keyframes cardIn{ to{ opacity:1; transform:none; } }
-    .cand.top{ border-color:rgba(1,211,160,.55); box-shadow:0 0 0 1px rgba(1,211,160,.35) inset, 0 22px 60px -30px rgba(1,211,160,.55); background:linear-gradient(180deg,rgba(1,211,160,.05),var(--bg2) 60%); }
-    .crown{ display:inline-flex; align-items:center; gap:6px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:#04140f; background:var(--g); padding:3px 10px; border-radius:6px; font-weight:700; margin-bottom:10px; }
-    .cand-comp{ transition:none; }
-    .seq span{ display:inline-block; opacity:0; transform:translateY(-6px); animation:aaIn .34s ease forwards; }
-    @keyframes aaIn{ to{ opacity:1; transform:none; } }
-    .bar-f{ width:0 !important; transition:width .9s cubic-bezier(.2,.8,.2,1); }
-    .bar-f.fill{ width:var(--w) !important; }
-
-    /* ── Strengths / watch-outs / reasoning ── */
-    .why{ margin-top:12px; background:var(--bg3); border:1px solid var(--brd); border-radius:9px; padding:13px 14px; font-size:13px; color:#cdd6d4; line-height:1.6; }
-    .why .why-h{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--mut); margin:0 0 6px; text-transform:uppercase; }
+    /* Pros/cons grid */
     .prosCons{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:11px; }
     @media(max-width:560px){ .prosCons{ grid-template-columns:1fr; } }
     .pc{ border-radius:9px; padding:12px 13px; border:1px solid var(--brd); }
@@ -154,12 +191,98 @@
     .pc.pro li::before{ content:"✓"; position:absolute; left:0; color:var(--g); font-weight:700; }
     .pc.con li::before{ content:"!"; position:absolute; left:1px; color:var(--amber); font-weight:700; }
 
-    /* ── Confetti ── */
+    /* Score bars */
+    .bars-cap{ font-size:11px; color:var(--mut); margin:14px 0 6px; }
+    .bars{ display:grid; gap:6px; margin-top:8px; }
+    .bar{ display:flex; align-items:center; gap:10px; }
+    .bar-l{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); width:130px; flex-shrink:0; }
+    .bar-t{ flex:1; height:3px; background:var(--brd); border-radius:2px; }
+    .bar-f{ height:100%; border-radius:2px; width:0 !important; transition:width .9s cubic-bezier(.2,.8,.2,1); }
+    .bar-f.fill{ width:var(--w) !important; }
+    .bar-v{ font-family:'DM Mono',monospace; font-size:10px; width:26px; text-align:right; }
+
+    /* Molecular deep-dive */
+    .mol{ background:#070c12; border:1px solid var(--brd); border-radius:10px; padding:15px 16px; margin-top:10px; }
+    .mol-hd{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px; color:var(--dim); text-transform:uppercase; margin-bottom:12px; }
+    .mol-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    @media(max-width:500px){ .mol-grid{ grid-template-columns:repeat(2,1fr); } }
+    .mol-cell{ background:var(--bg2); border:1px solid var(--brd); border-radius:8px; padding:10px 12px; }
+    .mc-l{ font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.8px; color:var(--dim); text-transform:uppercase; margin-bottom:4px; }
+    .mc-v{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:#fff; line-height:1.1; }
+    .mc-note{ font-size:10px; color:var(--mut); margin-top:2px; line-height:1.3; }
+    .mc-g .mc-v{ color:var(--g); }
+    .mc-vio .mc-v{ color:var(--vio); }
+    .mc-amber .mc-v{ color:var(--amber); }
+    .mc-red .mc-v{ color:var(--red); }
+
+    /* Helical wheel */
+    .wheel-row{ display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-top:12px; }
+    .wheel-key{ flex:1; min-width:130px; }
+    .wk-item{ display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:11px; color:var(--mut); }
+    .wk-dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+    /* Lab hypothesis */
+    .hyp{ margin-top:10px; padding:9px 11px; background:rgba(123,140,255,.08); border:1px solid rgba(123,140,255,.2); border-radius:6px; font-size:12px; color:var(--vio); line-height:1.5; }
+    .meta-line{ font-family:'DM Mono',monospace; font-size:10px; color:var(--dim); margin-top:9px; line-height:1.5; }
+
+    /* Candidate actions */
+    .cand-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .ca-btn{ flex:1; min-width:120px; background:var(--bg3); border:1px solid var(--brd); color:#cdd6d4; font-size:13px; font-weight:600; padding:10px; border-radius:8px; cursor:pointer; font-family:inherit; transition:.15s; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; }
+    .ca-btn.order{ border-color:rgba(123,140,255,.3); color:var(--vio); }
+    .ca-btn.order:hover{ background:rgba(123,140,255,.1); border-color:var(--vio); }
+    .ca-btn.refine-open{ border-color:rgba(240,176,59,.3); color:var(--amber); }
+    .ca-btn.refine-open:hover{ background:rgba(240,176,59,.08); border-color:var(--amber); }
+
+    /* Refinement panel */
+    .refine-panel{ background:var(--bg3); border:1px solid rgba(240,176,59,.28); border-radius:12px; padding:18px; margin-top:12px; display:none; }
+    .refine-panel.open{ display:block; animation:popIn .3s both; }
+    .rp-hd{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--amber); margin-bottom:8px; text-transform:uppercase; }
+    .rp-quota{ font-family:'DM Mono',monospace; font-size:11px; color:var(--mut); margin-bottom:11px; }
+    .quick-chips{ display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px; }
+    .qchip{ background:#101822; border:1px solid #283341; color:#9aa3ad; font-family:'DM Mono',monospace; font-size:11px; padding:6px 11px; border-radius:7px; cursor:pointer; transition:.12s; }
+    .qchip:hover{ border-color:var(--amber); color:var(--amber); }
+    .refine-panel textarea{ min-height:68px; font-size:14px; }
+    .refine-run{ width:100%; margin-top:10px; background:rgba(240,176,59,.12); border:1px solid var(--amber); color:var(--amber); border-radius:8px; padding:11px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; transition:.15s; }
+    .refine-run:hover{ background:rgba(240,176,59,.22); }
+    .refine-run:disabled{ opacity:.5; cursor:default; }
+
+    /* Refined candidate cards */
+    .refined-card{ background:var(--bg2); border:1px solid rgba(240,176,59,.2); border-radius:10px; padding:14px; margin-top:10px; }
+    .rc-top{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+    .rc-id{ font-family:'DM Mono',monospace; font-size:10px; color:var(--amber); }
+    .rc-name{ font-size:14px; font-weight:700; color:#fff; margin:3px 0 7px; }
+    .rc-seq{ font-family:'DM Mono',monospace; font-size:15px; letter-spacing:3px; padding:10px 12px; background:#05070a; border:1px solid var(--brd); border-radius:6px; overflow-x:auto; margin-bottom:8px; }
+    .rc-rat{ font-size:13px; color:#cdd6d4; line-height:1.55; }
+    .rc-order{ margin-top:10px; background:rgba(123,140,255,.08); border:1px solid rgba(123,140,255,.25); color:var(--vio); border-radius:7px; padding:8px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; text-decoration:none; display:inline-block; transition:.15s; }
+    .rc-order:hover{ background:rgba(123,140,255,.18); }
+
+    /* Upsell */
+    .upsell{ margin-top:18px; text-align:center; background:var(--bg3); border:1px solid rgba(1,211,160,.25); border-radius:12px; padding:24px; }
+    .upsell p{ margin:0 0 12px; color:#cdd3d9; font-size:15px; }
+    .upsell a{ color:var(--g); font-weight:700; text-decoration:none; }
+
+    /* Toast */
+    #toasts{ position:fixed; bottom:24px; right:20px; z-index:90; display:grid; gap:8px; pointer-events:none; }
+    .toast{ background:#0e141b; border:1px solid var(--brd); border-radius:10px; padding:10px 16px; font-size:13px; color:#dfe6e4; display:flex; align-items:center; gap:8px; animation:toastIn .3s both; pointer-events:all; max-width:320px; }
+    .toast.ok{ border-color:rgba(1,211,160,.4); }
+    .toast.ok::before{ content:"✓"; color:var(--g); font-weight:700; }
+    .toast.err{ border-color:rgba(240,99,126,.4); }
+    .toast.err::before{ content:"!"; color:var(--red); font-weight:700; }
+    @keyframes toastIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+
+    /* Confetti */
     #fx{ position:fixed; inset:0; pointer-events:none; z-index:60; overflow:hidden; }
     .conf{ position:absolute; width:9px; height:14px; top:-20px; border-radius:1px; animation:confFall linear forwards; }
     @keyframes confFall{ to{ transform:translateY(110vh) rotate(720deg); opacity:.2; } }
 
-    @media (prefers-reduced-motion: reduce){
+    /* Spin */
+    .spin{ text-align:center; color:var(--mut); padding:30px; font-family:'DM Mono',monospace; font-size:13px; }
+
+    /* Footer */
+    .foot{ border-top:1px solid #11181f; padding:20px; text-align:center; color:var(--dim); font-size:11px; line-height:1.7; }
+    .foot a{ color:var(--mut); }
+
+    @media(prefers-reduced-motion:reduce){
       .run::after,.res-hd,.cand,.seq span,.prog-row.on .prog-ic{ animation:none !important; }
       .cand,.res-hd{ opacity:1 !important; transform:none !important; }
       .seq span{ opacity:1 !important; transform:none !important; }
@@ -169,19 +292,62 @@
 </head>
 <body>
 <div id="fx"></div>
+<div id="toasts"></div>
+
 <div class="dlh">
   <a href="/" aria-label="Velox Peptides"><img src="/assets/images/veloxpeps2.png" alt="Velox Peptides"></a>
   <span class="nm">VELOX <span>DESIGN LAB</span></span>
-  <a class="acc" href="/account/">My account</a>
+  <div class="dlh-right">
+    <button class="libBtn" id="libToggle" style="display:none">📚 My designs <span id="libCountBadge">0</span></button>
+    <a class="acc" href="/account/">My account</a>
+  </div>
 </div>
 
 <div class="wrap">
   <h1>Design a <span>novel peptide</span></h1>
-  <p class="lede">Tell it what you want to study using normal, everyday words. In under a minute the AI invents three brand-new peptides (tiny chains made of building blocks), explains each one in plain language, grades them, and checks they don't already exist. Tap any result to see the full story. For in vitro (lab-dish) research only.</p>
+  <p class="lede">Tell it what you want to study in plain English. In under a minute the AI invents three brand-new peptide candidates — graded, checked for novelty, and explained clearly. Each letter is one building block (scientists call them amino acids). For in vitro research only.</p>
 
-  <div id="quotaBadge"></div>
-  <div id="app"><div class="spin">Loading…</div></div>
+  <div class="quotaRow" id="quotaRow"></div>
 
+  <!-- Library panel (hidden by default) -->
+  <div id="libPanel">
+    <div class="lib-hd">
+      <h3>My <span>Designs</span></h3>
+      <button class="lib-close" id="libClose" aria-label="Close library">✕</button>
+    </div>
+    <div id="libContent"><div class="lib-empty">Loading…</div></div>
+  </div>
+
+  <!-- Template chips -->
+  <div class="tmpl-label">Start from a template →</div>
+  <div class="tmpl-grid" id="tmplGrid">
+    <button class="tmpl" data-ex="A collagen-stimulating peptide, more stable than GHK-Cu, for in vitro skin-fibroblast research.">
+      <span class="ti">🧬</span><span class="tn">Collagen booster</span><span class="ts">Skin fibroblast research, beyond GHK-Cu</span>
+    </button>
+    <button class="tmpl" data-ex="A neuroprotective peptide, Semax-like, with improved protease stability, for in vitro neuronal culture studies.">
+      <span class="ti">🧠</span><span class="tn">Neuroprotective</span><span class="ts">Semax-inspired, neuronal culture</span>
+    </button>
+    <button class="tmpl" data-ex="A gut anti-inflammatory peptide with stability against digestive enzymes, for in vitro intestinal epithelial cell research.">
+      <span class="ti">🔥</span><span class="tn">Anti-inflammatory</span><span class="ts">Gut epithelial, enzyme-stable</span>
+    </button>
+    <button class="tmpl" data-ex="A mitochondria-targeting antioxidant peptide, inspired by SS-31, for in vitro oxidative-stress and cell energy research.">
+      <span class="ti">⚡</span><span class="tn">Mitochondrial</span><span class="ts">SS-31-inspired antioxidant</span>
+    </button>
+    <button class="tmpl" data-ex="A short amphipathic antimicrobial peptide with broad-spectrum activity against bacterial biofilms, for in vitro testing.">
+      <span class="ti">🛡️</span><span class="tn">Antimicrobial</span><span class="ts">Broad-spectrum, biofilm research</span>
+    </button>
+    <button class="tmpl" data-ex="A novel cell-penetrating peptide with low cytotoxicity, for intracellular cargo delivery in vitro transfection research.">
+      <span class="ti">💊</span><span class="tn">Cell-penetrating</span><span class="ts">Intracellular delivery, low toxicity</span>
+    </button>
+  </div>
+
+  <!-- Input area -->
+  <div class="input-wrap" id="app"><div class="spin">Loading…</div></div>
+
+  <!-- Save/share bar (appears after a design runs) -->
+  <div id="saveBar"></div>
+
+  <!-- Results (progress stepper, then candidate cards) -->
   <div id="results"></div>
 </div>
 
@@ -193,205 +359,628 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
-  var SB_URL='https://stkjdtyhaxejxqmbzyua.supabase.co';
-  var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
-  var sb = window.supabase.createClient(SB_URL, SB_ANON);
-  var $=function(s){return document.querySelector(s);};
-  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-  var AA_POS=new Set('KRH'),AA_NEG=new Set('DE'),AA_HYD=new Set('AILMFWPV'),AA_SPC=new Set('CGY');
-  function aaCol(a){ return AA_POS.has(a)?'#01D3A0':AA_NEG.has(a)?'#f0637e':AA_HYD.has(a)?'#01D3A0':AA_SPC.has(a)?'#f0b03b':'#8aa0a0'; }
-  function scoreCol(s){ return s>=75?'#01D3A0':s>=55?'#7b8cff':'#f0b03b'; }
-  var token=null;
+'use strict';
+var SB_URL='https://stkjdtyhaxejxqmbzyua.supabase.co';
+var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
+var sb=window.supabase.createClient(SB_URL,SB_ANON);
+var $=function(s){ return document.querySelector(s); };
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  async function init(){
+// ── Amino acid colour coding ───────────────────────────────────────────────
+var AA_POS=new Set('KRH'), AA_NEG=new Set('DE'), AA_HYD=new Set('AILMFWPV');
+function aaCol(a){ return AA_POS.has(a)?'#01D3A0':AA_NEG.has(a)?'#f0637e':AA_HYD.has(a)?'#7b8cff':'#8aa0a0'; }
+function scoreCol(s){ return s>=75?'#01D3A0':s>=55?'#7b8cff':'#f0b03b'; }
+
+// ── State ──────────────────────────────────────────────────────────────────
+var token=null, quotaData=null, currentRunId=null, currentShareToken=null, currentBrief=null;
+
+// ── Molecular calculations ─────────────────────────────────────────────────
+var PKA={D:3.65,E:4.25,C:8.18,Y:10.07,H:6.0,K:10.53,R:12.48,nTerm:9.6,cTerm:2.34};
+function calcPI(seq){
+  function chargeAt(pH){
+    var c=1/(1+Math.pow(10,pH-PKA.nTerm));
+    c-=1/(1+Math.pow(10,PKA.cTerm-pH));
+    for(var i=0;i<seq.length;i++){
+      var a=seq[i];
+      if(a==='D') c-=1/(1+Math.pow(10,PKA.D-pH));
+      else if(a==='E') c-=1/(1+Math.pow(10,PKA.E-pH));
+      else if(a==='C') c-=1/(1+Math.pow(10,PKA.C-pH));
+      else if(a==='Y') c-=1/(1+Math.pow(10,PKA.Y-pH));
+      else if(a==='H') c+=1/(1+Math.pow(10,pH-PKA.H));
+      else if(a==='K') c+=1/(1+Math.pow(10,pH-PKA.K));
+      else if(a==='R') c+=1/(1+Math.pow(10,pH-PKA.R));
+    }
+    return c;
+  }
+  var lo=0,hi=14;
+  for(var i=0;i<150;i++){ var mid=(lo+hi)/2; if(chargeAt(mid)>0) lo=mid; else hi=mid; }
+  return Math.round((lo+hi)/2*100)/100;
+}
+function netChargeAt74(seq){
+  var c=0;
+  for(var i=0;i<seq.length;i++){
+    var a=seq[i];
+    if(a==='K'||a==='R') c+=1;
+    else if(a==='H') c+=1/(1+Math.pow(10,7.4-6.0));
+    else if(a==='D'||a==='E') c-=1;
+    else if(a==='C') c-=1/(1+Math.pow(10,8.18-7.4));
+  }
+  return Math.round(c*10)/10;
+}
+var NEND={A:'>20 h',C:'~1.2 h',D:'~1.1 h',E:'~1 h',F:'~1.1 h',G:'>20 h',H:'~3.5 h',I:'~20 h',K:'~1.3 h',L:'~5.5 h',M:'>20 h',N:'~1.4 h',P:'unknown',Q:'~0.8 h',R:'~1 h',S:'>20 h',T:'~7.2 h',V:'>100 h',W:'~2.8 h',Y:'~2.8 h'};
+function estHalfLife(seq){ return NEND[seq[0]]||'?'; }
+var HM_SC={A:0.25,R:-1.76,N:-0.64,D:-0.72,C:0.04,Q:-0.69,E:-0.62,G:0.16,H:-0.40,I:0.73,L:0.53,K:-1.10,M:0.26,F:0.61,P:-0.07,S:-0.26,T:-0.18,W:0.37,Y:0.02,V:0.54};
+function hydrophobicMoment(seq){
+  var ss=0,sc=0;
+  for(var i=0;i<seq.length;i++){ var h=HM_SC[seq[i]]||0; var r=i*100*Math.PI/180; ss+=h*Math.sin(r); sc+=h*Math.cos(r); }
+  return Math.sqrt(ss*ss+sc*sc)/seq.length;
+}
+function isAmphipathic(seq){ return hydrophobicMoment(seq)>0.20; }
+
+function helicalWheelSVG(seq){
+  seq=seq.slice(0,18);
+  var n=seq.length,size=200,cx=100,cy=100;
+  function col(a){ return AA_POS.has(a)?'#01D3A0':AA_NEG.has(a)?'#f0637e':AA_HYD.has(a)?'#7b8cff':'#475262'; }
+  var svg='<svg viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg" width="180" height="180">';
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="90" fill="#070c12" stroke="#1a2230" stroke-width="1"/>';
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="2" fill="#475262"/>';
+  var rMin=22,rMax=76;
+  for(var i=0;i<n;i++){
+    var deg=i*100-90, rad=deg*Math.PI/180;
+    var r=n>1?rMin+i*(rMax-rMin)/(n-1):cx;
+    var x=cx+Math.cos(rad)*r, y=cy+Math.sin(rad)*r;
+    var c=col(seq[i]);
+    if(i>0){
+      var pdeg=(i-1)*100-90, prad=pdeg*Math.PI/180;
+      var pr=rMin+(i-1)*(rMax-rMin)/(n-1);
+      var px=cx+Math.cos(prad)*pr, py=cy+Math.sin(prad)*pr;
+      svg+='<line x1="'+px+'" y1="'+py+'" x2="'+x+'" y2="'+y+'" stroke="#1a2230" stroke-width="1.2"/>';
+    }
+    svg+='<circle cx="'+x+'" cy="'+y+'" r="11" fill="'+c+'" opacity="0.92"/>';
+    if(i===0) svg+='<circle cx="'+x+'" cy="'+y+'" r="14.5" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>';
+    svg+='<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="9" font-family="monospace" fill="#fff" font-weight="bold">'+seq[i]+'</text>';
+    svg+='<text x="'+x+'" y="'+(y+16)+'" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,.45)">'+(i+1)+'</text>';
+  }
+  svg+='</svg>';
+  return svg;
+}
+
+// ── Toasts ────────────────────────────────────────────────────────────────
+function toast(msg,type){
+  var t=document.createElement('div'); t.className='toast '+(type||'ok'); t.textContent=msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(function(){ t.style.cssText='opacity:0;transition:opacity .3s'; setTimeout(function(){ t.remove(); },350); },3200);
+}
+
+// ── API helper ────────────────────────────────────────────────────────────
+async function api(path,opts){
+  opts=opts||{}; opts.headers=Object.assign({'Authorization':'Bearer '+token,'Content-Type':'application/json'},opts.headers||{});
+  return fetch('/api/design-lab/'+path,opts);
+}
+
+// ── Auth / init ───────────────────────────────────────────────────────────
+async function init(){
+  try{
     var s=await sb.auth.getSession();
     var sess=s&&s.data&&s.data.session;
     if(!sess){ gate(); return; }
     token=sess.access_token;
-    loadQuota();
     renderTool();
-  }
-  function gate(){
-    $('#quotaBadge').innerHTML='';
-    $('#app').innerHTML='<div class="card gate"><p style="font-size:16px;margin:0 0 16px">Sign in to start designing — your first design is free.</p><a class="run" href="/account/?next=/design-lab/app/">Sign in / create account →</a></div>';
-  }
-  async function api(path, opts){
-    opts=opts||{}; opts.headers=Object.assign({'Authorization':'Bearer '+token,'Content-Type':'application/json'},opts.headers||{});
-    return fetch('/api/design-lab/'+path, opts);
-  }
-  async function loadQuota(){
-    try{ var r=await api('quota'); var q=await r.json(); showQuota(q); }catch(e){}
-  }
-  function showQuota(q){
-    if(!q||q.tier===undefined){ $('#quotaBadge').innerHTML=''; return; }
-    var txt = q.unlimited ? 'Unlimited designs · '+esc(q.tierLabel)
-      : esc(q.remaining)+' of '+esc(q.limit)+' designs left'+(q.window==='month'?' this month':'')+' · '+esc(q.tierLabel);
-    $('#quotaBadge').innerHTML='<div class="quota">⚗ '+txt+'</div>';
-  }
-  function renderTool(){
-    $('#app').innerHTML=
-      '<div class="card">'+
-        '<textarea id="target" placeholder="e.g. A short collagen-stimulating peptide, more stable than GHK-Cu, for in vitro skin-fibroblast research."></textarea>'+
-        '<div class="ex">'+
-          '<button data-ex="A collagen-stimulating peptide, more stable than GHK-Cu, for in vitro fibroblast research.">Collagen, beyond GHK-Cu</button>'+
-          '<button data-ex="A neuroprotective peptide, Semax-like, with improved protease stability, for in vitro neuronal studies.">Neuroprotective, Semax-like</button>'+
-          '<button data-ex="A gut anti-inflammatory peptide with oral-route stability, for in vitro epithelial research.">Gut anti-inflammatory</button>'+
-        '</div>'+
-        '<button class="run" id="runBtn">✨ Design 3 new peptides →</button>'+
-        '<div class="msg" id="msg"></div>'+
-      '</div>';
-    $('#runBtn').addEventListener('click', run);
-    document.querySelectorAll('.ex button').forEach(function(b){ b.addEventListener('click', function(){ $('#target').value=b.getAttribute('data-ex'); }); });
-  }
-  function runProgress(){
-    var steps=[['🎯','Reading what you wrote'],['🧬','Inventing three new peptides'],['📊','Grading & checking they\'re new']];
-    var rows=steps.map(function(s,i){ return '<div class="prog-row" data-i="'+i+'"><div class="prog-ic">'+s[0]+'</div><div class="prog-tx">'+s[1]+'</div></div>'; }).join('');
-    $('#results').innerHTML='<div class="prog"><div class="prog-rows">'+rows+'</div><div class="prog-bar"><i></i></div></div>';
-    var bar=$('#results .prog-bar i');
-    var rowEls=document.querySelectorAll('#results .prog-row');
-    var pct=0, done=false;
-    function activate(i){ if(i>0&&rowEls[i-1]){ rowEls[i-1].classList.remove('on'); rowEls[i-1].classList.add('done'); } if(rowEls[i]) rowEls[i].classList.add('on'); }
-    activate(0);
-    var t1=setTimeout(function(){ if(!done) activate(1); },1700);
-    var t2=setTimeout(function(){ if(!done) activate(2); },4300);
-    var creep=setInterval(function(){ if(done)return; pct=Math.min(92,pct+Math.random()*7); bar.style.width=pct+'%'; },340);
-    return {
-      finish:function(cb){ done=true; clearTimeout(t1); clearTimeout(t2); clearInterval(creep);
-        rowEls.forEach(function(r){ r.classList.remove('on'); r.classList.add('done'); });
-        if(bar) bar.style.width='100%';
-        setTimeout(cb,430); },
-      abort:function(){ done=true; clearTimeout(t1); clearTimeout(t2); clearInterval(creep); $('#results').innerHTML=''; }
-    };
-  }
-  async function run(){
-    var target=$('#target').value.trim();
-    $('#msg').textContent=''; $('#results').innerHTML='';
-    if(target.length<6){ $('#msg').textContent='Tell it what you want to study first.'; return; }
-    var btn=$('#runBtn'); btn.disabled=true; btn.textContent='Designing…';
-    var prog=runProgress();
-    try{
-      var r=await api('generate',{method:'POST',body:JSON.stringify({target:target})});
-      var d=await r.json().catch(function(){return{};});
-      if(r.status===401){ prog.abort(); gate(); return; }
-      if(r.status===403){ prog.abort(); $('#msg').textContent=''; renderUpsell(d.message); loadQuota(); }
-      else if(!r.ok){ prog.abort(); $('#msg').textContent=d.error||'Something went wrong — try again.'; }
-      else { prog.finish(function(){ renderResults(d); fireConfetti(); if(d.quota) showQuota(d.quota); }); }
-    }catch(e){ prog.abort(); $('#msg').textContent='Network error — please try again.'; }
-    btn.disabled=false; btn.textContent='✨ Design 3 new peptides →';
-  }
-  function renderUpsell(msg){
-    $('#results').innerHTML='<div class="upsell"><p style="margin:0 0 10px;color:#cdd3d9">'+esc(msg||'You\'ve hit your design limit.')+'</p><a href="/pro/">Upgrade your Velox Pro tier →</a></div>';
-  }
-  function seqHTML(seq){ return String(seq).split('').map(function(a){ return '<span style="color:'+aaCol(a)+'">'+esc(a)+'</span>'; }).join(''); }
-  function barHTML(label,val,col){ return '<div class="bar"><span class="bar-l">'+label+'</span><div class="bar-t"><div class="bar-f" style="--w:'+val+'%;background:'+col+'"></div></div><span class="bar-v" style="color:'+col+'">'+val+'</span></div>'; }
-  function listHTML(arr){ return (arr||[]).map(function(x){ return '<li>'+esc(x)+'</li>'; }).join(''); }
+    document.getElementById('libToggle').style.display='';
+    loadQuota();
+    loadLibrary();
+  }catch(e){ gate(); }
+}
 
-  function countUp(el,to){ to=+to||0; var dur=850,st=null;
-    function fr(ts){ if(!st)st=ts; var p=Math.min(1,(ts-st)/dur); var e=1-Math.pow(1-p,3); el.textContent=Math.round(to*e); if(p<1) requestAnimationFrame(fr); else el.textContent=to; }
-    requestAnimationFrame(fr);
+function gate(){
+  document.querySelectorAll('.tmpl').forEach(function(t){ t.style.pointerEvents='none'; t.style.opacity='.4'; });
+  $('#app').innerHTML='<div class="gate">'+
+    '<div class="gbig">Design your <span>first peptide</span></div>'+
+    '<div class="gsub">Your first design is completely free — no card needed.</div>'+
+    '<a class="btn-g" href="/account/?next=/design-lab/app/">Sign in / create account →</a>'+
+    '</div>';
+}
+
+// ── Quota ─────────────────────────────────────────────────────────────────
+async function loadQuota(){
+  try{ var r=await api('quota'); if(r.ok){ var q=await r.json(); quotaData=q; renderQuota(q); } }catch(e){}
+}
+function renderQuota(q){
+  if(!q){ document.getElementById('quotaRow').innerHTML=''; return; }
+  var html='';
+  var designTxt=q.unlimited?'∞ designs · '+esc(q.tierLabel)
+    :esc(q.remaining)+' of '+esc(q.limit)+' designs left'+(q.window==='month'?' this month':'')+' · '+esc(q.tierLabel);
+  var dCls=q.unlimited?'':q.remaining===0?' empty':q.remaining<=1?' warn':'';
+  html+='<div class="quota'+dCls+'">⚗ '+designTxt+'</div>';
+  if(q.refineRemaining!==undefined){
+    var rTxt=q.refineRemaining===Infinity?'∞ refinements':esc(q.refineRemaining)+' of '+esc(q.refineLimit)+' refinements left this month';
+    var rCls=q.refineRemaining===0?' empty':q.refineRemaining<=1?' warn':'';
+    html+='<div class="quota refine'+rCls+'">🔬 '+rTxt+'</div>';
   }
-  function fireConfetti(){
-    var fx=document.getElementById('fx'); if(!fx) return;
-    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var cols=['#01D3A0','#6cf7d6','#7b8cff','#f0b03b','#ffffff'];
-    for(var i=0;i<76;i++){ (function(){
-      var c=document.createElement('div'); c.className='conf';
-      c.style.left=Math.random()*100+'%';
-      c.style.background=cols[Math.floor(Math.random()*cols.length)];
-      var dur=2.4+Math.random()*1.9;
-      c.style.animationDuration=dur+'s';
-      c.style.animationDelay=(Math.random()*0.45)+'s';
-      c.style.transform='rotate('+(Math.random()*360)+'deg)';
-      fx.appendChild(c);
-      setTimeout(function(){ c.remove(); }, (dur+1)*1000);
-    })(); }
-  }
-  function reveal(){
-    var cards=document.querySelectorAll('#results .cand');
-    cards.forEach(function(card,i){
-      card.style.animationDelay=(0.09*i)+'s';
-      var comp=card.querySelector('.cand-comp');
-      if(comp){ var to=comp.getAttribute('data-to'); comp.textContent='0'; setTimeout(function(){ countUp(comp,to); }, 90*i+260); }
-      card.querySelectorAll('.seq span').forEach(function(s,j){ s.style.animationDelay=(0.09*i+0.28+j*0.028)+'s'; });
-    });
-  }
-  function toggleCard(card){
-    var open=card.classList.toggle('open');
-    var lbl=card.querySelector('.cand-toggle .lbl');
-    if(lbl) lbl.textContent=open?'Hide the details':'Tap to see the full story';
-    if(open && !card.dataset.filled){ card.dataset.filled='1'; card.querySelectorAll('.bar-f').forEach(function(b){ b.classList.add('fill'); }); }
-  }
-  function renderResults(d){
-    var b=d.brief||{};
-    var cands=d.candidates||[];
-    var top=null; cands.forEach(function(c){ var v=(c.scores||{}).comp||0; if(!top||v>top.v) top={id:c.id,v:v}; });
-    var novelCount=cands.filter(function(c){ return (c.novelty||{}).badge==='novel'; }).length;
+  document.getElementById('quotaRow').innerHTML=html;
+}
 
-    var html='<div class="res-hd"><div class="spark">✦ DESIGN COMPLETE ✦</div>'+
-      '<div class="big"><b>'+cands.length+'</b> brand-new peptides, just for you</div>'+
-      '<div class="sub">'+(novelCount?novelCount+' look likely to be completely new · ':'')+'tap any card to open its full story</div>'+
-      '<div class="sub" style="margin-top:6px;font-size:12px">A peptide is a tiny chain. Each capital letter below is one <b style="color:#cdd6d4">building block</b> (scientists call them amino acids).</div></div>';
+// ── Tool ──────────────────────────────────────────────────────────────────
+function renderTool(){
+  $('#app').innerHTML=
+    '<textarea id="target" placeholder="e.g. A short collagen-stimulating peptide, more stable than GHK-Cu, for in vitro skin-fibroblast research." maxlength="500"></textarea>'+
+    '<div class="char-row"><span class="char-cnt" id="charCnt">0 / 500</span></div>'+
+    '<button class="run" id="runBtn">✨ Design 3 new peptides →</button>'+
+    '<div class="msg" id="msg"></div>';
+  var ta=$('#target'),cc=$('#charCnt'),rb=$('#runBtn');
+  ta.addEventListener('input',function(){ var n=ta.value.length; cc.textContent=n+' / 500'; cc.className='char-cnt'+(n>420?' near':''); });
+  rb.addEventListener('click',run);
+  document.getElementById('tmplGrid').addEventListener('click',function(e){
+    var b=e.target.closest('.tmpl'); if(!b) return;
+    ta.value=b.getAttribute('data-ex'); ta.dispatchEvent(new Event('input')); ta.focus();
+  });
+  document.getElementById('libToggle').addEventListener('click',toggleLibrary);
+  document.getElementById('libClose').addEventListener('click',closeLibrary);
+}
 
-    html+='<div class="brief" style="animation:popIn .5s .05s both"><div class="lbl">WHAT THE AI UNDERSTOOD</div><p>'+esc(b.target_mechanism||'')+'</p>'+
-      (b.desired_properties||[]).map(function(p){return '<span class="tag g">'+esc(p)+'</span>';}).join('')+
-      (b.reference_compounds&&b.reference_compounds.length?'<div style="margin-top:6px"><span style="font-size:11px;color:var(--mut)">References: </span>'+(b.reference_compounds||[]).map(function(r){return '<span class="tag">'+esc(r)+'</span>';}).join('')+'</div>':'')+
-      '</div>';
+// ── Run ───────────────────────────────────────────────────────────────────
+async function run(){
+  var taEl=$('#target'); if(!taEl) return;
+  var target=taEl.value.trim();
+  var msgEl=$('#msg'); if(msgEl) msgEl.textContent='';
+  $('#results').innerHTML=''; $('#saveBar').innerHTML='';
+  currentRunId=null; currentShareToken=null; currentBrief=null;
+  if(target.length<6){ if(msgEl) msgEl.textContent='Tell it what you want to study first.'; return; }
+  var btn=$('#runBtn'); btn.disabled=true; btn.textContent='Designing…';
+  var prog=runProgress();
+  try{
+    var r=await api('generate',{method:'POST',body:JSON.stringify({target:target})});
+    var d=await r.json().catch(function(){ return {}; });
+    if(r.status===401){ prog.abort(); gate(); return; }
+    if(r.status===403){ prog.abort(); renderUpsell(d.message); loadQuota(); }
+    else if(!r.ok){ prog.abort(); if(msgEl) msgEl.textContent=d.error||'Something went wrong — try again.'; }
+    else{
+      currentRunId=d.runId||null; currentShareToken=d.shareToken||null; currentBrief=d.brief||null;
+      prog.finish(function(){
+        renderResults(d);
+        fireConfetti();
+        if(d.quota){ quotaData=d.quota; renderQuota(d.quota); }
+        renderSaveBar();
+        setTimeout(loadLibrary,800);
+      });
+    }
+  }catch(e){ prog.abort(); if(msgEl) msgEl.textContent='Network error — please try again.'; }
+  if($('#runBtn')){ $('#runBtn').disabled=false; $('#runBtn').textContent='✨ Design 3 new peptides →'; }
+}
 
-    cands.forEach(function(c){
-      var sc=c.scores||{}, nv=c.novelty||{};
-      var novCls = nv.badge==='novel'?'novel':nv.badge==='known'?'known':'partial';
-      var novTxt = nv.badge==='novel'?'✦ Likely brand-new':nv.badge==='known'?'⚠ Already exists':'~ '+esc(nv.label||'Partially similar');
-      var isTop = top && c.id===top.id && cands.length>1;
-      var style = c.style || c.scaffold_class || '';
-      var summary = c.plain_summary || c.rationale || '';
-      var helpList = c.how_it_helps || c.strengths || [];
-      var riskList = c.why_might_not || c.watch_outs || [];
+// ── Progress stepper ──────────────────────────────────────────────────────
+function runProgress(){
+  var steps=[['🎯','Reading what you wrote'],['🧬','Inventing three new peptides'],['📊','Grading & checking novelty']];
+  var rows=steps.map(function(s,i){ return '<div class="prog-row" data-i="'+i+'"><div class="prog-ic">'+s[0]+'</div><div class="prog-tx">'+s[1]+'</div></div>'; }).join('');
+  $('#results').innerHTML='<div class="prog"><div class="prog-rows">'+rows+'</div><div class="prog-bar"><i></i></div></div>';
+  var bar=$('#results .prog-bar i'); var rowEls=document.querySelectorAll('#results .prog-row');
+  var pct=0,done=false;
+  function activate(i){ if(i>0&&rowEls[i-1]){ rowEls[i-1].classList.remove('on'); rowEls[i-1].classList.add('done'); } if(rowEls[i]) rowEls[i].classList.add('on'); }
+  activate(0);
+  var t1=setTimeout(function(){ if(!done) activate(1); },1900);
+  var t2=setTimeout(function(){ if(!done) activate(2); },4600);
+  var creep=setInterval(function(){ if(done)return; pct=Math.min(92,pct+Math.random()*7); if(bar) bar.style.width=pct+'%'; },340);
+  return{
+    finish:function(cb){ done=true; clearTimeout(t1); clearTimeout(t2); clearInterval(creep); rowEls.forEach(function(r){ r.classList.remove('on'); r.classList.add('done'); }); if(bar) bar.style.width='100%'; setTimeout(cb,430); },
+    abort:function(){ done=true; clearTimeout(t1); clearTimeout(t2); clearInterval(creep); $('#results').innerHTML=''; }
+  };
+}
 
-      // ── Collapsed (always visible) ──
-      html+='<div class="cand'+(isTop?' top':'')+'">'+
-        (isTop?'<div class="crown">👑 BEST MATCH · highest overall score</div>':'')+
-        '<div class="cand-top"><div><div class="cand-id">'+esc(c.id||'')+' · '+esc(sc.len||c.sequence.length)+' building blocks</div><div class="cand-name">'+esc(c.name||'Candidate')+'</div></div>'+
-          '<div style="text-align:right"><div class="cand-comp" data-to="'+(sc.comp||0)+'" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">SCORE /100</div></div></div>'+
-        '<div style="margin:6px 0"><span class="nov '+novCls+'">'+novTxt+'</span>'+(style?' <span class="tag">'+esc(style)+'</span>':'')+'</div>'+
-        '<div class="seq-cap">The recipe — each letter is one building block:</div>'+
-        '<div class="seq">'+seqHTML(c.sequence)+'</div>'+
-        (summary?'<div class="summary">'+esc(summary)+'</div>':'')+
+// ── Save / Share bar ──────────────────────────────────────────────────────
+function renderSaveBar(){
+  if(!currentRunId) return;
+  $('#saveBar').innerHTML=
+    '<div class="save-bar">'+
+      '<span class="sb-lbl">💾 Name this design:</span>'+
+      '<input id="saveName" type="text" placeholder="e.g. BPC variants, Q2 collagen study…" maxlength="80">'+
+      '<button class="save-btn" id="saveNameBtn">Save name</button>'+
+      '<button class="share-btn" id="shareBtn">🔗 Get share link</button>'+
+    '</div>';
+  $('#saveNameBtn').addEventListener('click',saveRunName);
+  $('#shareBtn').addEventListener('click',toggleShare);
+}
+async function saveRunName(){
+  var nameEl=$('#saveName'); if(!nameEl) return;
+  var name=nameEl.value.trim(); if(!name) return;
+  var btn=$('#saveNameBtn'); btn.disabled=true; btn.textContent='Saving…';
+  try{
+    var r=await api('run',{method:'PATCH',body:JSON.stringify({id:currentRunId,name:name})});
+    if(r.ok){ toast('Design saved as "'+name+'"'); setTimeout(loadLibrary,400); }
+    else toast('Could not save — try again.','err');
+  }catch(e){ toast('Network error.','err'); }
+  btn.disabled=false; btn.textContent='Save name';
+}
+async function toggleShare(){
+  if(!currentRunId||!currentShareToken) return;
+  var btn=$('#shareBtn'); if(!btn) return;
+  var isShared=btn.classList.contains('active');
+  var newState=!isShared;
+  btn.disabled=true;
+  try{
+    var r=await api('run',{method:'PATCH',body:JSON.stringify({id:currentRunId,is_shared:newState})});
+    if(r.ok){
+      if(newState){
+        btn.classList.add('active'); btn.textContent='✓ Link shared';
+        var link=window.location.origin+'/design-lab/run/?r='+currentShareToken;
+        var el=document.createElement('div'); el.className='share-link'; el.textContent=link; el.title='Click to copy';
+        el.addEventListener('click',function(){ navigator.clipboard.writeText(link).then(function(){ toast('Link copied!'); }); });
+        var sb=$('.save-bar'); if(sb) sb.appendChild(el);
+        toast('Share link ready — click the link to copy it!');
+      }else{
+        btn.classList.remove('active'); btn.textContent='🔗 Get share link';
+        var sl=document.querySelector('.share-link'); if(sl) sl.remove();
+        toast('Sharing turned off.');
+      }
+    }else toast('Could not update share — try again.','err');
+  }catch(e){ toast('Network error.','err'); }
+  btn.disabled=false;
+}
 
-        // ── Expandable detail ──
-        '<div class="cand-more">'+
-          (c.relates_to_request?'<div class="blk match"><h4>🔎 Why this matches what you asked for</h4>'+esc(c.relates_to_request)+'</div>':'')+
-          (helpList.length?'<div class="blk help"><h4>✓ How it could do what you want</h4><ul>'+listHTML(helpList)+'</ul></div>':'')+
-          (riskList.length?'<div class="blk risk"><h4>⚠ Why it might NOT work</h4><ul>'+listHTML(riskList)+'</ul></div>':'')+
-          '<div class="bars-cap">How it scored (each bar is out of 100 — higher is better):</div>'+
-          '<div class="bars">'+
-            barHTML('Easy to make',sc.sy||0,'#01D3A0')+
-            barHTML('Dissolves in water',sc.so||0,'#7b8cff')+
-            barHTML('Good length',sc.ls||0,'#f0b03b')+
-            barHTML('Mix of blocks',sc.dv||0,'#8aa0a0')+
-          '</div>'+
-          '<div class="meta" title="'+esc('Charge: how strongly positive or negative it is. In water: whether it dissolves easily or prefers fatty places like cell walls. Sturdiness: how well it resists the body’s tiny scissors (enzymes: '+(sc.protRisk||'')+').')+'">'+
-            'Charge: '+(sc.netCharge>0?'+'+esc(sc.netCharge)+' (positive pull)':sc.netCharge<0?esc(sc.netCharge)+' (negative pull)':'neutral (no pull)')+
-            ' · In water: '+(sc.gravyScore>0.3?'prefers oily places (won\'t mix into water)':sc.gravyScore<-0.3?'dissolves easily (mixes into water)':'fairly balanced')+
-            ' · Sturdiness: '+(sc.protRisk==='Low'?'high — hard for the body to snip apart':'lower — the body\'s tiny scissors could snip it')+
-            ' · about £'+esc(sc.cost)+' to build</div>'+
-          (c.design_reasoning?'<div class="blk brain"><h4>🧠 Why the AI chose these exact blocks</h4>'+esc(c.design_reasoning)+'</div>':'')+
-          (c.research_hypothesis?'<div class="hyp"><b style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.5px;opacity:.7">🔬 WHAT A LAB MIGHT SEE · </b>'+esc(c.research_hypothesis)+'</div>':'')+
-        '</div>'+
-        '<button class="cand-toggle" type="button"><span class="lbl">Tap to see the full story</span> <span class="chev">▾</span></button>'+
-      '</div>';
-    });
-    $('#results').innerHTML=html;
-    reveal();
+// ── Library ───────────────────────────────────────────────────────────────
+async function loadLibrary(){
+  try{
+    var r=await api('runs');
+    var runs=r.ok?await r.json():[];
+    runs=Array.isArray(runs)?runs:[];
+    var badge=document.getElementById('libCountBadge');
+    if(badge){ if(runs.length){ badge.textContent=runs.length; badge.style.display=''; }else badge.style.display='none'; }
+    window._labRuns=runs;
+    if(document.getElementById('libPanel').classList.contains('open')) renderLibraryContent(runs);
+  }catch(e){}
+}
+function toggleLibrary(){
+  var panel=document.getElementById('libPanel');
+  if(panel.classList.toggle('open')) renderLibraryContent(window._labRuns||[]);
+}
+function closeLibrary(){ document.getElementById('libPanel').classList.remove('open'); }
+function renderLibraryContent(runs){
+  var el=document.getElementById('libContent');
+  if(!runs||!runs.length){ el.innerHTML='<div class="lib-empty">No saved designs yet.<br>Run a design and give it a name to save it here.</div>'; return; }
+  var html='';
+  runs.forEach(function(run){
+    var cands=Array.isArray(run.candidates)?run.candidates:[];
+    var dt=run.created_at?new Date(run.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+    html+='<div class="lib-card">'+
+      '<div class="lib-card-body">'+
+        '<div class="lib-card-name">'+esc(run.name||'Unnamed design')+'</div>'+
+        '<div class="lib-card-target">'+esc(run.target||'')+'</div>'+
+        '<div class="lib-card-meta">'+cands.length+' candidates · '+dt+(run.tier_at_run?' · '+esc(run.tier_at_run):'')+'</div>'+
+      '</div>'+
+      '<div class="lib-actions">'+
+        '<button class="la-btn" data-action="load" data-id="'+esc(run.id)+'">Load</button>'+
+        '<button class="la-btn share'+(run.is_shared?' on':'')+'" data-action="share" data-id="'+esc(run.id)+'" data-token="'+esc(run.share_token)+'" data-shared="'+(run.is_shared?'1':'0')+'">'+
+          (run.is_shared?'✓ Shared':'Share')+
+        '</button>'+
+        '<button class="la-btn del" data-action="del" data-id="'+esc(run.id)+'">Delete</button>'+
+      '</div>'+
+    '</div>';
+  });
+  el.innerHTML=html;
+  el.removeEventListener('click',libAction);
+  el.addEventListener('click',libAction);
+}
+async function libAction(e){
+  var btn=e.target.closest('[data-action]'); if(!btn) return;
+  var action=btn.getAttribute('data-action'), id=btn.getAttribute('data-id');
+  if(action==='load'){
+    var run=(window._labRuns||[]).find(function(r){ return r.id===id; }); if(!run) return;
+    closeLibrary();
+    currentRunId=run.id; currentShareToken=run.share_token; currentBrief=run.brief||null;
+    renderResults({brief:run.brief||{},candidates:run.candidates||[],quota:quotaData});
+    renderSaveBar();
+    var sn=$('#saveName'); if(sn) sn.value=run.name||'';
     $('#results').scrollIntoView({behavior:'smooth',block:'start'});
+  }else if(action==='share'){
+    var isShared=btn.getAttribute('data-shared')==='1';
+    var newState=!isShared;
+    var tok=btn.getAttribute('data-token');
+    try{
+      var r=await api('run',{method:'PATCH',body:JSON.stringify({id:id,is_shared:newState})});
+      if(r.ok){
+        btn.setAttribute('data-shared',newState?'1':'0');
+        btn.classList.toggle('on',newState);
+        btn.textContent=newState?'✓ Shared':'Share';
+        var run2=(window._labRuns||[]).find(function(x){ return x.id===id; });
+        if(run2) run2.is_shared=newState;
+        if(newState){
+          var link=window.location.origin+'/design-lab/run/?r='+tok;
+          navigator.clipboard.writeText(link).then(function(){ toast('Share link copied!'); }).catch(function(){ toast('Shared! Copy: '+link); });
+        }else toast('Sharing turned off.');
+      }else toast('Could not update.','err');
+    }catch(ee){ toast('Network error.','err'); }
+  }else if(action==='del'){
+    if(!confirm('Delete this design? This cannot be undone.')) return;
+    try{
+      var r2=await api('run?id='+encodeURIComponent(id),{method:'DELETE'});
+      if(r2.ok){ toast('Design deleted.'); loadLibrary(); }
+      else toast('Could not delete.','err');
+    }catch(ee){ toast('Network error.','err'); }
   }
+}
 
-  // Expand/collapse any result card (delegated — survives re-renders)
-  document.addEventListener('click', function(e){
-    var t=e.target.closest ? e.target.closest('.cand-toggle') : null;
-    if(t){ var card=t.closest('.cand'); if(card) toggleCard(card); }
+// ── Upsell ────────────────────────────────────────────────────────────────
+function renderUpsell(msg){
+  $('#results').innerHTML='<div class="upsell"><p>'+esc(msg||'You\'ve used all your designs for this period.')+'</p><a href="/pro/">Upgrade your Velox tier →</a></div>';
+}
+
+// ── HTML helpers ──────────────────────────────────────────────────────────
+function seqHTML(seq){ return String(seq).split('').map(function(a){ return '<span style="color:'+aaCol(a)+'">'+esc(a)+'</span>'; }).join(''); }
+function barHTML(label,val,col){ return '<div class="bar"><span class="bar-l">'+label+'</span><div class="bar-t"><div class="bar-f" style="--w:'+val+'%;background:'+col+'"></div></div><span class="bar-v" style="color:'+col+'">'+val+'</span></div>'; }
+function listHTML(arr){ return (arr||[]).map(function(x){ return '<li>'+esc(x)+'</li>'; }).join(''); }
+function countUp(el,to){ to=+to||0; var dur=850,st=null; function fr(ts){ if(!st)st=ts; var p=Math.min(1,(ts-st)/dur); var e=1-Math.pow(1-p,3); el.textContent=Math.round(to*e); if(p<1) requestAnimationFrame(fr); else el.textContent=to; } requestAnimationFrame(fr); }
+function fireConfetti(){
+  var fx=document.getElementById('fx'); if(!fx) return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var cols=['#01D3A0','#6cf7d6','#7b8cff','#f0b03b','#ffffff'];
+  for(var i=0;i<80;i++){ (function(){
+    var c=document.createElement('div'); c.className='conf';
+    c.style.left=Math.random()*100+'%'; c.style.background=cols[Math.floor(Math.random()*cols.length)];
+    var dur=2.4+Math.random()*1.9; c.style.animationDuration=dur+'s'; c.style.animationDelay=(Math.random()*.45)+'s';
+    c.style.transform='rotate('+(Math.random()*360)+'deg)';
+    fx.appendChild(c); setTimeout(function(){ c.remove(); },(dur+1)*1000);
+  })(); }
+}
+
+// ── Reveal animations ─────────────────────────────────────────────────────
+function reveal(){
+  document.querySelectorAll('#results .cand').forEach(function(card,i){
+    card.style.animationDelay=(0.09*i)+'s';
+    var comp=card.querySelector('.cand-comp');
+    if(comp){ var to=comp.getAttribute('data-to'); comp.textContent='0'; setTimeout(function(){ countUp(comp,to); },90*i+260); }
+    card.querySelectorAll('.seq span').forEach(function(s,j){ s.style.animationDelay=(0.09*i+0.28+j*0.028)+'s'; });
+  });
+}
+function toggleCard(card){
+  var open=card.classList.toggle('open');
+  var lbl=card.querySelector('.cand-toggle .lbl'); if(lbl) lbl.textContent=open?'Hide the details':'Tap to see the full story';
+  if(open&&!card.dataset.filled){ card.dataset.filled='1'; card.querySelectorAll('.bar-f').forEach(function(b){ b.classList.add('fill'); }); }
+}
+
+// ── Main result renderer ──────────────────────────────────────────────────
+function renderResults(d){
+  var b=d.brief||{}, cands=d.candidates||[];
+  var top=null; cands.forEach(function(c){ var v=(c.scores||{}).comp||0; if(!top||v>top.v) top={id:c.id,v:v}; });
+  var novelCount=cands.filter(function(c){ return (c.novelty||{}).badge==='novel'; }).length;
+
+  var html='<div class="res-hd">'+
+    '<div class="spark">✦ DESIGN COMPLETE ✦</div>'+
+    '<div class="big"><b>'+cands.length+'</b> brand-new peptides, just for you</div>'+
+    '<div class="sub">'+(novelCount?novelCount+' appear completely new · ':'')+
+    'tap any card to open its full molecular story</div>'+
+    '</div>';
+
+  // Brief interpretation card
+  html+='<div class="brief-card">'+
+    '<div class="bc-lbl">WHAT THE AI UNDERSTOOD</div>'+
+    '<p>'+esc(b.target_mechanism||'')+'</p>'+
+    (b.desired_properties||[]).map(function(p){ return '<span class="tag g">'+esc(p)+'</span>'; }).join('')+
+    (b.reference_compounds&&b.reference_compounds.length?'<div style="margin-top:6px"><span style="font-size:11px;color:var(--mut)">References: </span>'+(b.reference_compounds||[]).map(function(r){ return '<span class="tag">'+esc(r)+'</span>'; }).join('')+'</div>':'')+
+    '</div>';
+
+  // Candidate cards
+  cands.forEach(function(c,ci){
+    var sc=c.scores||{}, nv=c.novelty||{};
+    var novCls=nv.badge==='novel'?'novel':nv.badge==='known'?'known':'partial';
+    var novTxt=nv.badge==='novel'?'✦ Likely brand-new':nv.badge==='known'?'⚠ Already exists':'~ '+esc(nv.label||'Partially similar');
+    var isTop=top&&c.id===top.id&&cands.length>1;
+    var style=c.style||c.scaffold_class||'';
+    var summary=c.plain_summary||c.rationale||'';
+    var helpList=c.how_it_helps||c.strengths||[];
+    var riskList=c.why_might_not||c.watch_outs||[];
+    var seq=c.sequence||'';
+
+    // Molecular properties
+    var pi=calcPI(seq);
+    var nc=netChargeAt74(seq);
+    var hl=estHalfLife(seq);
+    var amphi=isAmphipathic(seq);
+    var hm=Math.round(hydrophobicMoment(seq)*1000)/1000;
+    var ncStr=nc>0?'+'+nc:String(nc);
+    var ncCls=nc>1?'mc-g':nc<-1?'mc-red':'mc-vio';
+    var piCls=pi>9?'mc-g':pi<5?'mc-red':'mc-vio';
+    var hlCls=hl.indexOf('>20')!==-1||hl.indexOf('>100')!==-1?'mc-g':hl.indexOf('~1')!==-1||hl.indexOf('~0')!==-1?'mc-red':'mc-amber';
+    var gravyStr=sc.gravyScore!==undefined?sc.gravyScore:0;
+    var gravyCls=gravyStr>0.3?'mc-vio':gravyStr<-0.3?'mc-g':'';
+
+    html+='<div class="cand'+(isTop?' top':'')+'" id="cand-'+ci+'">'+
+      (isTop?'<div class="crown">👑 BEST MATCH · highest overall score</div>':'')+
+      '<div class="cand-top">'+
+        '<div>'+
+          '<div class="cand-id">'+esc(c.id||'')+' · '+seq.length+' building blocks</div>'+
+          '<div class="cand-name">'+esc(c.name||'Candidate')+'</div>'+
+        '</div>'+
+        '<div style="text-align:right">'+
+          '<div class="cand-comp" data-to="'+(sc.comp||0)+'" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div>'+
+          '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">SCORE /100</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="margin:6px 0">'+
+        '<span class="nov '+novCls+'">'+novTxt+'</span>'+
+        (amphi?'<span class="badge-amphi">⟨⟩ amphipathic</span>':'')+
+        (style?' <span class="tag">'+esc(style)+'</span>':'')+
+      '</div>'+
+      '<div class="seq-cap">The recipe — each letter is one building block:</div>'+
+      '<div class="seq">'+seqHTML(seq)+'</div>'+
+      (summary?'<div class="summary">'+esc(summary)+'</div>':'')+
+
+      // Expandable section
+      '<div class="cand-more">'+
+
+        // Why it matches
+        (c.relates_to_request?'<div class="blk match"><h4>🔎 Why this matches what you asked for</h4>'+esc(c.relates_to_request)+'</div>':'')+
+
+        // Strengths / watch-outs
+        (helpList.length||riskList.length?
+          '<div class="prosCons">'+
+            (helpList.length?'<div class="pc pro"><h4>✓ Strengths</h4><ul>'+listHTML(helpList)+'</ul></div>':'')+
+            (riskList.length?'<div class="pc con"><h4>⚠ Watch-outs</h4><ul>'+listHTML(riskList)+'</ul></div>':'')+
+          '</div>':'')+
+
+        // Score bars
+        '<div class="bars-cap">Score breakdown (out of 100 — higher is better):</div>'+
+        '<div class="bars">'+
+          barHTML('Easy to synthesise',sc.sy||0,'#01D3A0')+
+          barHTML('Dissolves in water',sc.so||0,'#7b8cff')+
+          barHTML('Ideal length',sc.ls||0,'#f0b03b')+
+          barHTML('Building block variety',sc.dv||0,'#8aa0a0')+
+        '</div>'+
+
+        // Molecular deep-dive
+        '<div class="mol">'+
+          '<div class="mol-hd">🔬 Molecular deep-dive</div>'+
+          '<div class="mol-grid">'+
+            '<div class="mol-cell '+piCls+'"><div class="mc-l">Isoelectric point (pI)</div><div class="mc-v">'+pi+'</div><div class="mc-note">pH at which net charge = 0</div></div>'+
+            '<div class="mol-cell '+ncCls+'"><div class="mc-l">Net charge (pH 7.4)</div><div class="mc-v">'+ncStr+'</div><div class="mc-note">'+(nc>1?'Cationic (positive)':nc<-1?'Anionic (negative)':'Near-neutral')+'</div></div>'+
+            '<div class="mol-cell '+hlCls+'"><div class="mc-l">Est. half-life</div><div class="mc-v">'+esc(hl)+'</div><div class="mc-note">N-end rule, mammalian</div></div>'+
+            '<div class="mol-cell '+gravyCls+'"><div class="mc-l">GRAVY score</div><div class="mc-v">'+gravyStr+'</div><div class="mc-note">'+(gravyStr>0.3?'Hydrophobic (prefers oily environments)':gravyStr<-0.3?'Hydrophilic (water-loving)':'Balanced')+'</div></div>'+
+            '<div class="mol-cell '+(amphi?'mc-vio':'')+'"><div class="mc-l">Hydrophobic moment</div><div class="mc-v">'+hm+'</div><div class="mc-note">'+(amphi?'Amphipathic — one oily side, one watery side':'Not amphipathic')+'</div></div>'+
+            '<div class="mol-cell mc-amber"><div class="mc-l">Protease risk</div><div class="mc-v" style="font-size:12px">'+esc(sc.protRisk||'Low')+'</div><div class="mc-note">Enzyme cleavage risk</div></div>'+
+          '</div>'+
+          // Helical wheel for amphipathic sequences
+          (amphi&&seq.length>=5?
+            '<div style="margin-top:14px">'+
+              '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">α-Helical wheel — shows if it could insert into cell membranes</div>'+
+              '<div class="wheel-row">'+
+                '<div>'+helicalWheelSVG(seq)+'</div>'+
+                '<div class="wheel-key">'+
+                  '<div class="wk-item"><span class="wk-dot" style="background:#01D3A0"></span>Positively charged (K, R, H)</div>'+
+                  '<div class="wk-item"><span class="wk-dot" style="background:#f0637e"></span>Negatively charged (D, E)</div>'+
+                  '<div class="wk-item"><span class="wk-dot" style="background:#7b8cff"></span>Hydrophobic (A,I,L,M,F,W,P,V)</div>'+
+                  '<div class="wk-item"><span class="wk-dot" style="background:#475262"></span>Other / polar</div>'+
+                  '<div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.5">Each circle is one building block. The ringed residue is position 1 (N-terminus). Spacing = 100° per residue — the geometry of a real α-helix. If one side clusters in one colour, the chain has a distinct oily face and a watery face.</div>'+
+                '</div>'+
+              '</div>'+
+            '</div>'
+          :'')+
+        '</div>'+
+
+        // AI reasoning
+        (c.design_reasoning?'<div class="blk brain"><h4>🧠 Why the AI chose these exact building blocks</h4>'+esc(c.design_reasoning)+'</div>':'')+
+
+        // Meta + cost line
+        '<div class="meta-line">'+
+          'Est. synthesis cost: ~£'+esc(sc.cost||'?')+
+          ' · Net charge at pH 7.4: '+ncStr+
+          ' · Protease risk: '+esc(sc.protRisk||'Low')+
+        '</div>'+
+
+        // Lab hypothesis
+        (c.research_hypothesis?'<div class="hyp"><b style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.5px;opacity:.7">🔬 WHAT A LAB MIGHT SEE · </b>'+esc(c.research_hypothesis)+'</div>':'')+
+
+        // Candidate actions
+        '<div class="cand-actions">'+
+          '<button class="ca-btn refine-open" data-refine-ci="'+ci+'">🔬 Refine this candidate</button>'+
+          '<a class="ca-btn order" href="/design-lab/order/?seq='+encodeURIComponent(seq)+'&name='+encodeURIComponent(c.name||c.id||'')+'" target="_blank">⚗ Request synthesis →</a>'+
+        '</div>'+
+
+        // Refinement panel
+        '<div class="refine-panel" id="rpanel-'+ci+'">'+
+          '<div class="rp-hd">🔬 Refine this candidate</div>'+
+          '<div class="rp-quota" id="rquota-'+ci+'"></div>'+
+          '<div class="quick-chips">'+
+            '<button class="qchip" data-ins="Make it shorter — target 6 to 8 building blocks">↓ Shorter</button>'+
+            '<button class="qchip" data-ins="Make it longer — target 15 to 20 building blocks">↑ Longer</button>'+
+            '<button class="qchip" data-ins="Improve water solubility by adding positively charged building blocks (K, R)">More soluble</button>'+
+            '<button class="qchip" data-ins="Improve protease stability by replacing enzyme-vulnerable sites">More stable</button>'+
+            '<button class="qchip" data-ins="Make it more hydrophobic for membrane interaction">More hydrophobic</button>'+
+            '<button class="qchip" data-ins="Reduce synthesis cost by avoiding expensive building blocks like W and C">Reduce cost</button>'+
+          '</div>'+
+          '<textarea id="rins-'+ci+'" placeholder="Or type your own, e.g. \'Replace cysteine with serine to avoid disulfide issues\'"></textarea>'+
+          '<button class="refine-run" id="rbtn-'+ci+'" data-ci="'+ci+'">Run refinement — get 6 new variants →</button>'+
+          '<div id="rresults-'+ci+'"></div>'+
+        '</div>'+
+
+      '</div>'+ // end cand-more
+
+      '<button class="cand-toggle" type="button"><span class="lbl">Tap to see the full story</span> <span class="chev">▾</span></button>'+
+    '</div>'; // end cand
   });
 
-  init();
+  $('#results').innerHTML=html;
+  reveal();
+  $('#results').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Bind refine panels
+  cands.forEach(function(c,ci){ bindRefinePanel(ci,c); });
+}
+
+// ── Refinement panel binding ──────────────────────────────────────────────
+function bindRefinePanel(ci,cand){
+  var openBtn=document.querySelector('[data-refine-ci="'+ci+'"]');
+  if(openBtn) openBtn.addEventListener('click',function(){ openRefinePanel(ci); });
+
+  var chipContainer=document.getElementById('rpanel-'+ci);
+  if(chipContainer) chipContainer.querySelectorAll('.qchip').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      var ins=document.getElementById('rins-'+ci);
+      if(ins) ins.value=chip.getAttribute('data-ins');
+    });
+  });
+
+  var rbtn=document.getElementById('rbtn-'+ci);
+  if(rbtn) rbtn.addEventListener('click',function(){ runRefinement(ci,cand); });
+}
+function openRefinePanel(ci){
+  var panel=document.getElementById('rpanel-'+ci); if(!panel) return;
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+    var rqEl=document.getElementById('rquota-'+ci);
+    if(rqEl&&quotaData){
+      var rem=quotaData.refineRemaining;
+      if(rem===undefined||rem===Infinity) rqEl.textContent='Unlimited refinements on your tier.';
+      else if(rem===0) rqEl.innerHTML='No refinements left this month. <a href="/pro/" style="color:var(--g)">Upgrade →</a>';
+      else rqEl.textContent=rem+' refinement'+(rem===1?'':'s')+' remaining this month.';
+    }
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+async function runRefinement(ci,cand){
+  var rins=document.getElementById('rins-'+ci);
+  var instruction=(rins?rins.value:'').trim();
+  if(!instruction){ toast('Choose or type a refinement instruction first.','err'); return; }
+  var rbtn=document.getElementById('rbtn-'+ci), rresults=document.getElementById('rresults-'+ci);
+  rbtn.disabled=true; rbtn.textContent='Refining — generating 6 variants…';
+  rresults.innerHTML='<div class="spin" style="padding:20px">Generating refined variants…</div>';
+  try{
+    var r=await api('refine',{method:'POST',body:JSON.stringify({brief:currentBrief,candidate:cand,instruction:instruction})});
+    var dd=await r.json().catch(function(){ return {}; });
+    if(r.status===403){ rresults.innerHTML='<div style="color:var(--amber);font-size:13px;padding:10px 0">'+esc(dd.message||'Refinement limit reached.')+' <a href="/pro/" style="color:var(--g)">Upgrade →</a></div>'; }
+    else if(!r.ok){ rresults.innerHTML='<div style="color:var(--red);font-size:13px;padding:10px 0">'+esc(dd.error||'Something went wrong.')+'</div>'; }
+    else{
+      if(dd.quota){ quotaData=dd.quota; renderQuota(dd.quota); }
+      renderRefinedCandidates(ci,dd.refined||[]);
+      toast('Refinement complete — '+(dd.refined||[]).length+' new variants!');
+    }
+  }catch(e){ rresults.innerHTML='<div style="color:var(--red);font-size:13px;padding:10px 0">Network error.</div>'; }
+  rbtn.disabled=false; rbtn.textContent='Run refinement — get 6 new variants →';
+}
+function renderRefinedCandidates(ci,refined){
+  var el=document.getElementById('rresults-'+ci); if(!el) return;
+  if(!refined.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px;padding:10px 0">No variants returned — try a different instruction.</div>'; return; }
+  var html='<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--amber);letter-spacing:1px;margin:10px 0 4px">'+refined.length+' REFINED VARIANTS</div>';
+  refined.forEach(function(rc){
+    var rseq=rc.sequence||'';
+    html+='<div class="refined-card">'+
+      '<div class="rc-top"><div><div class="rc-id">'+esc(rc.id||'')+'</div><div class="rc-name">'+esc(rc.name||'Refined candidate')+'</div></div>'+
+      '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--dim)">'+rseq.length+' aa</span>'+
+      '</div>'+
+      '<div class="rc-seq">'+seqHTML(rseq)+'</div>'+
+      '<div class="rc-rat">'+esc(rc.rationale||rc.design_reasoning||'')+'</div>'+
+      (rc.strengths&&rc.strengths.length?'<ul style="margin:8px 0 0;padding-left:16px;font-size:12px;color:var(--mut);line-height:1.7">'+rc.strengths.map(function(s){ return '<li>'+esc(s)+'</li>'; }).join('')+'</ul>':'')+
+      (rc.research_hypothesis?'<div class="hyp" style="margin-top:8px">'+esc(rc.research_hypothesis)+'</div>':'')+
+      '<a class="rc-order" href="/design-lab/order/?seq='+encodeURIComponent(rseq)+'&name='+encodeURIComponent(rc.name||rc.id||'')+'" target="_blank">⚗ Request synthesis →</a>'+
+    '</div>';
+  });
+  el.innerHTML=html;
+}
+
+// ── Card toggle delegation ────────────────────────────────────────────────
+document.addEventListener('click',function(e){
+  var t=e.target.closest&&e.target.closest('.cand-toggle');
+  if(t){ var card=t.closest('.cand'); if(card) toggleCard(card); }
+});
+
+init();
 })();
 </script>
 </body>
