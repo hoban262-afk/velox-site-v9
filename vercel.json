@@ -86,6 +86,10 @@
     {
       "path": "/api/agents/content-draft",
       "schedule": "0 8 1 * *"
+    },
+    {
+      "path": "/api/indexnow",
+      "schedule": "30 6 * * *"
     }
   ],
   "headers": [
@@ -99,6 +103,9 @@
     { "source": "/design-lab/leaderboard/", "destination": "/api/design-lab-leaderboard" }
   ],
   "redirects": [
+    { "source": "/favicon.ico", "destination": "/favicon.svg", "permanent": true },
+    { "source": "/apple-touch-icon.png", "destination": "/favicon.svg", "permanent": true },
+    { "source": "/apple-touch-icon-precomposed.png", "destination": "/favicon.svg", "permanent": true },
     {
       "source": "/compounds/neuropeptide-research/",
       "destination": "/compounds/cognitive/",
