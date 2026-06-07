@@ -5846,8 +5846,9 @@ a.nl[href="/guides/"]::before {
 .vp-search-box{display:flex;align-items:center;gap:8px;background:#0d0d0d;border:1px solid #1f262d;border-radius:999px;padding:7px 14px}
 .vp-search-nav .vp-search-box{min-width:190px}
 .vp-search-box svg{width:16px;height:16px;flex:0 0 auto;color:#6b7280}
-.vp-search-input{flex:1;min-width:0;background:transparent;border:0;outline:none;color:#fff;font:inherit;font-size:14px}
+.vp-search-input{flex:1;min-width:0;background:transparent;border:0;outline:none;box-shadow:none;border-radius:0;-webkit-appearance:none;appearance:none;color:#fff;font:inherit;font-size:14px}
 .vp-search-input::placeholder{color:#6b7280}
+.vp-search-input::-webkit-search-decoration,.vp-search-input::-webkit-search-cancel-button,.vp-search-input::-webkit-search-results-button,.vp-search-input::-webkit-search-results-decoration{-webkit-appearance:none;appearance:none}
 .vp-search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;min-width:240px;background:#0d0d0d;border:1px solid #1f262d;border-radius:10px;max-height:360px;overflow-y:auto;z-index:1000;box-shadow:0 16px 40px -12px rgba(0,0,0,.8)}
 .vp-search-results[hidden]{display:none}
 .vp-search-results a{display:block;padding:10px 14px;color:#cdd3d9;text-decoration:none;font-size:14px;border-bottom:1px solid rgba(255,255,255,.05)}
