@@ -5887,3 +5887,30 @@ a.nl[href="/guides/"]::before {
   .site-header .vp-search-nav .vp-search-input{font-size:13px !important;line-height:1.2 !important;padding:9px 14px 9px 36px !important;box-sizing:border-box !important;width:100% !important;height:auto !important}
   .site-header .vp-search-nav .vp-search-box svg{left:12px !important;top:50% !important;transform:translateY(-50%) !important;position:absolute !important}
 }
+
+/* ════════════════════════════════════════════════════════════════
+   NAV FIXES (appended override) — centered 3-column layout, dropdowns,
+   single-outline search, clickable product cards. 2026-06-07.
+═══════════════════════════════════════════════════════════════════ */
+.site-header .nav{display:flex !important;align-items:center;gap:14px;}
+.site-header .nav > .nav-logo{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:flex-start;}
+.site-header .nav > .nav-links{flex:0 0 auto !important;justify-content:center;margin:0;}
+.site-header .nav > .nav-actions{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:0 !important;}
+
+/* Guide Hub / About dropdowns (reuse existing .nl-drop / .nl-menu component) */
+.site-header .nav-links .nl-drop{position:relative;display:inline-flex;align-items:center;}
+.site-header .nav-links .nl-drop > .nl{display:inline-flex;align-items:center;gap:5px;}
+.site-header .nav-links .nl-menu{left:50%;transform:translateX(-50%);top:calc(100% + 6px);min-width:170px;}
+.site-header .nav-links .nl-drop:hover .nl-menu,
+.site-header .nav-links .nl-drop:focus-within .nl-menu{display:flex;}
+.site-header .nav-links .nl-drop:hover .nl-caret{transform:rotate(180deg);}
+.site-header .nav-links .nl-menu .nl-item{font-size:13px;color:var(--t2);text-decoration:none;}
+
+/* Search bar: exactly one outline (on the box; none on form/input) */
+.vp-search.vp-search-nav{border:0;background:none;padding:0;box-shadow:none;}
+.vp-search-nav .vp-search-box{border:1px solid #1f262d;background:#0d0d0d;box-shadow:none;}
+.vp-search-nav .vp-search-box:focus-within{border-color:#2a3340;}
+.vp-search-input,.vp-search-input:focus,.vp-search-input:focus-visible{border:0 !important;outline:0 !important;box-shadow:none !important;background:transparent !important;}
+
+/* Whole product card clickable (JS navigates; inner links/buttons still work) */
+.cc{cursor:pointer;}

@@ -260,3 +260,17 @@
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') vpPing(); });
   } catch (e) {}
 }());
+
+// ── Whole product card clickable ──────────────────────────────────────────────
+// The product name and image already link to the PDP; this makes the entire
+// card navigate too, while leaving inner links/buttons (add-to-cart) working.
+(function () {
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('a, button, input, label, select, textarea')) return;
+    var card = e.target.closest('.cc');
+    if (!card) return;
+    var link = card.querySelector('.cc-name-link, .cc-img-link, a[href*="/compounds/"]');
+    var href = link && link.getAttribute('href');
+    if (href) window.location.href = href;
+  });
+})();
