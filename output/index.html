@@ -871,18 +871,56 @@
         </div>
         <div style="font-size:13px;color:#6b7a7a;margin-top:10px">Free to try · up to unlimited with <a href="/pro/" style="color:#01D3A0;text-decoration:none">Velox Pro</a></div>
       </div>
-      <div style="flex:0 0 320px;max-width:340px;background:#0a0d12;border:1px solid #1a2230;border-radius:14px;padding:18px 18px 16px;box-shadow:0 30px 60px -28px rgba(0,0,0,.8)">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#8aa0a0;margin-bottom:8px">VDL-002 · 10 residues · likely novel</div>
-        <div style="font-family:'DM Mono',monospace;font-size:18px;letter-spacing:4px;padding:12px 14px;background:#05070a;border:1px solid #1a2230;border-radius:7px;margin-bottom:12px"><span style="color:#01D3A0">K</span><span style="color:#01D3A0">V</span><span style="color:#01D3A0">L</span><span style="color:#01D3A0">F</span><span style="color:#01D3A0">F</span><span style="color:#01D3A0">P</span><span style="color:#eef3f2">N</span><span style="color:#6cf7d6">H</span><span style="color:#f0b03b">G</span><span style="color:#6cf7d6">K</span></div>
-        <div style="display:grid;gap:7px">
-          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:#8aa0a0;width:96px;flex-shrink:0">Synthesisability</span><div style="flex:1;height:3px;background:#1a2230;border-radius:2px"><div style="width:96%;height:100%;background:#01D3A0;border-radius:2px"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;color:#01D3A0;width:24px;text-align:right">96</span></div>
-          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:#8aa0a0;width:96px;flex-shrink:0">Novelty</span><div style="flex:1;height:3px;background:#1a2230;border-radius:2px"><div style="width:88%;height:100%;background:#7b8cff;border-radius:2px"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;color:#7b8cff;width:24px;text-align:right">88</span></div>
-          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:#8aa0a0;width:96px;flex-shrink:0">Length opt.</span><div style="flex:1;height:3px;background:#1a2230;border-radius:2px"><div style="width:100%;height:100%;background:#f0b03b;border-radius:2px"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;color:#f0b03b;width:24px;text-align:right">100</span></div>
+      <div class="hdl-demo" id="hdlDemo" aria-hidden="true">
+        <div class="hdl-bar"><i style="background:#f0637e"></i><i style="background:#f0b03b"></i><i style="background:#01D3A0"></i><span>velox design lab &middot; live</span></div>
+        <div class="hdl-body">
+          <div class="hdl-pr"><span class="pfx">&rsaquo; </span><span id="hdlType"></span><span class="hdl-cx" id="hdlCaret"></span></div>
+          <div class="hdl-st" id="hdlStatus">&#10022; designing three novel candidates<span class="d">.</span><span class="d">.</span><span class="d">.</span></div>
+          <div id="hdlCands"></div>
         </div>
       </div>
     </div>
   </div>
 </section>
+<style>
+  .hdl-demo{flex:0 0 360px;max-width:380px;background:linear-gradient(180deg,#0b0f15,#070a0e);border:1px solid #1a2230;border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -28px rgba(0,0,0,.85)}
+  .hdl-bar{display:flex;align-items:center;gap:7px;padding:10px 13px;background:#0e141b;border-bottom:1px solid #1a2230}
+  .hdl-bar i{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .hdl-bar span{font-family:'DM Mono',monospace;font-size:10px;color:#8aa0a0;margin-left:7px;letter-spacing:.4px}
+  .hdl-body{padding:15px 15px 16px;min-height:190px;font-family:'DM Mono',monospace}
+  .hdl-pr{font-size:12.5px;color:#cdd6dd;line-height:1.55;min-height:20px}
+  .hdl-pr .pfx{color:#01D3A0}
+  .hdl-cx{display:inline-block;width:7px;height:13px;background:#01D3A0;margin-left:1px;vertical-align:-2px;animation:hdlBlink 1s step-end infinite}
+  @keyframes hdlBlink{50%{opacity:0}}
+  .hdl-st{font-size:10.5px;color:#01D3A0;margin:12px 0 4px;height:13px;opacity:0;transition:opacity .3s}
+  .hdl-st.on{opacity:1}
+  .hdl-st .d{animation:hdlDots 1.4s infinite}.hdl-st .d:nth-child(2){animation-delay:.2s}.hdl-st .d:nth-child(3){animation-delay:.4s}
+  @keyframes hdlDots{0%,60%,100%{opacity:.2}30%{opacity:1}}
+  .hdl-c{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid #1a2230;border-radius:7px;background:rgba(255,255,255,.015);margin-top:7px;opacity:0;transform:translateY(8px);transition:.45s}
+  .hdl-c.show{opacity:1;transform:none}
+  .hdl-c .nm{font-size:9px;color:#8aa0a0;width:46px;flex-shrink:0}
+  .hdl-c .sq{flex:1;font-size:13px;letter-spacing:1.5px;white-space:nowrap;overflow:hidden}
+  .hdl-c .sq b{display:inline-block;font-weight:500;opacity:0;animation:hdlPop .26s ease forwards}
+  @keyframes hdlPop{from{opacity:0;transform:translateY(-5px)}to{opacity:1}}
+  .hdl-c .sc{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:#01D3A0;min-width:24px;text-align:right}
+  @media(prefers-reduced-motion:reduce){.hdl-cx,.hdl-st .d{animation:none}.hdl-c{opacity:1;transform:none}}
+</style>
+<script>
+(function(){
+  var COL={K:'#01D3A0',R:'#01D3A0',H:'#6cf7d6',D:'#f0637e',E:'#f0637e',A:'#01D3A0',I:'#01D3A0',L:'#01D3A0',M:'#01D3A0',F:'#01D3A0',W:'#01D3A0',P:'#01D3A0',V:'#01D3A0',C:'#f0b03b',G:'#f0b03b',Y:'#f0b03b',N:'#eef3f2',Q:'#eef3f2',S:'#8aa0a0',T:'#8aa0a0'};
+  var tx=document.getElementById('hdlType'),stt=document.getElementById('hdlStatus'),cc=document.getElementById('hdlCands'),cr=document.getElementById('hdlCaret');
+  if(!tx||!cc) return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var S=[{q:'a GLP-1 / GIP / glucagon triple agonist',c:[['VDL-α','HAEGTFTSDYSKYLD',91],['VDL-β','YAEGTFISDYSIALD',84],['VDL-γ','HSQGTFTSDYSKYLDE',92]]},{q:'a BPC-157-style repair peptide',c:[['VDL-α','GEPPPGKPADEAGLV',88],['VDL-β','GKPADDAGLVRP',84],['VDL-γ','LKKTETQEKN',89]]},{q:'a short, BBB-friendly nootropic',c:[['VDL-α','MEHFPGPK',88],['VDL-β','TKPRGPK',86],['VDL-γ','PGPMEHF',82]]}];
+  function col(s){return s.split('').map(function(a,i){return '<b style="color:'+(COL[a]||'#8aa0a0')+';animation-delay:'+(i*0.04)+'s">'+a+'</b>';}).join('');}
+  function cnt(el,to){var st=null;function fr(ts){if(!st)st=ts;var p=Math.min(1,(ts-st)/650);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(fr);else el.textContent=to;}el.textContent='0';requestAnimationFrame(fr);}
+  function rows(list,done){cc.innerHTML='';list.forEach(function(c){var r=document.createElement('div');r.className='hdl-c';r.innerHTML='<span class="nm">'+c[0]+'</span><span class="sq">'+col(c[1])+'</span><span class="sc">0</span>';cc.appendChild(r);});var rs=cc.querySelectorAll('.hdl-c');rs.forEach(function(r,x){setTimeout(function(){r.classList.add('show');cnt(r.querySelector('.sc'),list[x][2]);},150+x*400);});setTimeout(done,150+rs.length*400+2600);}
+  var i=0;
+  function run(){var s=S[i%S.length],q=s.q,k=0;tx.textContent='';stt.classList.remove('on');cc.innerHTML='';(function t(){if(k<=q.length){tx.textContent=q.slice(0,k);k++;setTimeout(t,42);}else{stt.classList.add('on');setTimeout(function(){stt.classList.remove('on');rows(s.c,function(){cc.querySelectorAll('.hdl-c').forEach(function(r){r.classList.remove('show');});setTimeout(function(){i++;run();},500);});},1200);}})();}
+  if(reduce){var s0=S[0];tx.textContent=s0.q;if(cr)cr.style.display='none';if(stt)stt.style.display='none';s0.c.forEach(function(c){var r=document.createElement('div');r.className='hdl-c show';r.innerHTML='<span class="nm">'+c[0]+'</span><span class="sq">'+col(c[1])+'</span><span class="sc">'+c[2]+'</span>';cc.appendChild(r);});}
+  else{var started=false;function go(){if(started)return;started=true;run();}if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){go();io.disconnect();}});},{threshold:.3});io.observe(document.getElementById('hdlDemo'));}else{go();}}
+})();
+</script>
 
 <section class="hp-sec hp-sec-stds">
   <div class="sec-i">
