@@ -139,11 +139,11 @@ async function sbFetch(path, opts = {}) {
   });
 }
 
-async function saveRun({ userId, target, brief, candidates, tier }) {
+async function saveRun({ userId, target, brief, candidates, tier, sid }) {
   const r = await sbFetch('design_lab_runs', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
-    body: JSON.stringify({ user_id: userId, target: target.slice(0, 1000), brief, candidates, tier_at_run: tier }),
+    body: JSON.stringify({ user_id: userId, target: target.slice(0, 1000), brief, candidates, tier_at_run: tier, sid: sid || null }),
   });
   if (!r.ok) return null;
   const rows = await r.json();
@@ -219,9 +219,10 @@ module.exports = async function handler(req, res) {
     }
 
     // Record usage and save the run (parallel)
+    const sid = String((req.body && req.body.sid) || '').replace(/[^a-z0-9]/gi, '').slice(0, 40) || null;
     const [, savedRun] = await Promise.allSettled([
       recordUsage(user.id, target, candidates.length, q.tier),
-      saveRun({ userId: user.id, target, brief, candidates, tier: q.tier }),
+      saveRun({ userId: user.id, target, brief, candidates, tier: q.tier, sid }),
     ]);
 
     const run = savedRun.status === 'fulfilled' ? savedRun.value : null;

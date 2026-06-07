@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI Peptide Design, Explained | Velox Peptides</title>
+  <meta name="description" content="What is AI peptide design? How an AI turns a plain-English research target into novel, scored peptide sequences — and where it fits in an in-vitro research workflow. Research use only.">
+  <link rel="canonical" href="https://veloxpeps.com/guides/ai-peptide-design/">
+  <meta property="og:site_name" content="Velox Peptides">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://veloxpeps.com/guides/ai-peptide-design/">
+  <meta property="og:title" content="AI Peptide Design, Explained | Velox Peptides">
+  <meta property="og:description" content="What is AI peptide design? How an AI turns a plain-English research target into novel, scored peptide sequences — and where it fits in an in-vitro research workflow. Research use only.">
+  <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Peptide Design, Explained | Velox Peptides">
+  <meta name="twitter:description" content="What is AI peptide design? How an AI turns a plain-English research target into novel, scored peptide sequences — and where it fits in an in-vitro research workflow. Research use only.">
+  <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#030407">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+  <link rel="stylesheet" href="/assets/css/core.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"AI Peptide Design, Explained","description":"What is AI peptide design? How an AI turns a plain-English research target into novel, scored peptide sequences — and where it fits in an in-vitro research workflow. Research use only.","datePublished":"2026-06-07","dateModified":"2026-06-07","author":{"@type":"Organization","name":"Velox Peptides Research Team"},"publisher":{"@type":"Organization","name":"Velox Peptides","logo":{"@type":"ImageObject","url":"https://veloxpeps.com/assets/images/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://veloxpeps.com/guides/ai-peptide-design/"},"image":"https://veloxpeps.com/assets/images/og-default.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://veloxpeps.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://veloxpeps.com/guides/"},{"@type":"ListItem","position":3,"name":"AI Peptide Design"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AI peptide design?","acceptedAnswer":{"@type":"Answer","text":"AI peptide design uses a trained model to propose new peptide sequences from a plain-English description of a research target, scoring each candidate for properties like novelty and synthesisability. It is for in vitro research use only."}},{"@type":"Question","name":"Is AI-designed peptide output a medicine?","acceptedAnswer":{"@type":"Answer","text":"No. Outputs are computational hypotheses for in-vitro research only. They are not validated compounds, not medicines, and not for human or veterinary use."}},{"@type":"Question","name":"How do I try AI peptide design?","acceptedAnswer":{"@type":"Answer","text":"Velox Design Lab is free to try for one design. Describe your research target in plain English and receive three scored, novelty-checked candidate sequences."}}]}</script>
+</head>
+<body class="page-research">
+
+<div class="ann-bar" role="note" aria-label="Site announcements">
+  <div class="ann-track-wrap" aria-hidden="true">
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;80&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-logo" href="/" aria-label="Velox Peptides">
+      <img class="nav-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="auto">
+    </a>
+    <div class="nav-links">
+      <a class="nl " href="/compounds/">Shop</a><a class="nl " href="/design-lab/">Design Lab</a>
+      <a class="nl " href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl " href="/guides/glossary/">Glossary</a>
+      <a class="nl " href="/guides/">Guide Hub</a>
+      <a class="nl " href="/about/">About</a>
+      <a class="nl " href="/contact/">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <form class="vp-search vp-search-nav" role="search" onsubmit="return false">
+        <div class="vp-search-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="vp-search-input" type="search" placeholder="Search&hellip;" aria-label="Search the catalogue" autocomplete="off">
+        </div>
+        <div class="vp-search-results" hidden></div>
+      </form>
+      <a class="nav-ig" href="https://www.instagram.com/veloxpeps" target="_blank" rel="noopener noreferrer" aria-label="Velox Peptides on Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+      <a class="nav-ig" href="/account/" aria-label="My account" title="My account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+      <a class="nav-cart" href="/cart/" aria-label="View cart">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="nav-cart-label">Order</span>
+        <span class="nav-cart-count" id="nav-cart-count">0</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mob-menu" id="mob-menu" aria-hidden="true"><form class="vp-search mob-search" role="search" onsubmit="return false"><div class="vp-search-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="vp-search-input" type="search" placeholder="Search compounds&hellip;" aria-label="Search the catalogue" autocomplete="off"></div><div class="vp-search-results" hidden></div></form>
+    <a href="/compounds/" class="mob-nl">Shop</a><a href="/design-lab/" class="mob-nl">Design Lab</a>
+    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub"> - Cognitive</a>
+    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub"> - Metabolic</a>
+    <a href="/compounds/recovery/" class="mob-nl mob-nl-sub"> - Recovery</a>
+    <a href="/compounds/growth/" class="mob-nl mob-nl-sub"> - Growth</a>
+    <a href="/compounds/antioxidant/" class="mob-nl mob-nl-sub"> - Antioxidant</a>
+    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a href="/guides/glossary/" class="mob-nl">Glossary</a>
+    <a href="/guides/" class="mob-nl">Guide Hub</a>
+    <a href="/about/" class="mob-nl">About</a>
+    <a href="/contact/" class="mob-nl">Contact</a>
+    <a href="/cart/" class="mob-nl">Order</a>
+    <a href="/account/" class="mob-nl">My account</a>
+  </div>
+</header>
+
+<main class="site-main">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a class="bc-link" href="/">Home</a><span class="bc-sep" aria-hidden="true">›</span><a class="bc-link" href="/guides/">Guides</a><span class="bc-sep" aria-hidden="true">›</span><span class="bc-current" aria-current="page">AI Peptide Design</span>
+  </nav>
+  <div class="rl-outer">
+    <div class="rl-layout">
+      <article class="rl-article" itemscope itemtype="https://schema.org/Article">
+        <header class="rl-header">
+          <a href="/guides/" class="rl-cat-badge" aria-label="Guides">GUIDE</a>
+          <h1 class="rl-h1" itemprop="headline">AI Peptide Design, Explained</h1>
+          <div class="rl-meta"><span>Published 7 June 2026</span><span class="rl-meta-sep">&middot;</span><span>Velox Peptides Research Team</span></div>
+          <div class="rl-compliance" role="note"><strong>For research reference only.</strong> This guide is educational. Velox Design Lab outputs and Velox research peptides are for <em>in vitro</em> research use only — never for human or veterinary use, dosing, diagnosis, or treatment.</div>
+        </header>
+        <p class="rl-lede" style="font-size:18px;color:#aeb9bd;line-height:1.7">AI peptide design turns a plain-English research goal into novel candidate sequences in under a minute. Here is how it works, what the scores mean, and where it fits in a research workflow.</p>
+        <section class="rl-section" aria-labelledby="s1"><h2 class="rl-h2" id="s1">What is AI peptide design?</h2><p>AI peptide design uses a language model trained on peptide chemistry to propose new amino-acid sequences that fit a described research goal. Instead of searching a catalogue, you describe what you want to study in plain English and the model generates candidate sequences built for that target.</p><p><a href="/design-lab/">Velox Design Lab</a> is the first tool of its kind aimed at research-peptide workflows: describe a target, get three novel candidates, each scored and novelty-checked, in under a minute.</p></section><section class="rl-section" aria-labelledby="s2"><h2 class="rl-h2" id="s2">From plain English to a scored candidate</h2><p>You do not need notation or a chemistry background. You type something like "a GLP-1, GIP and glucagon triple agonist optimised for synthesisability", and the tool interprets that into a structured brief, then proposes sequences.</p><p>Each candidate is scored on <strong>synthesisability</strong>, <strong>novelty</strong> and <strong>length-optimisation</strong>, and labelled as likely-novel, partially similar, or already-existing. You can read more on <a href="/guides/what-makes-a-peptide-novel/">what makes a peptide novel</a>.</p></section><section class="rl-section" aria-labelledby="s3"><h2 class="rl-h2" id="s3">Where AI design fits in a research workflow</h2><p>AI design is an idea-generation step. The outputs are computational hypotheses — proposals for in-vitro evaluation, not validated compounds. They give a researcher a structured starting point and a spread of distinct candidates rather than a single guess.</p><p>When a research target overlaps a well-characterised compound, it is usually faster to study the known material directly. For metabolic and incretin research, for example, that often means <a href="/compounds/retatrutide/">retatrutide</a>; for tissue-repair work, <a href="/compounds/recovery/">recovery compounds</a> such as BPC-157 and TB-500.</p></section><section class="rl-section" aria-labelledby="s4"><h2 class="rl-h2" id="s4">What it is not</h2><p>AI peptide design does not produce medicines and makes no health, medical or dosing claims. Generated sequences have not been synthesised, tested, or evaluated by any regulator. Everything is supplied strictly for <em>in vitro</em> research by qualified researchers.</p></section>
+        <section class="rl-section"><h2 class="rl-h2">Keep exploring</h2><div style="margin-top:6px"><a href="/design-lab/" style="display:inline-block;font-weight:700;font-size:14px;text-decoration:none;padding:11px 18px;border-radius:9px;background:rgba(1,211,160,.1);color:#01D3A0;border:1px solid rgba(1,211,160,.28);margin:6px 8px 0 0">Open Velox Design Lab →</a><a href="/guides/what-makes-a-peptide-novel/" style="display:inline-block;font-weight:700;font-size:14px;text-decoration:none;padding:11px 18px;border-radius:9px;background:rgba(1,211,160,.1);color:#01D3A0;border:1px solid rgba(1,211,160,.28);margin:6px 8px 0 0">What makes a peptide novel? →</a><a href="/compounds/retatrutide/" style="display:inline-block;font-weight:700;font-size:14px;text-decoration:none;padding:11px 18px;border-radius:9px;background:rgba(1,211,160,.1);color:#01D3A0;border:1px solid rgba(1,211,160,.28);margin:6px 8px 0 0">Research Retatrutide →</a><a href="/guides/" style="display:inline-block;font-weight:700;font-size:14px;text-decoration:none;padding:11px 18px;border-radius:9px;background:rgba(1,211,160,.1);color:#01D3A0;border:1px solid rgba(1,211,160,.28);margin:6px 8px 0 0">All guides →</a></div></section>
+      </article>
+    </div>
+  </div>
+</main>
+
+<div class="compliance-block" role="note" aria-label="Compliance notice">
+  <div class="cb-i">
+    <strong>Compliance statement.</strong>
+    Velox Peptides supplies research reagents for <em>in vitro</em> use by qualified researchers. Every compound is sold strictly as a research reagent. No product is a medicinal product within the meaning of the Human Medicines Regulations 2012. No product has been evaluated by the MHRA or FDA. No product is intended for human or veterinary consumption, diagnosis, treatment, cure, or prevention of any condition. Any use outside lawful scientific research is outside the scope of sale. See our <a href="/legal/research-use-policy/">Research Use Policy</a> and <a href="/legal/mhra-statement/">MHRA Statement</a>.
+    <br><br>
+    <em>All research summaries on this page are derived from publicly available peer-reviewed literature. Velox Peptides makes no therapeutic claims. For research use only.</em>
+  </div>
+</div>
+
+<footer class="site-footer" id="footer">
+  <div class="ft-i">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="ft-logo-wordmark">Velox Peptides</div>
+        <p class="ft-tag">Research peptide supplier - shipping to UK &amp; EU. HPLC-verified, dispatched from Northern Ireland.</p>
+        <address class="ft-address">
+          CRP Labs Ltd<br>
+          Company no. NI738125<br>
+          Holywood, Northern Ireland, United Kingdom<br>
+          <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a>
+        </address>
+      </div>
+      <div class="ft-cols">
+        <div class="ft-col">
+          <div class="ft-col-h">Compounds</div>
+          <a href="/compounds/">All compounds</a>
+          <a href="/compounds/cognitive/">Cognitive</a>
+          <a href="/compounds/metabolic/">Metabolic</a>
+          <a href="/compounds/recovery/">Recovery</a>
+          <a href="/compounds/growth/">Growth</a>
+          <a href="/compounds/antioxidant/">Antioxidant</a>
+          <a href="/stacks/">Research Bundles</a>
+          <a href="/supplies/bacteriostatic-water/">Bacteriostatic Water</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Resources</div>
+          <a href="/affiliate-program/">Affiliate Program</a>
+          <a href="/guides/">Guides</a>
+          <a href="/guides/glossary/">Glossary</a>
+          <a href="/guides/bpc-157/">BPC-157 Research</a>
+          <a href="/tools/reconstitution-calculator/">Reconstitution Calculator</a>
+          <a href="/about/">About Velox</a>
+          <a href="/about/quality-and-testing/">Quality &amp; Testing</a>
+          <a href="/about/coa-library/">CoA Library</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Order &amp; Delivery</div>
+          <a href="/cart/">Current order</a>
+          <a href="/shipping/">Shipping &amp; Delivery</a>
+          <a href="/legal/refunds/">Refunds &amp; Returns</a>
+          <a href="/contact/">Contact</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-col-h">Legal</div>
+          <a href="/legal/research-use-policy/">Research Use Policy</a>
+          <a href="/legal/mhra-statement/">MHRA Statement</a>
+          <a href="/legal/terms/">Terms &amp; Conditions</a>
+          <a href="/legal/privacy/">Privacy Policy</a>
+          <a href="/legal/cookies/">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div class="ft-cr">&copy; 2026 CRP Labs Ltd. All rights reserved.</div>
+      <div class="ft-disc">For in vitro research use only. Not for human or veterinary consumption.</div>
+    </div>
+  </div>
+</footer>
+
+<div class="entry-gate" id="entry-gate" role="dialog" aria-modal="true" aria-labelledby="eg-av-title">
+  <div class="eg-i">
+    <div class="eg-logo-wrap">
+      <img class="eg-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="190">
+    </div>
+    <div class="eg-eyebrow">AGE VERIFICATION</div>
+    <h2 id="eg-av-title" class="eg-av-title">Confirm your eligibility</h2>
+    <p class="eg-sub">This website is restricted to qualified researchers aged 21 or over. All products are for in vitro research use only.</p>
+    <div class="eg-checks">
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am 21 years of age or older</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I am a qualified researcher, scientist, or laboratory professional</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">All products will be used for lawful in vitro research only - not for human consumption</span>
+      </label>
+      <label class="eg-check-row">
+        <input type="checkbox" class="eg-cb" checked>
+        <span class="eg-check-box" aria-hidden="true"></span>
+        <span class="eg-check-label">I accept the <a href="/legal/terms/" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank" rel="noopener">Research Use Disclaimer</a></span>
+      </label>
+    </div>
+    <div class="eg-disclaimer">
+      All products sold for research use only. Not for human consumption. Not evaluated by the MHRA or FDA.
+    </div>
+    <div class="eg-actions">
+      <button class="eg-btn eg-btn-p" id="eg-accept">I CONFIRM - ENTER SITE</button>
+      <a class="eg-exit-link" href="https://www.gov.uk" rel="noopener">Exit</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/assets/js/core.js"></script>
+<script src="/assets/js/conversion.js" defer></script>
+<script src="/assets/js/animations.js" defer></script>
+  <script src="/assets/js/newsletter-popup.js"></script>
+  <script src="/assets/js/search.js" defer></script>
+</body>
+</html>

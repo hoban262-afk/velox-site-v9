@@ -529,7 +529,8 @@ async function run(){
   var btn=$('#runBtn'); btn.disabled=true; btn.textContent='Designing…';
   var prog=runProgress();
   try{
-    var r=await api('generate',{method:'POST',body:JSON.stringify({target:target})});
+    var _sid=''; try{_sid=localStorage.getItem('vp_sid')||'';}catch(e){}
+    var r=await api('generate',{method:'POST',body:JSON.stringify({target:target,sid:_sid})});
     var d=await r.json().catch(function(){ return {}; });
     if(r.status===401){ prog.abort(); gate(); return; }
     if(r.status===403){ prog.abort(); renderUpsell(d.message); loadQuota(); }
@@ -601,7 +602,7 @@ async function toggleShare(){
     if(r.ok){
       if(newState){
         btn.classList.add('active'); btn.textContent='✓ Link shared';
-        var link=window.location.origin+'/design-lab/run/?r='+currentShareToken;
+        var link=window.location.origin+'/design-lab/r/'+currentShareToken;
         var el=document.createElement('div'); el.className='share-link'; el.textContent=link; el.title='Click to copy';
         el.addEventListener('click',function(){ navigator.clipboard.writeText(link).then(function(){ toast('Link copied!'); }); });
         var sb=$('.save-bar'); if(sb) sb.appendChild(el);
@@ -683,7 +684,7 @@ async function libAction(e){
         var run2=(window._labRuns||[]).find(function(x){ return x.id===id; });
         if(run2) run2.is_shared=newState;
         if(newState){
-          var link=window.location.origin+'/design-lab/run/?r='+tok;
+          var link=window.location.origin+'/design-lab/r/'+tok;
           navigator.clipboard.writeText(link).then(function(){ toast('Share link copied!'); }).catch(function(){ toast('Shared! Copy: '+link); });
         }else toast('Sharing turned off.');
       }else toast('Could not update.','err');
@@ -734,6 +735,51 @@ function toggleCard(card){
   var open=card.classList.toggle('open');
   var lbl=card.querySelector('.cand-toggle .lbl'); if(lbl) lbl.textContent=open?'Hide the details':'Tap to see the full story';
   if(open&&!card.dataset.filled){ card.dataset.filled='1'; card.querySelectorAll('.bar-f').forEach(function(b){ b.classList.add('fill'); }); }
+}
+
+// ── Cross-sell bridge: map the brief to in-stock Velox compounds ───────────
+var DL_COMPOUND_MAP=[
+  {kw:/glp|gip|glucagon|incretin|metabol|appetite|weight|tirzep|retatru|semaglu|obesit|adipos|insulin|lipid|fat /i,
+   title:'Metabolic & GLP-class research', items:[['Retatrutide','/compounds/retatrutide/'],['Browse metabolic','/compounds/metabolic/']]},
+  {kw:/repair|heal|tendon|ligament|gut|wound|anti-?inflamm|recover|injur|tissue|collagen|angiogen/i,
+   title:'Tissue-repair research', items:[['BPC-157','/compounds/bpc-157/'],['TB-500','/compounds/tb-500/'],['BPC-157 + TB-500','/compounds/bpc157-tb500-mix/']]},
+  {kw:/growth hormone|secretagogue|ghrh|\bigf\b|gh release|cjc|ipamor|tesamor|\bhgh\b|mots/i,
+   title:'Growth-hormone research', items:[['CJC-1295','/compounds/cjc-1295/'],['Tesamorelin','/compounds/tesamorelin/'],['MOTS-c','/compounds/mots-c/']]},
+  {kw:/nootrop|cognit|memory|neuroprotect|\bbrain\b|bdnf|focus|anxiet|\bmood\b|neurotroph|synap/i,
+   title:'Cognitive research', items:[['Semax','/compounds/semax/'],['Selank','/compounds/selank/'],['Dihexa','/compounds/dihexa/']]},
+  {kw:/melano|pigment|\btan\b|melanocortin|mc1r|mc4r/i,
+   title:'Melanocortin research', items:[['Melanotan II','/compounds/melanotan-ii/']]},
+  {kw:/mitochond|antioxidant|cellular|\bnad\b|glutathione|longevit|senescen|copper|ghk|oxidativ/i,
+   title:'Cellular & antioxidant research', items:[['NAD+','/compounds/nad-plus/'],['Glutathione','/compounds/glutathione/'],['GHK-Cu','/compounds/ghk-cu/']]}
+];
+function dlBridgeMatch(b){
+  var hay=[b.target_mechanism||'', (b.desired_properties||[]).join(' '), (b.reference_compounds||[]).join(' '), (b.target||'')].join(' ').toLowerCase();
+  for(var i=0;i<DL_COMPOUND_MAP.length;i++){ if(DL_COMPOUND_MAP[i].kw.test(hay)) return DL_COMPOUND_MAP[i]; }
+  return {title:'Start with our best-selling research compound', items:[['Retatrutide','/compounds/retatrutide/'],['Browse all compounds','/compounds/']]};
+}
+function bridgeHTML(b){
+  var m=dlBridgeMatch(b);
+  return '<div style="margin:26px 0 6px;background:var(--bg2,#0a0d12);border:1px solid var(--brd,#1a2230);border-radius:14px;padding:22px 22px">'+
+    '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g,#01D3A0);margin-bottom:6px">Researching this area?</div>'+
+    '<div style="font-size:15px;color:#fff;font-weight:600;margin-bottom:4px">'+esc(m.title)+' — in stock, HPLC-verified</div>'+
+    '<div style="font-size:13px;color:var(--mut,#8aa0a0);line-height:1.6;margin-bottom:14px">Your designs are novel and made to order. If your research overlaps a known compound, Velox dispatches verified material from the UK in 24h.</div>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+      m.items.map(function(it){ return '<a href="'+it[1]+'" style="font-family:Inter,sans-serif;font-weight:700;font-size:13px;text-decoration:none;padding:10px 16px;border-radius:9px;background:rgba(1,211,160,.1);color:var(--g,#01D3A0);border:1px solid rgba(1,211,160,.28)">'+esc(it[0])+' →</a>'; }).join('')+
+    '</div>'+
+  '</div>';
+}
+// ── Delight-moment Pro nudge (fires right after a free/at-limit result) ─────
+function prowallHTML(q){
+  q=q||{};
+  var show = q.tier==='free' || (q.unlimited!==true && (q.remaining===0 || q.remaining===null && false));
+  if(!show) return '';
+  var usedLine = (q.limit!=null) ? ("That's design "+(q.used||q.limit)+" of "+q.limit+(q.window==='month'?' this month':'')+'.') : 'Want to keep designing?';
+  return '<div style="margin:24px 0 6px;background:linear-gradient(180deg,rgba(1,211,160,.07),rgba(1,211,160,.02));border:1px solid rgba(1,211,160,.32);border-radius:14px;padding:26px 24px;text-align:center">'+
+    '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:800;text-transform:uppercase;font-size:24px;color:#fff;letter-spacing:-.3px">'+esc(usedLine)+' 🔓</div>'+
+    '<p style="font-size:14px;color:var(--mut,#8aa0a0);line-height:1.6;max-width:460px;margin:8px auto 16px">Velox Pro unlocks more designs (Solo 4 · Group 20 · Lab unlimited), saves &amp; shares every run, and applies member pricing to every compound in the store.</p>'+
+    '<a href="/pro/" style="font-family:Inter,sans-serif;font-weight:800;font-size:14px;text-decoration:none;padding:13px 24px;border-radius:10px;background:var(--g,#01D3A0);color:#04140f;display:inline-block">Unlock more designs with Pro →</a>'+
+    '<div style="font-size:11px;color:var(--dim,#475262);margin-top:12px;font-family:\'DM Mono\',monospace">Cancel anytime in your bank · Research use only</div>'+
+  '</div>';
 }
 
 // ── Main result renderer ──────────────────────────────────────────────────
@@ -895,6 +941,10 @@ function renderResults(d){
       '<button class="cand-toggle" type="button"><span class="lbl">Tap to see the full story</span> <span class="chev">▾</span></button>'+
     '</div>'; // end cand
   });
+
+  // Delight-moment Pro nudge + cross-sell bridge to in-stock compounds
+  html+=prowallHTML(d.quota||quotaData||{});
+  html+=bridgeHTML(b);
 
   $('#results').innerHTML=html;
   reveal();
