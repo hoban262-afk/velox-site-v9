@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Command Centre — Velox</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#030407">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Command">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/core.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/supabase-client.js"></script>
+
+  <style>
+    :root{
+      --bg:#030407; --bg2:#0b0d11; --card:#0d1014; --brd:#1a1d23;
+      --g:#01D3A0; --t1:#ffffff; --t2:#9ca3af; --t3:#6b7280;
+      --red:#f87171; --amber:#fbbf24;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--t1);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    .mono{font-family:'DM Mono',monospace;letter-spacing:.06em}
+
+    /* ── Login ── */
+    .login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+    .login-box{background:var(--bg2);border:1px solid var(--brd);border-radius:14px;padding:38px 32px;width:100%;max-width:360px}
+    .login-logo{font-family:'DM Mono',monospace;font-size:11px;color:var(--g);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px}
+    .login h1{font-size:21px;font-weight:800;margin:0 0 6px}
+    .login p{font-size:13px;color:var(--t3);margin:0 0 24px}
+    .inp{width:100%;background:#06080b;border:1px solid var(--brd);border-radius:9px;color:#fff;font-size:15px;padding:12px 14px;outline:none}
+    .inp:focus{border-color:var(--g)}
+    .btn{width:100%;background:var(--g);color:#021;font-weight:700;font-size:15px;border:none;border-radius:9px;padding:13px;margin-top:12px;cursor:pointer}
+    .btn:disabled{opacity:.6;cursor:default}
+    .err{font-size:12.5px;color:var(--red);min-height:16px;margin-top:10px}
+
+    /* ── Dashboard ── */
+    .dash{display:none;max-width:760px;margin:0 auto;padding:20px 16px 80px}
+    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .hello{font-size:22px;font-weight:800;line-height:1.15}
+    .date{font-size:12.5px;color:var(--t3);margin-top:3px}
+    .top-actions{display:flex;gap:8px;flex-shrink:0}
+    .chip{font-size:12px;color:var(--t2);background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:7px 11px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+    .chip:hover{color:#fff;border-color:var(--t3)}
+
+    .card{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:18px;margin-bottom:14px}
+    .card-h{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin:0 0 14px;display:flex;align-items:center;justify-content:space-between}
+    .card-h a{color:var(--g);text-decoration:none;font-size:11px;letter-spacing:.04em;text-transform:none}
+
+    /* money hero */
+    .money-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .stat .lbl{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+    .stat .big{font-size:27px;font-weight:800;margin-top:3px;line-height:1}
+    .stat .sub{font-size:12px;color:var(--t2);margin-top:5px}
+    .up{color:var(--g)} .down{color:var(--red)} .flat{color:var(--t3)}
+
+    /* mini stat row */
+    .mini-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .mini{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:13px 12px;text-align:center}
+    .mini .v{font-size:20px;font-weight:800}
+    .mini .k{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+    .dot.ok{background:var(--g)} .dot.bad{background:var(--red)}
+    a.mini{text-decoration:none;color:inherit;display:block}
+    a.mini:hover{border-color:var(--t3)}
+
+    /* lists */
+    .row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid var(--brd);font-size:14px}
+    .row:first-child{border-top:none}
+    .row .name{color:var(--t1)} .row .meta{color:var(--t2);font-size:12.5px}
+    .val{color:var(--g);font-weight:700;font-variant-numeric:tabular-nums}
+
+    /* tasks */
+    .task-add{display:flex;gap:8px;margin-bottom:6px}
+    .task-add .inp{padding:10px 12px;font-size:14px}
+    .seg{display:flex;border:1px solid var(--brd);border-radius:8px;overflow:hidden;flex-shrink:0}
+    .seg button{background:#06080b;color:var(--t3);border:none;font-size:11.5px;font-weight:600;padding:0 10px;cursor:pointer}
+    .seg button.on{background:var(--g);color:#021}
+    .add-btn{background:var(--g);color:#021;border:none;border-radius:8px;font-weight:700;padding:0 14px;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0}
+    .task{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--brd)}
+    .task:first-child{border-top:none}
+    .tcheck{width:20px;height:20px;border:1.6px solid var(--t3);border-radius:6px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .tcheck.done{background:var(--g);border-color:var(--g)}
+    .tcheck.done svg{display:block} .tcheck svg{display:none;width:13px;height:13px;color:#021}
+    .ttitle{flex:1;font-size:14px}
+    .task.is-done .ttitle{color:var(--t3);text-decoration:line-through}
+    .tkind{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:5px}
+    .tkind.business{background:rgba(1,211,160,.13);color:var(--g)}
+    .tkind.personal{background:rgba(156,163,175,.13);color:var(--t2)}
+    .tdel{background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:2px 4px}
+    .tdel:hover{color:var(--red)}
+
+    /* quick links */
+    .links{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .qlink{background:#06080b;border:1px solid var(--brd);border-radius:10px;padding:14px 10px;text-align:center;text-decoration:none;color:var(--t2);font-size:12.5px;font-weight:600}
+    .qlink:hover{color:#fff;border-color:var(--t3)}
+
+    .muted{color:var(--t3);font-size:13px}
+    .soon{border-style:dashed;color:var(--t2)}
+    .soon .card-h{color:var(--t3)}
+
+    @media(max-width:560px){
+      .mini-row{grid-template-columns:repeat(2,1fr)}
+      .hello{font-size:19px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Login ── -->
+  <div class="login" id="login">
+    <div class="login-box">
+      <div class="login-logo">Velox Command Centre</div>
+      <h1>Sign in</h1>
+      <p>Your business and your day, in one place.</p>
+      <input class="inp" id="pw" type="password" placeholder="Password" autocomplete="current-password">
+      <button class="btn" id="signin" type="button">Sign in</button>
+      <div class="err" id="err"></div>
+    </div>
+  </div>
+
+  <!-- ── Dashboard ── -->
+  <div class="dash" id="dash">
+    <div class="top">
+      <div>
+        <div class="hello" id="hello">Welcome back</div>
+        <div class="date" id="date"></div>
+      </div>
+      <div class="top-actions">
+        <button class="chip" id="refresh" title="Refresh">↻</button>
+        <a class="chip" href="/admin">Full admin →</a>
+        <button class="chip" id="logout">Sign out</button>
+      </div>
+    </div>
+
+    <!-- Money -->
+    <div class="card">
+      <div class="card-h">Money <a href="/admin">Margins →</a></div>
+      <div id="money"><div class="muted">Loading…</div></div>
+    </div>
+
+    <!-- Mini stats -->
+    <div class="mini-row" id="mini"></div>
+    <div style="height:14px"></div>
+
+    <!-- Top products + customers -->
+    <div class="card" id="skus-card">
+      <div class="card-h">Top products · 7 days</div>
+      <div id="skus"><div class="muted">Loading…</div></div>
+    </div>
+
+    <!-- Tasks -->
+    <div class="card">
+      <div class="card-h">To-do <span id="task-count" class="muted" style="text-transform:none;letter-spacing:0"></span></div>
+      <div class="task-add">
+        <input class="inp" id="task-input" type="text" placeholder="Add a task…" maxlength="300">
+        <div class="seg" id="task-kind">
+          <button data-k="personal" class="on" type="button">Me</button>
+          <button data-k="business" type="button">Biz</button>
+        </div>
+        <button class="add-btn" id="task-add-btn" type="button">+</button>
+      </div>
+      <div id="tasks"></div>
+    </div>
+
+    <!-- Personal layer (Phase 2 placeholder) -->
+    <div class="card soon">
+      <div class="card-h">Your day · coming next</div>
+      <div class="muted">Calendar &amp; email land here once we connect your Google account — today's agenda and the messages that need a reply, right alongside the business.</div>
+    </div>
+
+    <!-- Quick links -->
+    <div class="card">
+      <div class="card-h">Jump to</div>
+      <div class="links">
+        <a class="qlink" href="/admin">Orders</a>
+        <a class="qlink" href="/admin">Approvals</a>
+        <a class="qlink" href="/admin">Margins</a>
+        <a class="qlink" href="/admin">Customers</a>
+        <a class="qlink" href="/admin">Search / SEO</a>
+        <a class="qlink" href="/admin">Affiliates</a>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:8px"><span class="muted" id="updated"></span></div>
+  </div>
+
+<script>
+(function(){
+  'use strict';
+  var loginEl=document.getElementById('login'), dashEl=document.getElementById('dash');
+  var pwEl=document.getElementById('pw'), btnEl=document.getElementById('signin'), errEl=document.getElementById('err');
+
+  function gbp(n){ n=Number(n)||0; return '£'+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function gbp0(n){ n=Number(n)||0; return '£'+Math.round(n).toLocaleString('en-GB'); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function rel(iso){ if(!iso)return''; var d=(Date.now()-new Date(iso).getTime())/1000; if(d<60)return'just now'; if(d<3600)return Math.floor(d/60)+'m ago'; if(d<86400)return Math.floor(d/3600)+'h ago'; return Math.floor(d/86400)+'d ago'; }
+
+  async function token(){ var s=await window._sb.auth.getSession(); return s&&s.data&&s.data.session&&s.data.session.access_token; }
+  async function authFetch(url,opts){ opts=opts||{}; opts.headers=Object.assign({'Authorization':'Bearer '+(await token())},opts.headers||{}); return fetch(url,opts); }
+
+  function showDash(){ loginEl.style.display='none'; dashEl.style.display='block'; init(); }
+  function showLogin(){ loginEl.style.display='flex'; dashEl.style.display='none'; }
+
+  if(!window._sb){ document.body.innerHTML='<p style="color:#f87171;padding:40px;font-family:monospace">Supabase not loaded.</p>'; return; }
+  window._sb.auth.getSession().then(function(r){ (r.data&&r.data.session)?showDash():showLogin(); });
+
+  function doSignIn(){
+    var pw=pwEl.value; if(!pw){errEl.textContent='Enter your password.';return;}
+    errEl.textContent='Signing in…'; btnEl.disabled=true;
+    window._sb.auth.signInWithPassword({email:'veloxpeps@gmail.com',password:pw}).then(function(r){
+      btnEl.disabled=false;
+      if(r.error){ errEl.textContent='Incorrect password.'; }
+      else { errEl.textContent=''; showDash(); }
+    });
+  }
+  btnEl.addEventListener('click',doSignIn);
+  pwEl.addEventListener('keydown',function(e){ if(e.key==='Enter')doSignIn(); });
+  document.getElementById('logout').addEventListener('click',function(){ window._sb.auth.signOut().then(showLogin); });
+  document.getElementById('refresh').addEventListener('click',function(){ loadHome(); loadTasks(); });
+
+  var inited=false;
+  function init(){
+    var h=new Date().getHours(), g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+    document.getElementById('hello').textContent=g+', Declan';
+    document.getElementById('date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+    if(inited)return; inited=true;
+    setupTasks(); loadHome(); loadTasks();
+  }
+
+  // ── Home (business pulse) ──
+  function arrow(pct){ if(pct==null)return''; if(pct>0)return'<span class="up">▲ '+pct+'%</span>'; if(pct<0)return'<span class="down">▼ '+Math.abs(pct)+'%</span>'; return'<span class="flat">— 0%</span>'; }
+  async function loadHome(){
+    try{
+      var r=await authFetch('/api/command/home'); var d=await r.json();
+      if(!r.ok){ document.getElementById('money').innerHTML='<div class="err">'+esc(d.error||'Could not load')+'</div>'; return; }
+      var m=d.money||{};
+      document.getElementById('money').innerHTML=
+        '<div class="money-grid">'+
+          '<div class="stat"><div class="lbl">Today</div><div class="big">'+gbp0(m.todayRevenue)+'</div><div class="sub">'+(m.todayOrders||0)+' order'+(m.todayOrders===1?'':'s')+'</div></div>'+
+          '<div class="stat"><div class="lbl">Last 7 days</div><div class="big">'+gbp0(m.revenue7)+'</div><div class="sub">'+(m.orders7||0)+' orders · '+arrow(m.revenueWoWPct)+'</div></div>'+
+          '<div class="stat"><div class="lbl">Month to date</div><div class="big">'+gbp0(m.mtdRevenue)+'</div><div class="sub">'+(m.mtdOrders||0)+' orders</div></div>'+
+          '<div class="stat"><div class="lbl">Avg order (7d)</div><div class="big">'+gbp0(m.aov7)+'</div><div class="sub">'+(d.repeat?(d.repeat.repeat+' repeat · '+d.repeat.fresh+' new'):'')+'</div></div>'+
+        '</div>'+
+        (d.latest?'<div class="row" style="margin-top:14px;border-top:1px solid var(--brd)"><span class="meta">Latest sale · '+esc(d.latest.email)+' · '+rel(d.latest.at)+'</span><span class="val">'+gbp(d.latest.total)+'</span></div>':'');
+
+      var site=d.site||{};
+      document.getElementById('mini').innerHTML=
+        '<div class="mini"><div class="v">'+(d.liveNow!=null?d.liveNow:'–')+'</div><div class="k">Live now</div></div>'+
+        '<div class="mini"><div class="v">'+(d.visitorsToday!=null?d.visitorsToday:'–')+'</div><div class="k">Visitors today</div></div>'+
+        '<a class="mini" href="/admin"><div class="v" style="color:'+((d.approvalsPending||0)>0?'var(--amber)':'inherit')+'">'+(d.approvalsPending!=null?d.approvalsPending:'–')+'</div><div class="k">Approvals</div></a>'+
+        '<div class="mini"><div class="v"><span class="dot '+(site.ok?'ok':'bad')+'"></span>'+(site.ok?'Up':'Down')+'</div><div class="k">Site</div></div>';
+
+      var skus=d.topSkus||[];
+      document.getElementById('skus').innerHTML = skus.length
+        ? skus.map(function(s){ return '<div class="row"><span class="name">'+esc(s.name)+'</span><span class="meta">'+s.qty+' sold'+(s.revenue>0?'</span><span class="val">'+gbp(s.revenue):'')+'</span></div>'; }).join('')
+        : '<div class="muted">No sales in the last 7 days yet.</div>';
+
+      document.getElementById('updated').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    }catch(e){ document.getElementById('money').innerHTML='<div class="err">Network error.</div>'; }
+  }
+
+  // ── Tasks ──
+  var taskKind='personal';
+  function setupTasks(){
+    document.querySelectorAll('#task-kind button').forEach(function(b){
+      b.addEventListener('click',function(){ taskKind=b.dataset.k; document.querySelectorAll('#task-kind button').forEach(function(x){x.classList.toggle('on',x===b);}); });
+    });
+    document.getElementById('task-add-btn').addEventListener('click',addTask);
+    document.getElementById('task-input').addEventListener('keydown',function(e){ if(e.key==='Enter')addTask(); });
+  }
+  async function loadTasks(){
+    try{
+      var r=await authFetch('/api/command/tasks'); var d=await r.json(); renderTasks(d.tasks||[]);
+    }catch(e){}
+  }
+  function renderTasks(tasks){
+    var open=tasks.filter(function(t){return !t.done;}).length;
+    document.getElementById('task-count').textContent=open?('· '+open+' open'):'· all clear';
+    var el=document.getElementById('tasks');
+    if(!tasks.length){ el.innerHTML='<div class="muted">Nothing yet — add your first task above.</div>'; return; }
+    el.innerHTML=tasks.map(function(t){
+      return '<div class="task'+(t.done?' is-done':'')+'" data-id="'+esc(t.id)+'">'+
+        '<div class="tcheck'+(t.done?' done':'')+'" data-act="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>'+
+        '<span class="ttitle">'+esc(t.title)+'</span>'+
+        '<span class="tkind '+(t.kind==='business'?'business':'personal')+'">'+(t.kind==='business'?'Biz':'Me')+'</span>'+
+        '<button class="tdel" data-act="del" title="Delete">×</button>'+
+      '</div>';
+    }).join('');
+    el.querySelectorAll('.task').forEach(function(row){
+      var id=row.dataset.id;
+      row.querySelector('[data-act="toggle"]').addEventListener('click',function(){ toggleTask(id,!row.classList.contains('is-done')); });
+      row.querySelector('[data-act="del"]').addEventListener('click',function(){ delTask(id); });
+    });
+  }
+  async function addTask(){
+    var inp=document.getElementById('task-input'); var title=inp.value.trim(); if(!title)return;
+    inp.value='';
+    await authFetch('/api/command/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:title,kind:taskKind})});
+    loadTasks();
+  }
+  async function toggleTask(id,done){
+    await authFetch('/api/command/tasks',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,done:done})});
+    loadTasks();
+  }
+  async function delTask(id){
+    await authFetch('/api/command/tasks',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})});
+    loadTasks();
+  }
+})();
+</script>
+</body>
+</html>
