@@ -305,7 +305,7 @@
 
 <div class="wrap">
   <h1>Design a <span>novel peptide</span></h1>
-  <p class="lede">Tell it what you want to study in plain English. In under a minute the AI invents three brand-new peptide candidates — graded, checked for novelty, and explained clearly. Each letter is one building block (scientists call them amino acids). For in vitro research only.</p>
+  <p class="lede">Tell it what you want to study in plain English. In under a minute the AI invents three fresh peptide candidates — graded for make-ability, checked against a 90+ peptide reference library, and explained clearly. Each letter is one building block (scientists call them amino acids). For in vitro research only.</p>
 
   <div class="quotaRow" id="quotaRow"></div>
 
@@ -815,9 +815,23 @@ function closestReason(p){
   return '<b style="color:#fff">'+c.n+'</b> is our most-validated, best-selling research compound — a solid known reference point to benchmark a new design against.';
 }
 function bridgeHTML(b,cands){
-  var p=pickClosest(b,cands||[]); var c=DL_CATALOG[p.slug]||DL_CATALOG['retatrutide'];
+  var p=pickClosest(b,cands||[]);
   var topc=(cands||[]).slice().sort(function(a,b){return ((b.scores||{}).comp||0)-((a.scores||{}).comp||0);})[0]||{};
   var synthHref='/design-lab/order/?seq='+encodeURIComponent(topc.sequence||'')+'&name='+encodeURIComponent(topc.name||topc.id||'');
+  // No genuine in-stock relative → don't force an unrelated best-seller. Show an
+  // honest "off the beaten path" card that points to synthesis + the catalogue.
+  if(p.via==='fallback'){
+    return '<div style="margin:26px 0 6px;background:linear-gradient(180deg,rgba(123,140,255,.06),rgba(123,140,255,.015));border:1px solid rgba(123,140,255,.3);border-radius:14px;padding:24px 22px">'+
+      '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7b8cff;margin-bottom:8px">No close in-stock match</div>'+
+      '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px">Your design is off the beaten path</div>'+
+      '<div style="font-size:14px;color:var(--mut,#8aa0a0);line-height:1.65;margin-bottom:16px">We don\'t stock a characterised compound that closely matches this brief — which is part of the point of designing something new. Your sequences are novel hypotheses that still have to be synthesised. If you want to take one further, we can quote making your exact design, or you can browse the wider catalogue for a reference point.</div>'+
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">'+
+        (topc.sequence?'<a href="'+synthHref+'" target="_blank" style="font-family:Inter,sans-serif;font-weight:800;font-size:14px;text-decoration:none;padding:12px 20px;border-radius:10px;background:#7b8cff;color:#04140f">⚗ Commission your exact design →</a>':'')+
+        '<a href="/compounds/" style="font-family:Inter,sans-serif;font-weight:700;font-size:13px;text-decoration:none;padding:11px 16px;border-radius:10px;background:rgba(1,211,160,.08);color:var(--g,#01D3A0);border:1px solid rgba(1,211,160,.25)">Browse the catalogue</a>'+
+      '</div>'+
+    '</div>';
+  }
+  var c=DL_CATALOG[p.slug]||DL_CATALOG['retatrutide'];
   return '<div style="margin:26px 0 6px;background:linear-gradient(180deg,rgba(1,211,160,.06),rgba(1,211,160,.015));border:1px solid rgba(1,211,160,.3);border-radius:14px;padding:24px 22px">'+
     '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g,#01D3A0);margin-bottom:8px">Closest compound you can order today</div>'+
     '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">'+esc(c.n)+'</div>'+
@@ -857,9 +871,10 @@ function renderResults(d){
 
   var html='<div class="res-hd">'+
     '<div class="spark">✦ DESIGN COMPLETE ✦</div>'+
-    '<div class="big"><b>'+cands.length+'</b> brand-new peptides, just for you</div>'+
-    '<div class="sub">'+(novelCount?novelCount+' appear completely new · ':'')+
+    '<div class="big"><b>'+cands.length+'</b> fresh peptide designs, just for you</div>'+
+    '<div class="sub">'+(novelCount?novelCount+' show no match in our reference library · ':'')+
     'tap any card to open its full molecular story</div>'+
+    '<div class="res-disc" style="font-size:11px;color:var(--dim);margin-top:8px;line-height:1.5">Novelty here means “no match in our 90+ peptide reference library” — it is not a patent or exhaustive novelty search. All outputs are computational predictions for in vitro research only.</div>'+
     '</div>';
 
   // Brief interpretation card
@@ -874,8 +889,8 @@ function renderResults(d){
   cands.forEach(function(c,ci){
     var sc=c.scores||{}, nv=c.novelty||{};
     var novCls=nv.badge==='novel'?'novel':nv.badge==='known'?'known':'partial';
-    var novTxt=nv.badge==='novel'?'✦ Likely brand-new':nv.badge==='known'?'⚠ Already exists':'~ '+esc(nv.label||'Partially similar');
-    var isTop=top&&c.id===top.id&&cands.length>1;
+    var novTxt=nv.badge==='novel'?'✦ No library match':nv.badge==='known'?'⚠ Already exists':'~ '+esc(nv.label||'Partially similar');
+    var isTop=false; // make-ability is not a quality ranking — don't crown a "best" card
     var style=c.style||c.scaffold_class||'';
     var summary=c.plain_summary||c.rationale||'';
     var helpList=c.how_it_helps||c.strengths||[];
@@ -895,16 +910,15 @@ function renderResults(d){
     var gravyStr=sc.gravyScore!==undefined?sc.gravyScore:0;
     var gravyCls=gravyStr>0.3?'mc-vio':gravyStr<-0.3?'mc-g':'';
 
-    html+='<div class="cand'+(isTop?' top':'')+'" id="cand-'+ci+'">'+
-      (isTop?'<div class="crown">👑 BEST MATCH · highest overall score</div>':'')+
+    html+='<div class="cand" id="cand-'+ci+'">'+
       '<div class="cand-top">'+
         '<div>'+
           '<div class="cand-id">'+esc(c.id||'')+' · '+seq.length+' building blocks</div>'+
           '<div class="cand-name">'+esc(c.name||'Candidate')+'</div>'+
         '</div>'+
         '<div style="text-align:right">'+
-          '<div class="cand-comp" data-to="'+(sc.comp||0)+'" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div>'+
-          '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">SCORE /100</div>'+
+          '<div class="cand-comp" data-to="'+(sc.comp||0)+'" style="color:'+scoreCol(sc.comp||0)+'" title="How easy this peptide is to make and handle — not a measure of biological activity">'+(sc.comp||0)+'</div>'+
+          '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">MAKE-ABILITY /100</div>'+
         '</div>'+
       '</div>'+
       '<div style="margin:6px 0">'+
@@ -930,7 +944,7 @@ function renderResults(d){
           '</div>':'')+
 
         // Score bars
-        '<div class="bars-cap">Score breakdown (out of 100 — higher is better):</div>'+
+        '<div class="bars-cap">Make-ability breakdown — how easy it is to synthesise &amp; handle (higher = easier, not better activity):</div>'+
         '<div class="bars">'+
           barHTML('Easy to synthesise',sc.sy||0,'#01D3A0')+
           barHTML('Dissolves in water',sc.so||0,'#7b8cff')+
@@ -944,7 +958,7 @@ function renderResults(d){
           '<div class="mol-grid">'+
             '<div class="mol-cell '+piCls+'"><div class="mc-l">Isoelectric point (pI)</div><div class="mc-v">'+pi+'</div><div class="mc-note">pH at which net charge = 0</div></div>'+
             '<div class="mol-cell '+ncCls+'"><div class="mc-l">Net charge (pH 7.4)</div><div class="mc-v">'+ncStr+'</div><div class="mc-note">'+(nc>1?'Cationic (positive)':nc<-1?'Anionic (negative)':'Near-neutral')+'</div></div>'+
-            '<div class="mol-cell '+hlCls+'"><div class="mc-l">Est. half-life</div><div class="mc-v">'+esc(hl)+'</div><div class="mc-note">N-end rule, mammalian</div></div>'+
+            '<div class="mol-cell '+hlCls+'"><div class="mc-l">N-end stability</div><div class="mc-v">'+esc(hl)+'</div><div class="mc-note">First-residue (N-end rule) heuristic · in vitro</div></div>'+
             '<div class="mol-cell '+gravyCls+'"><div class="mc-l">GRAVY score</div><div class="mc-v">'+gravyStr+'</div><div class="mc-note">'+(gravyStr>0.3?'Hydrophobic (prefers oily environments)':gravyStr<-0.3?'Hydrophilic (water-loving)':'Balanced')+'</div></div>'+
             '<div class="mol-cell '+(amphi?'mc-vio':'')+'"><div class="mc-l">Hydrophobic moment</div><div class="mc-v">'+hm+'</div><div class="mc-note">'+(amphi?'Amphipathic — one oily side, one watery side':'Not amphipathic')+'</div></div>'+
             '<div class="mol-cell mc-amber"><div class="mc-l">Protease risk</div><div class="mc-v" style="font-size:12px">'+esc(sc.protRisk||'Low')+'</div><div class="mc-note">Enzyme cleavage risk</div></div>'+
@@ -1059,14 +1073,16 @@ async function runRefinement(ci,cand){
   rbtn.disabled=true; rbtn.textContent='Refining — generating 6 variants…';
   rresults.innerHTML='<div class="spin" style="padding:20px">Generating refined variants…</div>';
   try{
-    var r=await api('refine',{method:'POST',body:JSON.stringify({brief:currentBrief,candidate:cand,instruction:instruction})});
+    var runId=(window._dlLast&&window._dlLast.runId)||null;
+    var r=await api('refine',{method:'POST',body:JSON.stringify({brief:currentBrief,candidate:cand,candidateId:(cand&&cand.id)||null,runId:runId,instruction:instruction})});
     var dd=await r.json().catch(function(){ return {}; });
     if(r.status===403){ rresults.innerHTML='<div style="color:var(--amber);font-size:13px;padding:10px 0">'+esc(dd.message||'Refinement limit reached.')+' <a href="/pro/" style="color:var(--g)">Upgrade →</a></div>'; }
     else if(!r.ok){ rresults.innerHTML='<div style="color:var(--red);font-size:13px;padding:10px 0">'+esc(dd.error||'Something went wrong.')+'</div>'; }
     else{
       if(dd.quota){ quotaData=dd.quota; renderQuota(dd.quota); }
-      renderRefinedCandidates(ci,dd.refined||[]);
-      toast('Refinement complete — '+(dd.refined||[]).length+' new variants!');
+      var rv=dd.refined||dd.candidates||[];
+      renderRefinedCandidates(ci,rv);
+      toast(rv.length?('Refinement complete — '+rv.length+' new variants!'):'No variants returned — try a different instruction.', rv.length?'':'err');
     }
   }catch(e){ rresults.innerHTML='<div style="color:var(--red);font-size:13px;padding:10px 0">Network error.</div>'; }
   rbtn.disabled=false; rbtn.textContent='Run refinement — get 6 new variants →';
@@ -1144,12 +1160,12 @@ init();
       ['Name',function(c){return esc(c.name||'—');}],
       ['Recipe',function(c){return '<span style="font-family:DM Mono,monospace;letter-spacing:1px">'+esc(c.sequence||'')+'</span>';}],
       ['Building blocks',function(c){return (c.scores||{}).len||(c.sequence||'').length;}],
-      ['Overall /100',function(c){return '<b style="color:#01D3A0">'+((c.scores||{}).comp||0)+'</b>';}],
+      ['Make-ability /100',function(c){return '<b style="color:#01D3A0">'+((c.scores||{}).comp||0)+'</b>';}],
       ['Easy to make',function(c){return (c.scores||{}).sy||0;}],
       ['Dissolves in water',function(c){return (c.scores||{}).so||0;}],
       ['Good length',function(c){return (c.scores||{}).ls||0;}],
       ['Mix of blocks',function(c){return (c.scores||{}).dv||0;}],
-      ['Newness',function(c){var nv=c.novelty||{};return nv.badge==='novel'?'✦ New':nv.badge==='known'?'⚠ Exists':'~ Partial';}],
+      ['Library match',function(c){var nv=c.novelty||{};return nv.badge==='novel'?'✦ None found':nv.badge==='known'?'⚠ Exists':'~ Partial';}],
       ['Est. cost to make',function(c){return gbp((c.scores||{}).cost);}]
     ];
     var thead='<tr><th style="text-align:left;padding:8px 10px">&nbsp;</th>'+cs.map(function(c){return '<th style="padding:8px 10px;color:#fff;font-size:13px;border-left:1px solid #1a2230">'+esc(c.id||'')+'</th>';}).join('')+'</tr>';
@@ -1169,7 +1185,7 @@ init();
       var risk=(c.why_might_not||c.watch_outs||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('');
       return '<div class="c"><h2>'+esc(c.id||'')+' &middot; '+esc(c.name||'')+'</h2>'+
         '<p class="seq">'+esc(c.sequence||'')+'</p>'+
-        '<p class="m">Overall '+(sc.comp||0)+'/100 &middot; '+(sc.len||0)+' building blocks &middot; est. '+gbp(sc.cost)+' to make &middot; '+(nv.badge==='novel'?'Likely brand-new':nv.badge==='known'?'Already exists':'Partially similar')+'</p>'+
+        '<p class="m">Make-ability '+(sc.comp||0)+'/100 &middot; '+(sc.len||0)+' building blocks &middot; est. '+gbp(sc.cost)+' to make &middot; '+(nv.badge==='novel'?'No library match':nv.badge==='known'?'Already exists':'Partially similar')+'</p>'+
         (c.plain_summary?'<p>'+esc(c.plain_summary)+'</p>':'')+
         (c.design_reasoning?'<p><b>Why built this way:</b> '+esc(c.design_reasoning)+'</p>':'')+
         (help?'<p><b>How it could help:</b></p><ul>'+help+'</ul>':'')+
