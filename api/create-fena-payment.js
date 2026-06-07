@@ -96,7 +96,7 @@ export default async function handler(req) {
   // The cart sends member-discounted prices; without recomputing the entitlement
   // here the price guard below would wrongly reject legitimate member orders.
   // memberPct comes ONLY from the verified user token + profile, never the client.
-  let memberPct = 0, memberTier = null;
+  let memberPct = 0, memberTier = null, memberBalance = 0;
   try {
     const authz = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
     const SBU = process.env.SUPABASE_URL, SVC = process.env.SUPABASE_SERVICE_ROLE_KEY, ANON = process.env.SUPABASE_ANON_KEY;
@@ -105,13 +105,16 @@ export default async function handler(req) {
       if (ures.ok) {
         const u = await ures.json();
         if (u && u.id) {
-          const pr = await fetch(`${SBU}/rest/v1/profiles?id=eq.${u.id}&select=is_pro,pro_tier,pro_until`, { headers: { apikey: SVC, Authorization: `Bearer ${SVC}` } });
+          const pr = await fetch(`${SBU}/rest/v1/profiles?id=eq.${u.id}&select=is_pro,pro_tier,pro_until,loyalty_points`, { headers: { apikey: SVC, Authorization: `Bearer ${SVC}` } });
           const prof = pr.ok ? (await pr.json())[0] : null;
-          if (prof && prof.is_pro && prof.pro_tier && (!prof.pro_until || new Date(prof.pro_until) > new Date())) {
-            const tr = await fetch(`${SBU}/rest/v1/membership_tiers?key=eq.${encodeURIComponent(prof.pro_tier)}&select=discount_pct`, { headers: { apikey: SVC, Authorization: `Bearer ${SVC}` } });
-            const t = tr.ok ? (await tr.json())[0] : null;
-            memberPct = t ? Number(t.discount_pct) : 0;
-            memberTier = prof.pro_tier;
+          if (prof) {
+            memberBalance = Number(prof.loyalty_points) || 0; // verified, so claimed points can't be spoofed
+            if (prof.is_pro && prof.pro_tier && (!prof.pro_until || new Date(prof.pro_until) > new Date())) {
+              const tr = await fetch(`${SBU}/rest/v1/membership_tiers?key=eq.${encodeURIComponent(prof.pro_tier)}&select=discount_pct`, { headers: { apikey: SVC, Authorization: `Bearer ${SVC}` } });
+              const t = tr.ok ? (await tr.json())[0] : null;
+              memberPct = t ? Number(t.discount_pct) : 0;
+              memberTier = prof.pro_tier;
+            }
           }
         }
       }
@@ -156,6 +159,21 @@ export default async function handler(req) {
         if (allKnown && n(meta.subtotal) + 0.01 < dbFloor) {
           console.warn(`[create-fena-payment] PRICE GUARD: client subtotal £${n(meta.subtotal)} below floor £${dbFloor} (memberPct=${memberPct}) — rejecting`);
           return new Response(JSON.stringify({ error: 'Your basket prices are out of date. Please refresh the page and try again.' }),
+            { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
+        }
+        // ── Charge-amount guard ──────────────────────────────────────────────
+        // amount_pence is client-supplied; the subtotal guard above doesn't see
+        // the amount actually charged. Reject an implausibly low charge (e.g.
+        // amount_pence:1 on a real basket → "pay a penny, get the order").
+        // Floor = member-adjusted DB subtotal, halved to allow ANY legit promo
+        // stack (member + volume/code ≤ ~40%), minus VERIFIED points. Generous
+        // £1 tolerance; fails open (allKnown only) so legit orders never break.
+        const qtyTot   = meta.items.reduce((s, it) => s + (Number(it.qty) || 1), 0);
+        const ptsValue = Math.min(n(meta.points_redeemed), memberBalance) / 100; // £, capped to real balance
+        const minLegit = Math.round((dbSubtotal * (1 - memberPct / 100) * 0.5 - ptsValue) * 100) / 100;
+        if (allKnown && n(amountStr) + 1.0 < minLegit) {
+          console.warn(`[create-fena-payment] CHARGE GUARD: amount £${n(amountStr)} far below floor £${minLegit} (dbSubtotal=${dbSubtotal}, memberPct=${memberPct}, pts£=${ptsValue}) — rejecting`);
+          return new Response(JSON.stringify({ error: 'Payment amount didn’t match your basket. Please refresh and try again.' }),
             { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
         }
       }

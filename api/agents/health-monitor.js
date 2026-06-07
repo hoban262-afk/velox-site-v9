@@ -29,7 +29,7 @@ function authorised(req) {
   const internal = req.headers['x-internal-secret'] || '';
   if (process.env.CRON_SECRET && auth === `Bearer ${process.env.CRON_SECRET}`) return true;
   if (process.env.INTERNAL_TASK_SECRET && internal === process.env.INTERNAL_TASK_SECRET) return true;
-  if (!process.env.CRON_SECRET && !process.env.INTERNAL_TASK_SECRET) return true;
+  if (!process.env.CRON_SECRET && !process.env.INTERNAL_TASK_SECRET) return false; // fail closed
   return false;
 }
 

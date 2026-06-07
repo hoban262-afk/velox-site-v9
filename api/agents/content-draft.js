@@ -23,7 +23,7 @@ function authorised(req) {
   const internal = req.headers['x-internal-secret'] || '';
   if (process.env.CRON_SECRET && auth === `Bearer ${process.env.CRON_SECRET}`) return true;
   if (process.env.INTERNAL_TASK_SECRET && internal === process.env.INTERNAL_TASK_SECRET) return true;
-  if (!process.env.CRON_SECRET && !process.env.INTERNAL_TASK_SECRET) return true;
+  if (!process.env.CRON_SECRET && !process.env.INTERNAL_TASK_SECRET) return false; // fail closed
   return false;
 }
 async function sbJson(p) { try { const r = await fetch(`${SUPABASE_URL}/rest/v1/${p}`, { headers: sbHeaders }); return r.ok ? await r.json() : []; } catch { return []; } }

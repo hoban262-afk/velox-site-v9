@@ -22,7 +22,7 @@ function authorised(req) {
   if (process.env.CRON_SECRET && auth === `Bearer ${process.env.CRON_SECRET}`) return true;
   if (process.env.INTERNAL_TASK_SECRET && internal === process.env.INTERNAL_TASK_SECRET) return true;
   // Vercel cron also pins a header; allow when no secret is configured (dev).
-  if (!process.env.CRON_SECRET && !process.env.INTERNAL_TASK_SECRET) return true;
+  if (!process.env.CRON_SECRET && !process.env.INTERNAL_TASK_SECRET) return false; // fail closed
   return false;
 }
 

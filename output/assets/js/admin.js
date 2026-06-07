@@ -1969,8 +1969,46 @@
 
   // ── AFFILIATES ────────────────────────────────────────────────────────────
 
+  // ── Affiliate payouts (payable summary + mark-paid) ──
+  async function loadAffiliatePayouts() {
+    var el = document.getElementById('affiliate-payouts-wrap'); if (!el) return;
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { el.innerHTML = '<div class="adm-empty">Sign in to view.</div>'; return; }
+      var r = await fetch('/api/admin/affiliate-payout', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { el.innerHTML = '<div class="adm-empty">Could not load.</div>'; return; }
+      var affs = (d.affiliates || []).filter(function (a) { return a.payable > 0; });
+      if (!affs.length) { el.innerHTML = '<div class="adm-empty">No commission due right now.</div>'; return; }
+      el.innerHTML = '<table class="adm-table"><thead><tr><th>Affiliate</th><th>Code</th><th>Orders</th><th>Payable</th><th></th></tr></thead><tbody>' +
+        affs.map(function (a) {
+          var amt = Number(a.payable).toFixed(2);
+          return '<tr><td style="color:#fff">' + esc(a.name || '') + '<div style="color:var(--t3,#6b7280);font-size:12px">' + esc(a.email || '') + '</div></td>' +
+            '<td style="font-family:monospace">' + esc(a.ref_code || '') + '</td>' +
+            '<td>' + a.count + '</td>' +
+            '<td style="color:#fff;font-weight:700">£' + amt + '</td>' +
+            '<td style="text-align:right"><button class="btn-p aff-payout" data-id="' + a.affiliate_id + '" data-amt="' + amt + '" style="width:auto;padding:6px 14px;font-size:11px">Mark £' + amt + ' paid</button></td></tr>';
+        }).join('') + '</tbody></table>';
+      el.querySelectorAll('.aff-payout').forEach(function (b) { b.addEventListener('click', function () { affPayout(b.dataset.id, b.dataset.amt, b); }); });
+    } catch (e) { el.innerHTML = '<div class="adm-empty">Could not load.</div>'; }
+  }
+  window.affPayout = async function (id, amt, btn) {
+    if (!window.confirm('Record a payout of £' + amt + '? Only do this AFTER you have actually paid them — it notifies and emails the affiliate.')) return;
+    btn.disabled = true; btn.textContent = 'Recording…';
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      var r = await fetch('/api/admin/affiliate-payout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ affiliate_id: id }) });
+      var d = await r.json().catch(function () { return {}; });
+      if (d && d.ok) { loadAffiliatePayouts(); }
+      else { btn.disabled = false; btn.textContent = 'Retry'; window.alert((d && d.error) || 'Payout failed.'); }
+    } catch (e) { btn.disabled = false; btn.textContent = 'Retry'; window.alert('Network error.'); }
+  };
+
   function loadAffiliates() {
     if (!window._sb) return;
+    loadAffiliatePayouts();
     window._sb.from('affiliates')
       .select('*')
       .order('created_at', { ascending: false })

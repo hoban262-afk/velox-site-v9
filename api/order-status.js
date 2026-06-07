@@ -36,8 +36,10 @@ module.exports = async function handler(req, res) {
   let b = req.body;
   if (typeof b === 'string') { try { b = JSON.parse(b); } catch { b = {}; } }
   b = b || {};
-  const ref = String(b.ref || '').trim().replace(/^#/, '');
-  const email = String(b.email || '').trim().toLowerCase();
+  // Strip LIKE wildcards (%/_) so a query like ref="%"&email="%" can't match
+  // an arbitrary order — that was a cross-customer info leak.
+  const ref = String(b.ref || '').trim().replace(/^#/, '').replace(/[%_]/g, '');
+  const email = String(b.email || '').trim().toLowerCase().replace(/[%_]/g, '');
   if (!ref || !email) return res.status(400).json({ error: 'Enter your order reference and email.' });
 
   let order = null;

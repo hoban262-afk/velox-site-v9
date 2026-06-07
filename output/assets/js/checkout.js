@@ -350,6 +350,11 @@
         discountMsg.innerHTML = '<span class="dc-err">Please enter a discount code.</span>';
         return;
       }
+      // Don't stack codes on top of Pro member pricing (it's already a discount).
+      if ((window.VELOX_MEMBER_PCT || 0) > 0) {
+        discountMsg.innerHTML = '<span class="dc-err">Your Velox Pro member pricing is already applied — codes can’t be combined with it.</span>';
+        return;
+      }
       // calcDiscount always works in GBP; convert saving to display currency
       var tGBP   = cartTotals(cart, 'UK');
       var result = calcDiscount(discountableGBP(cart), code);
@@ -447,6 +452,7 @@
     (function autoApplyRef() {
       try {
         if (!discountInput || appliedDiscount || affiliateApplied || welcomeCodeApplied) return;
+        if ((window.VELOX_MEMBER_PCT || 0) > 0) return; // member pricing already applied — don't stack
         if (discountInput.value.trim()) return;
         var stored = JSON.parse(localStorage.getItem('vp_ref') || 'null');
         if (!stored || !stored.code || !stored.ts) return;
