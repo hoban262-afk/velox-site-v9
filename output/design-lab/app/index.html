@@ -761,14 +761,69 @@ function dlBridgeMatch(b){
   for(var i=0;i<DL_COMPOUND_MAP.length;i++){ if(DL_COMPOUND_MAP[i].kw.test(hay)) return DL_COMPOUND_MAP[i]; }
   return {title:'Start with our best-selling research compound', items:[['Retatrutide','/compounds/retatrutide/'],['Browse all compounds','/compounds/']]};
 }
-function bridgeHTML(b){
+// Stocked compounds the bridge can recommend (slug → display + category)
+var DL_CATALOG={
+ 'retatrutide':{n:'Retatrutide',u:'/compounds/retatrutide/',cat:'metabolic / GLP-class',catU:'/compounds/metabolic/'},
+ 'bpc-157':{n:'BPC-157',u:'/compounds/bpc-157/',cat:'tissue-repair',catU:'/compounds/recovery/'},
+ 'tb-500':{n:'TB-500',u:'/compounds/tb-500/',cat:'tissue-repair',catU:'/compounds/recovery/'},
+ 'bpc157-tb500-mix':{n:'BPC-157 + TB-500',u:'/compounds/bpc157-tb500-mix/',cat:'tissue-repair',catU:'/compounds/recovery/'},
+ 'ghk-cu':{n:'GHK-Cu',u:'/compounds/ghk-cu/',cat:'cellular / antioxidant',catU:'/compounds/antioxidant/'},
+ 'kpv':{n:'KPV',u:'/compounds/kpv/',cat:'anti-inflammatory',catU:'/compounds/recovery/'},
+ 'cjc-1295':{n:'CJC-1295',u:'/compounds/cjc-1295/',cat:'growth-hormone',catU:'/compounds/growth/'},
+ 'tesamorelin':{n:'Tesamorelin',u:'/compounds/tesamorelin/',cat:'growth-hormone',catU:'/compounds/growth/'},
+ 'mots-c':{n:'MOTS-c',u:'/compounds/mots-c/',cat:'mitochondrial',catU:'/compounds/growth/'},
+ 'semax':{n:'Semax',u:'/compounds/semax/',cat:'cognitive',catU:'/compounds/cognitive/'},
+ 'selank':{n:'Selank',u:'/compounds/selank/',cat:'cognitive',catU:'/compounds/cognitive/'},
+ 'dihexa':{n:'Dihexa',u:'/compounds/dihexa/',cat:'cognitive',catU:'/compounds/cognitive/'},
+ 'dsip':{n:'DSIP',u:'/compounds/dsip/',cat:'cognitive / sleep',catU:'/compounds/cognitive/'},
+ 'melanotan-ii':{n:'Melanotan II',u:'/compounds/melanotan-ii/',cat:'melanocortin',catU:'/compounds/'},
+ 'nad-plus':{n:'NAD+',u:'/compounds/nad-plus/',cat:'cellular',catU:'/compounds/antioxidant/'},
+ 'glutathione':{n:'Glutathione',u:'/compounds/glutathione/',cat:'antioxidant',catU:'/compounds/antioxidant/'}
+};
+// known-peptide name (from the novelty check) → the stocked SKU it corresponds to
+var DL_KNOWN_TO_SLUG={'BPC-157':'bpc-157','GHK (copper tripeptide)':'ghk-cu','KPV':'kpv','Semax':'semax','Selank':'selank','MOTS-c':'mots-c','CJC-1295 core':'cjc-1295','TB-500 active fragment':'tb-500','Thymosin Beta-4 core':'tb-500','MT-II core':'melanotan-ii','PT-141 core':'melanotan-ii'};
+// brief-text aliases → SKU (most specific first)
+var DL_ALIASES=[['retatrutide',/retatru|triple agonist|glp-?1[^.]{0,30}g(ip|lucagon)|incretin/i],['tesamorelin',/tesamor/i],['cjc-1295',/cjc-?1295|ghrh|mod ?grf/i],['mots-c',/mots-?c/i],['bpc157-tb500-mix',/bpc[^.]{0,12}tb-?500|tb-?500[^.]{0,12}bpc/i],['bpc-157',/bpc-?157/i],['tb-500',/tb-?500|thymosin beta/i],['ghk-cu',/ghk|copper (tri)?peptide/i],['kpv',/\bkpv\b/i],['semax',/semax/i],['selank',/selank/i],['dihexa',/dihexa/i],['dsip',/\bdsip\b|delta sleep/i],['melanotan-ii',/melanotan|mt-?2\b|mt-?ii|pt-?141|bremelanotide|melanocortin/i],['nad-plus',/\bnad\+?\b/i],['glutathione',/glutathione/i]];
+
+function pickClosest(b,cands){
+  // 1) strongest signal: a candidate is sequence-similar to a STOCKED peptide
+  var seqBest=null;
+  (cands||[]).forEach(function(c){
+    var mt=c.novelty&&c.novelty.match;
+    if(mt&&DL_KNOWN_TO_SLUG[mt.name]){
+      if(!seqBest||mt.pct>seqBest.pct) seqBest={slug:DL_KNOWN_TO_SLUG[mt.name],pct:mt.pct,knownName:mt.name,mtype:mt.type,candName:c.name||c.id||'your top candidate'};
+    }
+  });
+  if(seqBest){ seqBest.via='sequence'; return seqBest; }
+  // 2) the brief references a stocked compound by name/alias
+  var hay=[b.target_mechanism||'',(b.desired_properties||[]).join(' '),(b.reference_compounds||[]).join(' '),(b.target||'')].join(' ');
+  for(var i=0;i<DL_ALIASES.length;i++){ if(DL_ALIASES[i][1].test(hay)) return {slug:DL_ALIASES[i][0],via:'reference'}; }
+  // 3) mechanism theme → the lead compound for that area (only on a real match)
   var m=dlBridgeMatch(b);
-  return '<div style="margin:26px 0 6px;background:var(--bg2,#0a0d12);border:1px solid var(--brd,#1a2230);border-radius:14px;padding:22px 22px">'+
-    '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g,#01D3A0);margin-bottom:6px">Researching this area?</div>'+
-    '<div style="font-size:15px;color:#fff;font-weight:600;margin-bottom:4px">'+esc(m.title)+' — in stock, HPLC-verified</div>'+
-    '<div style="font-size:13px;color:var(--mut,#8aa0a0);line-height:1.6;margin-bottom:14px">Your designs are novel and made to order. If your research overlaps a known compound, Velox dispatches verified material from the UK in 24h.</div>'+
-    '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-      m.items.map(function(it){ return '<a href="'+it[1]+'" style="font-family:Inter,sans-serif;font-weight:700;font-size:13px;text-decoration:none;padding:10px 16px;border-radius:9px;background:rgba(1,211,160,.1);color:var(--g,#01D3A0);border:1px solid rgba(1,211,160,.28)">'+esc(it[0])+' →</a>'; }).join('')+
+  if(m.kw){ var slug=((m.items[0][1]).match(/\/compounds\/([^/]+)\//)||[])[1]; if(slug&&DL_CATALOG[slug]) return {slug:slug,via:'mechanism'}; }
+  // 4) fallback to the best-seller
+  return {slug:'retatrutide',via:'fallback'};
+}
+function closestReason(p){
+  var c=DL_CATALOG[p.slug]||DL_CATALOG['retatrutide'];
+  if(p.via==='sequence'){
+    var rel=p.mtype==='exact'?'an exact sequence match to':p.mtype==='fragment'?('a fragment of '):p.mtype==='contains'?('built around the motif of '):(p.pct+'% sequence-similar to');
+    return 'Your design <b style="color:#fff">'+esc(p.candName)+'</b> is '+rel+' <b style="color:#fff">'+esc(p.knownName)+'</b>'+((p.mtype==='fragment'||p.mtype==='contains')?(' ('+p.pct+'%)'):'')+' — and '+c.n+' is the characterised, HPLC-verified compound in that family.';
+  }
+  if(p.via==='reference') return 'Your brief points straight at <b style="color:#fff">'+c.n+'</b> — the closest characterised compound Velox stocks for this kind of research.';
+  if(p.via==='mechanism') return 'Your target is <b style="color:#fff">'+c.cat+'</b> research, and <b style="color:#fff">'+c.n+'</b> is the closest characterised compound we stock for it.';
+  return '<b style="color:#fff">'+c.n+'</b> is our most-validated, best-selling research compound — a solid known reference point to benchmark a new design against.';
+}
+function bridgeHTML(b,cands){
+  var p=pickClosest(b,cands||[]); var c=DL_CATALOG[p.slug]||DL_CATALOG['retatrutide'];
+  return '<div style="margin:26px 0 6px;background:linear-gradient(180deg,rgba(1,211,160,.06),rgba(1,211,160,.015));border:1px solid rgba(1,211,160,.3);border-radius:14px;padding:24px 22px">'+
+    '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g,#01D3A0);margin-bottom:8px">Closest compound you can order today</div>'+
+    '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">'+esc(c.n)+'</div>'+
+    '<div style="font-size:14px;color:var(--mut,#8aa0a0);line-height:1.65;margin-bottom:10px">'+closestReason(p)+'</div>'+
+    '<div style="font-size:13px;color:var(--mut,#8aa0a0);line-height:1.65;margin-bottom:16px">Your designed sequences are novel hypotheses that still have to be synthesised. '+esc(c.n)+' is real material you can study now — <b style="color:#cdd3d9">≥99% HPLC-verified, batch Certificate of Analysis included, dispatched from the UK in 24h</b> — the ideal benchmark for your design.</div>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">'+
+      '<a href="'+c.u+'" style="font-family:Inter,sans-serif;font-weight:800;font-size:14px;text-decoration:none;padding:12px 20px;border-radius:10px;background:var(--g,#01D3A0);color:#04140f">Research '+esc(c.n)+' →</a>'+
+      '<a href="'+c.catU+'" style="font-family:Inter,sans-serif;font-weight:700;font-size:13px;text-decoration:none;padding:11px 16px;border-radius:10px;background:rgba(1,211,160,.08);color:var(--g,#01D3A0);border:1px solid rgba(1,211,160,.25)">Browse related compounds</a>'+
     '</div>'+
   '</div>';
 }
@@ -948,7 +1003,7 @@ function renderResults(d){
 
   // Delight-moment Pro nudge + cross-sell bridge to in-stock compounds
   html+=prowallHTML(d.quota||quotaData||{});
-  html+=bridgeHTML(b);
+  html+=bridgeHTML(b,cands);
 
   $('#results').innerHTML=html;
   reveal();
