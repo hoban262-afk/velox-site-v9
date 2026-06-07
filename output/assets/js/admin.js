@@ -106,7 +106,7 @@
 
   // ── Tab switching + bottom nav + sheet + toasts ─────────────────────────────
   var TAB_TITLES = {
-    overview: 'Overview', actions: 'Approvals', orders: 'Orders', margins: 'Margins',
+    overview: 'Overview', stats: 'Stats', actions: 'Approvals', orders: 'Orders', margins: 'Margins',
     interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
     campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings',
     deal: 'Deal of the Day', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing',

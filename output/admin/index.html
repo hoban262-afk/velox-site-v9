@@ -258,6 +258,7 @@
       <nav class="sb-nav">
         <div class="sb-sec">Main</div>
         <button class="sb-item active" data-tab="overview" onclick="switchTab('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg> Overview</button>
+        <button class="sb-item" data-tab="stats" onclick="switchTab('stats')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="13" y="7" width="3" height="10" rx="1"/></svg> Stats</button>
 
         <div class="sb-sec">Orders</div>
         <button class="sb-item" data-tab="orders" onclick="switchTab('orders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg> Orders</button>
@@ -357,6 +358,7 @@
     <div class="more-backdrop" id="more-backdrop" onclick="closeMore()"></div>
     <div class="more-sheet" id="more-sheet">
       <div class="ms-handle"></div>
+      <button class="ms-item" data-tab="stats" onclick="switchTab('stats')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="13" y="7" width="3" height="10" rx="1"/></svg> Stats</button>
       <button class="ms-item" data-tab="actions" onclick="switchTab('actions')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 6h13l3.5 6v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5Z"/></svg> Actions</button>
       <button class="ms-item" data-tab="interest" onclick="switchTab('interest')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Interest</button>
       <button class="ms-item" data-tab="pricing" onclick="switchTab('pricing')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13 21a2 2 0 0 1-2.8 0L3 13.8V4h9.8l7.8 7.6a2 2 0 0 1 0 1.8Z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg> Pricing</button>
@@ -391,46 +393,34 @@
         <div id="dash-chart" style="margin-top:8px"></div>
       </div>
 
-      <!-- Visual overview (admin-charts.js) -->
+      <!-- Visual overview (admin-charts.js) — shared markup, also used in the Stats tab -->
       <style>
-        #vstats-section .vstats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
-        #vstats-section .vstats-card{background:var(--bg2,#0a0d12);border:1px solid var(--brd,#1a2230);border-radius:12px;padding:14px 16px;min-width:0}
-        #vstats-section .vstats-h{font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-        #vstats-section .vstats-kpi{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#fff;line-height:1.15;margin:4px 0 10px}
-        #vstats-section .vstats-kpi small{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3,#6b7280);font-weight:400}
-        #vstats-section .vstats-canvas{position:relative;height:160px}
-        #vstats-section .vstats-per.is-on{color:#01D3A0;border-color:#01D3A0}
-        @media(max-width:760px){ #vstats-section .vstats-grid{grid-template-columns:1fr} }
+        .vstats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+        .vstats-card{background:var(--bg2,#0a0d12);border:1px solid var(--brd,#1a2230);border-radius:12px;padding:14px 16px;min-width:0}
+        .vstats-h{font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+        .vstats-kpi{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#fff;line-height:1.15;margin:4px 0 10px}
+        .vstats-kpi small{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3,#6b7280);font-weight:400}
+        .vstats-canvas{position:relative;height:160px}
+        .vstats-tall .vstats-canvas{height:240px}
+        .vstats-per.is-on{color:#01D3A0;border-color:#01D3A0}
+        @media(max-width:760px){ .vstats-grid{grid-template-columns:1fr} }
       </style>
-      <div class="adm-section" id="vstats-section">
+      <div class="adm-section">
         <div class="adm-sec-hdr">
           <div class="adm-sec-title">Visual overview</div>
-          <div id="vstats-periods" style="display:flex;gap:4px">
+          <div style="display:flex;gap:4px">
             <button class="status-select vstats-per" data-days="7" style="cursor:pointer">7 days</button>
             <button class="status-select vstats-per is-on" data-days="30" style="cursor:pointer">30 days</button>
             <button class="status-select vstats-per" data-days="90" style="cursor:pointer">90 days</button>
+            <button class="status-select" type="button" style="cursor:pointer" onclick="switchTab('stats')">Full &rarr;</button>
           </div>
         </div>
-        <div class="vstats-grid">
-          <div class="vstats-card">
-            <div class="vstats-h">Revenue &amp; orders</div>
-            <div class="vstats-kpi" id="vk-rev">&mdash;</div>
-            <div class="vstats-canvas"><canvas id="ch-rev"></canvas></div>
-          </div>
-          <div class="vstats-card">
-            <div class="vstats-h">Website visitors</div>
-            <div class="vstats-kpi" id="vk-vis">&mdash;</div>
-            <div class="vstats-canvas"><canvas id="ch-traffic"></canvas></div>
-          </div>
-          <div class="vstats-card">
-            <div class="vstats-h">Top products &middot; by revenue</div>
-            <div class="vstats-kpi" id="vk-prod">&mdash;</div>
-            <div class="vstats-canvas"><canvas id="ch-prod"></canvas></div>
-          </div>
-          <div class="vstats-card">
-            <div class="vstats-h">Conversion funnel</div>
-            <div class="vstats-kpi" id="vk-cvr">&mdash;</div>
-            <div class="vstats-canvas"><canvas id="ch-funnel"></canvas></div>
+        <div class="vstats-block">
+          <div class="vstats-grid">
+            <div class="vstats-card"><div class="vstats-h">Revenue &amp; orders</div><div class="vstats-kpi vk-rev">&mdash;</div><div class="vstats-canvas"><canvas class="ch-rev"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Website visitors</div><div class="vstats-kpi vk-vis">&mdash;</div><div class="vstats-canvas"><canvas class="ch-traffic"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Top products &middot; by revenue</div><div class="vstats-kpi vk-prod">&mdash;</div><div class="vstats-canvas"><canvas class="ch-prod"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Conversion funnel</div><div class="vstats-kpi vk-cvr">&mdash;</div><div class="vstats-canvas"><canvas class="ch-funnel"></canvas></div></div>
           </div>
         </div>
       </div>
@@ -481,6 +471,28 @@
       <div class="adm-section">
         <div class="adm-sec-hdr"><div class="adm-sec-title">Recent orders</div></div>
         <div id="recent-orders-list"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
+    <!-- Stats (full visual dashboard — admin-charts.js) -->
+    <div class="admin-panel" id="panel-stats">
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Visual stats</div>
+          <div style="display:flex;gap:4px">
+            <button class="status-select vstats-per" data-days="7" style="cursor:pointer">7 days</button>
+            <button class="status-select vstats-per is-on" data-days="30" style="cursor:pointer">30 days</button>
+            <button class="status-select vstats-per" data-days="90" style="cursor:pointer">90 days</button>
+          </div>
+        </div>
+        <div class="vstats-block vstats-tall">
+          <div class="vstats-grid">
+            <div class="vstats-card"><div class="vstats-h">Revenue &amp; orders</div><div class="vstats-kpi vk-rev">&mdash;</div><div class="vstats-canvas"><canvas class="ch-rev"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Website visitors</div><div class="vstats-kpi vk-vis">&mdash;</div><div class="vstats-canvas"><canvas class="ch-traffic"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Top products &middot; by revenue</div><div class="vstats-kpi vk-prod">&mdash;</div><div class="vstats-canvas"><canvas class="ch-prod"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Conversion funnel</div><div class="vstats-kpi vk-cvr">&mdash;</div><div class="vstats-canvas"><canvas class="ch-funnel"></canvas></div></div>
+          </div>
+        </div>
       </div>
     </div>
 
