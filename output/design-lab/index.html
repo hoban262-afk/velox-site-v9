@@ -133,6 +133,15 @@
     .dl-form input:focus{ border-color:var(--dl-g); }
     .dl-ok{ display:none; padding:14px; background:rgba(1,211,160,.08); border:1px solid rgba(1,211,160,.25); border-radius:9px; color:var(--dl-g); font-size:14px; }
 
+    /* Sample card scroll-reveal (only when JS is on, so no-JS shows full state) */
+    .dl-js .dl-win{ opacity:0; transform:translateY(18px) scale(.99); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.9,.25,1); }
+    .dl-js .dl-win.reveal{ opacity:1; transform:none; }
+    .dl-js .dl-win .dl-bar-f{ width:0 !important; transition:width 1s cubic-bezier(.2,.8,.2,1); }
+    .dl-js .dl-win.reveal .dl-bar-f{ width:var(--w) !important; }
+    .dl-js .dl-win .dl-seq span{ display:inline-block; opacity:0; transform:translateY(-7px); }
+    .dl-js .dl-win.reveal .dl-seq span{ animation:dlFade2 .36s ease forwards; }
+    @keyframes dlFade2{ to{ opacity:1; transform:none; } }
+
     @media(max-width:820px){
       .dl-stats-g{ grid-template-columns:repeat(2,1fr); }
       .dl-steps{ grid-template-columns:1fr; }
@@ -140,7 +149,12 @@
       .dl-tiers{ grid-template-columns:1fr 1fr; }
     }
     @media(max-width:480px){ .dl-tiers{ grid-template-columns:1fr; } }
-    @media (prefers-reduced-motion: reduce){ .dl-stream,.dl-badge-dot,.dl-seqprev .aa{ animation:none; } .dl-seqprev .aa{ opacity:1; } }
+    @media (prefers-reduced-motion: reduce){
+      .dl-stream,.dl-badge-dot,.dl-seqprev .aa{ animation:none; } .dl-seqprev .aa{ opacity:1; }
+      .dl-js .dl-win{ opacity:1; transform:none; transition:none; }
+      .dl-js .dl-win .dl-bar-f{ transition:none; width:var(--w) !important; }
+      .dl-js .dl-win .dl-seq span{ opacity:1; transform:none; animation:none; }
+    }
   </style>
 </head>
 <body class="page-design-lab">
@@ -250,7 +264,7 @@
       <p class="dl-eyebrow">Real output</p>
       <h2 class="dl-h2">This is what it<br>actually produces.</h2>
       <p class="dl-secsub">This isn't a made-up example. It's a real, brand-new peptide the tool designed, graded and checked — ready to send off to be made.</p>
-      <div class="dl-win">
+      <div class="dl-win" id="dlSample">
         <div class="dl-win-bar">
           <span class="dl-dot" style="background:#f0637e"></span><span class="dl-dot" style="background:#f0b03b"></span><span class="dl-dot" style="background:#01D3A0"></span>
           <span class="dl-mono" style="font-size:11px;color:var(--dl-mut);margin-left:8px">velox design lab &middot; pipeline v0.4</span>
@@ -261,10 +275,10 @@
           <div class="dl-badges"><span class="dl-bdg dl-bdg-g">✦ Likely brand-new</span><span class="dl-bdg dl-bdg-m">Built to enter cells easily</span></div>
           <div class="dl-seq"><span style="color:#01D3A0">K</span><span style="color:#01D3A0">V</span><span style="color:#01D3A0">L</span><span style="color:#01D3A0">F</span><span style="color:#01D3A0">F</span><span style="color:#01D3A0">P</span><span style="color:#eef3f2">N</span><span style="color:#6cf7d6">H</span><span style="color:#f0b03b">G</span><span style="color:#6cf7d6">K</span></div>
           <div class="dl-bars">
-            <div class="dl-bar"><span class="dl-bar-l">Easy to make</span><div class="dl-bar-t"><div class="dl-bar-f" style="width:96%;background:#01D3A0"></div></div><span class="dl-bar-v" style="color:#01D3A0">96</span></div>
-            <div class="dl-bar"><span class="dl-bar-l">Should dissolve well</span><div class="dl-bar-t"><div class="dl-bar-f" style="width:55%;background:#7b8cff"></div></div><span class="dl-bar-v" style="color:#7b8cff">55</span></div>
-            <div class="dl-bar"><span class="dl-bar-l">Good length</span><div class="dl-bar-t"><div class="dl-bar-f" style="width:100%;background:#f0b03b"></div></div><span class="dl-bar-v" style="color:#f0b03b">100</span></div>
-            <div class="dl-bar"><span class="dl-bar-l">Variety of parts</span><div class="dl-bar-t"><div class="dl-bar-f" style="width:80%;background:#8aa0a0"></div></div><span class="dl-bar-v" style="color:#8aa0a0">80</span></div>
+            <div class="dl-bar"><span class="dl-bar-l">Easy to make</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:96%;background:#01D3A0"></div></div><span class="dl-bar-v" style="color:#01D3A0" data-to="96">96</span></div>
+            <div class="dl-bar"><span class="dl-bar-l">Should dissolve well</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:55%;background:#7b8cff"></div></div><span class="dl-bar-v" style="color:#7b8cff" data-to="55">55</span></div>
+            <div class="dl-bar"><span class="dl-bar-l">Good length</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:100%;background:#f0b03b"></div></div><span class="dl-bar-v" style="color:#f0b03b" data-to="100">100</span></div>
+            <div class="dl-bar"><span class="dl-bar-l">Variety of parts</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:80%;background:#8aa0a0"></div></div><span class="dl-bar-v" style="color:#8aa0a0" data-to="80">80</span></div>
           </div>
           <div class="dl-hyp"><span>WHY IT MIGHT WORK: </span>It's mostly made of "water-avoiding" building blocks, which could help it slip inside cells more easily, and one pair near the end may let it act in an unusual way. It's a starting point for lab testing — not a finished, proven compound.</div>
         </div>
@@ -384,6 +398,33 @@
     var lab=document.createElement('span'); lab.className='dl-mono'; lab.style.cssText='font-size:11px;color:#8aa0a0;letter-spacing:1px;margin-right:14px'; lab.textContent='SAMPLE OUTPUT · CycloSeq-14 ·'; prev.appendChild(lab);
     'RPPKGDVAGPPYQK'.split('').forEach(function(aa,i){ var sp=document.createElement('span'); sp.className='aa'; sp.style.color=COL[aa]||'#8aa0a0'; sp.style.animationDelay=(0.5+i*0.08)+'s'; sp.textContent=aa; prev.appendChild(sp); });
     var sc=document.createElement('span'); sc.className='dl-mono'; sc.style.cssText='font-size:11px;margin-left:14px;color:#01D3A0;border:1px solid rgba(1,211,160,.3);padding:3px 8px;border-radius:4px'; sc.textContent='SCORE 83'; prev.appendChild(sc);
+  }
+
+  // Sample card: scroll-reveal with bar-fill, sequence cascade and count-up
+  var sample=document.getElementById('dlSample');
+  if(sample){
+    document.body.classList.add('dl-js');
+    var seqSpans=sample.querySelectorAll('.dl-seq span');
+    seqSpans.forEach(function(s,i){ s.style.animationDelay=(0.3+i*0.05)+'s'; });
+    var revealed=false;
+    function countTo(el){
+      var to=+el.getAttribute('data-to')||0, dur=1000, st=null;
+      function fr(ts){ if(!st)st=ts; var p=Math.min(1,(ts-st)/dur); var e=1-Math.pow(1-p,3); el.textContent=Math.round(to*e); if(p<1) requestAnimationFrame(fr); else el.textContent=to; }
+      el.textContent='0'; requestAnimationFrame(fr);
+    }
+    function doReveal(){
+      if(revealed) return; revealed=true;
+      sample.classList.add('reveal');
+      var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      sample.querySelectorAll('.dl-bar-v').forEach(function(v,i){
+        if(reduce){ v.textContent=v.getAttribute('data-to'); return; }
+        setTimeout(function(){ countTo(v); }, 350+i*120);
+      });
+    }
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ doReveal(); io.disconnect(); } }); },{ threshold:.4 });
+      io.observe(sample);
+    } else { doReveal(); }
   }
 
   var form=document.getElementById('dlForm');
