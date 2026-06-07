@@ -5,9 +5,9 @@
  * Read-only, service-role. Mirrors the admin's revenue rule (isPaid =
  * status 'paid' | 'dispatched') so the numbers match /admin exactly.
  *
- * Returns money (today / 7d vs prior 7d / MTD / AOV), top SKUs (7d),
- * repeat-vs-new (7d), the latest sale, pending approvals, live visitors,
- * visitors today, and a live-site status check.
+ * Returns money, top SKUs, repeat-vs-new, latest sale, recurring revenue (MRR),
+ * out-of-stock, to-fulfil queue, pending approvals (with detail), live/visitors,
+ * a live-site check, and a computed `alerts` feed for the home strip.
  */
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -43,19 +43,25 @@ function orderItems(o) {
   if (typeof it === 'string') { try { const p = JSON.parse(it); return Array.isArray(p) ? p : []; } catch { return []; } }
   return [];
 }
-function itemName(it) {
-  return it.name || it.title || it.product || it.sku || it.variant || 'Item';
-}
-function itemQty(it) { return Number(it.qty || it.quantity) || 1; }
+const itemName = (it) => it.name || it.title || it.product || it.sku || it.variant || 'Item';
+const itemQty  = (it) => Number(it.qty || it.quantity) || 1;
 function itemLineRevenue(it) {
   const price = num(it.price != null ? it.price : it.unit_price);
   return price > 0 ? price * itemQty(it) : 0;
 }
-
 function maskEmail(e) {
   if (!e || !e.includes('@')) return '—';
   const [u, d] = e.split('@');
   return (u.length <= 2 ? u[0] + '*' : u.slice(0, 2) + '***') + '@' + d;
+}
+// Normalise a subscription frequency to a monthly multiplier for MRR.
+function monthlyFactor(freq) {
+  freq = (freq || '').toLowerCase();
+  if (/year|annual/.test(freq)) return 1 / 12;
+  if (/quarter/.test(freq))     return 1 / 3;
+  if (/fortnight|biweek/.test(freq)) return 2.17;
+  if (/week/.test(freq))        return /4/.test(freq) ? 1 : 4.345; // "4weeks" ≈ monthly
+  return 1; // default monthly
 }
 
 module.exports = async function handler(req, res) {
@@ -69,15 +75,16 @@ module.exports = async function handler(req, res) {
   const d7  = ms(now) - 7 * 86400e3;
   const d14 = ms(now) - 14 * 86400e3;
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const pull = new Date(d14).toISOString(); // 14 days covers today / 7d / prior-7d; MTD pulled separately if needed
+  const pull = new Date(d14).toISOString();
 
   const out = {
     money: null, topSkus: [], repeat: null, latest: null,
+    recurring: null, outOfStock: [], toFulfil: null, approvals: [],
     approvalsPending: null, liveNow: null, visitorsToday: null, site: null,
-    generated_at: now.toISOString(),
+    alerts: [], generated_at: now.toISOString(),
   };
 
-  // ── Orders (last 14d for windows) + MTD orders ───────────────────────────
+  // ── Orders (last 14d for windows) + MTD ──────────────────────────────────
   try {
     const [recentRes, mtdRes] = await Promise.all([
       sb(`orders?select=created_at,total,customer_email,items,status&created_at=gte.${encodeURIComponent(pull)}&order=created_at.desc&limit=2000`),
@@ -85,9 +92,7 @@ module.exports = async function handler(req, res) {
     ]);
     const recent = recentRes.ok ? await recentRes.json() : [];
     const mtd    = mtdRes.ok ? await mtdRes.json() : [];
-
     const paid = recent.filter(isPaid);
-
     const win = (from, to) => paid.filter((o) => { const t = ms(new Date(o.created_at)); return t >= from && t < to; });
     const sum = (arr) => arr.reduce((s, o) => s + num(o.total), 0);
 
@@ -95,8 +100,8 @@ module.exports = async function handler(req, res) {
     const last7 = win(d7, ms(now) + 1);
     const prev7 = win(d14, d7);
     const mtdPaid = mtd.filter(isPaid);
-
     const rev7 = sum(last7), revPrev7 = sum(prev7);
+
     out.money = {
       todayRevenue: sum(today), todayOrders: today.length,
       revenue7: rev7, orders7: last7.length,
@@ -106,37 +111,51 @@ module.exports = async function handler(req, res) {
       aov7: last7.length ? rev7 / last7.length : 0,
     };
 
-    // Top SKUs last 7d (by revenue if priced, else by units)
     const skuRev = {}, skuQty = {}; let anyPrice = false;
     for (const o of last7) for (const it of orderItems(o)) {
-      const n = itemName(it), q = itemQty(it), r = itemLineRevenue(it);
-      skuQty[n] = (skuQty[n] || 0) + q;
+      const n = itemName(it);
+      skuQty[n] = (skuQty[n] || 0) + itemQty(it);
+      const r = itemLineRevenue(it);
       if (r > 0) { skuRev[n] = (skuRev[n] || 0) + r; anyPrice = true; }
     }
     out.topSkus = Object.keys(skuQty).map((n) => ({ name: n, qty: skuQty[n], revenue: skuRev[n] || 0 }))
       .sort((a, b) => anyPrice ? (b.revenue - a.revenue) : (b.qty - a.qty)).slice(0, 5);
-    out._skuByRevenue = anyPrice;
 
-    // Repeat vs new (7d): emails seen before this 7d window vs first-timers
     const before = new Set(paid.filter((o) => ms(new Date(o.created_at)) < d7).map((o) => (o.customer_email || '').toLowerCase()));
     let repeat = 0, fresh = 0;
-    for (const o of last7) {
-      const e = (o.customer_email || '').toLowerCase();
-      if (e && before.has(e)) repeat++; else fresh++;
-    }
+    for (const o of last7) { const e = (o.customer_email || '').toLowerCase(); if (e && before.has(e)) repeat++; else fresh++; }
     out.repeat = { repeat, fresh };
 
-    // Latest sale
-    if (paid.length) {
-      const l = paid[0];
-      out.latest = { email: maskEmail(l.customer_email), total: num(l.total), at: l.created_at };
-    }
+    if (paid.length) { const l = paid[0]; out.latest = { email: maskEmail(l.customer_email), total: num(l.total), at: l.created_at }; }
   } catch (e) { out.moneyError = 'orders query failed'; }
 
-  // ── Pending approvals ────────────────────────────────────────────────────
+  // ── Recurring revenue (MRR) ──────────────────────────────────────────────
   try {
-    const r = await sb('agent_actions?select=id&status=eq.pending&limit=500');
-    out.approvalsPending = r.ok ? (await r.json()).length : null;
+    const r = await sb('subscriptions?select=amount_pence,frequency,status,next_expected_date&status=eq.active&limit=1000');
+    const subs = r.ok ? await r.json() : [];
+    let mrrPence = 0;
+    for (const s of subs) mrrPence += num(s.amount_pence) * monthlyFactor(s.frequency);
+    out.recurring = { active: subs.length, mrr: mrrPence / 100 };
+  } catch {}
+
+  // ── Out of stock ─────────────────────────────────────────────────────────
+  try {
+    const r = await sb('stock_state?select=slug&in_stock=eq.false&limit=200');
+    out.outOfStock = r.ok ? (await r.json()).map((x) => x.slug) : [];
+  } catch {}
+
+  // ── To-fulfil queue (paid, not yet dispatched) ───────────────────────────
+  try {
+    const r = await sb('orders?select=id,customer_name,total,created_at&status=eq.paid&order=created_at.asc&limit=50');
+    const rows = r.ok ? await r.json() : [];
+    out.toFulfil = { count: rows.length, orders: rows.slice(0, 8) };
+  } catch {}
+
+  // ── Pending approvals (with detail for inline approve/dismiss) ───────────
+  try {
+    const r = await sb('agent_actions?select=id,type,title,summary,created_at&status=eq.pending&order=created_at.desc&limit=12');
+    out.approvals = r.ok ? await r.json() : [];
+    out.approvalsPending = out.approvals.length;
   } catch {}
 
   // ── Live now + visitors today ────────────────────────────────────────────
@@ -150,12 +169,32 @@ module.exports = async function handler(req, res) {
     if (r.ok) { const v = await r.json(); out.visitorsToday = new Set(v.map((x) => x.sid)).size; }
   } catch {}
 
+  // ── Worker health (recent failures) ──────────────────────────────────────
+  let workerFails = 0;
+  try {
+    const r = await sb('worker_runs?select=worker,ok,ran_at&order=ran_at.desc&limit=40');
+    const rows = r.ok ? await r.json() : [];
+    const latest = {};
+    for (const w of rows) if (!latest[w.worker]) latest[w.worker] = w;
+    workerFails = Object.values(latest).filter((w) => w && w.ok === false).length;
+  } catch {}
+
   // ── Live-site status check ───────────────────────────────────────────────
   try {
-    const ctrl = AbortSignal.timeout ? AbortSignal.timeout(4000) : undefined;
-    const r = await fetch('https://veloxpeps.com', { signal: ctrl });
+    const sig = AbortSignal.timeout ? AbortSignal.timeout(4000) : undefined;
+    const r = await fetch('https://veloxpeps.com', { signal: sig });
     out.site = { ok: r.ok, status: r.status };
   } catch { out.site = { ok: false, status: 0 }; }
+
+  // ── Build the alerts feed (most urgent first) ────────────────────────────
+  const A = [];
+  if (out.site && !out.site.ok) A.push({ level: 'bad', text: 'Live site is not responding', href: '/admin' });
+  if (out.approvalsPending > 0) A.push({ level: 'warn', text: out.approvalsPending + ' draft' + (out.approvalsPending === 1 ? '' : 's') + ' waiting for your approval', href: '#needs-you' });
+  if (out.toFulfil && out.toFulfil.count > 0) A.push({ level: 'warn', text: out.toFulfil.count + ' paid order' + (out.toFulfil.count === 1 ? '' : 's') + ' to dispatch', href: '#needs-you' });
+  if (out.outOfStock.length > 0) A.push({ level: 'warn', text: out.outOfStock.length + ' product' + (out.outOfStock.length === 1 ? '' : 's') + ' out of stock', href: '#needs-you' });
+  if (workerFails > 0) A.push({ level: 'bad', text: workerFails + ' automation(s) failing — check health', href: '/admin' });
+  if (out.money && out.money.todayOrders > 0) A.push({ level: 'good', text: out.money.todayOrders + ' order' + (out.money.todayOrders === 1 ? '' : 's') + ' today (£' + Math.round(out.money.todayRevenue) + ')', href: null });
+  out.alerts = A;
 
   res.setHeader('Cache-Control', 'no-store');
   return res.status(200).json(out);

@@ -7,6 +7,9 @@
   <meta name="robots" content="noindex,nofollow">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#030407">
+  <link rel="manifest" href="/command/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/images/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Command">
@@ -29,7 +32,6 @@
     body{margin:0;background:var(--bg);color:var(--t1);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
     .mono{font-family:'DM Mono',monospace;letter-spacing:.06em}
 
-    /* ── Login ── */
     .login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
     .login-box{background:var(--bg2);border:1px solid var(--brd);border-radius:14px;padding:38px 32px;width:100%;max-width:360px}
     .login-logo{font-family:'DM Mono',monospace;font-size:11px;color:var(--g);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px}
@@ -41,27 +43,32 @@
     .btn:disabled{opacity:.6;cursor:default}
     .err{font-size:12.5px;color:var(--red);min-height:16px;margin-top:10px}
 
-    /* ── Dashboard ── */
     .dash{display:none;max-width:760px;margin:0 auto;padding:20px 16px 80px}
-    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
     .hello{font-size:22px;font-weight:800;line-height:1.15}
     .date{font-size:12.5px;color:var(--t3);margin-top:3px}
     .top-actions{display:flex;gap:8px;flex-shrink:0}
     .chip{font-size:12px;color:var(--t2);background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:7px 11px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
     .chip:hover{color:#fff;border-color:var(--t3)}
 
+    /* alerts strip */
+    .alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+    .alert{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:10px;font-size:13.5px;font-weight:500;text-decoration:none;border:1px solid}
+    .alert.warn{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28);color:#fde68a}
+    .alert.bad{background:rgba(248,113,113,.09);border-color:rgba(248,113,113,.3);color:#fca5a5}
+    .alert.good{background:rgba(1,211,160,.08);border-color:rgba(1,211,160,.26);color:#6ee7c4}
+    .alert .ad{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:currentColor}
+
     .card{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:18px;margin-bottom:14px}
     .card-h{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin:0 0 14px;display:flex;align-items:center;justify-content:space-between}
     .card-h a{color:var(--g);text-decoration:none;font-size:11px;letter-spacing:.04em;text-transform:none}
 
-    /* money hero */
     .money-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .stat .lbl{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
     .stat .big{font-size:27px;font-weight:800;margin-top:3px;line-height:1}
     .stat .sub{font-size:12px;color:var(--t2);margin-top:5px}
     .up{color:var(--g)} .down{color:var(--red)} .flat{color:var(--t3)}
 
-    /* mini stat row */
     .mini-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     .mini{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:13px 12px;text-align:center}
     .mini .v{font-size:20px;font-weight:800}
@@ -71,11 +78,23 @@
     a.mini{text-decoration:none;color:inherit;display:block}
     a.mini:hover{border-color:var(--t3)}
 
-    /* lists */
     .row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid var(--brd);font-size:14px}
     .row:first-child{border-top:none}
     .row .name{color:var(--t1)} .row .meta{color:var(--t2);font-size:12.5px}
     .val{color:var(--g);font-weight:700;font-variant-numeric:tabular-nums}
+
+    /* needs-you / approvals */
+    .sub-h{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t2);margin:16px 0 8px}
+    .sub-h:first-child{margin-top:0}
+    .appr{padding:12px;border:1px solid var(--brd);border-radius:10px;margin-bottom:9px;background:#06080b}
+    .appr-t{font-size:14px;font-weight:600}
+    .appr-s{font-size:12.5px;color:var(--t2);margin-top:3px;white-space:pre-wrap;max-height:88px;overflow:auto}
+    .appr-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)}
+    .appr-btns{display:flex;gap:8px;margin-top:10px}
+    .b-approve{flex:1;background:var(--g);color:#021;border:none;border-radius:8px;font-weight:700;font-size:13px;padding:9px;cursor:pointer}
+    .b-dismiss{flex:1;background:transparent;color:var(--t2);border:1px solid var(--brd);border-radius:8px;font-weight:600;font-size:13px;padding:9px;cursor:pointer}
+    .b-approve:disabled,.b-dismiss:disabled{opacity:.5}
+    .pill{display:inline-block;background:#06080b;border:1px solid var(--brd);border-radius:7px;padding:5px 10px;font-size:12.5px;color:var(--t2);margin:0 6px 6px 0}
 
     /* tasks */
     .task-add{display:flex;gap:8px;margin-bottom:6px}
@@ -97,24 +116,20 @@
     .tdel{background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:2px 4px}
     .tdel:hover{color:var(--red)}
 
-    /* quick links */
     .links{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
     .qlink{background:#06080b;border:1px solid var(--brd);border-radius:10px;padding:14px 10px;text-align:center;text-decoration:none;color:var(--t2);font-size:12.5px;font-weight:600}
     .qlink:hover{color:#fff;border-color:var(--t3)}
 
+    .b-ghost{background:transparent;color:var(--g);border:1px solid rgba(1,211,160,.4);border-radius:8px;font-weight:600;font-size:13px;padding:10px 14px;cursor:pointer}
+    .b-ghost:disabled{opacity:.5}
     .muted{color:var(--t3);font-size:13px}
-    .soon{border-style:dashed;color:var(--t2)}
-    .soon .card-h{color:var(--t3)}
+    .soon{border-style:dashed}.soon .card-h{color:var(--t3)}
 
-    @media(max-width:560px){
-      .mini-row{grid-template-columns:repeat(2,1fr)}
-      .hello{font-size:19px}
-    }
+    @media(max-width:560px){ .mini-row{grid-template-columns:repeat(2,1fr)} .hello{font-size:19px} }
   </style>
 </head>
 <body>
 
-  <!-- ── Login ── -->
   <div class="login" id="login">
     <div class="login-box">
       <div class="login-logo">Velox Command Centre</div>
@@ -126,7 +141,6 @@
     </div>
   </div>
 
-  <!-- ── Dashboard ── -->
   <div class="dash" id="dash">
     <div class="top">
       <div>
@@ -135,10 +149,13 @@
       </div>
       <div class="top-actions">
         <button class="chip" id="refresh" title="Refresh">↻</button>
-        <a class="chip" href="/admin">Full admin →</a>
+        <a class="chip" href="/admin">Admin →</a>
         <button class="chip" id="logout">Sign out</button>
       </div>
     </div>
+
+    <!-- Alerts strip -->
+    <div class="alerts" id="alerts"></div>
 
     <!-- Money -->
     <div class="card">
@@ -150,8 +167,20 @@
     <div class="mini-row" id="mini"></div>
     <div style="height:14px"></div>
 
-    <!-- Top products + customers -->
-    <div class="card" id="skus-card">
+    <!-- Needs you -->
+    <div class="card" id="needs-you">
+      <div class="card-h">Needs you</div>
+      <div id="needs"><div class="muted">Loading…</div></div>
+    </div>
+
+    <!-- Recurring -->
+    <div class="card" id="recurring-card" style="display:none">
+      <div class="card-h">Recurring revenue</div>
+      <div id="recurring"></div>
+    </div>
+
+    <!-- Top products -->
+    <div class="card">
       <div class="card-h">Top products · 7 days</div>
       <div id="skus"><div class="muted">Loading…</div></div>
     </div>
@@ -170,10 +199,21 @@
       <div id="tasks"></div>
     </div>
 
-    <!-- Personal layer (Phase 2 placeholder) -->
+    <!-- Phone alerts -->
+    <div class="card">
+      <div class="card-h">Phone alerts</div>
+      <div class="muted" style="margin-bottom:12px">Get a push when a new order lands, a draft needs approval, or the site has a problem.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="b-ghost" id="push-enable" type="button">Enable on this device</button>
+        <button class="b-ghost" id="push-test" type="button" style="display:none">Send test</button>
+      </div>
+      <div class="muted" id="push-status" style="margin-top:10px;min-height:16px"></div>
+    </div>
+
+    <!-- Personal layer (deferred) -->
     <div class="card soon">
-      <div class="card-h">Your day · coming next</div>
-      <div class="muted">Calendar &amp; email land here once we connect your Google account — today's agenda and the messages that need a reply, right alongside the business.</div>
+      <div class="card-h">Your day · coming later</div>
+      <div class="muted">Calendar &amp; email will land here once we connect a Google account.</div>
     </div>
 
     <!-- Quick links -->
@@ -195,6 +235,7 @@
 <script>
 (function(){
   'use strict';
+  var VAPID_PUBLIC='BB2LHMCFOvkgS5qsI8tsrOcHD_4aI8rc5l-GBVduJ5o-SjsI61Ck2iUqtLrVmdRzU1gC9TubyBlEsmedPyL1VFA';
   var loginEl=document.getElementById('login'), dashEl=document.getElementById('dash');
   var pwEl=document.getElementById('pw'), btnEl=document.getElementById('signin'), errEl=document.getElementById('err');
 
@@ -202,6 +243,7 @@
   function gbp0(n){ n=Number(n)||0; return '£'+Math.round(n).toLocaleString('en-GB'); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function rel(iso){ if(!iso)return''; var d=(Date.now()-new Date(iso).getTime())/1000; if(d<60)return'just now'; if(d<3600)return Math.floor(d/60)+'m ago'; if(d<86400)return Math.floor(d/3600)+'h ago'; return Math.floor(d/86400)+'d ago'; }
+  function urlB64ToUint8(b){ var p='='.repeat((4-b.length%4)%4); var s=(b+p).replace(/-/g,'+').replace(/_/g,'/'); var raw=atob(s); var arr=new Uint8Array(raw.length); for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i); return arr; }
 
   async function token(){ var s=await window._sb.auth.getSession(); return s&&s.data&&s.data.session&&s.data.session.access_token; }
   async function authFetch(url,opts){ opts=opts||{}; opts.headers=Object.assign({'Authorization':'Bearer '+(await token())},opts.headers||{}); return fetch(url,opts); }
@@ -226,21 +268,33 @@
   document.getElementById('logout').addEventListener('click',function(){ window._sb.auth.signOut().then(showLogin); });
   document.getElementById('refresh').addEventListener('click',function(){ loadHome(); loadTasks(); });
 
-  var inited=false;
+  var inited=false, pollTimer=null;
   function init(){
     var h=new Date().getHours(), g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
     document.getElementById('hello').textContent=g+', Declan';
     document.getElementById('date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
     if(inited)return; inited=true;
-    setupTasks(); loadHome(); loadTasks();
+    setupTasks(); wirePush(); loadHome(); loadTasks();
+    // auto-refresh: poll every 60s, and whenever the app regains focus
+    pollTimer=setInterval(loadHome,60000);
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden) loadHome(); });
   }
 
-  // ── Home (business pulse) ──
   function arrow(pct){ if(pct==null)return''; if(pct>0)return'<span class="up">▲ '+pct+'%</span>'; if(pct<0)return'<span class="down">▼ '+Math.abs(pct)+'%</span>'; return'<span class="flat">— 0%</span>'; }
+
   async function loadHome(){
     try{
       var r=await authFetch('/api/command/home'); var d=await r.json();
       if(!r.ok){ document.getElementById('money').innerHTML='<div class="err">'+esc(d.error||'Could not load')+'</div>'; return; }
+
+      // Alerts strip
+      var al=document.getElementById('alerts');
+      al.innerHTML=(d.alerts||[]).map(function(a){
+        var inner='<span class="ad"></span>'+esc(a.text);
+        return a.href ? '<a class="alert '+a.level+'" href="'+esc(a.href)+'">'+inner+'</a>' : '<div class="alert '+a.level+'">'+inner+'</div>';
+      }).join('');
+
+      // Money
       var m=d.money||{};
       document.getElementById('money').innerHTML=
         '<div class="money-grid">'+
@@ -251,13 +305,27 @@
         '</div>'+
         (d.latest?'<div class="row" style="margin-top:14px;border-top:1px solid var(--brd)"><span class="meta">Latest sale · '+esc(d.latest.email)+' · '+rel(d.latest.at)+'</span><span class="val">'+gbp(d.latest.total)+'</span></div>':'');
 
+      // Mini stats
       var site=d.site||{};
       document.getElementById('mini').innerHTML=
         '<div class="mini"><div class="v">'+(d.liveNow!=null?d.liveNow:'–')+'</div><div class="k">Live now</div></div>'+
         '<div class="mini"><div class="v">'+(d.visitorsToday!=null?d.visitorsToday:'–')+'</div><div class="k">Visitors today</div></div>'+
-        '<a class="mini" href="/admin"><div class="v" style="color:'+((d.approvalsPending||0)>0?'var(--amber)':'inherit')+'">'+(d.approvalsPending!=null?d.approvalsPending:'–')+'</div><div class="k">Approvals</div></a>'+
+        '<a class="mini" href="#needs-you"><div class="v" style="color:'+((d.approvalsPending||0)>0?'var(--amber)':'inherit')+'">'+(d.approvalsPending!=null?d.approvalsPending:'–')+'</div><div class="k">Approvals</div></a>'+
         '<div class="mini"><div class="v"><span class="dot '+(site.ok?'ok':'bad')+'"></span>'+(site.ok?'Up':'Down')+'</div><div class="k">Site</div></div>';
 
+      renderNeeds(d);
+
+      // Recurring
+      if(d.recurring && d.recurring.active>0){
+        document.getElementById('recurring-card').style.display='';
+        document.getElementById('recurring').innerHTML=
+          '<div class="money-grid">'+
+            '<div class="stat"><div class="lbl">Monthly recurring</div><div class="big">'+gbp0(d.recurring.mrr)+'</div><div class="sub">predictable / month</div></div>'+
+            '<div class="stat"><div class="lbl">Active subs</div><div class="big">'+d.recurring.active+'</div><div class="sub">paying subscribers</div></div>'+
+          '</div>';
+      } else { document.getElementById('recurring-card').style.display='none'; }
+
+      // Top products
       var skus=d.topSkus||[];
       document.getElementById('skus').innerHTML = skus.length
         ? skus.map(function(s){ return '<div class="row"><span class="name">'+esc(s.name)+'</span><span class="meta">'+s.qty+' sold'+(s.revenue>0?'</span><span class="val">'+gbp(s.revenue):'')+'</span></div>'; }).join('')
@@ -265,6 +333,50 @@
 
       document.getElementById('updated').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
     }catch(e){ document.getElementById('money').innerHTML='<div class="err">Network error.</div>'; }
+  }
+
+  // ── Needs you (approvals + fulfil + stock) ──
+  function renderNeeds(d){
+    var el=document.getElementById('needs'); var html='';
+    var ap=d.approvals||[];
+    if(ap.length){
+      html+='<div class="sub-h">Approvals waiting ('+ap.length+')</div>';
+      html+=ap.map(function(a){
+        return '<div class="appr" data-id="'+esc(a.id)+'">'+
+          '<div class="appr-tag">'+esc(a.type||'action')+' · '+rel(a.created_at)+'</div>'+
+          '<div class="appr-t">'+esc(a.title||'(untitled)')+'</div>'+
+          (a.summary?'<div class="appr-s">'+esc(a.summary)+'</div>':'')+
+          '<div class="appr-btns"><button class="b-approve" data-act="approve">Approve</button><button class="b-dismiss" data-act="dismiss">Dismiss</button></div>'+
+        '</div>';
+      }).join('');
+    }
+    if(d.toFulfil && d.toFulfil.count>0){
+      html+='<div class="sub-h">To dispatch ('+d.toFulfil.count+')</div>';
+      html+=(d.toFulfil.orders||[]).map(function(o){
+        return '<div class="row"><span class="name">'+esc(o.customer_name||'Order')+'</span><span class="meta">'+rel(o.created_at)+'</span></div>';
+      }).join('')+'<a class="qlink" href="/admin" style="display:block;margin-top:8px">Dispatch in admin →</a>';
+    }
+    if((d.outOfStock||[]).length){
+      html+='<div class="sub-h">Out of stock ('+d.outOfStock.length+')</div>';
+      html+='<div>'+d.outOfStock.map(function(s){return '<span class="pill">'+esc(s)+'</span>';}).join('')+'</div>';
+    }
+    if(!html) html='<div class="muted">All clear — nothing needs you right now. ✓</div>';
+    el.innerHTML=html;
+    el.querySelectorAll('.appr').forEach(function(card){
+      var id=card.dataset.id;
+      card.querySelector('[data-act="approve"]').addEventListener('click',function(){ decide(card,id,'approve'); });
+      card.querySelector('[data-act="dismiss"]').addEventListener('click',function(){ decide(card,id,'dismiss'); });
+    });
+  }
+  async function decide(card,id,decision){
+    var btns=card.querySelectorAll('button'); btns.forEach(function(b){b.disabled=true;});
+    card.querySelector('[data-act="'+decision+'"]').textContent=decision==='approve'?'Approving…':'Dismissing…';
+    try{
+      var r=await authFetch('/api/admin/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,decision:decision})});
+      var d=await r.json().catch(function(){return {};});
+      if(r.ok){ card.style.opacity='.4'; card.querySelector('.appr-btns').innerHTML='<span class="muted">'+(d.status||decision)+'</span>'; setTimeout(loadHome,900); }
+      else { card.querySelector('.appr-btns').innerHTML='<span class="err">'+esc(d.error||('HTTP '+r.status))+'</span>'; }
+    }catch(e){ card.querySelector('.appr-btns').innerHTML='<span class="err">Network error</span>'; }
   }
 
   // ── Tasks ──
@@ -276,11 +388,7 @@
     document.getElementById('task-add-btn').addEventListener('click',addTask);
     document.getElementById('task-input').addEventListener('keydown',function(e){ if(e.key==='Enter')addTask(); });
   }
-  async function loadTasks(){
-    try{
-      var r=await authFetch('/api/command/tasks'); var d=await r.json(); renderTasks(d.tasks||[]);
-    }catch(e){}
-  }
+  async function loadTasks(){ try{ var r=await authFetch('/api/command/tasks'); var d=await r.json(); renderTasks(d.tasks||[]); }catch(e){} }
   function renderTasks(tasks){
     var open=tasks.filter(function(t){return !t.done;}).length;
     document.getElementById('task-count').textContent=open?('· '+open+' open'):'· all clear';
@@ -301,18 +409,53 @@
     });
   }
   async function addTask(){
-    var inp=document.getElementById('task-input'); var title=inp.value.trim(); if(!title)return;
-    inp.value='';
+    var inp=document.getElementById('task-input'); var title=inp.value.trim(); if(!title)return; inp.value='';
     await authFetch('/api/command/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:title,kind:taskKind})});
     loadTasks();
   }
-  async function toggleTask(id,done){
-    await authFetch('/api/command/tasks',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,done:done})});
-    loadTasks();
+  async function toggleTask(id,done){ await authFetch('/api/command/tasks',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,done:done})}); loadTasks(); }
+  async function delTask(id){ await authFetch('/api/command/tasks',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})}); loadTasks(); }
+
+  // ── Phone push ──
+  function pushStatus(t,c){ var el=document.getElementById('push-status'); if(el){ el.textContent=t; el.style.color=c||'var(--t3)'; } }
+  async function wirePush(){
+    var enableBtn=document.getElementById('push-enable'), testBtn=document.getElementById('push-test');
+    enableBtn.addEventListener('click',enablePush); testBtn.addEventListener('click',testPush);
+    if(!('serviceWorker' in navigator)||!('PushManager' in window)){
+      pushStatus('On iPhone: add to Home Screen first (iOS 16.4+), then open it from the icon and try again.');
+      enableBtn.disabled=true; return;
+    }
+    try{
+      await navigator.serviceWorker.register('/command/sw.js',{scope:'/command/'});
+      var reg=await navigator.serviceWorker.ready;
+      var sub=await reg.pushManager.getSubscription();
+      if(sub && Notification.permission==='granted'){ pushStatus('✓ Alerts on for this device.','#01D3A0'); enableBtn.textContent='Re-enable'; testBtn.style.display=''; }
+    }catch(e){}
   }
-  async function delTask(id){
-    await authFetch('/api/command/tasks',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})});
-    loadTasks();
+  async function enablePush(){
+    var btn=document.getElementById('push-enable');
+    if(!('serviceWorker' in navigator)||!('PushManager' in window)){ pushStatus('Push not supported on this device.'); return; }
+    btn.disabled=true; btn.textContent='Enabling…';
+    try{
+      var perm=await Notification.requestPermission();
+      if(perm!=='granted'){ pushStatus('Permission denied — enable notifications in settings.','#f87171'); btn.disabled=false; btn.textContent='Enable on this device'; return; }
+      var reg=await navigator.serviceWorker.register('/command/sw.js',{scope:'/command/'});
+      await navigator.serviceWorker.ready;
+      var sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64ToUint8(VAPID_PUBLIC)});
+      var r=await authFetch('/api/admin/push-subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:sub.toJSON(),label:'Command · '+navigator.userAgent.slice(0,50)})});
+      if(!r.ok){ var d=await r.json().catch(function(){return {};}); pushStatus('Could not save: '+esc((d&&d.error)||('HTTP '+r.status)),'#f87171'); btn.disabled=false; btn.textContent='Enable on this device'; return; }
+      pushStatus('✓ Alerts on for this device.','#01D3A0'); btn.disabled=false; btn.textContent='Re-enable';
+      document.getElementById('push-test').style.display='';
+    }catch(e){ pushStatus('Failed: '+esc(e.message),'#f87171'); btn.disabled=false; btn.textContent='Enable on this device'; }
+  }
+  async function testPush(){
+    pushStatus('Sending test…');
+    try{
+      var r=await authFetch('/api/admin/push-test',{method:'POST'});
+      var d=await r.json().catch(function(){return {};});
+      if(r.ok) pushStatus('Test sent to '+(d.sent||0)+' device(s).','#01D3A0');
+      else pushStatus('Test failed: '+esc((d&&d.error)||('HTTP '+r.status)),'#f87171');
+    }catch(e){ pushStatus('Test failed: '+esc(e.message),'#f87171'); }
   }
 })();
 </script>
