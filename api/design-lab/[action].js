@@ -124,14 +124,18 @@ module.exports = async function handler(req, res) {
       return res.status(403).json({ error: 'limit_reached', message: `You've used all ${q.limit} of your ${q.tierLabel} designs ${q.window === 'month' ? 'this month' : ''}. Upgrade your Velox Pro tier for more.`, quota: q });
     }
 
+    // Brief stage: best-effort. We NEVER reject the user over wording — if the model's
+    // brief can't be parsed (or the model is briefly down), we synthesise a minimal brief
+    // straight from their own words and proceed to generation anyway.
     let brief, candidates = [];
     try {
-      const briefRaw = await claude(dl.briefPrompt(target), 700);
+      const briefRaw = await claude(dl.briefPrompt(target), 1400);
       brief = dl.extractJSON(briefRaw) || (dl.salvageObjects(briefRaw) || [])[0];
-      if (!brief) throw new Error('Could not interpret that target — try rephrasing it.');
     } catch (e) {
-      console.error('[design-lab] brief stage failed:', e && e.message);
-      return res.status(502).json({ error: 'Couldn\'t read that target — please rephrase and try again.' });
+      console.error('[design-lab] brief stage error (falling back to raw target):', e && e.message);
+    }
+    if (!brief || typeof brief !== 'object' || Array.isArray(brief)) {
+      brief = { target_mechanism: target, desired_properties: [], reference_compounds: [], optimal_length: { min: 6, max: 20 }, key_residues: [], design_rationale: '', scaffold_classes: [] };
     }
 
     // Generate, with one full re-roll if the first attempt yields no usable candidates.
