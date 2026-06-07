@@ -95,6 +95,19 @@ ${noindex ? '<meta name="robots" content="noindex,follow">' : '<link rel="canoni
  .br a{display:inline-block;font-weight:700;font-size:13px;text-decoration:none;padding:9px 15px;border-radius:9px;background:rgba(1,211,160,.1);color:#01D3A0;border:1px solid rgba(1,211,160,.28);margin:6px 8px 0 0}
  .dis{font-size:12px;color:#5a6675;line-height:1.6;margin-top:30px;border-top:1px solid #1a2230;padding-top:18px}
  a.home{color:#8aa0a0;font-size:13px;text-decoration:none}
+ .specbtn{display:inline-block;margin:0 0 22px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.5px;color:#01D3A0;background:rgba(1,211,160,.08);border:1px solid rgba(1,211,160,.28);border-radius:8px;padding:9px 14px;cursor:pointer}
+ @media print{
+   body{background:#fff;color:#111}
+   .w{max-width:100%;padding:0}
+   .ey{color:#0a8f6e}
+   h1,.cn,.cand-h .sc{color:#111}
+   .tgt,.cand{background:#fff;border:1px solid #ccc;color:#222}
+   .seq{background:#f4f4f4;border:1px solid #ddd;color:#111}
+   .bd{background:#eef;border:1px solid #bcd;color:#114}
+   .cta,.br,.specbtn,a.home{display:none!important}
+   .dis{color:#444;border-top:1px solid #ccc}
+   p,div{color:#222}
+ }
 </style></head><body><div class="w">${body}</div></body></html>`;
 }
 
@@ -143,6 +156,7 @@ module.exports = async function handler(req, res) {
 
   const body = `<p class="ey">Velox Design Lab · Shared design</p>`
     + `<h1>${esc(runName)}</h1>`
+    + `<button class="specbtn" onclick="window.print()">⤓ Download spec sheet (PDF)</button>`
     + `<div class="tgt"><strong style="color:#fff">Research target:</strong> ${esc(mech)}</div>`
     + candHTML
     + `<a class="cta" href="/design-lab/">Design your own novel peptide free →</a>`

@@ -86,7 +86,9 @@
     { "source": "/assets/(.*)\\.(css|js)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=60, must-revalidate" }] }
   ],
   "rewrites": [
-    { "source": "/design-lab/r/:token", "destination": "/api/design-lab-share?t=:token" }
+    { "source": "/design-lab/r/:token", "destination": "/api/design-lab-share?t=:token" },
+    { "source": "/design-lab/leaderboard", "destination": "/api/design-lab-leaderboard" },
+    { "source": "/design-lab/leaderboard/", "destination": "/api/design-lab-leaderboard" }
   ],
   "redirects": [
     {
