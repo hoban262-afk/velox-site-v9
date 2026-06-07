@@ -77,7 +77,7 @@
 
 <div class="wrap">
   <h1>Design a <span>novel peptide</span></h1>
-  <p class="lede">Describe your research target in plain English. The AI returns six novel sequences — scored, novelty-checked and ready to synthesise. For in vitro research only.</p>
+  <p class="lede">Tell it what you're trying to study in plain English. In under a minute the AI invents six brand-new peptides, grades each one, and checks they don't already exist. Pick the best and order it. For in vitro research only.</p>
 
   <div id="quotaBadge"></div>
   <div id="app"><div class="spin">Loading…</div></div>
@@ -167,26 +167,26 @@
   function barHTML(label,val,col){ return '<div class="bar"><span class="bar-l">'+label+'</span><div class="bar-t"><div class="bar-f" style="width:'+val+'%;background:'+col+'"></div></div><span class="bar-v" style="color:'+col+'">'+val+'</span></div>'; }
   function renderResults(d){
     var b=d.brief||{};
-    var html='<div class="brief"><div class="lbl">INTERPRETED BRIEF</div><p>'+esc(b.target_mechanism||'')+'</p>'+
+    var html='<div class="brief"><div class="lbl">WHAT THE AI UNDERSTOOD</div><p>'+esc(b.target_mechanism||'')+'</p>'+
       (b.desired_properties||[]).map(function(p){return '<span class="tag g">'+esc(p)+'</span>';}).join('')+
       (b.reference_compounds&&b.reference_compounds.length?'<div style="margin-top:6px"><span style="font-size:11px;color:var(--mut)">References: </span>'+(b.reference_compounds||[]).map(function(r){return '<span class="tag">'+esc(r)+'</span>';}).join('')+'</div>':'')+
       '</div>';
     (d.candidates||[]).forEach(function(c){
       var sc=c.scores||{}, nv=c.novelty||{};
       var novCls = nv.badge==='novel'?'novel':nv.badge==='known'?'known':'partial';
-      var novTxt = nv.badge==='novel'?'✦ Likely novel':nv.badge==='known'?'⚠ Known sequence':'~ '+esc(nv.label||'Partially similar');
+      var novTxt = nv.badge==='novel'?'✦ Likely brand-new':nv.badge==='known'?'⚠ Already exists':'~ '+esc(nv.label||'Partially similar');
       html+='<div class="cand">'+
-        '<div class="cand-top"><div><div class="cand-id">'+esc(c.id||'')+' · '+esc(sc.len||c.sequence.length)+' residues</div><div class="cand-name">'+esc(c.name||'Candidate')+'</div></div>'+
-          '<div style="text-align:right"><div class="cand-comp" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">COMPOSITE</div></div></div>'+
+        '<div class="cand-top"><div><div class="cand-id">'+esc(c.id||'')+' · '+esc(sc.len||c.sequence.length)+' building blocks</div><div class="cand-name">'+esc(c.name||'Candidate')+'</div></div>'+
+          '<div style="text-align:right"><div class="cand-comp" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">OVERALL</div></div></div>'+
         '<div style="margin:6px 0"><span class="nov '+novCls+'">'+novTxt+'</span> <span class="tag">'+esc(c.scaffold_class||'')+'</span></div>'+
         '<div class="seq">'+seqHTML(c.sequence)+'</div>'+
         '<div class="bars">'+
-          barHTML('Synthesisability',sc.sy||0,'#01D3A0')+
-          barHTML('Solubility est.',sc.so||0,'#7b8cff')+
-          barHTML('Length opt.',sc.ls||0,'#f0b03b')+
-          barHTML('AA diversity',sc.dv||0,'#8aa0a0')+
+          barHTML('Easy to make',sc.sy||0,'#01D3A0')+
+          barHTML('Should dissolve well',sc.so||0,'#7b8cff')+
+          barHTML('Good length',sc.ls||0,'#f0b03b')+
+          barHTML('Variety of parts',sc.dv||0,'#8aa0a0')+
         '</div>'+
-        '<div class="meta">Net charge '+(sc.netCharge>0?'+':'')+esc(sc.netCharge)+' · GRAVY '+esc(sc.gravyScore)+' · Protease: '+esc(sc.protRisk)+' · est. £'+esc(sc.cost)+' synthesis</div>'+
+        '<div class="meta" title="Net charge: overall electrical charge. Water balance (GRAVY): how water-loving vs water-avoiding it is. Breakdown risk: how easily the body\'s enzymes would chop it up.">Net charge '+(sc.netCharge>0?'+':'')+esc(sc.netCharge)+' · Water balance '+esc(sc.gravyScore)+' · Breakdown risk: '+esc(sc.protRisk)+' · est. £'+esc(sc.cost)+' to make</div>'+
         (c.research_hypothesis?'<div class="hyp">'+esc(c.research_hypothesis)+'</div>':'')+
       '</div>';
     });
