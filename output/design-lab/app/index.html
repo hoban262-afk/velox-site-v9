@@ -61,6 +61,31 @@
     .bar-v{ font-family:'DM Mono',monospace; font-size:10px; width:26px; text-align:right; }
     .hyp{ margin-top:10px; padding:9px 11px; background:rgba(123,140,255,.08); border:1px solid rgba(123,140,255,.2); border-radius:6px; font-size:12px; color:var(--vio); line-height:1.5; }
     .meta{ font-family:'DM Mono',monospace; font-size:10px; color:var(--dim); margin-top:8px; }
+
+    /* ── Expandable card ── */
+    .seq-cap{ font-size:11px; color:var(--mut); margin:10px 0 4px; }
+    .summary{ font-size:14px; color:#dfe6e4; line-height:1.55; margin:10px 0 2px; }
+    .cand-toggle{ width:100%; margin-top:12px; background:#101822; border:1px solid #283341; color:#cdd6d4; font-family:Inter,sans-serif; font-size:13px; font-weight:600; padding:11px; border-radius:9px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:.15s; }
+    .cand-toggle:hover{ border-color:var(--g); color:var(--g); }
+    .cand-toggle .chev{ transition:transform .35s; font-size:11px; }
+    .cand.open .cand-toggle .chev{ transform:rotate(180deg); }
+    .cand-more{ overflow:hidden; max-height:0; opacity:0; transition:max-height .5s ease, opacity .4s ease, margin-top .3s ease; }
+    .cand.open .cand-more{ max-height:2200px; opacity:1; margin-top:14px; }
+    .blk{ border-radius:10px; padding:13px 14px; margin-top:10px; font-size:13.5px; line-height:1.6; color:#cdd6d4; border:1px solid var(--brd); background:var(--bg3); }
+    .blk h4{ margin:0 0 7px; font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:7px; }
+    .blk.match{ background:rgba(1,211,160,.06); border-color:rgba(1,211,160,.22); }
+    .blk.match h4{ color:var(--g); }
+    .blk.help{ background:rgba(1,211,160,.04); border-color:rgba(1,211,160,.18); }
+    .blk.help h4{ color:var(--g2); }
+    .blk.risk{ background:rgba(240,176,59,.05); border-color:rgba(240,176,59,.22); }
+    .blk.risk h4{ color:var(--amber); }
+    .blk.brain h4{ color:#9fb0c9; }
+    .blk ul{ margin:0; padding:0; list-style:none; display:grid; gap:8px; }
+    .blk li{ position:relative; padding-left:20px; }
+    .blk.help li::before{ content:"✓"; position:absolute; left:0; color:var(--g); font-weight:700; }
+    .blk.risk li::before{ content:"!"; position:absolute; left:2px; color:var(--amber); font-weight:700; }
+    .bars-cap{ font-size:11px; color:var(--mut); margin:14px 0 6px; }
+
     .upsell{ margin-top:18px; text-align:center; background:var(--bg3); border:1px solid rgba(1,211,160,.25); border-radius:12px; padding:22px; }
     .upsell a{ color:var(--g); font-weight:700; text-decoration:none; }
     .foot{ border-top:1px solid #11181f; padding:20px; text-align:center; color:var(--dim); font-size:11px; line-height:1.6; }
@@ -152,7 +177,7 @@
 
 <div class="wrap">
   <h1>Design a <span>novel peptide</span></h1>
-  <p class="lede">Tell it what you're trying to study in plain English. In under a minute the AI invents six brand-new peptides, grades each one, and checks they don't already exist. Pick the best and order it. For in vitro research only.</p>
+  <p class="lede">Tell it what you want to study using normal, everyday words. In under a minute the AI invents three brand-new peptides (tiny chains made of building blocks), explains each one in plain language, grades them, and checks they don't already exist. Tap any result to see the full story. For in vitro (lab-dish) research only.</p>
 
   <div id="quotaBadge"></div>
   <div id="app"><div class="spin">Loading…</div></div>
@@ -212,14 +237,14 @@
           '<button data-ex="A neuroprotective peptide, Semax-like, with improved protease stability, for in vitro neuronal studies.">Neuroprotective, Semax-like</button>'+
           '<button data-ex="A gut anti-inflammatory peptide with oral-route stability, for in vitro epithelial research.">Gut anti-inflammatory</button>'+
         '</div>'+
-        '<button class="run" id="runBtn">✨ Design 6 new peptides →</button>'+
+        '<button class="run" id="runBtn">✨ Design 3 new peptides →</button>'+
         '<div class="msg" id="msg"></div>'+
       '</div>';
     $('#runBtn').addEventListener('click', run);
     document.querySelectorAll('.ex button').forEach(function(b){ b.addEventListener('click', function(){ $('#target').value=b.getAttribute('data-ex'); }); });
   }
   function runProgress(){
-    var steps=[['🎯','Reading your brief'],['🧬','Inventing six new peptides'],['📊','Grading & novelty-checking']];
+    var steps=[['🎯','Reading what you wrote'],['🧬','Inventing three new peptides'],['📊','Grading & checking they\'re new']];
     var rows=steps.map(function(s,i){ return '<div class="prog-row" data-i="'+i+'"><div class="prog-ic">'+s[0]+'</div><div class="prog-tx">'+s[1]+'</div></div>'; }).join('');
     $('#results').innerHTML='<div class="prog"><div class="prog-rows">'+rows+'</div><div class="prog-bar"><i></i></div></div>';
     var bar=$('#results .prog-bar i');
@@ -252,7 +277,7 @@
       else if(!r.ok){ prog.abort(); $('#msg').textContent=d.error||'Something went wrong — try again.'; }
       else { prog.finish(function(){ renderResults(d); fireConfetti(); if(d.quota) showQuota(d.quota); }); }
     }catch(e){ prog.abort(); $('#msg').textContent='Network error — please try again.'; }
-    btn.disabled=false; btn.textContent='✨ Design 6 new peptides →';
+    btn.disabled=false; btn.textContent='✨ Design 3 new peptides →';
   }
   function renderUpsell(msg){
     $('#results').innerHTML='<div class="upsell"><p style="margin:0 0 10px;color:#cdd3d9">'+esc(msg||'You\'ve hit your design limit.')+'</p><a href="/pro/">Upgrade your Velox Pro tier →</a></div>';
@@ -289,7 +314,12 @@
       if(comp){ var to=comp.getAttribute('data-to'); comp.textContent='0'; setTimeout(function(){ countUp(comp,to); }, 90*i+260); }
       card.querySelectorAll('.seq span').forEach(function(s,j){ s.style.animationDelay=(0.09*i+0.28+j*0.028)+'s'; });
     });
-    setTimeout(function(){ document.querySelectorAll('#results .bar-f').forEach(function(b){ b.classList.add('fill'); }); }, 420);
+  }
+  function toggleCard(card){
+    var open=card.classList.toggle('open');
+    var lbl=card.querySelector('.cand-toggle .lbl');
+    if(lbl) lbl.textContent=open?'Hide the details':'Tap to see the full story';
+    if(open && !card.dataset.filled){ card.dataset.filled='1'; card.querySelectorAll('.bar-f').forEach(function(b){ b.classList.add('fill'); }); }
   }
   function renderResults(d){
     var b=d.brief||{};
@@ -299,7 +329,8 @@
 
     var html='<div class="res-hd"><div class="spark">✦ DESIGN COMPLETE ✦</div>'+
       '<div class="big"><b>'+cands.length+'</b> brand-new peptides, just for you</div>'+
-      '<div class="sub">'+(novelCount?novelCount+' look likely to be completely new · ':'')+'scroll to explore each one</div></div>';
+      '<div class="sub">'+(novelCount?novelCount+' look likely to be completely new · ':'')+'tap any card to open its full story</div>'+
+      '<div class="sub" style="margin-top:6px;font-size:12px">A peptide is a tiny chain. Each capital letter below is one <b style="color:#cdd6d4">building block</b> (scientists call them amino acids).</div></div>';
 
     html+='<div class="brief" style="animation:popIn .5s .05s both"><div class="lbl">WHAT THE AI UNDERSTOOD</div><p>'+esc(b.target_mechanism||'')+'</p>'+
       (b.desired_properties||[]).map(function(p){return '<span class="tag g">'+esc(p)+'</span>';}).join('')+
@@ -311,35 +342,54 @@
       var novCls = nv.badge==='novel'?'novel':nv.badge==='known'?'known':'partial';
       var novTxt = nv.badge==='novel'?'✦ Likely brand-new':nv.badge==='known'?'⚠ Already exists':'~ '+esc(nv.label||'Partially similar');
       var isTop = top && c.id===top.id && cands.length>1;
+      var style = c.style || c.scaffold_class || '';
+      var summary = c.plain_summary || c.rationale || '';
+      var helpList = c.how_it_helps || c.strengths || [];
+      var riskList = c.why_might_not || c.watch_outs || [];
+
+      // ── Collapsed (always visible) ──
       html+='<div class="cand'+(isTop?' top':'')+'">'+
-        (isTop?'<div class="crown">👑 TOP PICK · highest overall score</div>':'')+
+        (isTop?'<div class="crown">👑 BEST MATCH · highest overall score</div>':'')+
         '<div class="cand-top"><div><div class="cand-id">'+esc(c.id||'')+' · '+esc(sc.len||c.sequence.length)+' building blocks</div><div class="cand-name">'+esc(c.name||'Candidate')+'</div></div>'+
-          '<div style="text-align:right"><div class="cand-comp" data-to="'+(sc.comp||0)+'" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">OVERALL</div></div></div>'+
-        '<div style="margin:6px 0"><span class="nov '+novCls+'">'+novTxt+'</span> <span class="tag">'+esc(c.scaffold_class||'')+'</span></div>'+
+          '<div style="text-align:right"><div class="cand-comp" data-to="'+(sc.comp||0)+'" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">SCORE /100</div></div></div>'+
+        '<div style="margin:6px 0"><span class="nov '+novCls+'">'+novTxt+'</span>'+(style?' <span class="tag">'+esc(style)+'</span>':'')+'</div>'+
+        '<div class="seq-cap">The recipe — each letter is one building block:</div>'+
         '<div class="seq">'+seqHTML(c.sequence)+'</div>'+
-        '<div class="bars">'+
-          barHTML('Easy to make',sc.sy||0,'#01D3A0')+
-          barHTML('Should dissolve well',sc.so||0,'#7b8cff')+
-          barHTML('Good length',sc.ls||0,'#f0b03b')+
-          barHTML('Variety of parts',sc.dv||0,'#8aa0a0')+
+        (summary?'<div class="summary">'+esc(summary)+'</div>':'')+
+
+        // ── Expandable detail ──
+        '<div class="cand-more">'+
+          (c.relates_to_request?'<div class="blk match"><h4>🔎 Why this matches what you asked for</h4>'+esc(c.relates_to_request)+'</div>':'')+
+          (helpList.length?'<div class="blk help"><h4>✓ How it could do what you want</h4><ul>'+listHTML(helpList)+'</ul></div>':'')+
+          (riskList.length?'<div class="blk risk"><h4>⚠ Why it might NOT work</h4><ul>'+listHTML(riskList)+'</ul></div>':'')+
+          '<div class="bars-cap">How it scored (each bar is out of 100 — higher is better):</div>'+
+          '<div class="bars">'+
+            barHTML('Easy to make',sc.sy||0,'#01D3A0')+
+            barHTML('Dissolves in water',sc.so||0,'#7b8cff')+
+            barHTML('Good length',sc.ls||0,'#f0b03b')+
+            barHTML('Mix of blocks',sc.dv||0,'#8aa0a0')+
+          '</div>'+
+          '<div class="meta" title="'+esc('Charge: how strongly positive or negative it is. In water: whether it dissolves easily or prefers fatty places like cell walls. Sturdiness: how well it resists the body’s tiny scissors (enzymes: '+(sc.protRisk||'')+').')+'">'+
+            'Charge: '+(sc.netCharge>0?'+'+esc(sc.netCharge)+' (positive pull)':sc.netCharge<0?esc(sc.netCharge)+' (negative pull)':'neutral (no pull)')+
+            ' · In water: '+(sc.gravyScore>0.3?'prefers oily places (won\'t mix into water)':sc.gravyScore<-0.3?'dissolves easily (mixes into water)':'fairly balanced')+
+            ' · Sturdiness: '+(sc.protRisk==='Low'?'high — hard for the body to snip apart':'lower — the body\'s tiny scissors could snip it')+
+            ' · about £'+esc(sc.cost)+' to build</div>'+
+          (c.design_reasoning?'<div class="blk brain"><h4>🧠 Why the AI chose these exact blocks</h4>'+esc(c.design_reasoning)+'</div>':'')+
+          (c.research_hypothesis?'<div class="hyp"><b style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.5px;opacity:.7">🔬 WHAT A LAB MIGHT SEE · </b>'+esc(c.research_hypothesis)+'</div>':'')+
         '</div>'+
-        '<div class="meta" title="'+esc('Charge: how strongly positive or negative the peptide is. In water: whether it dissolves easily or prefers fatty places like cell walls. Sturdiness: how well it resists being snipped apart by the body’s enzymes ('+(sc.protRisk||'')+').')+'">'+
-          'Charge: '+(sc.netCharge>0?'+'+esc(sc.netCharge)+' (positive)':sc.netCharge<0?esc(sc.netCharge)+' (negative)':'neutral')+
-          ' · In water: '+(sc.gravyScore>0.3?'prefers fat/cell walls (water-avoiding)':sc.gravyScore<-0.3?'dissolves easily (water-loving)':'fairly balanced')+
-          ' · Sturdiness: '+(sc.protRisk==='Low'?'high — hard to snip apart':'lower — body enzymes could snip it')+
-          ' · ~£'+esc(sc.cost)+' to make</div>'+
-        (c.design_reasoning?'<div class="why"><p class="why-h">Why the AI built it this way</p>'+esc(c.design_reasoning)+'</div>':'')+
-        (((c.strengths&&c.strengths.length)||(c.watch_outs&&c.watch_outs.length))?'<div class="prosCons">'+
-          (c.strengths&&c.strengths.length?'<div class="pc pro"><h4>Why it could work</h4><ul>'+listHTML(c.strengths)+'</ul></div>':'')+
-          (c.watch_outs&&c.watch_outs.length?'<div class="pc con"><h4>What to watch</h4><ul>'+listHTML(c.watch_outs)+'</ul></div>':'')+
-        '</div>':'')+
-        (c.research_hypothesis?'<div class="hyp"><b style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.5px;opacity:.7">TESTABLE PREDICTION · </b>'+esc(c.research_hypothesis)+'</div>':'')+
+        '<button class="cand-toggle" type="button"><span class="lbl">Tap to see the full story</span> <span class="chev">▾</span></button>'+
       '</div>';
     });
     $('#results').innerHTML=html;
     reveal();
     $('#results').scrollIntoView({behavior:'smooth',block:'start'});
   }
+
+  // Expand/collapse any result card (delegated — survives re-renders)
+  document.addEventListener('click', function(e){
+    var t=e.target.closest ? e.target.closest('.cand-toggle') : null;
+    if(t){ var card=t.closest('.cand'); if(card) toggleCard(card); }
+  });
 
   init();
 })();
