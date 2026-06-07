@@ -13,24 +13,58 @@ const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const esc = (s) => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-// Cross-sell map (mirrors the in-app bridge)
-const MAP = [
-  { re: /glp|gip|glucagon|incretin|metabol|appetite|weight|tirzep|retatru|semaglu|obesit|adipos|insulin|lipid/i,
-    title: 'Metabolic & GLP-class research', items: [['Retatrutide', '/compounds/retatrutide/'], ['Browse metabolic', '/compounds/metabolic/']] },
-  { re: /repair|heal|tendon|ligament|gut|wound|anti-?inflamm|recover|injur|tissue|collagen|angiogen/i,
-    title: 'Tissue-repair research', items: [['BPC-157', '/compounds/bpc-157/'], ['TB-500', '/compounds/tb-500/'], ['BPC-157 + TB-500', '/compounds/bpc157-tb500-mix/']] },
-  { re: /growth hormone|secretagogue|ghrh|\bigf\b|cjc|ipamor|tesamor|\bhgh\b|mots/i,
-    title: 'Growth-hormone research', items: [['CJC-1295', '/compounds/cjc-1295/'], ['Tesamorelin', '/compounds/tesamorelin/'], ['MOTS-c', '/compounds/mots-c/']] },
-  { re: /nootrop|cognit|memory|neuroprotect|\bbrain\b|bdnf|focus|anxiet|\bmood\b|synap/i,
-    title: 'Cognitive research', items: [['Semax', '/compounds/semax/'], ['Selank', '/compounds/selank/'], ['Dihexa', '/compounds/dihexa/']] },
-  { re: /melano|pigment|\btan\b|melanocortin/i,
-    title: 'Melanocortin research', items: [['Melanotan II', '/compounds/melanotan-ii/']] },
-  { re: /mitochond|antioxidant|cellular|\bnad\b|glutathione|longevit|senescen|copper|ghk|oxidativ/i,
-    title: 'Cellular & antioxidant research', items: [['NAD+', '/compounds/nad-plus/'], ['Glutathione', '/compounds/glutathione/'], ['GHK-Cu', '/compounds/ghk-cu/']] },
+// ── Closest-compound bridge (mirrors the in-app /design-lab/app logic) ────────
+const CATALOG = {
+  'retatrutide': { n: 'Retatrutide', u: '/compounds/retatrutide/', cat: 'metabolic / GLP-class', catU: '/compounds/metabolic/' },
+  'bpc-157': { n: 'BPC-157', u: '/compounds/bpc-157/', cat: 'tissue-repair', catU: '/compounds/recovery/' },
+  'tb-500': { n: 'TB-500', u: '/compounds/tb-500/', cat: 'tissue-repair', catU: '/compounds/recovery/' },
+  'bpc157-tb500-mix': { n: 'BPC-157 + TB-500', u: '/compounds/bpc157-tb500-mix/', cat: 'tissue-repair', catU: '/compounds/recovery/' },
+  'ghk-cu': { n: 'GHK-Cu', u: '/compounds/ghk-cu/', cat: 'cellular / antioxidant', catU: '/compounds/antioxidant/' },
+  'kpv': { n: 'KPV', u: '/compounds/kpv/', cat: 'anti-inflammatory', catU: '/compounds/recovery/' },
+  'cjc-1295': { n: 'CJC-1295', u: '/compounds/cjc-1295/', cat: 'growth-hormone', catU: '/compounds/growth/' },
+  'tesamorelin': { n: 'Tesamorelin', u: '/compounds/tesamorelin/', cat: 'growth-hormone', catU: '/compounds/growth/' },
+  'mots-c': { n: 'MOTS-c', u: '/compounds/mots-c/', cat: 'mitochondrial', catU: '/compounds/growth/' },
+  'semax': { n: 'Semax', u: '/compounds/semax/', cat: 'cognitive', catU: '/compounds/cognitive/' },
+  'selank': { n: 'Selank', u: '/compounds/selank/', cat: 'cognitive', catU: '/compounds/cognitive/' },
+  'dihexa': { n: 'Dihexa', u: '/compounds/dihexa/', cat: 'cognitive', catU: '/compounds/cognitive/' },
+  'dsip': { n: 'DSIP', u: '/compounds/dsip/', cat: 'cognitive / sleep', catU: '/compounds/cognitive/' },
+  'melanotan-ii': { n: 'Melanotan II', u: '/compounds/melanotan-ii/', cat: 'melanocortin', catU: '/compounds/' },
+  'nad-plus': { n: 'NAD+', u: '/compounds/nad-plus/', cat: 'cellular', catU: '/compounds/antioxidant/' },
+  'glutathione': { n: 'Glutathione', u: '/compounds/glutathione/', cat: 'antioxidant', catU: '/compounds/antioxidant/' },
+};
+const KNOWN_TO_SLUG = { 'BPC-157': 'bpc-157', 'GHK (copper tripeptide)': 'ghk-cu', 'KPV': 'kpv', 'Semax': 'semax', 'Selank': 'selank', 'MOTS-c': 'mots-c', 'CJC-1295 core': 'cjc-1295', 'TB-500 active fragment': 'tb-500', 'Thymosin Beta-4 core': 'tb-500', 'MT-II core': 'melanotan-ii', 'PT-141 core': 'melanotan-ii' };
+const ALIASES = [['retatrutide', /retatru|triple agonist|glp-?1[^.]{0,30}g(ip|lucagon)|incretin/i], ['tesamorelin', /tesamor/i], ['cjc-1295', /cjc-?1295|ghrh|mod ?grf/i], ['mots-c', /mots-?c/i], ['bpc157-tb500-mix', /bpc[^.]{0,12}tb-?500|tb-?500[^.]{0,12}bpc/i], ['bpc-157', /bpc-?157/i], ['tb-500', /tb-?500|thymosin beta/i], ['ghk-cu', /ghk|copper (tri)?peptide/i], ['kpv', /\bkpv\b/i], ['semax', /semax/i], ['selank', /selank/i], ['dihexa', /dihexa/i], ['dsip', /\bdsip\b|delta sleep/i], ['melanotan-ii', /melanotan|mt-?2\b|mt-?ii|pt-?141|bremelanotide|melanocortin/i], ['nad-plus', /\bnad\+?\b/i], ['glutathione', /glutathione/i]];
+const THEME = [
+  [/glp|gip|glucagon|incretin|metabol|appetite|weight|tirzep|obesit|adipos|insulin|lipid/i, 'retatrutide'],
+  [/repair|heal|tendon|ligament|gut|wound|anti-?inflamm|recover|injur|tissue|collagen|angiogen/i, 'bpc-157'],
+  [/growth hormone|secretagogue|ghrh|\bigf\b|\bhgh\b/i, 'cjc-1295'],
+  [/nootrop|cognit|memory|neuroprotect|\bbrain\b|bdnf|focus|anxiet|\bmood\b|synap/i, 'semax'],
+  [/mitochond|antioxidant|cellular|longevit|senescen|oxidativ/i, 'nad-plus'],
 ];
-function bridge(hay) {
-  for (const m of MAP) if (m.re.test(hay)) return m;
-  return { title: 'Our best-selling research compound', items: [['Retatrutide', '/compounds/retatrutide/'], ['Browse all compounds', '/compounds/']] };
+function pickClosest(brief, cands) {
+  let seqBest = null;
+  (cands || []).forEach((c) => {
+    const mt = c.novelty && c.novelty.match;
+    if (mt && KNOWN_TO_SLUG[mt.name] && (!seqBest || mt.pct > seqBest.pct)) {
+      seqBest = { slug: KNOWN_TO_SLUG[mt.name], pct: mt.pct, knownName: mt.name, mtype: mt.type, candName: c.name || c.id || 'the top candidate', via: 'sequence' };
+    }
+  });
+  if (seqBest) return seqBest;
+  const hay = [brief.target_mechanism || '', (brief.desired_properties || []).join(' '), (brief.reference_compounds || []).join(' ')].join(' ');
+  for (const [slug, re] of ALIASES) if (re.test(hay)) return { slug, via: 'reference' };
+  for (const [re, slug] of THEME) if (re.test(hay)) return { slug, via: 'mechanism' };
+  return { slug: 'retatrutide', via: 'fallback' };
+}
+function closestReason(p) {
+  const c = CATALOG[p.slug] || CATALOG['retatrutide'];
+  if (p.via === 'sequence') {
+    const rel = p.mtype === 'exact' ? 'an exact sequence match to' : p.mtype === 'fragment' ? 'a fragment of' : p.mtype === 'contains' ? 'built around the motif of' : (p.pct + '% sequence-similar to');
+    const tail = (p.mtype === 'fragment' || p.mtype === 'contains') ? (' (' + p.pct + '%)') : '';
+    return 'This design (<strong style="color:#fff">' + esc(p.candName) + '</strong>) is ' + rel + ' <strong style="color:#fff">' + esc(p.knownName) + '</strong>' + tail + ' — and ' + c.n + ' is the characterised, HPLC-verified compound in that family.';
+  }
+  if (p.via === 'reference') return 'This brief points straight at <strong style="color:#fff">' + c.n + '</strong> — the closest characterised compound Velox stocks for this kind of research.';
+  if (p.via === 'mechanism') return 'This is <strong style="color:#fff">' + c.cat + '</strong> research, and <strong style="color:#fff">' + c.n + '</strong> is the closest characterised compound Velox stocks for it.';
+  return '<strong style="color:#fff">' + c.n + '</strong> is Velox’s most-validated, best-selling research compound — a solid known reference point to benchmark a new design against.';
 }
 
 function page({ title, desc, canonical, body, noindex }) {
@@ -94,8 +128,8 @@ module.exports = async function handler(req, res) {
   const canonical = `https://veloxpeps.com/design-lab/r/${esc(token)}`;
   const title = `${esc(runName)} — AI-designed research peptide | Velox Design Lab`;
   const desc = `An AI-designed research peptide for: ${String(mech).slice(0, 140)}. ${cands.length} scored, novelty-checked candidate sequences. In vitro research use only.`;
-  const hay = [brief.target_mechanism || '', (brief.desired_properties || []).join(' '), (brief.reference_compounds || []).join(' '), run.target || ''].join(' ');
-  const m = bridge(hay);
+  const pick = pickClosest(Object.assign({}, brief, { target_mechanism: brief.target_mechanism || run.target }), cands);
+  const pc = CATALOG[pick.slug] || CATALOG['retatrutide'];
 
   const candHTML = cands.map((c) => {
     const sc = c.scores || {}, nv = c.novelty || {};
@@ -112,10 +146,12 @@ module.exports = async function handler(req, res) {
     + `<div class="tgt"><strong style="color:#fff">Research target:</strong> ${esc(mech)}</div>`
     + candHTML
     + `<a class="cta" href="/design-lab/">Design your own novel peptide free →</a>`
-    + `<div class="br"><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#01D3A0;margin-bottom:6px">Researching this area?</div>`
-    + `<div style="color:#fff;font-weight:600;margin-bottom:4px">${esc(m.title)} — in stock, HPLC-verified</div>`
-    + `<div style="color:#8aa0a0;font-size:13px;line-height:1.6;margin-bottom:6px">Designs are novel and made to order. If your research overlaps a known compound, Velox dispatches verified material from the UK in 24h.</div>`
-    + m.items.map((it) => `<a href="${it[1]}">${esc(it[0])} →</a>`).join('')
+    + `<div class="br"><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#01D3A0;margin-bottom:8px">Closest compound you can order today</div>`
+    + `<div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px">${esc(pc.n)}</div>`
+    + `<div style="color:#aeb9bd;font-size:14px;line-height:1.65;margin-bottom:10px">${closestReason(pick)}</div>`
+    + `<div style="color:#8aa0a0;font-size:13px;line-height:1.65;margin-bottom:14px">Designed sequences are novel hypotheses that still have to be synthesised. ${esc(pc.n)} is real material you can study now — ≥99% HPLC-verified, batch Certificate of Analysis included, dispatched from the UK in 24h.</div>`
+    + `<a href="${pc.u}" style="display:inline-block;font-weight:800;font-size:14px;text-decoration:none;padding:12px 20px;border-radius:10px;background:#01D3A0;color:#04140f;margin-right:8px">Research ${esc(pc.n)} →</a>`
+    + `<a href="${pc.catU}">Browse related compounds →</a>`
     + `</div>`
     + `<div class="dis">Velox Design Lab outputs are computational sequence predictions for <em>in vitro</em> research use only. They are hypotheses, not validated compounds, and are not a medicinal product, not medical advice, and not for human or veterinary use. See our <a href="/legal/research-use-policy/" style="color:#8aa0a0">Research Use Policy</a>.</div>`;
 
