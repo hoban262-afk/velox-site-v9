@@ -22,6 +22,8 @@ ALIASES = {
     "tb-500": "tb500 tb thymosin beta-4 thymosin recovery repair",
     "bpc157-tb500-mix": "bpc tb500 mix blend healing recovery duo",
     "retatrutide": "reta glp-1 glp1 gip glucagon triple agonist metabolic tirzepatide semaglutide",
+    "tirzepatide": "tirz twincretin gip glp-1 glp1 dual agonist metabolic incretin retatrutide semaglutide",
+    "ipamorelin": "ipa ghrp growth hormone secretagogue ghrelin ghs-r selective gh pentapeptide",
     "cjc-1295": "cjc cjc1295 ghrh growth hormone without dac",
     "tesamorelin": "tesa ghrh growth hormone",
     "semax": "nootropic focus brain bdnf cognitive",

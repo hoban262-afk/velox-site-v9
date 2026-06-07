@@ -26,6 +26,8 @@ sitemap = (
     '  <url><loc>https://veloxpeps.com/compounds/mots-c/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n'
     '  <url><loc>https://veloxpeps.com/compounds/cjc-1295/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n'
     '  <url><loc>https://veloxpeps.com/compounds/tesamorelin/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n'
+    '  <url><loc>https://veloxpeps.com/compounds/tirzepatide/</loc><lastmod>2026-06-07</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n'
+    '  <url><loc>https://veloxpeps.com/compounds/ipamorelin/</loc><lastmod>2026-06-07</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n'
     '  <url><loc>https://veloxpeps.com/compounds/kpv/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n\n'
     '  <!-- Supplies -->\n'
     '  <url><loc>https://veloxpeps.com/supplies/bacteriostatic-water/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n\n'
