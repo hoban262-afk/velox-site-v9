@@ -165,12 +165,15 @@ export default async function handler(req) {
         // amount_pence is client-supplied; the subtotal guard above doesn't see
         // the amount actually charged. Reject an implausibly low charge (e.g.
         // amount_pence:1 on a real basket → "pay a penny, get the order").
-        // Floor = member-adjusted DB subtotal, halved to allow ANY legit promo
-        // stack (member + volume/code ≤ ~40%), minus VERIFIED points. Generous
-        // £1 tolerance; fails open (allKnown only) so legit orders never break.
+        // Floor = member-adjusted DB subtotal × 0.6, leaving room for any legit
+        // promo stack on TOP of the member price (volume/code max 20% + affiliate
+        // ~10% ⇒ charge ≈ 0.7 of member subtotal), minus VERIFIED points. Tightened
+        // 0.5 → 0.6: real COGS is ~22% of retail and the lowest-margin sellable SKUs
+        // are ~31%, so 0.5 allowed prices too close to cost under a max stack.
+        // Generous £1 tolerance; fails open (allKnown only) so legit orders never break.
         const qtyTot   = meta.items.reduce((s, it) => s + (Number(it.qty) || 1), 0);
         const ptsValue = Math.min(n(meta.points_redeemed), memberBalance) / 100; // £, capped to real balance
-        const minLegit = Math.round((dbSubtotal * (1 - memberPct / 100) * 0.5 - ptsValue) * 100) / 100;
+        const minLegit = Math.round((dbSubtotal * (1 - memberPct / 100) * 0.6 - ptsValue) * 100) / 100;
         if (allKnown && n(amountStr) + 1.0 < minLegit) {
           console.warn(`[create-fena-payment] CHARGE GUARD: amount £${n(amountStr)} far below floor £${minLegit} (dbSubtotal=${dbSubtotal}, memberPct=${memberPct}, pts£=${ptsValue}) — rejecting`);
           return new Response(JSON.stringify({ error: 'Payment amount didn’t match your basket. Please refresh and try again.' }),
