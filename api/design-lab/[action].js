@@ -198,8 +198,9 @@ module.exports = async function handler(req, res) {
     if (!user) return res.status(401).json({ error: 'Please sign in to use Velox Design Lab.' });
 
     // Anti-Sybil: per-IP cap so one person can't spin up many free accounts to
-    // farm unlimited (paid) generations. Generous enough for shared lab IPs.
-    if (!(await ipAllowed(req, 'dl-gen', 20, 86400))) {
+    // farm generations. Set above a single Lab user's ~7/day and roomy enough for
+    // shared institutional IPs where several paid members work behind one address.
+    if (!(await ipAllowed(req, 'dl-gen', 60, 86400))) {
       return res.status(429).json({ error: 'Too many designs from this network today. Please try again tomorrow or upgrade your Velox Pro tier.' });
     }
 
@@ -412,6 +413,16 @@ module.exports = async function handler(req, res) {
     if (!email || !sequence) return res.status(400).json({ error: 'Email and sequence are required.' });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Invalid email.' });
 
+    // Member tier (server-verified, not client-supplied). Lab members get 15% off
+    // the synthesis quote — flag it on the enquiry so the team applies it.
+    let memberTier = 'free', synthDiscountPct = 0;
+    try { if (user) memberTier = await getTier(user.id); } catch {}
+    if (memberTier === 'lab') synthDiscountPct = 15;
+    const tierNote = synthDiscountPct
+      ? `[Velox ${memberTier.toUpperCase()} member — apply ${synthDiscountPct}% synthesis discount]`
+      : (memberTier !== 'free' ? `[Velox ${memberTier.toUpperCase()} member]` : '');
+    const notesWithTier = [tierNote, (notes ? String(notes) : '')].filter(Boolean).join(' ').trim();
+
     try {
       const r = await sbFetch('synthesis_enquiries', {
         method: 'POST',
@@ -423,7 +434,7 @@ module.exports = async function handler(req, res) {
           quantity_mg: quantity_mg ? parseInt(quantity_mg, 10) : null,
           purity: purity || null,
           modifications: Array.isArray(modifications) ? modifications : [],
-          notes: notes ? String(notes).slice(0, 2000) : null,
+          notes: notesWithTier ? notesWithTier.slice(0, 2000) : null,
         }),
       });
       if (!r.ok) throw new Error('DB insert failed');
@@ -440,7 +451,8 @@ module.exports = async function handler(req, res) {
             body: JSON.stringify({
               _type: 'synthesis_enquiry',
               enquiry_id: enquiry && enquiry.id,
-              email, full_name, sequence, candidate_name, quantity_mg, purity, modifications, notes,
+              email, full_name, sequence, candidate_name, quantity_mg, purity, modifications,
+              notes: notesWithTier, member_tier: memberTier, synthesis_discount_pct: synthDiscountPct,
             }),
           });
         }

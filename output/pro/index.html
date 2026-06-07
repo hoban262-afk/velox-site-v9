@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Velox Pro - Member Pricing for Researchers | Velox Peptides</title>
-  <meta name="description" content="Join Velox Pro: 5–25% off every order, free tracked UK shipping, first dibs on restocks, subscribe-&-save and more. Solo, Group and Lab membership tiers.">
+  <meta name="description" content="Join Velox Pro: 10–25% off every order, free tracked UK shipping, more AI peptide designs, first dibs on restocks, subscribe-&-save and more. Solo, Group and Lab membership tiers.">
   <link rel="canonical" href="https://veloxpeps.com/pro/">
 
   <!-- Open Graph -->
@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veloxpeps.com/pro/">
   <meta property="og:title" content="Velox Pro - Member Pricing for Researchers">
-  <meta property="og:description" content="5–25% off every order, free tracked UK shipping, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
+  <meta property="og:description" content="10–25% off every order, free tracked UK shipping, more AI peptide designs, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
   <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -21,7 +21,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Velox Pro - Member Pricing for Researchers">
-  <meta name="twitter:description" content="5–25% off every order, free tracked UK shipping, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
+  <meta name="twitter:description" content="10–25% off every order, free tracked UK shipping, more AI peptide designs, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
   <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
 
   <!-- Icons and manifest -->
@@ -70,8 +70,15 @@
     .pro-save-note { font-size:12px; color:#8c95a0; margin-bottom:36px; }
 
     /* ── Tiers grid ─────────────────────────────────────── */
-    .tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:stretch; max-width:1040px; margin:0 auto; padding:14px 0 40px; }
-    @media (max-width:860px){ .tiers{ grid-template-columns:1fr; max-width:420px; gap:26px; } }
+    .tiers { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:stretch; max-width:1240px; margin:0 auto; padding:14px 0 40px; }
+    @media (max-width:1000px){ .tiers{ grid-template-columns:repeat(2,1fr); max-width:760px; gap:18px; } }
+    @media (max-width:560px){ .tiers{ grid-template-columns:1fr; max-width:420px; gap:22px; } }
+    .tier .roi { font-size:11.5px; color:#01D3A0; font-weight:600; min-height:30px; margin:6px 4px 0; line-height:1.35; }
+    .tier.featured .roi { color:#043f30; }
+    .tier-free { background:linear-gradient(180deg,#0c1117,#080b0f); }
+    .tier-free .disc { color:#9aa3ad; }
+    a.cta.cta-free { display:block; text-align:center; text-decoration:none; border-radius:11px; padding:14px; font:800 15px Inter,Arial; background:#141b22; color:#fff; border:1px solid #2a323a; transition:.2s; }
+    a.cta.cta-free:hover { border-color:#01D3A0; }
 
     .tier { position:relative; z-index:1; background:linear-gradient(180deg,#0e141b,#0a0e13); border:1px solid #1f262d; border-radius:16px; padding:30px 24px; display:flex; flex-direction:column; text-align:center; transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
     .tier:hover { transform:translateY(-6px); border-color:#2f3a44; box-shadow:0 18px 50px -20px rgba(0,0,0,.85); }
@@ -290,9 +297,15 @@
   var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
 
   var FEATURES = {
-    solo: ['5% off every item, always on', '⚗ Velox Design Lab — 20 AI designs/mo', 'Free Royal Mail Tracked 24', 'Subscribe-&-save auto-reorder', '2× loyalty points', 'First dibs on restocks', 'Full CoA / batch documentation', 'Priority email support'],
-    group: ['10% off every item, always on', '⚗ Velox Design Lab — 50 AI designs/mo', 'Everything in Solo, plus:', 'Free shipping, no threshold', 'Up to 3 team seats + addresses', '3× loyalty points', 'Earlier restock access', 'Priority support queue'],
-    lab: ['25% off every item, always on', '⚗ Velox Design Lab — unlimited designs (fair use)', 'Everything in Group, plus:', 'Free next-day + cold-chain shipping', 'Unlimited seats + business account', 'VAT invoices & PO support', 'Reserved stock + pre-launch access', 'Net-7 terms (on approval)']
+    free: ['3 AI designs / month', '1 design refinement / month', 'Plain-English explanations + grading', 'Save &amp; share your designs', 'Standard pricing &amp; shipping', '1× loyalty points'],
+    solo: ['10% off every item, always on', '⚗ Velox Design Lab — 20 AI designs/mo', '✎ 3 design refinements/mo', 'Free Royal Mail Tracked 24 — every order', '2× loyalty points', 'Subscribe-&amp;-save auto-reorder', 'First dibs on restocks', 'Full CoA / batch documentation', 'Priority email support'],
+    group: ['15% off every item, always on', '⚗ Velox Design Lab — 50 AI designs/mo', '✎ 5 design refinements/mo', 'Everything in Solo, plus:', 'Free shipping — no threshold', 'Up to 3 team seats + saved addresses', 'Shared team design library', '3× loyalty points', 'Early restocks + new-compound previews', 'Priority support queue'],
+    lab: ['25% off every item, always on', '⚗ Velox Design Lab — unlimited designs (fair use)', '✎ 10 design refinements/mo', '🧪 15% off custom synthesis of your designs', 'Everything in Group, plus:', 'Free next-day + cold-chain shipping', 'Unlimited seats + business account', '4× loyalty points', 'Reserved stock + pre-launch access', 'VAT invoices, PO &amp; Net-7 terms (on approval)', 'Dedicated account manager']
+  };
+  var ROI = {
+    solo: 'Free Tracked-24 + 10% ≈ pays for itself in one order a month',
+    group: 'Pays for itself at ~£130/mo of orders — plus 50 designs',
+    lab: 'Pays for itself at ~£200/mo — built for high-volume labs'
   };
   var ORDER = ['solo', 'group', 'lab'];
   var FEATURED = 'group';
@@ -302,9 +315,22 @@
   function money(p) { var v = p / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
   function setMsg(t, ok) { var m = document.getElementById('msg'); if (m) { m.textContent = t || ''; m.style.color = ok ? '#01D3A0' : '#9aa3ad'; } }
 
+  function freeCard() {
+    var feats = FEATURES.free.map(function (f) { return '<li>' + f + '</li>'; }).join('');
+    return '<div class="tier tier-free">' +
+      '<h2>Free</h2>' +
+      '<div class="disc">No membership</div>' +
+      '<div class="price">£0<small>/mo</small></div>' +
+      '<div class="annual-eq">No card needed</div>' +
+      '<div class="roi">Create an account &amp; start designing</div>' +
+      '<ul>' + feats + '</ul>' +
+      '<a class="cta cta-free" href="/account/?next=/design-lab/app/">Start free →</a>' +
+    '</div>';
+  }
+
   function render() {
     var el = document.getElementById('tiers');
-    el.innerHTML = tiers.map(function (t) {
+    var paid = tiers.map(function (t) {
       var price = plan === 'annual' ? t.annual_price_pence : t.monthly_price_pence;
       var perMo = plan === 'annual' ? '/yr' : '/mo';
       var eq = plan === 'annual' ? ('≈ ' + money(Math.round(t.annual_price_pence / 12)) + '/mo') : '';
@@ -315,10 +341,12 @@
         '<div class="disc">' + t.discount_pct + '% off everything</div>' +
         '<div class="price">' + money(price) + '<small>' + perMo + '</small></div>' +
         '<div class="annual-eq">' + eq + '</div>' +
+        '<div class="roi">' + (ROI[t.key] || '') + '</div>' +
         '<ul>' + feats + '</ul>' +
         '<button class="cta" data-tier="' + t.key + '">Join ' + t.name + '</button>' +
       '</div>';
     }).join('');
+    el.innerHTML = freeCard() + paid;
     el.querySelectorAll('button.cta').forEach(function (b) {
       b.addEventListener('click', function () { subscribe(b.getAttribute('data-tier')); });
     });
@@ -351,7 +379,7 @@
   fetch(SB_URL + '/rest/v1/membership_tiers?active=eq.true&order=sort_order&select=*', { headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON } })
     .then(function (r) { return r.ok ? r.json() : []; })
     .then(function (rows) {
-      tiers = (rows && rows.length) ? rows : ORDER.map(function (k, i) { return { key: k, name: { solo: 'Solo Researcher', group: 'Group Researchers', lab: 'Lab Researchers' }[k], discount_pct: [5, 10, 25][i], monthly_price_pence: [699, 1999, 4999][i], annual_price_pence: [5900, 17900, 44900][i] }; });
+      tiers = (rows && rows.length) ? rows : ORDER.map(function (k, i) { return { key: k, name: { solo: 'Solo Researcher', group: 'Group Researchers', lab: 'Lab Researchers' }[k], discount_pct: [10, 15, 25][i], monthly_price_pence: [699, 1999, 4999][i], annual_price_pence: [5900, 17900, 44900][i] }; });
       render();
     })
     .catch(function () { setMsg('Could not load membership plans - please refresh.'); });
