@@ -112,20 +112,34 @@
       });
       setKpi(el, 'vk-prod', tp.length ? esc(tp[0].name) + ' <small>· best seller</small>' : '<small>No sales yet</small>');
     }
-    // Conversion funnel (horizontal bars)
+    // Conversion funnel (4 stages from real events)
     var f = d.funnel || {}, fc = q(el, 'ch-funnel');
     if (fc) {
       el._charts.funnel = new Chart(fc.getContext('2d'), {
         type: 'bar',
-        data: { labels: ['Visited site', 'Reached cart', 'Ordered'], datasets: [{ data: [f.visitors || 0, f.reachedCart || 0, f.orders || 0], backgroundColor: [GREEN + 'cc', GREEN2 + 'cc', VIO + 'cc'], borderRadius: 4 }] },
+        data: { labels: ['Visited', 'Added to cart', 'Started checkout', 'Ordered'], datasets: [{ data: [f.visitors || 0, f.addedToCart || 0, f.startedCheckout || 0, f.orders || 0], backgroundColor: [GREEN + 'cc', GREEN2 + 'cc', '#f0b03bcc', VIO + 'cc'], borderRadius: 4 }] },
         options: baseOpts({
           indexAxis: 'y',
           plugins: { legend: { display: false }, tooltip: Object.assign({ callbacks: { label: function (c) { return c.parsed.x.toLocaleString('en-GB') + ' people'; } } }, TT) },
           scales: { x: axis({ beginAtZero: true, ticks: { color: MUT, font: { size: 10 }, precision: 0 } }), y: axis({ grid: { display: false }, ticks: { color: '#cdd6d4', font: { size: 11 } } }) },
         }),
       });
-      countKpi(q(el, 'vk-cvr'), f.rate || 0, fmtPct, ' <small>· visitor → order</small>');
+      countKpi(q(el, 'vk-cvr'), f.rate || 0, fmtPct, ' <small>· visitor → order' + (f.tracked ? '' : ' · cart steps fill in once tracking is live') + '</small>');
     }
+    // Traffic sources (doughnut)
+    var src = d.trafficSources || [], srcCanvas = q(el, 'ch-sources');
+    if (srcCanvas) {
+      var palette = [GREEN, GREEN2, VIO, '#f0b03b', '#f0637e', '#8aa0a0'];
+      el._charts.src = new Chart(srcCanvas.getContext('2d'), {
+        type: 'doughnut',
+        data: { labels: src.map(function (x) { return x.source; }), datasets: [{ data: src.map(function (x) { return x.count; }), backgroundColor: src.map(function (_, i) { return palette[i % palette.length]; }), borderColor: '#0a0d12', borderWidth: 2 }] },
+        options: baseOpts({ cutout: '60%', plugins: { legend: { display: true, position: 'bottom', labels: { color: MUT, boxWidth: 9, font: { size: 10 }, padding: 8 } }, tooltip: Object.assign({ callbacks: { label: function (c) { return c.label + ': ' + c.parsed.toLocaleString('en-GB') + ' views'; } } }, TT) } }),
+      });
+      setKpi(el, 'vk-src', src.length ? esc(src[0].source) + ' <small>· top source</small>' : '<small>No traffic yet</small>');
+    }
+    // Customer value (text stats, no chart)
+    var tot = d.totals || {};
+    setKpi(el, 'vk-cust', gbp2(tot.aov) + ' <small>· avg order &nbsp;·&nbsp; ' + (tot.repeatRate || 0) + '% repeat &nbsp;·&nbsp; ' + (tot.buyers || 0) + ' buyers</small>');
     el._renderedFor = renderToken;
     if (!el._animated) { el._animated = true; el.classList.add('vstats-in'); }
   }
@@ -142,6 +156,38 @@
     // hidden blocks render when their tab is opened (IntersectionObserver)
   }
   window.veloxStatsRefresh = refresh;
+
+  // Export the current window's stats as a CSV download.
+  function csvRow(cells) { return cells.map(function (c) { var s = String(c == null ? '' : c); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(','); }
+  window.veloxStatsExport = function () {
+    var d = DATA; if (!d) return;
+    var t = d.totals || {}, f = d.funnel || {};
+    var lines = [];
+    lines.push(csvRow(['Velox stats export', 'last ' + (d.days || period) + ' days', new Date().toISOString()]));
+    lines.push('');
+    lines.push(csvRow(['Summary']));
+    lines.push(csvRow(['Revenue', t.revenue])); lines.push(csvRow(['Orders', t.orders])); lines.push(csvRow(['Avg order value', t.aov]));
+    lines.push(csvRow(['Unique visitors', t.visitors])); lines.push(csvRow(['Buyers', t.buyers])); lines.push(csvRow(['Repeat rate %', t.repeatRate]));
+    lines.push('');
+    lines.push(csvRow(['Funnel'])); lines.push(csvRow(['Visited', f.visitors])); lines.push(csvRow(['Added to cart', f.addedToCart])); lines.push(csvRow(['Started checkout', f.startedCheckout])); lines.push(csvRow(['Ordered', f.orders])); lines.push(csvRow(['Conversion %', f.rate]));
+    lines.push('');
+    lines.push(csvRow(['Daily', 'Revenue', 'Orders', 'Visitors']));
+    var rs = d.revenueSeries || [], ts = d.trafficSeries || [];
+    for (var i = 0; i < rs.length; i++) lines.push(csvRow([rs[i].date, rs[i].revenue, rs[i].orders, (ts[i] || {}).visitors || 0]));
+    lines.push('');
+    lines.push(csvRow(['Top products', 'Units', 'Revenue']));
+    (d.topProducts || []).forEach(function (p) { lines.push(csvRow([p.name, p.units, p.revenue])); });
+    lines.push('');
+    lines.push(csvRow(['Traffic source', 'Views']));
+    (d.trafficSources || []).forEach(function (s) { lines.push(csvRow([s.source, s.count])); });
+
+    var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'velox-stats-' + (d.days || period) + 'd-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  };
 
   function syncPeriodButtons() {
     document.querySelectorAll('.vstats-per').forEach(function (b) {

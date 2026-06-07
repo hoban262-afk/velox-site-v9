@@ -850,6 +850,7 @@ function prowallHTML(q){
 
 // ── Main result renderer ──────────────────────────────────────────────────
 function renderResults(d){
+  window._dlLast=d; // captured for the compare/download companion (admin-charts-independent)
   var b=d.brief||{}, cands=d.candidates||[];
   var top=null; cands.forEach(function(c){ var v=(c.scores||{}).comp||0; if(!top||v>top.v) top={id:c.id,v:v}; });
   var novelCount=cands.filter(function(c){ return (c.novelty||{}).badge==='novel'; }).length;
@@ -1097,6 +1098,104 @@ document.addEventListener('click',function(e){
 });
 
 init();
+})();
+</script>
+
+<!-- Compare + Download summary (self-contained; reads window._dlLast set by renderResults) -->
+<script>
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function gbp(n){return '£'+(Math.round(Number(n)||0)).toLocaleString('en-GB');}
+  function cands(){var d=window._dlLast||{};return d.candidates||[];}
+  function brief(){var d=window._dlLast||{};return d.brief||{};}
+
+  function injectTools(){
+    var res=document.getElementById('results'); if(!res) return;
+    var hd=res.querySelector('.res-hd'); if(!hd) return;
+    if(res.querySelector('#dlTools')) return;
+    if(!cands().length) return;
+    var bar=document.createElement('div'); bar.id='dlTools';
+    bar.style.cssText='display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:2px 0 18px';
+    var bs='background:#101822;border:1px solid #283341;color:#cdd6d4;font:600 13px Inter,sans-serif;padding:10px 16px;border-radius:9px;cursor:pointer';
+    bar.innerHTML='<button type="button" id="dlCmpBtn" style="'+bs+'">⊞ Compare the 3 side by side</button>'+
+      '<button type="button" id="dlDlBtn" style="'+bs+'">⬇ Download summary</button>';
+    hd.insertAdjacentElement('afterend',bar);
+    document.getElementById('dlCmpBtn').onclick=openCompare;
+    document.getElementById('dlDlBtn').onclick=downloadSummary;
+  }
+
+  function showModal(inner){
+    var ov=document.createElement('div'); ov.id='dlModal';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px';
+    var box=document.createElement('div');
+    box.style.cssText='background:#0a0d12;border:1px solid #1a2230;border-radius:14px;max-width:700px;width:100%;max-height:86vh;overflow:auto;padding:22px;position:relative';
+    var x=document.createElement('button'); x.type='button'; x.textContent='✕';
+    x.style.cssText='position:absolute;top:14px;right:16px;background:none;border:0;color:#8aa0a0;font-size:20px;cursor:pointer';
+    x.onclick=function(){ov.remove();};
+    box.innerHTML=inner; box.appendChild(x);
+    ov.appendChild(box);
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+    document.body.appendChild(ov);
+  }
+
+  function openCompare(){
+    var cs=cands(); if(!cs.length) return;
+    var rows=[
+      ['Name',function(c){return esc(c.name||'—');}],
+      ['Recipe',function(c){return '<span style="font-family:DM Mono,monospace;letter-spacing:1px">'+esc(c.sequence||'')+'</span>';}],
+      ['Building blocks',function(c){return (c.scores||{}).len||(c.sequence||'').length;}],
+      ['Overall /100',function(c){return '<b style="color:#01D3A0">'+((c.scores||{}).comp||0)+'</b>';}],
+      ['Easy to make',function(c){return (c.scores||{}).sy||0;}],
+      ['Dissolves in water',function(c){return (c.scores||{}).so||0;}],
+      ['Good length',function(c){return (c.scores||{}).ls||0;}],
+      ['Mix of blocks',function(c){return (c.scores||{}).dv||0;}],
+      ['Newness',function(c){var nv=c.novelty||{};return nv.badge==='novel'?'✦ New':nv.badge==='known'?'⚠ Exists':'~ Partial';}],
+      ['Est. cost to make',function(c){return gbp((c.scores||{}).cost);}]
+    ];
+    var thead='<tr><th style="text-align:left;padding:8px 10px">&nbsp;</th>'+cs.map(function(c){return '<th style="padding:8px 10px;color:#fff;font-size:13px;border-left:1px solid #1a2230">'+esc(c.id||'')+'</th>';}).join('')+'</tr>';
+    var body=rows.map(function(r,ri){
+      var bg=ri%2?'background:rgba(255,255,255,.02)':'';
+      return '<tr style="'+bg+'"><td style="padding:8px 10px;color:#8aa0a0;font-size:12px;white-space:nowrap">'+r[0]+'</td>'+cs.map(function(c){return '<td style="padding:8px 10px;color:#cdd6d4;font-size:13px;border-left:1px solid #1a2230;text-align:center">'+r[1](c)+'</td>';}).join('')+'</tr>';
+    }).join('');
+    showModal('<h3 style="margin:0 0 14px;font-family:Barlow Condensed,sans-serif;font-weight:800;text-transform:uppercase;font-size:22px;color:#fff">Compare all three</h3><div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;min-width:430px">'+thead+body+'</table></div><p style="margin:14px 0 0;font-size:11px;color:#475262">Higher scores are better. All values are computational predictions for in vitro research only.</p>');
+  }
+
+  function downloadSummary(){
+    var cs=cands(), b=brief(); if(!cs.length) return;
+    var when=new Date().toLocaleString('en-GB');
+    var cards=cs.map(function(c){
+      var sc=c.scores||{}, nv=c.novelty||{};
+      var help=(c.how_it_helps||c.strengths||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('');
+      var risk=(c.why_might_not||c.watch_outs||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('');
+      return '<div class="c"><h2>'+esc(c.id||'')+' &middot; '+esc(c.name||'')+'</h2>'+
+        '<p class="seq">'+esc(c.sequence||'')+'</p>'+
+        '<p class="m">Overall '+(sc.comp||0)+'/100 &middot; '+(sc.len||0)+' building blocks &middot; est. '+gbp(sc.cost)+' to make &middot; '+(nv.badge==='novel'?'Likely brand-new':nv.badge==='known'?'Already exists':'Partially similar')+'</p>'+
+        (c.plain_summary?'<p>'+esc(c.plain_summary)+'</p>':'')+
+        (c.design_reasoning?'<p><b>Why built this way:</b> '+esc(c.design_reasoning)+'</p>':'')+
+        (help?'<p><b>How it could help:</b></p><ul>'+help+'</ul>':'')+
+        (risk?'<p><b>What to watch:</b></p><ul>'+risk+'</ul>':'')+
+        (c.research_hypothesis?'<p><b>What a lab might see:</b> '+esc(c.research_hypothesis)+'</p>':'')+
+        '</div>';
+    }).join('');
+    var docHtml='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Velox Design Lab summary</title>'+
+      '<style>body{font-family:Arial,Helvetica,sans-serif;max-width:760px;margin:30px auto;padding:0 20px;color:#111;line-height:1.5}h1{font-size:22px}h2{font-size:16px;margin:0 0 4px}.seq{font-family:monospace;letter-spacing:1px;background:#f3f4f6;padding:8px 10px;border-radius:6px;word-break:break-all}.m{color:#555;font-size:13px}.c{border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin:14px 0}ul{margin:4px 0}.dis{margin-top:24px;font-size:11px;color:#777;border-top:1px solid #e5e7eb;padding-top:10px}</style></head><body>'+
+      '<h1>Velox Design Lab — design summary</h1>'+
+      '<p class="m">Generated '+esc(when)+'</p>'+
+      '<p><b>Your request:</b> '+esc(b.target_mechanism||'')+'</p>'+
+      cards+
+      '<p class="dis">All sequences are computational predictions for in vitro research use only. Not validated compounds; not for human or veterinary use. CRP Labs Ltd (Velox Peptides).</p>'+
+      '</body></html>';
+    var blob=new Blob([docHtml],{type:'text/html'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='velox-design-summary-'+new Date().toISOString().slice(0,10)+'.html';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);
+  }
+
+  var res=document.getElementById('results');
+  if(res && 'MutationObserver' in window){
+    new MutationObserver(injectTools).observe(res,{childList:true});
+  }
 })();
 </script>
 </body>

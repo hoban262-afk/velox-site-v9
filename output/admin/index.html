@@ -474,6 +474,7 @@
         .vstats-kpi small{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3,#6b7280);font-weight:400}
         .vstats-canvas{position:relative;height:160px}
         .vstats-tall .vstats-canvas{height:240px}
+        .vstats-note{font-size:12px;color:var(--t3,#6b7280);line-height:1.5}
         .vstats-per{transition:color .15s ease,border-color .15s ease}
         .vstats-per.is-on{color:#01D3A0;border-color:#01D3A0}
         /* staggered card entrance when a block first renders */
@@ -482,6 +483,8 @@
         .vstats-in .vstats-card:nth-child(2){animation-delay:.12s}
         .vstats-in .vstats-card:nth-child(3){animation-delay:.20s}
         .vstats-in .vstats-card:nth-child(4){animation-delay:.28s}
+        .vstats-in .vstats-card:nth-child(5){animation-delay:.36s}
+        .vstats-in .vstats-card:nth-child(6){animation-delay:.44s}
         @keyframes vsIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
         @media(max-width:760px){ .vstats-grid{grid-template-columns:1fr} }
         @media(prefers-reduced-motion:reduce){ .vstats-in .vstats-card{opacity:1;animation:none} .vstats-card{transition:none} }
@@ -493,6 +496,7 @@
             <button class="status-select vstats-per" data-days="7" style="cursor:pointer">7 days</button>
             <button class="status-select vstats-per is-on" data-days="30" style="cursor:pointer">30 days</button>
             <button class="status-select vstats-per" data-days="90" style="cursor:pointer">90 days</button>
+            <button class="status-select" type="button" style="cursor:pointer" onclick="window.veloxStatsExport&&window.veloxStatsExport()">Export CSV</button>
             <button class="status-select" type="button" style="cursor:pointer" onclick="switchTab('stats')">Full &rarr;</button>
           </div>
         </div>
@@ -502,6 +506,8 @@
             <div class="vstats-card"><div class="vstats-h">Website visitors</div><div class="vstats-kpi vk-vis">&mdash;</div><div class="vstats-canvas"><canvas class="ch-traffic"></canvas></div></div>
             <div class="vstats-card"><div class="vstats-h">Top products &middot; by revenue</div><div class="vstats-kpi vk-prod">&mdash;</div><div class="vstats-canvas"><canvas class="ch-prod"></canvas></div></div>
             <div class="vstats-card"><div class="vstats-h">Conversion funnel</div><div class="vstats-kpi vk-cvr">&mdash;</div><div class="vstats-canvas"><canvas class="ch-funnel"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Where visitors come from</div><div class="vstats-kpi vk-src">&mdash;</div><div class="vstats-canvas"><canvas class="ch-sources"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Customer value</div><div class="vstats-kpi vk-cust">&mdash;</div><div class="vstats-note">Average order value, repeat-purchase rate and unique buyers in this period.</div></div>
           </div>
         </div>
       </div>
@@ -564,6 +570,7 @@
             <button class="status-select vstats-per" data-days="7" style="cursor:pointer">7 days</button>
             <button class="status-select vstats-per is-on" data-days="30" style="cursor:pointer">30 days</button>
             <button class="status-select vstats-per" data-days="90" style="cursor:pointer">90 days</button>
+            <button class="status-select" type="button" style="cursor:pointer" onclick="window.veloxStatsExport&&window.veloxStatsExport()">Export CSV</button>
           </div>
         </div>
         <div class="vstats-block vstats-tall">
@@ -572,6 +579,8 @@
             <div class="vstats-card"><div class="vstats-h">Website visitors</div><div class="vstats-kpi vk-vis">&mdash;</div><div class="vstats-canvas"><canvas class="ch-traffic"></canvas></div></div>
             <div class="vstats-card"><div class="vstats-h">Top products &middot; by revenue</div><div class="vstats-kpi vk-prod">&mdash;</div><div class="vstats-canvas"><canvas class="ch-prod"></canvas></div></div>
             <div class="vstats-card"><div class="vstats-h">Conversion funnel</div><div class="vstats-kpi vk-cvr">&mdash;</div><div class="vstats-canvas"><canvas class="ch-funnel"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Where visitors come from</div><div class="vstats-kpi vk-src">&mdash;</div><div class="vstats-canvas"><canvas class="ch-sources"></canvas></div></div>
+            <div class="vstats-card"><div class="vstats-h">Customer value</div><div class="vstats-kpi vk-cust">&mdash;</div><div class="vstats-note">Average order value, repeat-purchase rate and unique buyers in this period.</div></div>
           </div>
         </div>
       </div>

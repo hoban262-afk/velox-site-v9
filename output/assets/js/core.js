@@ -140,6 +140,7 @@
 
     localStorage.setItem('vp_cart', JSON.stringify(cart));
     updateCartCount();
+    if (window.vpTrack) window.vpTrack('add_to_cart');
     if (window.toast) window.toast('Added to order \u2014 ' + name);
   });
 
@@ -226,6 +227,22 @@
       navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
     } else {
       fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
+    }
+
+    // Funnel-event beacon (add_to_cart, begin_checkout). Same anonymous sid, no PII.
+    window.vpTrack = function (event) {
+      try {
+        var p = JSON.stringify({ sid: sid, event: event, path: location.pathname });
+        if (navigator.sendBeacon) navigator.sendBeacon('/api/track', new Blob([p], { type: 'application/json' }));
+        else fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: p, keepalive: true }).catch(function () {});
+      } catch (e) {}
+    };
+    // Fire begin_checkout once when the visitor reaches the cart/checkout page.
+    if (/^\/(cart|checkout)/.test(location.pathname)) {
+      try {
+        var seen = sessionStorage.getItem('vp_chk');
+        if (!seen) { sessionStorage.setItem('vp_chk', '1'); window.vpTrack('begin_checkout'); }
+      } catch (e) { window.vpTrack('begin_checkout'); }
     }
 
     // ── Live-presence heartbeat (powers the admin "live on site" counter) ──

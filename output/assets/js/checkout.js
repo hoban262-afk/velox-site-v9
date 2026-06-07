@@ -385,6 +385,34 @@
         return;
       }
 
+      // Design Lab first-order code — validated per customer (no prior paid order).
+      if (code.toUpperCase() === 'DESIGN10') {
+        var foEmail = '';
+        try { foEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+        if (!foEmail) { discountMsg.innerHTML = '<span class="dc-err">Enter your email above first, then apply the code.</span>'; return; }
+        discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
+        fetch('/api/first-order/validate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code, email: foEmail }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.valid) {
+            var pct = Number(d.value) || 10;
+            var saving = Math.round(tGBP.subtotal * pct) / 100;
+            applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: pct, saving: saving });
+          } else {
+            appliedDiscount = null;
+            var reasons = {
+              not_first_order: 'This code is for first orders only — it looks like you’ve ordered with us before.',
+              email_required: 'Enter your email above first, then apply the code.',
+              not_found: 'Invalid discount code.',
+            };
+            discountMsg.innerHTML = '<span class="dc-err">' + (reasons[d && d.reason] || 'Invalid discount code.') + '</span>';
+            renderTotalsWithDiscount(cart, null, payRegion);
+          }
+        }).catch(function () { discountMsg.innerHTML = '<span class="dc-err">Could not validate code. Please try again.</span>'; });
+        return;
+      }
+
       // Try affiliate ref code — validate server-side (last fallback)
       discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
       fetch('/api/affiliate/validate', {

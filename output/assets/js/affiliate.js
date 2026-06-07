@@ -201,6 +201,7 @@
     renderNotifications(nr.data || []);
 
     renderSettings();
+    renderContentKit();
 
     // filter buttons
     var flt = $('ord-filter');
@@ -266,6 +267,39 @@
         esc(n.message) + '</div><div class="when">' + fmtWhen(n.created_at) + '</div></div></div>';
     }).join('');
   }
+  // ── Content kit: shared designs as ready-to-post, ref-stamped links ──
+  async function renderContentKit() {
+    var wrap = $('content-wrap'); if (!wrap) return;
+    var code = affiliate.ref_code || affiliate.code || '';
+    try {
+      var r = await fetch('/api/design-lab-shared');
+      var d = await r.json().catch(function () { return {}; });
+      var designs = (d && d.designs) || [];
+      if (!designs.length) { wrap.innerHTML = '<p class="empty">No shared designs yet. Design one in the Lab and tap “Get share link”.</p>'; return; }
+      wrap.innerHTML = designs.map(function (x) {
+        var link = window.location.origin + '/design-lab/r/' + x.token + (code ? ('?ref=' + encodeURIComponent(code)) : '');
+        return '<div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:14px 16px;margin-bottom:10px">' +
+          '<div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap">' +
+            '<div style="font-weight:600;color:#fff">' + esc(x.name) + '</div>' +
+            (x.closest ? '<span style="font-size:11px;font-family:monospace;color:#01D3A0;border:1px solid rgba(1,211,160,.3);border-radius:5px;padding:2px 8px">&rarr; ' + esc(x.closest) + '</span>' : '') +
+          '</div>' +
+          '<div style="font-size:12.5px;color:var(--t3,#6b7280);margin:4px 0 10px">' + esc(x.mech) + '</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+            '<input readonly value="' + esc(link) + '" style="flex:1;min-width:200px;font-family:monospace;font-size:12px;background:#05070a;border:1px solid var(--brd,#1a1a1a);border-radius:6px;color:#9ca3af;padding:8px 10px">' +
+            '<button class="btn-p ck-copy" data-link="' + esc(link) + '" style="width:auto;padding:8px 14px;font-size:12px">Copy</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+      wrap.querySelectorAll('.ck-copy').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var l = b.getAttribute('data-link');
+          if (navigator.clipboard) navigator.clipboard.writeText(l);
+          b.textContent = 'Copied!'; setTimeout(function () { b.textContent = 'Copy'; }, 1500);
+        });
+      });
+    } catch (e) { wrap.innerHTML = '<p class="empty">Could not load designs.</p>'; }
+  }
+
   async function markNotificationsRead() {
     if (!unreadIds.length) return;
     var ids = unreadIds.slice(); unreadIds = [];

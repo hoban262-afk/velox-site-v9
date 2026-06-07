@@ -24,6 +24,7 @@ var DISCOUNT_CODES = [
   // ── Add codes below in the same format ─────────────────────────────────────
   // { code: "EXAMPLE", type: "percentage", value: 15, active: true },
   { code: "JOSIE20", type: "percentage", value: 20, active: true },
-  // First-order hook surfaced on Design Lab results (closest-compound card).
-  { code: "DESIGN10", type: "percentage", value: 10, active: true },
+  // NOTE: DESIGN10 (Design Lab first-order code) is intentionally NOT here —
+  // it is validated server-side per customer via /api/first-order/validate so it
+  // only works on a first order, not as a reusable public code.
 ];

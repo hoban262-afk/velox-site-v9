@@ -229,9 +229,19 @@
 
     <div class="acc-tabs">
       <button class="acc-tab active" data-t="orders"        onclick="affTab('orders')">Orders</button>
+      <button class="acc-tab"        data-t="content"       onclick="affTab('content')">Content kit</button>
       <button class="acc-tab"        data-t="payouts"       onclick="affTab('payouts')">Payouts</button>
       <button class="acc-tab"        data-t="notifications" onclick="affTab('notifications')">Notifications<span class="pill" id="notif-pill">0</span></button>
       <button class="acc-tab"        data-t="settings"      onclick="affTab('settings')">Settings</button>
+    </div>
+
+    <div class="acc-panel" id="panel-content">
+      <div class="card">
+        <h3>Content kit — ready-to-post designs</h3>
+        <p style="font-size:13px;color:var(--t2,#9ca3af);margin:0 0 6px;line-height:1.6">Share any of these AI-designed peptides. Each link is stamped with <strong style="color:#fff">your code</strong>, so any resulting order is attributed to you automatically. Pair it with the hook: <em>"watch an AI invent a novel peptide in 60 seconds."</em></p>
+        <p style="font-size:13px;color:var(--t2,#9ca3af);margin:0 0 18px;line-height:1.6">Want a fresh one? <a href="/design-lab/app/" target="_blank" style="color:#01D3A0;text-decoration:none">Design it in the Lab →</a>, hit "Get share link", then add <code style="font-family:monospace;color:#01D3A0">?ref=YOURCODE</code>.</p>
+        <div id="content-wrap"><p class="empty">Loading designs…</p></div>
+      </div>
     </div>
 
     <div class="acc-panel active" id="panel-orders">
