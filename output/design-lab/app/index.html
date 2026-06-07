@@ -533,7 +533,7 @@ async function run(){
     var r=await api('generate',{method:'POST',body:JSON.stringify({target:target,sid:_sid})});
     var d=await r.json().catch(function(){ return {}; });
     if(r.status===401){ prog.abort(); gate(); return; }
-    if(r.status===403){ prog.abort(); renderUpsell(d.message); loadQuota(); }
+    if(r.status===403){ prog.abort(); renderUpsell(d.message,d.quota); loadQuota(); }
     else if(!r.ok){ prog.abort(); if(msgEl) msgEl.textContent=d.error||'Something went wrong — try again.'; }
     else{
       currentRunId=d.runId||null; currentShareToken=d.shareToken||null; currentBrief=d.brief||null;
@@ -700,8 +700,12 @@ async function libAction(e){
 }
 
 // ── Upsell ────────────────────────────────────────────────────────────────
-function renderUpsell(msg){
-  $('#results').innerHTML='<div class="upsell"><p>'+esc(msg||'You\'ve used all your designs for this period.')+'</p><a href="/pro/">Upgrade your Velox tier →</a></div>';
+function renderUpsell(msg,quota){
+  var fairUse=quota&&quota.fairUse;
+  var cta=fairUse
+    ? '<a href="mailto:support@veloxpeps.com?subject=Design%20Lab%20fair-use%20cap">Email us to lift the cap →</a>'
+    : '<a href="/pro/">Upgrade your Velox tier →</a>';
+  $('#results').innerHTML='<div class="upsell"><p>'+esc(msg||'You\'ve used all your designs for this period.')+'</p>'+cta+'</div>';
 }
 
 // ── HTML helpers ──────────────────────────────────────────────────────────

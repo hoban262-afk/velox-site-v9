@@ -85,6 +85,7 @@ async function quotaFor(userId) {
     limit: unlimited ? null : lim.limit, used,
     remaining: unlimited ? null : Math.max(0, lim.limit - used),
     unlimited,
+    fairUse: !!lim.fairUse,
     refineLimit, refineUsed,
     refineRemaining: Math.max(0, refineLimit - refineUsed),
   };
@@ -184,11 +185,10 @@ module.exports = async function handler(req, res) {
 
     const q = await quotaFor(user.id);
     if (!q.unlimited && q.remaining <= 0) {
-      return res.status(403).json({
-        error: 'limit_reached',
-        message: `You've used all ${q.limit} of your ${q.tierLabel} designs${q.window === 'month' ? ' this month' : ''}. Upgrade your Velox Pro tier for more.`,
-        quota: q,
-      });
+      const msg = q.fairUse
+        ? `You're flying — you've reached this month's fair-use limit of ${q.limit} designs. Email support@veloxpeps.com and we'll lift the cap for your research.`
+        : `You've used all ${q.limit} of your ${q.tierLabel} designs${q.window === 'month' ? ' this month' : ''}. Upgrade your Velox Pro tier for more.`;
+      return res.status(403).json({ error: 'limit_reached', message: msg, quota: q });
     }
 
     // Brief stage
