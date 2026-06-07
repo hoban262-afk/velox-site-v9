@@ -21,7 +21,12 @@ insert into public.product_variants
   ('selank', 'Selank', '10mg', 34.99, null, 39.99, true, false, 0),
   ('semax', 'Semax', '10mg', 34.99, null, null, true, false, 0),
   ('tb-500', 'TB-500', '10mg', 29.99, null, null, true, false, 0),
-  ('tesamorelin', 'Tesamorelin', '15mg', 99.99, null, 129.99, true, false, 0)
+  ('tesamorelin', 'Tesamorelin', '15mg', 99.99, null, 129.99, true, false, 0),
+  ('ipamorelin', 'Ipamorelin', '5mg', 20.00, null, null, true, false, 0),
+  ('ipamorelin', 'Ipamorelin', '10mg', 30.00, null, null, true, false, 1),
+  ('tirzepatide', 'Tirzepatide', '10mg', 40.00, null, null, true, false, 0),
+  ('tirzepatide', 'Tirzepatide', '30mg', 90.00, null, null, true, false, 1),
+  ('tirzepatide', 'Tirzepatide', '60mg', 160.00, null, null, true, false, 2)
 on conflict (slug, size) do update set
   name = excluded.name, base_price = excluded.base_price, sale_price = excluded.sale_price,
   compare_at = excluded.compare_at, discountable = excluded.discountable,
