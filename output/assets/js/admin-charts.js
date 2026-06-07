@@ -45,6 +45,22 @@
 
   function q(el, cls) { return el.querySelector('.' + cls); }
   function setKpi(el, cls, html) { var n = q(el, cls); if (n) n.innerHTML = html; }
+  var REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function countKpi(node, to, fmt, suffix, dur) {
+    if (!node) return;
+    to = Number(to) || 0; suffix = suffix || ''; dur = dur || 750;
+    if (REDUCE) { node.innerHTML = fmt(to) + suffix; return; }
+    var st = null;
+    function fr(ts) {
+      if (!st) st = ts;
+      var p = Math.min(1, (ts - st) / dur), e = 1 - Math.pow(1 - p, 3);
+      node.innerHTML = fmt(to * e) + suffix;
+      if (p < 1) requestAnimationFrame(fr); else node.innerHTML = fmt(to) + suffix;
+    }
+    requestAnimationFrame(fr);
+  }
+  var fmtInt = function (v) { return Math.round(v).toLocaleString('en-GB'); };
+  var fmtPct = function (v) { return (Math.round(v * 10) / 10) + '%'; };
 
   function renderBlock(el, d) {
     if (!d || !window.Chart) return;
@@ -68,7 +84,7 @@
         }),
       });
       var t = d.totals || {};
-      setKpi(el, 'vk-rev', gbp(t.revenue) + ' <small>· ' + (t.orders || 0) + ' orders · ' + gbp2(t.aov) + ' avg</small>');
+      countKpi(q(el, 'vk-rev'), t.revenue, gbp, ' <small>· ' + (t.orders || 0) + ' orders · ' + gbp2(t.aov) + ' avg</small>');
     }
     // Traffic (area line)
     var tr = d.trafficSeries || [], tc = q(el, 'ch-traffic');
@@ -80,7 +96,7 @@
         options: baseOpts({ scales: { x: axis(), y: axis({ beginAtZero: true, ticks: { color: MUT, font: { size: 10 }, precision: 0 } }) } }),
       });
       var totalVis = tr.reduce(function (s, x) { return s + x.visitors; }, 0);
-      setKpi(el, 'vk-vis', totalVis.toLocaleString('en-GB') + ' <small>· unique visitors' + (d.tracked ? '' : ' (no data yet)') + '</small>');
+      countKpi(q(el, 'vk-vis'), totalVis, fmtInt, ' <small>· unique visitors' + (d.tracked ? '' : ' (no data yet)') + '</small>');
     }
     // Top products (horizontal bars)
     var tp = d.topProducts || [], pc = q(el, 'ch-prod');
@@ -108,9 +124,10 @@
           scales: { x: axis({ beginAtZero: true, ticks: { color: MUT, font: { size: 10 }, precision: 0 } }), y: axis({ grid: { display: false }, ticks: { color: '#cdd6d4', font: { size: 11 } } }) },
         }),
       });
-      setKpi(el, 'vk-cvr', (f.rate || 0) + '% <small>· visitor → order</small>');
+      countKpi(q(el, 'vk-cvr'), f.rate || 0, fmtPct, ' <small>· visitor → order</small>');
     }
     el._renderedFor = renderToken;
+    if (!el._animated) { el._animated = true; el.classList.add('vstats-in'); }
   }
 
   function blocks() { return Array.prototype.slice.call(document.querySelectorAll('.vstats-block')); }

@@ -161,6 +161,20 @@
       background:rgba(255,255,255,.025); border:1px solid var(--brd,#1a2230); border-radius:13px; padding:13px 13px;
       min-height:62px; font-size:13.5px; font-weight:600; }
     .ms-grid .ms-item.active { background:rgba(1,211,160,.09); border-color:var(--g,#01D3A0); }
+    .ms-grid .ms-item:active { transform:scale(.97); }
+    /* Staggered entrance each time the sheet opens */
+    .more-sheet.open .ms-title { animation:msFade .3s ease both; }
+    .more-sheet.open .ms-group-h { animation:msFade .32s ease both; }
+    .more-sheet.open .ms-grid .ms-item { animation:msIn .4s cubic-bezier(.2,.8,.25,1) both; }
+    .more-sheet.open .ms-grid .ms-item:nth-child(1){ animation-delay:.05s; }
+    .more-sheet.open .ms-grid .ms-item:nth-child(2){ animation-delay:.10s; }
+    .more-sheet.open .ms-grid .ms-item:nth-child(3){ animation-delay:.15s; }
+    .more-sheet.open .ms-grid .ms-item:nth-child(4){ animation-delay:.20s; }
+    @keyframes msIn { from{ opacity:0; transform:translateY(12px) scale(.97);} to{ opacity:1; transform:none;} }
+    @keyframes msFade { from{ opacity:0;} to{ opacity:1;} }
+    @media (prefers-reduced-motion: reduce){
+      .more-sheet.open .ms-title,.more-sheet.open .ms-group-h,.more-sheet.open .ms-grid .ms-item{ animation:none; }
+    }
 
     /* ── Mobile / installed PWA ─────────────────────────────────────────────── */
     @media (max-width: 640px) {
@@ -453,14 +467,24 @@
       <!-- Visual overview (admin-charts.js) — shared markup, also used in the Stats tab -->
       <style>
         .vstats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
-        .vstats-card{background:var(--bg2,#0a0d12);border:1px solid var(--brd,#1a2230);border-radius:12px;padding:14px 16px;min-width:0}
+        .vstats-card{background:var(--bg2,#0a0d12);border:1px solid var(--brd,#1a2230);border-radius:12px;padding:14px 16px;min-width:0;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+        .vstats-card:hover{transform:translateY(-2px);border-color:#2a3645;box-shadow:0 16px 34px -22px rgba(0,0,0,.85)}
         .vstats-h{font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-        .vstats-kpi{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#fff;line-height:1.15;margin:4px 0 10px}
+        .vstats-kpi{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#fff;line-height:1.15;margin:4px 0 10px;transition:opacity .3s ease}
         .vstats-kpi small{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3,#6b7280);font-weight:400}
         .vstats-canvas{position:relative;height:160px}
         .vstats-tall .vstats-canvas{height:240px}
+        .vstats-per{transition:color .15s ease,border-color .15s ease}
         .vstats-per.is-on{color:#01D3A0;border-color:#01D3A0}
+        /* staggered card entrance when a block first renders */
+        .vstats-in .vstats-card{opacity:0;animation:vsIn .5s cubic-bezier(.2,.8,.25,1) forwards}
+        .vstats-in .vstats-card:nth-child(1){animation-delay:.04s}
+        .vstats-in .vstats-card:nth-child(2){animation-delay:.12s}
+        .vstats-in .vstats-card:nth-child(3){animation-delay:.20s}
+        .vstats-in .vstats-card:nth-child(4){animation-delay:.28s}
+        @keyframes vsIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
         @media(max-width:760px){ .vstats-grid{grid-template-columns:1fr} }
+        @media(prefers-reduced-motion:reduce){ .vstats-in .vstats-card{opacity:1;animation:none} .vstats-card{transition:none} }
       </style>
       <div class="adm-section">
         <div class="adm-sec-hdr">
