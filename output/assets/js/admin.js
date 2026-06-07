@@ -109,7 +109,8 @@
     overview: 'Overview', actions: 'Approvals', orders: 'Orders', margins: 'Margins',
     interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
     campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings',
-    deal: 'Deal of the Day', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing'
+    deal: 'Deal of the Day', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing',
+    'design-lab': 'Design Lab'
   };
   var BN_PRIMARY = { overview: 1, orders: 1, margins: 1, customers: 1 };
 
@@ -334,6 +335,49 @@
     }).join('');
   }
 
+  // ── Design Lab funnel ───────────────────────────────────────────────────────
+  async function loadDesignLab() {
+    if (!window._sb) return;
+    var fz = document.getElementById('dlab-funnel');
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { if (fz) fz.innerHTML = '<div class="adm-empty">Sign in to view.</div>'; return; }
+      var r = await fetch('/api/admin/design-lab', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (fz) fz.innerHTML = '<div class="adm-empty">Could not load: ' + esc((d && d.error) || ('HTTP ' + r.status)) + '</div>'; return; }
+      renderDesignLab(d);
+    } catch (e) { if (fz) fz.innerHTML = '<div class="adm-empty">Could not load: ' + esc(e.message) + '</div>'; }
+  }
+  function renderDesignLab(d) {
+    var f = d.funnel || {};
+    var gen = document.getElementById('dlab-generated'); if (gen && d.generated_at) gen.textContent = 'Updated ' + fmtDate(d.generated_at);
+    function n(v) { return Number(v || 0); }
+    function rate(a, b) { b = n(b); if (!b) return '—'; return Math.round(n(a) / b * 100) + '%'; }
+    function card(label, val, sub) { return '<div class="stat-card"><div class="stat-label">' + label + '</div><div class="stat-value">' + val + '</div><div class="stat-sub">' + (sub || '') + '</div></div>'; }
+    var sessions = n(f.design_lab_sessions), runs = n(f.total_runs), designers = n(f.designers), pro = n(f.designers_pro), ordered = n(f.designers_ordered);
+    var fdiv = document.getElementById('dlab-funnel');
+    if (fdiv) fdiv.innerHTML =
+      card('Visited Design Lab', sessions, 'sessions') +
+      card('Generated a design', runs, rate(designers, sessions) + ' of visitors · ' + designers + ' designers') +
+      card('Went Pro', pro, rate(pro, designers) + ' of designers') +
+      card('Placed an order', ordered, rate(ordered, designers) + ' of designers');
+    var tb = d.tierBreakdown || {};
+    var udiv = document.getElementById('dlab-usage');
+    if (udiv) udiv.innerHTML =
+      card('Designs this month', n(d.runsThisMonth), 'Lab cap 300/mo per member') +
+      card('Designs all-time', n(d.runsAllTime), '') +
+      card('By tier', n(tb.free) + ' free', n(tb.solo) + ' solo · ' + n(tb.group) + ' group · ' + n(tb.lab) + ' lab') +
+      card('Shared (recent)', n(d.recentSharedVisible), 'public in last 15');
+    var rec = d.recent || [];
+    var rdiv = document.getElementById('dlab-recent');
+    if (rdiv) {
+      if (!rec.length) { rdiv.innerHTML = '<div class="adm-empty">No designs yet — the channel plan is what drives this number.</div>'; }
+      else rdiv.innerHTML = '<table class="adm-table"><thead><tr><th>Target</th><th>Tier</th><th>Shared</th><th>When</th></tr></thead><tbody>' +
+        rec.map(function (x) { return '<tr><td>' + esc(x.target || '') + '</td><td>' + esc(x.tier || '') + '</td><td>' + (x.is_shared ? '✓' : '') + '</td><td>' + fmtDate(x.created_at) + '</td></tr>'; }).join('') + '</tbody></table>';
+    }
+  }
+
   // ── Data loaders ──────────────────────────────────────────────────────────
 
   function loadAllData() {
@@ -354,6 +398,7 @@
     loadAnalytics();
     loadHealth();
     loadDeal();
+    loadDesignLab();
     registerSW();
     wirePush();
   }

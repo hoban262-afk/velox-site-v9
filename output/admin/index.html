@@ -278,6 +278,7 @@
         <button class="sb-item" data-tab="margins" onclick="switchTab('margins')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V11"/><path d="M12 21V4"/><path d="M18 21v-7"/></svg> Margins</button>
         <button class="sb-item" data-tab="traffic" onclick="switchTab('traffic')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 5-6"/></svg> Traffic</button>
         <button class="sb-item" data-tab="seo" onclick="switchTab('seo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search (SEO)</button>
+        <button class="sb-item" data-tab="design-lab" onclick="switchTab('design-lab')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6L4.6 18a2 2 0 0 0 1.7 3h11.4a2 2 0 0 0 1.7-3L14 9V3"/><path d="M7.5 14h9"/></svg> Design Lab</button>
 
         <div class="sb-sec">People</div>
         <button class="sb-item" data-tab="customers" onclick="switchTab('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M20.5 20a5 5 0 0 0-3.8-4.85"/></svg> Customers</button>
@@ -590,6 +591,29 @@
         <div class="adm-sec-hdr"><div class="adm-sec-title">Recent registrations</div></div>
         <div id="interest-recent-wrap"></div>
         <div id="interest-msg" style="font-size:12px;color:var(--t3,#6b7280);margin-top:10px"></div>
+      </div>
+    </div>
+
+    <!-- Design Lab -->
+    <div class="admin-panel" id="panel-design-lab">
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Design Lab funnel</div>
+          <div style="font-size:12px;color:var(--t3,#6b7280)" id="dlab-generated"></div>
+        </div>
+        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 14px;line-height:1.5">
+          The conversion path: <strong style="color:#fff">visited Design Lab → generated a design → went Pro → placed an order.</strong> The lowest step-to-step rate is your leak to fix first.
+        </p>
+        <div class="stat-grid" id="dlab-funnel"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Usage &amp; cost</div></div>
+        <div class="stat-grid" id="dlab-usage"></div>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:12px 0 0;line-height:1.5">Each design runs on Claude Haiku (cheap). For exact spend, check your Anthropic billing dashboard — these counts are your sanity check. Lab tier is capped at 300/mo (fair use).</p>
+      </div>
+      <div class="adm-section">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Recent designs</div></div>
+        <div id="dlab-recent"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
     </div>
 
