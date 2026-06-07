@@ -128,7 +128,10 @@ function parseCandidates(raw) {
   if (!Array.isArray(arr) || !arr.length) arr = dl.salvageObjects(raw);
   if (!Array.isArray(arr)) return [];
   return arr.map((c) => ({ ...c, sequence: dl.sanitizeSeq(c.sequence) }))
-    .filter((c) => c.sequence && c.sequence.length >= 4 && c.sequence.length <= 26)
+    // Honour the prompt's stated 6-20 bound (small tolerance) so out-of-spec
+    // sequences the model occasionally emits don't reach the user.
+    .filter((c) => c.sequence && c.sequence.length >= 5 && c.sequence.length <= 24)
+    .map((c) => dl.scrubCandidate(c)) // neutralise any human-use / therapeutic phrasing
     .map((c) => ({ ...c, scores: dl.score(c.sequence), novelty: dl.checkNovelty(c.sequence) }));
 }
 
@@ -221,6 +224,16 @@ module.exports = async function handler(req, res) {
     } catch (e) {
       console.error('[design-lab] brief stage failed:', e && e.message);
       return res.status(502).json({ error: "Couldn't read that target — please rephrase and try again." });
+    }
+
+    // Relevance gate: if the brief stage flagged the input as not a usable peptide
+    // request (gibberish, off-topic, empty test), stop BEFORE the expensive generate
+    // call. This does NOT consume a design from the user's quota.
+    if (brief.usable === false) {
+      return res.status(422).json({
+        error: 'unusable_target',
+        message: brief.reason || "That doesn't look like a peptide research goal yet. Try describing what you'd like the peptide to do.",
+      });
     }
 
     // Generate stage (one re-roll if 0 usable candidates)
@@ -333,7 +346,7 @@ module.exports = async function handler(req, res) {
     const user = await authUser(req);
     if (!user) return res.status(401).json({ error: 'Please sign in.' });
 
-    const { runId, candidateId, instruction } = req.body || {};
+    const { runId, candidateId, instruction, brief: bodyBrief, candidate: bodyCandidate } = req.body || {};
     if (!instruction || String(instruction).trim().length < 3) return res.status(400).json({ error: 'Describe what to change.' });
 
     const q = await quotaFor(user.id);
@@ -345,15 +358,18 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Fetch the parent run to get the brief + candidate being refined
-    let parentBrief = null, parentCandidate = null;
-    if (runId) {
+    // Context for the refinement. The client sends the brief + candidate it's
+    // looking at directly (most reliable); fall back to fetching the parent run
+    // from the DB by id if the client only passed identifiers.
+    let parentBrief = bodyBrief || null;
+    let parentCandidate = bodyCandidate || null;
+    if ((!parentBrief || !parentCandidate) && runId) {
       const r = await sbFetch(`design_lab_runs?id=eq.${runId}&user_id=eq.${user.id}&select=brief,candidates&limit=1`);
       const rows = r.ok ? await r.json() : [];
       const run = Array.isArray(rows) && rows[0];
       if (run) {
-        parentBrief = run.brief;
-        if (candidateId && Array.isArray(run.candidates)) {
+        if (!parentBrief) parentBrief = run.brief;
+        if (!parentCandidate && candidateId && Array.isArray(run.candidates)) {
           parentCandidate = run.candidates.find((c) => c.id === candidateId) || null;
         }
       }
@@ -380,7 +396,8 @@ module.exports = async function handler(req, res) {
     });
 
     const after = await quotaFor(user.id);
-    return res.status(200).json({ candidates, quota: after });
+    // `refined` is the key the client reads; keep `candidates` too for compatibility.
+    return res.status(200).json({ candidates, refined: candidates, quota: after });
   }
 
   // ── synthesis enquiry ──────────────────────────────────────────────────────
