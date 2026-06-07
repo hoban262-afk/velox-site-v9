@@ -161,7 +161,71 @@
       .dl-js .dl-win .dl-bar-f{ transition:none; width:var(--w) !important; }
       .dl-js .dl-win .dl-seq span{ opacity:1; transform:none; animation:none; }
     }
+
+    /* ════════ Animation upgrade ════════ */
+    /* Scroll reveal — FOUC-guarded via html.dl-anim (set in <head>) */
+    .dl-anim .dl-step,.dl-anim .dl-dcard,.dl-anim .dl-tier,.dl-anim .dl-real>a,.dl-anim .dl-final .dl-box,.dl-anim .dl-stats,.dl-anim .dl-sec .dl-eyebrow,.dl-anim .dl-sec .dl-h2,.dl-anim .dl-sec .dl-secsub{ opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.2,.9,.25,1),transform .7s cubic-bezier(.2,.9,.25,1); }
+    .dl-anim .dl-revealed{ opacity:1 !important; transform:none !important; }
+
+    /* Animated gradient headline accent */
+    .dl-h1 .ac{ background:linear-gradient(100deg,#01D3A0 0%,#6cf7d6 38%,#01D3A0 72%); background-size:220% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:dlShine 5s linear infinite; }
+    @keyframes dlShine{ to{ background-position:220% center; } }
+
+    /* Hero ambient glow + scan line */
+    .dl-hero::before{ content:""; position:absolute; left:50%; top:-12%; width:920px; height:540px; max-width:140vw; transform:translateX(-50%); background:radial-gradient(ellipse at center,rgba(1,211,160,.16),transparent 62%); filter:blur(22px); pointer-events:none; z-index:0; animation:dlBreathe 7s ease-in-out infinite; }
+    @keyframes dlBreathe{ 0%,100%{ opacity:.65; } 50%{ opacity:1; } }
+    .dl-scan{ position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg,transparent,rgba(1,211,160,.45),transparent); pointer-events:none; z-index:1; opacity:.5; animation:dlScan 7s linear infinite; }
+    @keyframes dlScan{ 0%{ top:0; } 100%{ top:100%; } }
+
+    /* Glowing primary CTA */
+    .dl-cta-row .dl-btn-p{ animation:dlGlow 2.6s ease-in-out infinite; }
+    @keyframes dlGlow{ 0%,100%{ box-shadow:0 8px 24px -10px rgba(1,211,160,.55); } 50%{ box-shadow:0 8px 36px -6px rgba(1,211,160,.9); } }
+
+    /* Live demo terminal */
+    .dl-demo{ max-width:640px; margin:40px auto 0; background:linear-gradient(180deg,#0b0f15,#070a0e); border:1px solid var(--dl-brd); border-radius:14px; overflow:hidden; box-shadow:0 44px 90px -42px rgba(0,0,0,.9); text-align:left; position:relative; z-index:2; }
+    .dl-demo-bar{ display:flex; align-items:center; gap:7px; padding:11px 14px; background:#0e141b; border-bottom:1px solid var(--dl-brd); }
+    .dl-demo-bar i{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+    .dl-demo-bar span{ font-family:'DM Mono',monospace; font-size:10.5px; color:var(--dl-mut); margin-left:8px; letter-spacing:.5px; }
+    .dl-demo-body{ padding:18px; min-height:236px; font-family:'DM Mono',monospace; }
+    .dl-demo-prompt{ font-size:13.5px; color:#cdd6dd; line-height:1.6; min-height:22px; }
+    .dl-demo-prompt .pfx{ color:var(--dl-g); }
+    .dl-caret{ display:inline-block; width:8px; height:15px; background:var(--dl-g); margin-left:1px; vertical-align:-2px; animation:dlBlink 1s step-end infinite; }
+    @keyframes dlBlink{ 50%{ opacity:0; } }
+    .dl-demo-status{ font-size:11.5px; color:var(--dl-g); margin:14px 0 4px; height:14px; opacity:0; transition:opacity .3s; }
+    .dl-demo-status.on{ opacity:1; }
+    .dl-demo-status .dot{ animation:dlDots 1.4s infinite; }
+    .dl-demo-status .dot:nth-child(2){ animation-delay:.2s; } .dl-demo-status .dot:nth-child(3){ animation-delay:.4s; }
+    @keyframes dlDots{ 0%,60%,100%{ opacity:.2; } 30%{ opacity:1; } }
+    .dl-cand{ display:flex; align-items:center; gap:12px; padding:9px 12px; border:1px solid var(--dl-brd); border-radius:8px; background:rgba(255,255,255,.015); margin-top:8px; opacity:0; transform:translateY(8px); transition:opacity .45s,transform .45s; }
+    .dl-cand.show{ opacity:1; transform:none; }
+    .dl-cand-nm{ font-size:9.5px; color:var(--dl-mut); width:58px; flex-shrink:0; letter-spacing:.5px; }
+    .dl-cand-seq{ flex:1; font-size:14px; letter-spacing:2px; white-space:nowrap; overflow:hidden; }
+    .dl-cand-seq b{ font-weight:500; display:inline-block; opacity:0; animation:dlPop .26s ease forwards; }
+    @keyframes dlPop{ from{ opacity:0; transform:translateY(-5px); } to{ opacity:1; transform:none; } }
+    .dl-cand-sc{ font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:20px; color:var(--dl-g); min-width:28px; text-align:right; }
+
+    /* Card hover lifts */
+    .dl-step,.dl-dcard,.dl-tier{ transition:border-color .25s,transform .25s,box-shadow .25s,background .25s; }
+    .dl-step:hover,.dl-dcard:hover{ transform:translateY(-4px); border-color:rgba(1,211,160,.4); box-shadow:0 22px 42px -28px rgba(1,211,160,.55); }
+    .dl-tier:hover{ transform:translateY(-4px); border-color:rgba(1,211,160,.45); }
+    .dl-step-ic{ transition:transform .25s; }
+    .dl-step:hover .dl-step-ic{ transform:scale(1.12) rotate(-4deg); }
+    .dl-tier.pop{ animation:dlPopGlow 3s ease-in-out infinite; }
+    @keyframes dlPopGlow{ 0%,100%{ box-shadow:0 0 0 1px var(--dl-g) inset,0 18px 50px -24px rgba(1,211,160,.5); } 50%{ box-shadow:0 0 0 1px var(--dl-g) inset,0 18px 62px -14px rgba(1,211,160,.85); } }
+
+    /* Shimmering accent bar on the sample window */
+    .dl-win{ position:relative; }
+    .dl-win::after{ content:""; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--dl-g),var(--dl-g2),transparent); background-size:200% 100%; animation:dlShine2 3s linear infinite; }
+    @keyframes dlShine2{ to{ background-position:200% 0; } }
+
+    @media (prefers-reduced-motion: reduce){
+      .dl-h1 .ac,.dl-hero::before,.dl-scan,.dl-cta-row .dl-btn-p,.dl-tier.pop,.dl-win::after,.dl-caret,.dl-demo-status .dot{ animation:none; }
+      .dl-anim .dl-step,.dl-anim .dl-dcard,.dl-anim .dl-tier,.dl-anim .dl-real>a,.dl-anim .dl-final .dl-box,.dl-anim .dl-stats,.dl-anim .dl-sec .dl-eyebrow,.dl-anim .dl-sec .dl-h2,.dl-anim .dl-sec .dl-secsub{ opacity:1; transform:none; transition:none; }
+      .dl-cand{ opacity:1; transform:none; }
+    }
   </style>
+  <script>try{document.documentElement.classList.add('dl-anim')}catch(e){}</script>
+  <noscript><style>.dl-anim .dl-step,.dl-anim .dl-dcard,.dl-anim .dl-tier,.dl-anim .dl-real>a,.dl-anim .dl-final .dl-box,.dl-anim .dl-stats,.dl-anim .dl-sec .dl-eyebrow,.dl-anim .dl-sec .dl-h2,.dl-anim .dl-sec .dl-secsub{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body class="page-design-lab">
 
@@ -212,6 +276,7 @@
   <!-- Hero -->
   <section class="dl-hero">
     <div class="dl-hero-bg" id="dlHeroBg"></div>
+    <div class="dl-scan" aria-hidden="true"></div>
     <div class="dl-hero-in">
       <div class="dl-badge"><span class="dl-badge-dot"></span> BETA &middot; FREE TIER AVAILABLE &middot; A VELOX PEPTIDES PRODUCT</div>
       <h1 class="dl-h1">Design novel<br><span class="ac">research peptides.</span><br><span class="dim">Powered by AI.</span></h1>
@@ -221,7 +286,14 @@
         <a class="dl-btn dl-btn-s" href="/design-lab/r/2380db8d-d1ee-45f0-b2f6-af25be9c90b7">See a real design →</a>
       </div>
       <p class="dl-note">For in vitro research use only &middot; <a href="#how" style="color:var(--dl-mut)">how it works ↓</a></p>
-      <div class="dl-seqprev" id="dlSeqPrev"></div>
+      <div class="dl-demo" id="dlDemo" aria-hidden="true">
+        <div class="dl-demo-bar"><i style="background:#f0637e"></i><i style="background:#f0b03b"></i><i style="background:#01D3A0"></i><span>velox design lab &middot; live</span></div>
+        <div class="dl-demo-body">
+          <div class="dl-demo-prompt"><span class="pfx">&rsaquo; </span><span id="dlType"></span><span class="dl-caret" id="dlCaret"></span></div>
+          <div class="dl-demo-status" id="dlStatus">&#10022; designing three novel candidates<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+          <div id="dlCands"></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -458,12 +530,50 @@
   var bg=document.getElementById('dlHeroBg');
   if(bg){ for(var i=0;i<6;i++){ var d=document.createElement('div'); d.className='dl-stream'; d.style.top=(8+i*15)+'%'; d.style.animationDelay=(-i*5)+'s'; d.style.animationDuration=(25+i*5)+'s'; var s=''; for(var j=0;j<60;j++) s+=AAs[Math.floor(Math.random()*AAs.length)]; d.textContent=s; bg.appendChild(d); } }
 
-  var prev=document.getElementById('dlSeqPrev');
-  if(prev){
-    var lab=document.createElement('span'); lab.className='dl-mono'; lab.style.cssText='font-size:11px;color:#8aa0a0;letter-spacing:1px;margin-right:14px'; lab.textContent='SAMPLE OUTPUT · CycloSeq-14 ·'; prev.appendChild(lab);
-    'RPPKGDVAGPPYQK'.split('').forEach(function(aa,i){ var sp=document.createElement('span'); sp.className='aa'; sp.style.color=COL[aa]||'#8aa0a0'; sp.style.animationDelay=(0.5+i*0.08)+'s'; sp.textContent=aa; prev.appendChild(sp); });
-    var sc=document.createElement('span'); sc.className='dl-mono'; sc.style.cssText='font-size:11px;margin-left:14px;color:#01D3A0;border:1px solid rgba(1,211,160,.3);padding:3px 8px;border-radius:4px'; sc.textContent='SCORE 83'; prev.appendChild(sc);
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Hero live-design demo (self-running loop) ──
+  var typeEl=document.getElementById('dlType'), statusEl=document.getElementById('dlStatus'), candsEl=document.getElementById('dlCands'), caretEl=document.getElementById('dlCaret');
+  if(typeEl && candsEl){
+    var SCRIPTS=[
+      { q:'a GLP-1 / GIP / glucagon triple agonist', c:[['VDL-α','HAEGTFTSDYSKYLD',91],['VDL-β','YAEGTFISDYSIALD',84],['VDL-γ','HSQGTFTSDYSKYLDE',92]] },
+      { q:'a BPC-157-style gut & tendon repair peptide', c:[['VDL-α','GEPPPGKPADEAGLV',88],['VDL-β','GKPADDAGLVRP',84],['VDL-γ','LKKTETQEKN',89]] },
+      { q:'a short, BBB-friendly nootropic', c:[['VDL-α','MEHFPGPK',88],['VDL-β','TKPRGPK',86],['VDL-γ','PGPMEHF',82]] }
+    ];
+    function colored(seq){ return seq.split('').map(function(a,i){ return '<b style="color:'+(COL[a]||'#8aa0a0')+';animation-delay:'+(i*0.04)+'s">'+a+'</b>'; }).join(''); }
+    function countSc(el,to){ var st=null,dur=700; function fr(ts){ if(!st)st=ts; var p=Math.min(1,(ts-st)/dur); el.textContent=Math.round(to*(1-Math.pow(1-p,3))); if(p<1)requestAnimationFrame(fr); else el.textContent=to; } el.textContent='0'; requestAnimationFrame(fr); }
+    function rowHTML(c){ return '<span class="dl-cand-nm">'+c[0]+'</span><span class="dl-cand-seq">'+colored(c[1])+'</span><span class="dl-cand-sc">0</span>'; }
+    var si=0;
+    function showCands(list, done){
+      candsEl.innerHTML='';
+      list.forEach(function(c){ var row=document.createElement('div'); row.className='dl-cand'; row.innerHTML=rowHTML(c); candsEl.appendChild(row); });
+      var rows=candsEl.querySelectorAll('.dl-cand');
+      rows.forEach(function(row,idx){ setTimeout(function(){ row.classList.add('show'); countSc(row.querySelector('.dl-cand-sc'), list[idx][2]); }, 160+idx*430); });
+      setTimeout(done, 160+rows.length*430+2700);
+    }
+    function runOnce(){
+      var sc=SCRIPTS[si%SCRIPTS.length], q=sc.q, i=0;
+      typeEl.textContent=''; statusEl.classList.remove('on'); candsEl.innerHTML='';
+      (function type(){
+        if(i<=q.length){ typeEl.textContent=q.slice(0,i); i++; setTimeout(type, 42); }
+        else { statusEl.classList.add('on'); setTimeout(function(){
+            statusEl.classList.remove('on');
+            showCands(sc.c, function(){ candsEl.querySelectorAll('.dl-cand').forEach(function(r){ r.classList.remove('show'); }); setTimeout(function(){ si++; runOnce(); }, 520); });
+          }, 1300); }
+      })();
+    }
+    if(reduce){
+      var s0=SCRIPTS[0]; typeEl.textContent=s0.q; if(caretEl) caretEl.style.display='none'; if(statusEl) statusEl.style.display='none';
+      s0.c.forEach(function(c){ var row=document.createElement('div'); row.className='dl-cand show'; row.innerHTML='<span class="dl-cand-nm">'+c[0]+'</span><span class="dl-cand-seq">'+colored(c[1])+'</span><span class="dl-cand-sc">'+c[2]+'</span>'; candsEl.appendChild(row); });
+    } else { runOnce(); }
   }
+
+  // ── Scroll reveal ──
+  var revEls=document.querySelectorAll('.dl-step,.dl-dcard,.dl-tier,.dl-real>a,.dl-final .dl-box,.dl-stats,.dl-sec .dl-eyebrow,.dl-sec .dl-h2,.dl-sec .dl-secsub');
+  if(!reduce && 'IntersectionObserver' in window){
+    var ro=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ var el=e.target, idx=el.parentNode?[].indexOf.call(el.parentNode.children,el):0; el.style.transitionDelay=Math.min(Math.max(idx,0),6)*70+'ms'; el.classList.add('dl-revealed'); ro.unobserve(el); } }); }, { threshold:.12, rootMargin:'0px 0px -8% 0px' });
+    revEls.forEach(function(el){ ro.observe(el); });
+  } else { revEls.forEach(function(el){ el.classList.add('dl-revealed'); }); }
 
   // Sample card: scroll-reveal with bar-fill, sequence cascade and count-up
   var sample=document.getElementById('dlSample');

@@ -140,6 +140,21 @@ async function sbFetch(path, opts = {}) {
   });
 }
 
+// Per-IP throttle (anti-Sybil / anti-spam). Returns true if ALLOWED. Fails OPEN.
+async function ipAllowed(req, prefix, limit, windowSecs) {
+  try {
+    const ip = String((req.headers && (req.headers['x-forwarded-for'] || req.headers['x-real-ip'])) || '')
+      .split(',')[0].trim() || 'unknown';
+    const r = await sbFetch('rpc/check_rate_limit', {
+      method: 'POST',
+      body: JSON.stringify({ p_key: `${prefix}:${ip}`, p_limit: limit, p_window_seconds: windowSecs }),
+    });
+    if (!r.ok) return true;
+    const ok = await r.json().catch(() => true);
+    return ok !== false;
+  } catch { return true; }
+}
+
 async function saveRun({ userId, target, brief, candidates, tier, sid }) {
   const r = await sbFetch('design_lab_runs', {
     method: 'POST',
@@ -178,6 +193,12 @@ module.exports = async function handler(req, res) {
     if (!ANTHROPIC_KEY) return res.status(503).json({ error: 'Design Lab is not configured yet.' });
     const user = await authUser(req);
     if (!user) return res.status(401).json({ error: 'Please sign in to use Velox Design Lab.' });
+
+    // Anti-Sybil: per-IP cap so one person can't spin up many free accounts to
+    // farm unlimited (paid) generations. Generous enough for shared lab IPs.
+    if (!(await ipAllowed(req, 'dl-gen', 20, 86400))) {
+      return res.status(429).json({ error: 'Too many designs from this network today. Please try again tomorrow or upgrade your Velox Pro tier.' });
+    }
 
     const target = String((req.body && req.body.target) || '').trim();
     if (target.length < 6) return res.status(400).json({ error: 'Describe your research target in a sentence or two.' });
@@ -365,6 +386,9 @@ module.exports = async function handler(req, res) {
   // ── synthesis enquiry ──────────────────────────────────────────────────────
   if (action === 'synthesis') {
     if (method !== 'POST') return res.status(405).end();
+    if (!(await ipAllowed(req, 'dl-syn', 8, 3600))) {
+      return res.status(429).json({ error: 'Too many enquiries — please wait a little and try again.' });
+    }
     const user = await authUser(req).catch(() => null);
     const body = req.body || {};
     const { email, full_name, sequence, candidate_name, candidate_data, quantity_mg, purity, modifications, notes } = body;
