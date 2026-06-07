@@ -69,13 +69,18 @@
   });
 
   (async function boot() {
-    if (enforceSessionOnly()) { hide('acc-loading'); show('auth-view'); return; }
-    var r = await sb.auth.getSession();
-    if (window.location.hash.indexOf('type=recovery') !== -1) {
-      hide('acc-loading'); show('auth-view'); window.authTab('newpw'); return;
+    try {
+      if (enforceSessionOnly()) { hide('acc-loading'); show('auth-view'); return; }
+      var r = await sb.auth.getSession();
+      if (window.location.hash.indexOf('type=recovery') !== -1) {
+        hide('acc-loading'); show('auth-view'); window.authTab('newpw'); return;
+      }
+      if (r.data && r.data.session) { await enterDashboard(); }
+      else { hide('acc-loading'); show('auth-view'); }
+    } catch (e) {
+      console.error('[account] boot error:', e);
+      hide('acc-loading'); show('auth-view');
     }
-    if (r.data && r.data.session) { await enterDashboard(); }
-    else { hide('acc-loading'); show('auth-view'); }
   })();
 
   // ── Auth: login ───────────────────────────────────────────────────────────────

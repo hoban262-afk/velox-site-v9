@@ -78,7 +78,7 @@ async function claudeOnce(prompt, maxTokens) {
 }
 
 // Retry transient Anthropic failures (overloaded / rate-limit / 5xx / network) with backoff.
-async function claude(prompt, maxTokens, tries = 3) {
+async function claude(prompt, maxTokens, tries = 2) {
   let lastErr;
   for (let i = 0; i < tries; i++) {
     try { return await claudeOnce(prompt, maxTokens); }
@@ -138,7 +138,7 @@ module.exports = async function handler(req, res) {
     let genErr;
     for (let attempt = 0; attempt < 2 && !candidates.length; attempt++) {
       try {
-        const raw = await claude(dl.generatePrompt(brief), 5200);
+        const raw = await claude(dl.generatePrompt(brief), 3000);
         candidates = parseCandidates(raw);
         if (!candidates.length) console.error(`[design-lab] generate attempt ${attempt + 1}: 0 candidates from ${raw.length} chars`);
       } catch (e) {

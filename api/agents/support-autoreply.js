@@ -152,5 +152,5 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  return res.status(200).json({ ok: true, scanned: msgs.length, autoSent, carded, skipped });
+  return res.status(200).json({ ok: true, scanned: candidates.length, autoSent, carded, skipped });
 };

@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "api/design-lab/[action].js": { "maxDuration": 60 }
+  },
   "crons": [
     {
       "path": "/api/recovery/run",
