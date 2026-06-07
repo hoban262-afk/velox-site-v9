@@ -12,7 +12,7 @@
  *   POST /api/design-lab/synthesis     (any)  { sequence, ... } → { id }
  *
  * Runs generation on VELOX's Anthropic key, gated by the signed-in user's Pro
- * tier (free=1 lifetime, solo=4/mo, group=20/mo, lab=unlimited).
+ * tier (free=3/mo, solo=20/mo, group=50/mo, lab=unlimited w/ 200/mo fair-use cap).
  * Refinement limits: free=1/mo, solo=3/mo, group=5/mo, lab=10/mo.
  * All outputs are computational predictions for in vitro research only.
  */

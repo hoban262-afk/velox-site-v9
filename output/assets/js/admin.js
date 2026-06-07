@@ -365,7 +365,7 @@
     var tb = d.tierBreakdown || {};
     var udiv = document.getElementById('dlab-usage');
     if (udiv) udiv.innerHTML =
-      card('Designs this month', n(d.runsThisMonth), 'Lab cap 300/mo per member') +
+      card('Designs this month', n(d.runsThisMonth), 'Lab cap 200/mo per member') +
       card('Designs all-time', n(d.runsAllTime), '') +
       card('By tier', n(tb.free) + ' free', n(tb.solo) + ' solo · ' + n(tb.group) + ' group · ' + n(tb.lab) + ' lab') +
       card('Shared (recent)', n(d.recentSharedVisible), 'public in last 15');
