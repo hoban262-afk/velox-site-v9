@@ -61,17 +61,44 @@ async function quotaFor(userId) {
   return { tier, tierLabel: lim.label, window: lim.window, limit: unlimited ? null : lim.limit, used, remaining: unlimited ? null : Math.max(0, lim.limit - used), unlimited };
 }
 
-async function claude(prompt, maxTokens) {
+async function claudeOnce(prompt, maxTokens) {
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({ model: dl.MODEL, max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] }),
   });
   const d = await r.json().catch(() => null);
-  if (!r.ok || (d && d.type === 'error')) throw new Error((d && d.error && d.error.message) || `Anthropic HTTP ${r.status}`);
+  if (!r.ok || (d && d.type === 'error')) {
+    const msg = (d && d.error && d.error.message) || `Anthropic HTTP ${r.status}`;
+    const err = new Error(msg); err.status = r.status; err.transient = r.status === 429 || r.status === 529 || r.status >= 500; throw err;
+  }
   const text = ((d && d.content) || []).filter((b) => b.type === 'text').map((b) => b.text).join('');
   if (!text) throw new Error('Empty response from the model');
   return text;
+}
+
+// Retry transient Anthropic failures (overloaded / rate-limit / 5xx / network) with backoff.
+async function claude(prompt, maxTokens, tries = 3) {
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    try { return await claudeOnce(prompt, maxTokens); }
+    catch (e) {
+      lastErr = e;
+      const retryable = e.transient || /fetch failed|ECONN|ETIMEDOUT|network|socket/i.test(String(e.message || ''));
+      if (i < tries - 1 && retryable) { await new Promise((r) => setTimeout(r, 500 * (i + 1) + Math.random() * 300)); continue; }
+      throw e;
+    }
+  }
+  throw lastErr;
+}
+
+function parseCandidates(raw) {
+  let arr = dl.extractJSON(raw);
+  if (!Array.isArray(arr) || !arr.length) arr = dl.salvageObjects(raw);
+  if (!Array.isArray(arr)) return [];
+  return arr.map((c) => ({ ...c, sequence: dl.sanitizeSeq(c.sequence) }))
+    .filter((c) => c.sequence && c.sequence.length >= 4 && c.sequence.length <= 26)
+    .map((c) => ({ ...c, scores: dl.score(c.sequence), novelty: dl.checkNovelty(c.sequence) }));
 }
 
 module.exports = async function handler(req, res) {
@@ -97,20 +124,30 @@ module.exports = async function handler(req, res) {
       return res.status(403).json({ error: 'limit_reached', message: `You've used all ${q.limit} of your ${q.tierLabel} designs ${q.window === 'month' ? 'this month' : ''}. Upgrade your Velox Pro tier for more.`, quota: q });
     }
 
-    let brief, candidates;
+    let brief, candidates = [];
     try {
-      brief = dl.extractJSON(await claude(dl.briefPrompt(target), 600));
-      if (!brief) throw new Error('Could not interpret that target — try rephrasing.');
-      const arr = dl.extractJSON(await claude(dl.generatePrompt(brief), 5200));
-      if (!Array.isArray(arr)) throw new Error('Generation failed — please try again.');
-      candidates = arr.map((c) => {
-        const seq = dl.sanitizeSeq(c.sequence);
-        return { ...c, sequence: seq };
-      }).filter((c) => c.sequence && c.sequence.length >= 4 && c.sequence.length <= 26)
-        .map((c) => ({ ...c, scores: dl.score(c.sequence), novelty: dl.checkNovelty(c.sequence) }));
-      if (!candidates.length) throw new Error('No valid sequences produced — please try again.');
+      const briefRaw = await claude(dl.briefPrompt(target), 700);
+      brief = dl.extractJSON(briefRaw) || (dl.salvageObjects(briefRaw) || [])[0];
+      if (!brief) throw new Error('Could not interpret that target — try rephrasing it.');
     } catch (e) {
-      return res.status(502).json({ error: e.message || 'Generation failed — please try again.' });
+      console.error('[design-lab] brief stage failed:', e && e.message);
+      return res.status(502).json({ error: 'Couldn\'t read that target — please rephrase and try again.' });
+    }
+
+    // Generate, with one full re-roll if the first attempt yields no usable candidates.
+    let genErr;
+    for (let attempt = 0; attempt < 2 && !candidates.length; attempt++) {
+      try {
+        const raw = await claude(dl.generatePrompt(brief), 5200);
+        candidates = parseCandidates(raw);
+        if (!candidates.length) console.error(`[design-lab] generate attempt ${attempt + 1}: 0 candidates from ${raw.length} chars`);
+      } catch (e) {
+        genErr = e;
+        console.error(`[design-lab] generate attempt ${attempt + 1} failed:`, e && e.message);
+      }
+    }
+    if (!candidates.length) {
+      return res.status(502).json({ error: 'The designer hiccuped on that one — please try again.', detail: genErr && genErr.message });
     }
 
     // Record the run (counts against quota).
