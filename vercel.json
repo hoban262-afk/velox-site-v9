@@ -103,9 +103,6 @@
     { "source": "/design-lab/leaderboard/", "destination": "/api/design-lab-leaderboard" }
   ],
   "redirects": [
-    { "source": "/favicon.ico", "destination": "/favicon.svg", "permanent": true },
-    { "source": "/apple-touch-icon.png", "destination": "/favicon.svg", "permanent": true },
-    { "source": "/apple-touch-icon-precomposed.png", "destination": "/favicon.svg", "permanent": true },
     {
       "source": "/compounds/neuropeptide-research/",
       "destination": "/compounds/cognitive/",
