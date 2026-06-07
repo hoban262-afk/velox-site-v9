@@ -29,11 +29,21 @@
   function wasOf(v) { return (v.sale_price != null) ? Number(v.base_price) : (v.compare_at != null ? Number(v.compare_at) : null); }
   function pct(from, to) { return Math.round((1 - to / from) * 100); }
 
-  function hydrateAll() {
-    fetch(SB_URL + '/rest/v1/product_variants?select=*', {
-      headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON }
-    })
+  // Cache variants in sessionStorage (5-min TTL) to skip a Supabase round-trip
+  // on every page navigation. Raw rows are cached; member discount is applied at
+  // render time, so caching is safe.
+  function cachedVariants() {
+    try {
+      var c = sessionStorage.getItem('vp_variants');
+      if (c) { var o = JSON.parse(c); if (o && o.t && (Date.now() - o.t) < 300000 && o.d) return Promise.resolve(o.d); }
+    } catch (e) {}
+    return fetch(SB_URL + '/rest/v1/product_variants?select=*', { headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON } })
       .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rows) { try { if (rows) sessionStorage.setItem('vp_variants', JSON.stringify({ t: Date.now(), d: rows })); } catch (e) {} return rows; });
+  }
+
+  function hydrateAll() {
+    cachedVariants()
       .then(function (rows) {
         if (!rows || !rows.length) return;          // keep hardcoded fallback
         var bySlug = {};
