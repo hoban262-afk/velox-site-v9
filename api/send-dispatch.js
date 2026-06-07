@@ -186,7 +186,7 @@ function buildDispatchHtml(orderNumber, customerName, trackingNumber, address, i
     <p style="margin:0 0 6px;font-size:13px">
       <a href="https://veloxpeps.com" style="color:#01D3A0;text-decoration:none;font-weight:600">veloxpeps.com</a>
     </p>
-    <p style="margin:0 0 4px;font-size:11px;color:#555">Velox Peptides &mdash; CRP Labs Ltd &mdash; Company no. NI738125</p>
+    <p style="margin:0 0 4px;font-size:11px;color:#555">Velox Peptides - CRP Labs Ltd - Company no. NI738125</p>
     <p style="margin:0;font-size:11px;color:#555">For in vitro research use only. Not for human or veterinary consumption.</p>
   </td></tr>
 
@@ -250,7 +250,7 @@ async function isAuthorized(req) {
  *   customerEmail  / customer_email  {string}  required
  *   customerName   / customer_name   {string}
  *   trackingNumber / tracking_number {string}  optional
- *   address                          {string}  optional — full address as one string
+ *   address                          {string}  optional - full address as one string
  */
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -284,7 +284,7 @@ module.exports = async function handler(req, res) {
     await resend.emails.send({
       from:    'Velox Peptides <orders@veloxpeps.com>',
       to:      customerEmail,
-      subject: 'Your Order Has Been Dispatched — Velox Peptides',
+      subject: 'Your Order Has Been Dispatched - Velox Peptides',
       html:    buildDispatchHtml(orderNumber, customerName, trackingNumber, address, items, total),
     });
 

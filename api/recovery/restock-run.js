@@ -1,5 +1,5 @@
 /**
- * GET/POST /api/recovery/restock-run — automated back-in-stock cron worker
+ * GET/POST /api/recovery/restock-run - automated back-in-stock cron worker
  *
  * Compares each product's current stock against the stock_state snapshot. When a
  * product flips out-of-stock -> in-stock, it emails everyone on that product's
@@ -60,7 +60,7 @@ function restockHtml(name, slug, unsubUrl) {
   return renderEmail({
     kicker: 'Back in stock',
     heading: name + ' is back in stock',
-    bodyHtml: emailParagraph('You asked to be told when <strong style="color:#fff">' + name + '</strong> was available again. It&rsquo;s live now &mdash; HPLC-verified with a batch-specific CoA. Stock can move fast, so don&rsquo;t wait too long.'),
+    bodyHtml: emailParagraph('You asked to be told when <strong style="color:#fff">' + name + '</strong> was available again. It&rsquo;s live now - HPLC-verified with a batch-specific CoA. Stock can move fast, so don&rsquo;t wait too long.'),
     cta: { href: url, label: 'SHOP ' + name.toUpperCase() + ' →' },
     unsubscribeUrl: unsubUrl,
     preheader: name + ' is back in stock at Velox Peptides.',
@@ -121,7 +121,7 @@ module.exports = async function handler(req, res) {
       if (await isUnsubscribed(w.email)) { summary.skipped_unsub++; await markNotified(w.id); continue; }
       const unsubUrl = `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(signEmailToken(w.email))}`;
       const r = await sendMail({
-        to: w.email, subject: `${name} is back in stock — Velox Peptides`,
+        to: w.email, subject: `${name} is back in stock - Velox Peptides`,
         html: restockHtml(name, slug, unsubUrl),
         text: `${name} is back in stock.\n\nShop: ${SITE}/compounds/${slug}/\n\nFor research use only. Unsubscribe: ${unsubUrl}`,
         flow: 'back_in_stock', productSlug: slug,
