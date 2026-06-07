@@ -66,9 +66,84 @@
     .foot{ border-top:1px solid #11181f; padding:20px; text-align:center; color:var(--dim); font-size:11px; line-height:1.6; }
     .foot a{ color:var(--mut); }
     .spin{ text-align:center; color:var(--mut); padding:30px; font-family:'DM Mono',monospace; font-size:13px; }
+
+    /* ── Run button shimmer ── */
+    .run{ position:relative; overflow:hidden; }
+    .run::after{ content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-18deg); animation:runShine 3.4s ease-in-out infinite; }
+    .run:disabled::after{ animation:none; }
+    @keyframes runShine{ 0%{ left:-60%; } 55%,100%{ left:130%; } }
+    .run:not(:disabled):hover{ transform:translateY(-1px); box-shadow:0 14px 30px -12px rgba(1,211,160,.7); transition:.15s; }
+    .run:not(:disabled):active{ transform:translateY(0) scale(.99); }
+
+    /* ── Live progress stepper ── */
+    .prog{ margin-top:24px; background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:26px 22px; overflow:hidden; position:relative; }
+    .prog::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse at 50% -20%,rgba(1,211,160,.10),transparent 60%); pointer-events:none; }
+    .prog-rows{ position:relative; display:grid; gap:14px; }
+    .prog-row{ display:flex; align-items:center; gap:13px; opacity:.4; transition:opacity .4s; }
+    .prog-row.on{ opacity:1; }
+    .prog-row.done{ opacity:1; }
+    .prog-ic{ width:30px; height:30px; flex-shrink:0; border-radius:50%; border:1.5px solid var(--brd); display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--mut); transition:.35s; }
+    .prog-row.on .prog-ic{ border-color:var(--g); color:var(--g); box-shadow:0 0 0 0 rgba(1,211,160,.5); animation:progPulse 1.3s ease-out infinite; }
+    .prog-row.done .prog-ic{ border-color:var(--g); background:var(--g); color:#04140f; }
+    @keyframes progPulse{ 0%{ box-shadow:0 0 0 0 rgba(1,211,160,.5);} 100%{ box-shadow:0 0 0 12px rgba(1,211,160,0);} }
+    .prog-tx{ font-size:14px; font-weight:600; color:#dfe6e4; }
+    .prog-row.on .prog-tx::after{ content:"…"; }
+    .prog-bar{ position:relative; height:4px; background:var(--brd); border-radius:3px; margin-top:20px; overflow:hidden; }
+    .prog-bar i{ position:absolute; inset:0; width:0%; background:linear-gradient(90deg,var(--g2),var(--g)); border-radius:3px; transition:width .5s ease; }
+    .prog-bar i::after{ content:""; position:absolute; right:0; top:0; bottom:0; width:40px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5)); }
+
+    /* ── Results celebration header ── */
+    .res-hd{ margin-top:30px; text-align:center; opacity:0; transform:translateY(8px); animation:popIn .5s cubic-bezier(.2,.9,.25,1) forwards; }
+    .res-hd .spark{ font-size:13px; font-family:'DM Mono',monospace; letter-spacing:2px; color:var(--g); }
+    .res-hd .big{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:30px; line-height:1.05; margin:4px 0 2px; }
+    .res-hd .big b{ color:var(--g); }
+    .res-hd .sub{ font-size:13px; color:var(--mut); }
+
+    @keyframes popIn{ to{ opacity:1; transform:none; } }
+
+    /* ── Candidate card reveal + states ── */
+    .cand{ opacity:0; transform:translateY(14px) scale(.985); animation:cardIn .55s cubic-bezier(.2,.9,.25,1) forwards; transition:border-color .2s, box-shadow .2s, transform .2s; }
+    .cand:hover{ border-color:#2a3645; box-shadow:0 18px 44px -28px rgba(0,0,0,.9); transform:translateY(-2px); }
+    @keyframes cardIn{ to{ opacity:1; transform:none; } }
+    .cand.top{ border-color:rgba(1,211,160,.55); box-shadow:0 0 0 1px rgba(1,211,160,.35) inset, 0 22px 60px -30px rgba(1,211,160,.55); background:linear-gradient(180deg,rgba(1,211,160,.05),var(--bg2) 60%); }
+    .crown{ display:inline-flex; align-items:center; gap:6px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:#04140f; background:var(--g); padding:3px 10px; border-radius:6px; font-weight:700; margin-bottom:10px; }
+    .cand-comp{ transition:none; }
+    .seq span{ display:inline-block; opacity:0; transform:translateY(-6px); animation:aaIn .34s ease forwards; }
+    @keyframes aaIn{ to{ opacity:1; transform:none; } }
+    .bar-f{ width:0 !important; transition:width .9s cubic-bezier(.2,.8,.2,1); }
+    .bar-f.fill{ width:var(--w) !important; }
+
+    /* ── Strengths / watch-outs / reasoning ── */
+    .why{ margin-top:12px; background:var(--bg3); border:1px solid var(--brd); border-radius:9px; padding:13px 14px; font-size:13px; color:#cdd6d4; line-height:1.6; }
+    .why .why-h{ font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--mut); margin:0 0 6px; text-transform:uppercase; }
+    .prosCons{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:11px; }
+    @media(max-width:560px){ .prosCons{ grid-template-columns:1fr; } }
+    .pc{ border-radius:9px; padding:12px 13px; border:1px solid var(--brd); }
+    .pc.pro{ background:rgba(1,211,160,.05); border-color:rgba(1,211,160,.22); }
+    .pc.con{ background:rgba(240,176,59,.05); border-color:rgba(240,176,59,.22); }
+    .pc h4{ margin:0 0 8px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; }
+    .pc.pro h4{ color:var(--g); }
+    .pc.con h4{ color:var(--amber); }
+    .pc ul{ margin:0; padding:0; list-style:none; display:grid; gap:7px; }
+    .pc li{ font-size:12.5px; line-height:1.5; color:#cdd6d4; padding-left:18px; position:relative; }
+    .pc.pro li::before{ content:"✓"; position:absolute; left:0; color:var(--g); font-weight:700; }
+    .pc.con li::before{ content:"!"; position:absolute; left:1px; color:var(--amber); font-weight:700; }
+
+    /* ── Confetti ── */
+    #fx{ position:fixed; inset:0; pointer-events:none; z-index:60; overflow:hidden; }
+    .conf{ position:absolute; width:9px; height:14px; top:-20px; border-radius:1px; animation:confFall linear forwards; }
+    @keyframes confFall{ to{ transform:translateY(110vh) rotate(720deg); opacity:.2; } }
+
+    @media (prefers-reduced-motion: reduce){
+      .run::after,.res-hd,.cand,.seq span,.prog-row.on .prog-ic{ animation:none !important; }
+      .cand,.res-hd{ opacity:1 !important; transform:none !important; }
+      .seq span{ opacity:1 !important; transform:none !important; }
+      .bar-f{ transition:none; }
+    }
   </style>
 </head>
 <body>
+<div id="fx"></div>
 <div class="dlh">
   <a href="/" aria-label="Velox Peptides"><img src="/assets/images/veloxpeps2.png" alt="Velox Peptides"></a>
   <span class="nm">VELOX <span>DESIGN LAB</span></span>
@@ -137,47 +212,109 @@
           '<button data-ex="A neuroprotective peptide, Semax-like, with improved protease stability, for in vitro neuronal studies.">Neuroprotective, Semax-like</button>'+
           '<button data-ex="A gut anti-inflammatory peptide with oral-route stability, for in vitro epithelial research.">Gut anti-inflammatory</button>'+
         '</div>'+
-        '<button class="run" id="runBtn">Run design pipeline →</button>'+
+        '<button class="run" id="runBtn">✨ Design 6 new peptides →</button>'+
         '<div class="msg" id="msg"></div>'+
       '</div>';
     $('#runBtn').addEventListener('click', run);
     document.querySelectorAll('.ex button').forEach(function(b){ b.addEventListener('click', function(){ $('#target').value=b.getAttribute('data-ex'); }); });
   }
+  function runProgress(){
+    var steps=[['🎯','Reading your brief'],['🧬','Inventing six new peptides'],['📊','Grading & novelty-checking']];
+    var rows=steps.map(function(s,i){ return '<div class="prog-row" data-i="'+i+'"><div class="prog-ic">'+s[0]+'</div><div class="prog-tx">'+s[1]+'</div></div>'; }).join('');
+    $('#results').innerHTML='<div class="prog"><div class="prog-rows">'+rows+'</div><div class="prog-bar"><i></i></div></div>';
+    var bar=$('#results .prog-bar i');
+    var rowEls=document.querySelectorAll('#results .prog-row');
+    var pct=0, done=false;
+    function activate(i){ if(i>0&&rowEls[i-1]){ rowEls[i-1].classList.remove('on'); rowEls[i-1].classList.add('done'); } if(rowEls[i]) rowEls[i].classList.add('on'); }
+    activate(0);
+    var t1=setTimeout(function(){ if(!done) activate(1); },1700);
+    var t2=setTimeout(function(){ if(!done) activate(2); },4300);
+    var creep=setInterval(function(){ if(done)return; pct=Math.min(92,pct+Math.random()*7); bar.style.width=pct+'%'; },340);
+    return {
+      finish:function(cb){ done=true; clearTimeout(t1); clearTimeout(t2); clearInterval(creep);
+        rowEls.forEach(function(r){ r.classList.remove('on'); r.classList.add('done'); });
+        if(bar) bar.style.width='100%';
+        setTimeout(cb,430); },
+      abort:function(){ done=true; clearTimeout(t1); clearTimeout(t2); clearInterval(creep); $('#results').innerHTML=''; }
+    };
+  }
   async function run(){
     var target=$('#target').value.trim();
     $('#msg').textContent=''; $('#results').innerHTML='';
-    if(target.length<6){ $('#msg').textContent='Describe your research target first.'; return; }
-    var btn=$('#runBtn'); btn.disabled=true; btn.textContent='Designing… (up to ~30s)';
-    $('#results').innerHTML='<div class="spin">Interpreting target → generating sequences → scoring…</div>';
+    if(target.length<6){ $('#msg').textContent='Tell it what you want to study first.'; return; }
+    var btn=$('#runBtn'); btn.disabled=true; btn.textContent='Designing…';
+    var prog=runProgress();
     try{
       var r=await api('generate',{method:'POST',body:JSON.stringify({target:target})});
       var d=await r.json().catch(function(){return{};});
-      if(r.status===401){ gate(); return; }
-      if(r.status===403){ $('#results').innerHTML=''; $('#msg').textContent=''; renderUpsell(d.message); loadQuota(); return; }
-      if(!r.ok){ $('#results').innerHTML=''; $('#msg').textContent=d.error||'Something went wrong — try again.'; return; }
-      renderResults(d);
-      if(d.quota) showQuota(d.quota);
-    }catch(e){ $('#results').innerHTML=''; $('#msg').textContent='Network error — please try again.'; }
-    btn.disabled=false; btn.textContent='Run design pipeline →';
+      if(r.status===401){ prog.abort(); gate(); return; }
+      if(r.status===403){ prog.abort(); $('#msg').textContent=''; renderUpsell(d.message); loadQuota(); }
+      else if(!r.ok){ prog.abort(); $('#msg').textContent=d.error||'Something went wrong — try again.'; }
+      else { prog.finish(function(){ renderResults(d); fireConfetti(); if(d.quota) showQuota(d.quota); }); }
+    }catch(e){ prog.abort(); $('#msg').textContent='Network error — please try again.'; }
+    btn.disabled=false; btn.textContent='✨ Design 6 new peptides →';
   }
   function renderUpsell(msg){
     $('#results').innerHTML='<div class="upsell"><p style="margin:0 0 10px;color:#cdd3d9">'+esc(msg||'You\'ve hit your design limit.')+'</p><a href="/pro/">Upgrade your Velox Pro tier →</a></div>';
   }
   function seqHTML(seq){ return String(seq).split('').map(function(a){ return '<span style="color:'+aaCol(a)+'">'+esc(a)+'</span>'; }).join(''); }
-  function barHTML(label,val,col){ return '<div class="bar"><span class="bar-l">'+label+'</span><div class="bar-t"><div class="bar-f" style="width:'+val+'%;background:'+col+'"></div></div><span class="bar-v" style="color:'+col+'">'+val+'</span></div>'; }
+  function barHTML(label,val,col){ return '<div class="bar"><span class="bar-l">'+label+'</span><div class="bar-t"><div class="bar-f" style="--w:'+val+'%;background:'+col+'"></div></div><span class="bar-v" style="color:'+col+'">'+val+'</span></div>'; }
+  function listHTML(arr){ return (arr||[]).map(function(x){ return '<li>'+esc(x)+'</li>'; }).join(''); }
+
+  function countUp(el,to){ to=+to||0; var dur=850,st=null;
+    function fr(ts){ if(!st)st=ts; var p=Math.min(1,(ts-st)/dur); var e=1-Math.pow(1-p,3); el.textContent=Math.round(to*e); if(p<1) requestAnimationFrame(fr); else el.textContent=to; }
+    requestAnimationFrame(fr);
+  }
+  function fireConfetti(){
+    var fx=document.getElementById('fx'); if(!fx) return;
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var cols=['#01D3A0','#6cf7d6','#7b8cff','#f0b03b','#ffffff'];
+    for(var i=0;i<76;i++){ (function(){
+      var c=document.createElement('div'); c.className='conf';
+      c.style.left=Math.random()*100+'%';
+      c.style.background=cols[Math.floor(Math.random()*cols.length)];
+      var dur=2.4+Math.random()*1.9;
+      c.style.animationDuration=dur+'s';
+      c.style.animationDelay=(Math.random()*0.45)+'s';
+      c.style.transform='rotate('+(Math.random()*360)+'deg)';
+      fx.appendChild(c);
+      setTimeout(function(){ c.remove(); }, (dur+1)*1000);
+    })(); }
+  }
+  function reveal(){
+    var cards=document.querySelectorAll('#results .cand');
+    cards.forEach(function(card,i){
+      card.style.animationDelay=(0.09*i)+'s';
+      var comp=card.querySelector('.cand-comp');
+      if(comp){ var to=comp.getAttribute('data-to'); comp.textContent='0'; setTimeout(function(){ countUp(comp,to); }, 90*i+260); }
+      card.querySelectorAll('.seq span').forEach(function(s,j){ s.style.animationDelay=(0.09*i+0.28+j*0.028)+'s'; });
+    });
+    setTimeout(function(){ document.querySelectorAll('#results .bar-f').forEach(function(b){ b.classList.add('fill'); }); }, 420);
+  }
   function renderResults(d){
     var b=d.brief||{};
-    var html='<div class="brief"><div class="lbl">WHAT THE AI UNDERSTOOD</div><p>'+esc(b.target_mechanism||'')+'</p>'+
+    var cands=d.candidates||[];
+    var top=null; cands.forEach(function(c){ var v=(c.scores||{}).comp||0; if(!top||v>top.v) top={id:c.id,v:v}; });
+    var novelCount=cands.filter(function(c){ return (c.novelty||{}).badge==='novel'; }).length;
+
+    var html='<div class="res-hd"><div class="spark">✦ DESIGN COMPLETE ✦</div>'+
+      '<div class="big"><b>'+cands.length+'</b> brand-new peptides, just for you</div>'+
+      '<div class="sub">'+(novelCount?novelCount+' look likely to be completely new · ':'')+'scroll to explore each one</div></div>';
+
+    html+='<div class="brief" style="animation:popIn .5s .05s both"><div class="lbl">WHAT THE AI UNDERSTOOD</div><p>'+esc(b.target_mechanism||'')+'</p>'+
       (b.desired_properties||[]).map(function(p){return '<span class="tag g">'+esc(p)+'</span>';}).join('')+
       (b.reference_compounds&&b.reference_compounds.length?'<div style="margin-top:6px"><span style="font-size:11px;color:var(--mut)">References: </span>'+(b.reference_compounds||[]).map(function(r){return '<span class="tag">'+esc(r)+'</span>';}).join('')+'</div>':'')+
       '</div>';
-    (d.candidates||[]).forEach(function(c){
+
+    cands.forEach(function(c){
       var sc=c.scores||{}, nv=c.novelty||{};
       var novCls = nv.badge==='novel'?'novel':nv.badge==='known'?'known':'partial';
       var novTxt = nv.badge==='novel'?'✦ Likely brand-new':nv.badge==='known'?'⚠ Already exists':'~ '+esc(nv.label||'Partially similar');
-      html+='<div class="cand">'+
+      var isTop = top && c.id===top.id && cands.length>1;
+      html+='<div class="cand'+(isTop?' top':'')+'">'+
+        (isTop?'<div class="crown">👑 TOP PICK · highest overall score</div>':'')+
         '<div class="cand-top"><div><div class="cand-id">'+esc(c.id||'')+' · '+esc(sc.len||c.sequence.length)+' building blocks</div><div class="cand-name">'+esc(c.name||'Candidate')+'</div></div>'+
-          '<div style="text-align:right"><div class="cand-comp" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">OVERALL</div></div></div>'+
+          '<div style="text-align:right"><div class="cand-comp" data-to="'+(sc.comp||0)+'" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">OVERALL</div></div></div>'+
         '<div style="margin:6px 0"><span class="nov '+novCls+'">'+novTxt+'</span> <span class="tag">'+esc(c.scaffold_class||'')+'</span></div>'+
         '<div class="seq">'+seqHTML(c.sequence)+'</div>'+
         '<div class="bars">'+
@@ -187,10 +324,17 @@
           barHTML('Variety of parts',sc.dv||0,'#8aa0a0')+
         '</div>'+
         '<div class="meta" title="Net charge: overall electrical charge. Water balance (GRAVY): how water-loving vs water-avoiding it is. Breakdown risk: how easily the body\'s enzymes would chop it up.">Net charge '+(sc.netCharge>0?'+':'')+esc(sc.netCharge)+' · Water balance '+esc(sc.gravyScore)+' · Breakdown risk: '+esc(sc.protRisk)+' · est. £'+esc(sc.cost)+' to make</div>'+
-        (c.research_hypothesis?'<div class="hyp">'+esc(c.research_hypothesis)+'</div>':'')+
+        (c.design_reasoning?'<div class="why"><p class="why-h">Why the AI built it this way</p>'+esc(c.design_reasoning)+'</div>':'')+
+        (((c.strengths&&c.strengths.length)||(c.watch_outs&&c.watch_outs.length))?'<div class="prosCons">'+
+          (c.strengths&&c.strengths.length?'<div class="pc pro"><h4>Why it could work</h4><ul>'+listHTML(c.strengths)+'</ul></div>':'')+
+          (c.watch_outs&&c.watch_outs.length?'<div class="pc con"><h4>What to watch</h4><ul>'+listHTML(c.watch_outs)+'</ul></div>':'')+
+        '</div>':'')+
+        (c.research_hypothesis?'<div class="hyp"><b style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.5px;opacity:.7">TESTABLE PREDICTION · </b>'+esc(c.research_hypothesis)+'</div>':'')+
       '</div>';
     });
     $('#results').innerHTML=html;
+    reveal();
+    $('#results').scrollIntoView({behavior:'smooth',block:'start'});
   }
 
   init();

@@ -101,7 +101,7 @@ module.exports = async function handler(req, res) {
     try {
       brief = dl.extractJSON(await claude(dl.briefPrompt(target), 600));
       if (!brief) throw new Error('Could not interpret that target — try rephrasing.');
-      const arr = dl.extractJSON(await claude(dl.generatePrompt(brief), 2200));
+      const arr = dl.extractJSON(await claude(dl.generatePrompt(brief), 5200));
       if (!Array.isArray(arr)) throw new Error('Generation failed — please try again.');
       candidates = arr.map((c) => {
         const seq = dl.sanitizeSeq(c.sequence);
