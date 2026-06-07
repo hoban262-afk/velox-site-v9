@@ -80,9 +80,6 @@
       "schedule": "0 8 1 * *"
     }
   ],
-  "functions": {
-    "api/design-lab/[action].js": { "maxDuration": 60 }
-  },
   "headers": [
     { "source": "/assets/(.*)\\.(woff2|woff|ttf|otf)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
     { "source": "/(.*)\\.(png|jpg|jpeg|webp|svg|gif|ico|avif)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },

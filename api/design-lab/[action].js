@@ -138,7 +138,7 @@ module.exports = async function handler(req, res) {
     let genErr;
     for (let attempt = 0; attempt < 2 && !candidates.length; attempt++) {
       try {
-        const raw = await claude(dl.generatePrompt(brief), 3000);
+        const raw = await claude(dl.generatePrompt(brief), 5200);
         candidates = parseCandidates(raw);
         if (!candidates.length) console.error(`[design-lab] generate attempt ${attempt + 1}: 0 candidates from ${raw.length} chars`);
       } catch (e) {

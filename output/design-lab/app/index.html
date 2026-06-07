@@ -323,7 +323,11 @@
           barHTML('Good length',sc.ls||0,'#f0b03b')+
           barHTML('Variety of parts',sc.dv||0,'#8aa0a0')+
         '</div>'+
-        '<div class="meta" title="Net charge: overall electrical charge. Water balance (GRAVY): how water-loving vs water-avoiding it is. Breakdown risk: how easily the body\'s enzymes would chop it up.">Net charge '+(sc.netCharge>0?'+':'')+esc(sc.netCharge)+' · Water balance '+esc(sc.gravyScore)+' · Breakdown risk: '+esc(sc.protRisk)+' · est. £'+esc(sc.cost)+' to make</div>'+
+        '<div class="meta" title="'+esc('Charge: how strongly positive or negative the peptide is. In water: whether it dissolves easily or prefers fatty places like cell walls. Sturdiness: how well it resists being snipped apart by the body’s enzymes ('+(sc.protRisk||'')+').')+'">'+
+          'Charge: '+(sc.netCharge>0?'+'+esc(sc.netCharge)+' (positive)':sc.netCharge<0?esc(sc.netCharge)+' (negative)':'neutral')+
+          ' · In water: '+(sc.gravyScore>0.3?'prefers fat/cell walls (water-avoiding)':sc.gravyScore<-0.3?'dissolves easily (water-loving)':'fairly balanced')+
+          ' · Sturdiness: '+(sc.protRisk==='Low'?'high — hard to snip apart':'lower — body enzymes could snip it')+
+          ' · ~£'+esc(sc.cost)+' to make</div>'+
         (c.design_reasoning?'<div class="why"><p class="why-h">Why the AI built it this way</p>'+esc(c.design_reasoning)+'</div>':'')+
         (((c.strengths&&c.strengths.length)||(c.watch_outs&&c.watch_outs.length))?'<div class="prosCons">'+
           (c.strengths&&c.strengths.length?'<div class="pc pro"><h4>Why it could work</h4><ul>'+listHTML(c.strengths)+'</ul></div>':'')+
