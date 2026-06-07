@@ -909,6 +909,10 @@ function renderResults(d){
     var hlCls=hl.indexOf('>20')!==-1||hl.indexOf('>100')!==-1?'mc-g':hl.indexOf('~1')!==-1||hl.indexOf('~0')!==-1?'mc-red':'mc-amber';
     var gravyStr=sc.gravyScore!==undefined?sc.gravyScore:0;
     var gravyCls=gravyStr>0.3?'mc-vio':gravyStr<-0.3?'mc-g':'';
+    // Phase-1 grounded properties
+    var mw=sc.mw||0, ext=sc.ext280||0, ali=(sc.aliphatic!==undefined?sc.aliphatic:0);
+    var aggR=sc.aggRisk||0, aggCls=aggR>50?'mc-red':aggR>25?'mc-amber':'mc-g';
+    var liab=(sc.liabilities||[]);
 
     html+='<div class="cand" id="cand-'+ci+'">'+
       '<div class="cand-top">'+
@@ -949,19 +953,30 @@ function renderResults(d){
           barHTML('Easy to synthesise',sc.sy||0,'#01D3A0')+
           barHTML('Dissolves in water',sc.so||0,'#7b8cff')+
           barHTML('Ideal length',sc.ls||0,'#f0b03b')+
-          barHTML('Building block variety',sc.dv||0,'#8aa0a0')+
+          barHTML('Low aggregation risk',sc.dv||0,'#8aa0a0')+
         '</div>'+
 
         // Molecular deep-dive
         '<div class="mol">'+
           '<div class="mol-hd">🔬 Molecular deep-dive</div>'+
           '<div class="mol-grid">'+
-            '<div class="mol-cell '+piCls+'"><div class="mc-l">Isoelectric point (pI)</div><div class="mc-v">'+pi+'</div><div class="mc-note">pH at which net charge = 0</div></div>'+
-            '<div class="mol-cell '+ncCls+'"><div class="mc-l">Net charge (pH 7.4)</div><div class="mc-v">'+ncStr+'</div><div class="mc-note">'+(nc>1?'Cationic (positive)':nc<-1?'Anionic (negative)':'Near-neutral')+'</div></div>'+
-            '<div class="mol-cell '+hlCls+'"><div class="mc-l">N-end stability</div><div class="mc-v">'+esc(hl)+'</div><div class="mc-note">First-residue (N-end rule) heuristic · in vitro</div></div>'+
-            '<div class="mol-cell '+gravyCls+'"><div class="mc-l">GRAVY score</div><div class="mc-v">'+gravyStr+'</div><div class="mc-note">'+(gravyStr>0.3?'Hydrophobic (prefers oily environments)':gravyStr<-0.3?'Hydrophilic (water-loving)':'Balanced')+'</div></div>'+
-            '<div class="mol-cell '+(amphi?'mc-vio':'')+'"><div class="mc-l">Hydrophobic moment</div><div class="mc-v">'+hm+'</div><div class="mc-note">'+(amphi?'Amphipathic — one oily side, one watery side':'Not amphipathic')+'</div></div>'+
-            '<div class="mol-cell mc-amber"><div class="mc-l">Protease risk</div><div class="mc-v" style="font-size:12px">'+esc(sc.protRisk||'Low')+'</div><div class="mc-note">Enzyme cleavage risk</div></div>'+
+            '<div class="mol-cell" title="Sum of average residue masses + one water (ExPASy ProtParam method)"><div class="mc-l">Molecular weight</div><div class="mc-v" style="font-size:14px">'+mw+'</div><div class="mc-note">Da · avg. residue masses</div></div>'+
+            '<div class="mol-cell '+piCls+'" title="Isoelectric point from residue pKa values (Henderson–Hasselbalch)"><div class="mc-l">Isoelectric point (pI)</div><div class="mc-v">'+pi+'</div><div class="mc-note">pH at which net charge = 0</div></div>'+
+            '<div class="mol-cell '+ncCls+'" title="Net charge at physiological pH 7.4 from side-chain pKa values"><div class="mc-l">Net charge (pH 7.4)</div><div class="mc-v">'+ncStr+'</div><div class="mc-note">'+(nc>1?'Cationic (positive)':nc<-1?'Anionic (negative)':'Near-neutral')+'</div></div>'+
+            '<div class="mol-cell '+gravyCls+'" title="Grand average of hydropathy (Kyte & Doolittle 1982)"><div class="mc-l">GRAVY score</div><div class="mc-v">'+gravyStr+'</div><div class="mc-note">'+(gravyStr>0.3?'Hydrophobic (prefers oily environments)':gravyStr<-0.3?'Hydrophilic (water-loving)':'Balanced')+'</div></div>'+
+            '<div class="mol-cell" title="Aliphatic index (Ikai 1980) — relative volume of aliphatic side chains; thermostability proxy"><div class="mc-l">Aliphatic index</div><div class="mc-v">'+ali+'</div><div class="mc-note">Higher = more thermostable</div></div>'+
+            '<div class="mol-cell '+aggCls+'" title="β-aggregation hotspot heuristic — runs of ≥3 consecutive hydrophobic residues"><div class="mc-l">Aggregation risk</div><div class="mc-v">'+aggR+'<span style="font-size:11px;color:var(--mut)">/100</span></div><div class="mc-note">'+(aggR>50?'High — may clump':aggR>25?'Moderate':'Low')+'</div></div>'+
+            '<div class="mol-cell '+(amphi?'mc-vio':'')+'" title="Hydrophobic moment (Eisenberg) — measures amphipathicity / membrane affinity"><div class="mc-l">Hydrophobic moment</div><div class="mc-v">'+hm+'</div><div class="mc-note">'+(amphi?'Amphipathic — one oily side, one watery side':'Not amphipathic')+'</div></div>'+
+            '<div class="mol-cell '+hlCls+'" title="N-terminal residue (N-end rule) stability heuristic — in vitro context only"><div class="mc-l">N-end stability</div><div class="mc-v">'+esc(hl)+'</div><div class="mc-note">First-residue heuristic · in vitro</div></div>'+
+            (ext>0?'<div class="mol-cell" title="Molar extinction coefficient at 280 nm (Pace et al. 1995): 5500·Trp + 1490·Tyr"><div class="mc-l">Extinction (280 nm)</div><div class="mc-v" style="font-size:13px">'+ext+'</div><div class="mc-note">M⁻¹cm⁻¹ · reduced Cys</div></div>':'')+
+            '<div class="mol-cell mc-amber" title="Protease cleavage motifs (trypsin/chymotrypsin)"><div class="mc-l">Protease risk</div><div class="mc-v" style="font-size:12px">'+esc(sc.protRisk||'Low')+'</div><div class="mc-note">Enzyme cleavage risk</div></div>'+
+          '</div>'+
+          // Documented sequence-stability liabilities
+          '<div style="margin-top:12px;font-size:12px;line-height:1.6">'+
+            '<span style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim)">Chemical-stability flags</span><br>'+
+            (liab.length
+              ? liab.map(function(x){ return '<span class="tag" style="background:rgba(240,99,126,.08);color:#f0637e;border:1px solid rgba(240,99,126,.25);margin:4px 4px 0 0;display:inline-block">⚠ '+esc(x)+'</span>'; }).join('')
+              : '<span style="color:var(--g)">✓ No major sequence-stability liabilities flagged</span>')+
           '</div>'+
           // Helical wheel for amphipathic sequences
           (amphi&&seq.length>=5?
@@ -1026,6 +1041,12 @@ function renderResults(d){
   // Delight-moment Pro nudge + cross-sell bridge to in-stock compounds
   html+=prowallHTML(d.quota||quotaData||{});
   html+=bridgeHTML(b,cands);
+
+  // Methods & sources — credibility footnote
+  html+='<div style="margin:22px 0 6px;font-size:11px;color:var(--dim);line-height:1.7;border-top:1px solid var(--brd,#1a2230);padding-top:14px">'+
+    '<b style="color:var(--mut)">Methods &amp; sources.</b> Molecular weight and extinction coefficient follow the ExPASy ProtParam method (Pace et al. 1995); isoelectric point and net charge from residue pKa values; GRAVY from Kyte &amp; Doolittle (1982); aliphatic index from Ikai (1980); hydrophobic moment from Eisenberg; aggregation risk and synthesis-ease are documented heuristics (hydrophobic-run hotspots; solid-phase-synthesis difficult-sequence factors). “Make-ability” reflects ease of synthesis and handling, not biological activity. Novelty is a match check against our reference library, not a patent search. '+
+    '<b style="color:var(--mut)">All values are computational predictions for in vitro research use only.</b>'+
+  '</div>';
 
   $('#results').innerHTML=html;
   reveal();
@@ -1164,7 +1185,7 @@ init();
       ['Easy to make',function(c){return (c.scores||{}).sy||0;}],
       ['Dissolves in water',function(c){return (c.scores||{}).so||0;}],
       ['Good length',function(c){return (c.scores||{}).ls||0;}],
-      ['Mix of blocks',function(c){return (c.scores||{}).dv||0;}],
+      ['Low aggregation',function(c){return (c.scores||{}).dv||0;}],
       ['Library match',function(c){var nv=c.novelty||{};return nv.badge==='novel'?'✦ None found':nv.badge==='known'?'⚠ Exists':'~ Partial';}],
       ['Est. cost to make',function(c){return gbp((c.scores||{}).cost);}]
     ];
