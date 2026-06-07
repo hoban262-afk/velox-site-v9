@@ -194,6 +194,23 @@
 
 }());
 
+// ── Affiliate ?ref= capture (30-day attribution window) ───────────────────────
+// Any page reached via an affiliate link (e.g. /design-lab/?ref=CODE) stores the
+// code so checkout can auto-apply it. Without this, affiliate links attribute
+// nothing. First-touch wins (don't overwrite an existing, unexpired ref).
+(function () {
+  try {
+    var m = location.search.match(/[?&]ref=([A-Za-z0-9_-]{2,32})/);
+    if (!m) return;
+    var code = m[1].toUpperCase();
+    var existing = null;
+    try { existing = JSON.parse(localStorage.getItem('vp_ref') || 'null'); } catch (e) {}
+    var THIRTY_DAYS = 30 * 864e5;
+    if (existing && existing.code && existing.ts && (Date.now() - existing.ts) < THIRTY_DAYS) return; // keep first touch
+    try { localStorage.setItem('vp_ref', JSON.stringify({ code: code, ts: Date.now() })); } catch (e) {}
+  } catch (e) {}
+})();
+
 // ── First-party analytics beacon (no cookies, no PII) ─────────────────────────
 (function () {
   try {

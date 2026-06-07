@@ -412,6 +412,22 @@
       });
     }
 
+    // ── Auto-apply a captured affiliate ?ref= code (set in core.js) ───────────
+    // If the customer arrived via an affiliate link and hasn't already applied a
+    // code, prefill + validate it so the discount applies AND attribution attaches
+    // to the order (orders.affiliate_code_used). Customer can still override it.
+    (function autoApplyRef() {
+      try {
+        if (!discountInput || appliedDiscount || affiliateApplied || welcomeCodeApplied) return;
+        if (discountInput.value.trim()) return;
+        var stored = JSON.parse(localStorage.getItem('vp_ref') || 'null');
+        if (!stored || !stored.code || !stored.ts) return;
+        if (Date.now() - stored.ts > 30 * 864e5) return; // expired
+        discountInput.value = stored.code;
+        handleApply();
+      } catch (e) {}
+    })();
+
     // ── Loyalty points redemption (signed-in users with balance >= 500) ──────
     if (window._sb) {
       (async function () {
