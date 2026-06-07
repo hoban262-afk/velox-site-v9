@@ -107,9 +107,9 @@
       var d=await r.json().catch(function(){return{};});
       if(!r.ok){ $('#msg').textContent=d.error||'Something went wrong. Try again.'; }
       else if(!d.found){
-        $('#result').innerHTML='<div class="miss">We couldn\'t find an order matching that reference and email. Double-check both match your confirmation email exactly — or email <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a> and we\'ll help.</div>';
+        $('#result').innerHTML='<div class="miss">We couldn\'t find an order matching that reference and email. Double-check both match your confirmation email exactly - or email <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a> and we\'ll help.</div>';
       } else { renderResult(d); }
-    }catch(e){ $('#msg').textContent='Network error — please try again.'; }
+    }catch(e){ $('#msg').textContent='Network error - please try again.'; }
     btn.disabled=false; btn.textContent='Check status';
   }
 

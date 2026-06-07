@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Velox Pro — Member Pricing for Researchers | Velox Peptides</title>
+  <title>Velox Pro - Member Pricing for Researchers | Velox Peptides</title>
   <meta name="description" content="Join Velox Pro: 5–25% off every order, free tracked UK shipping, first dibs on restocks, subscribe-&-save and more. Solo, Group and Lab membership tiers.">
   <link rel="canonical" href="https://veloxpeps.com/pro/">
 
@@ -11,7 +11,7 @@
   <meta property="og:site_name" content="Velox Peptides">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veloxpeps.com/pro/">
-  <meta property="og:title" content="Velox Pro — Member Pricing for Researchers">
+  <meta property="og:title" content="Velox Pro - Member Pricing for Researchers">
   <meta property="og:description" content="5–25% off every order, free tracked UK shipping, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
   <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
   <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Velox Pro — Member Pricing for Researchers">
+  <meta name="twitter:title" content="Velox Pro - Member Pricing for Researchers">
   <meta name="twitter:description" content="5–25% off every order, free tracked UK shipping, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
   <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
 
@@ -89,7 +89,7 @@
     .tier:not(.featured) button.cta { background:#141b22; color:#fff; border:1px solid #2a323a; }
     .tier:not(.featured) button.cta:hover { border-color:#01D3A0; box-shadow:none; filter:none; }
 
-    /* ── Featured card — animated, glowing, elevated ────── */
+    /* ── Featured card - animated, glowing, elevated ────── */
     @property --proang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
     .tier.featured { z-index:2; border:0; overflow:hidden; color:#053a2c; transform:translateY(-8px) scale(1.04); background:linear-gradient(165deg,#1ef0bd 0%,#01D3A0 55%,#00b489 100%); animation:proFloat 5s ease-in-out infinite, proGlow 3s ease-in-out infinite; }
     .tier.featured h2 { color:#03150f; }
@@ -174,11 +174,11 @@
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true">
     <a href="/compounds/" class="mob-nl">Shop</a>
-    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub">— Cognitive</a>
-    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub">— Metabolic</a>
-    <a href="/compounds/recovery/" class="mob-nl mob-nl-sub">— Recovery</a>
-    <a href="/compounds/growth/" class="mob-nl mob-nl-sub">— Growth</a>
-    <a href="/compounds/antioxidant/" class="mob-nl mob-nl-sub">— Antioxidant</a>
+    <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub"> - Cognitive</a>
+    <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub"> - Metabolic</a>
+    <a href="/compounds/recovery/" class="mob-nl mob-nl-sub"> - Recovery</a>
+    <a href="/compounds/growth/" class="mob-nl mob-nl-sub"> - Growth</a>
+    <a href="/compounds/antioxidant/" class="mob-nl mob-nl-sub"> - Antioxidant</a>
     <a href="/pro/" class="mob-nl" style="color:#01D3A0">Pro</a>
     <a href="/guides/glossary/" class="mob-nl">Glossary</a>
     <a href="/guides/" class="mob-nl">Guide Hub</a>
@@ -197,7 +197,7 @@
   <section class="pro-hero">
     <div class="page-intro" style="padding:0">
       <h1 class="page-h1">Velox <span class="pro-word">Pro</span></h1>
-      <p class="page-lede">Members get an automatic discount on <strong style="color:#fff">every item</strong> the moment they log in — plus free tracked UK shipping, first dibs on restocks, and subscribe-&-save. Choose the tier that fits your volume.</p>
+      <p class="page-lede">Members get an automatic discount on <strong style="color:#fff">every item</strong> the moment they log in - plus free tracked UK shipping, first dibs on restocks, and subscribe-&-save. Choose the tier that fits your volume.</p>
     </div>
 
     <div class="toggle" id="billing-toggle">
@@ -228,7 +228,7 @@
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-logo-wordmark">Velox Peptides</div>
-        <p class="ft-tag">Research peptide supplier &mdash; shipping to UK &amp; EU. HPLC-verified, dispatched from Northern Ireland.</p>
+        <p class="ft-tag">Research peptide supplier - shipping to UK &amp; EU. HPLC-verified, dispatched from Northern Ireland.</p>
         <address class="ft-address">
           CRP Labs Ltd<br>
           Company no. NI738125<br>
@@ -332,7 +332,7 @@
     setMsg('Setting up your membership…', true);
     var token = null;
     try { var s = window._sb && (await window._sb.auth.getSession()); token = s && s.data && s.data.session && s.data.session.access_token; } catch (e) {}
-    if (!token) { setMsg('Please sign in or create an account first — redirecting…'); setTimeout(function () { location.href = '/account/?next=/pro/'; }, 1200); return; }
+    if (!token) { setMsg('Please sign in or create an account first - redirecting…'); setTimeout(function () { location.href = '/account/?next=/pro/'; }, 1200); return; }
     try {
       var r = await fetch('/api/create-fena-recurring', {
         method: 'POST',
@@ -342,7 +342,7 @@
       var d = await r.json();
       if (!r.ok || !d.paymentUrl) { setMsg('Could not start membership: ' + (d.error || ('HTTP ' + r.status))); return; }
       location.href = d.paymentUrl;
-    } catch (e) { setMsg('Network error — please try again.'); }
+    } catch (e) { setMsg('Network error - please try again.'); }
   }
 
   document.getElementById('billing-toggle').addEventListener('click', function (e) {
@@ -358,7 +358,7 @@
       tiers = (rows && rows.length) ? rows : ORDER.map(function (k, i) { return { key: k, name: { solo: 'Solo Researcher', group: 'Group Researchers', lab: 'Lab Researchers' }[k], discount_pct: [5, 10, 25][i], monthly_price_pence: [699, 1999, 4999][i], annual_price_pence: [5900, 17900, 44900][i] }; });
       render();
     })
-    .catch(function () { setMsg('Could not load membership plans — please refresh.'); });
+    .catch(function () { setMsg('Could not load membership plans - please refresh.'); });
 }());
 </script>
 </body>

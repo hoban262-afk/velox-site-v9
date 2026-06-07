@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Velox — Packing</title>
+<title>Velox - Packing</title>
 <style>
   :root{ --bg:#0b0f0e; --card:#12181a; --line:#1f2a2c; --txt:#eaf2f0; --mut:#8aa0a0; --g:#01D3A0; --gd:#02a17a; --warn:#f0a23b; --err:#f06363; }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -67,7 +67,7 @@
 <header hidden id="hdr">
   <button class="vtab vtab-on" id="tab-pack" type="button">Packing</button>
   <button class="vtab" id="tab-stock" type="button">Stock</button>
-  <span class="pill" id="count">—</span>
+  <span class="pill" id="count"> - </span>
 </header>
 <div class="wrap" id="app" hidden>
   <div id="view-pack">
@@ -104,7 +104,7 @@
       $('#lock').hidden = true; $('#hdr').hidden = false; $('#app').hidden = false;
       reset();
       load(); loadStock();
-    }catch(e){ $('#lockmsg').textContent = 'Network error — try again.'; reset(); }
+    }catch(e){ $('#lockmsg').textContent = 'Network error - try again.'; reset(); }
   }
   $('#unlock').addEventListener('click', unlock);
   $('#pin').addEventListener('keydown', function(e){ if(e.key==='Enter') unlock(); });
@@ -127,11 +127,11 @@
   }
   $('#refresh').addEventListener('click', load);
 
-  function relock(){ token=null; $('#lock').hidden=false; $('#hdr').hidden=true; $('#app').hidden=true; $('#pin').value=''; $('#lockmsg').textContent='Session expired — enter PIN.'; }
+  function relock(){ token=null; $('#lock').hidden=false; $('#hdr').hidden=true; $('#app').hidden=true; $('#pin').value=''; $('#lockmsg').textContent='Session expired - enter PIN.'; }
 
   function render(orders){
     $('#count').textContent = orders.length + (orders.length===1?' order':' orders');
-    if(!orders.length){ $('#list').innerHTML = '<div class="empty">🎉 All caught up — nothing to pack.</div>'; return; }
+    if(!orders.length){ $('#list').innerHTML = '<div class="empty">🎉 All caught up - nothing to pack.</div>'; return; }
     $('#list').innerHTML = orders.map(function(o){
       var addr = [o.ship.name, o.ship.line1, o.ship.line2, o.ship.city, o.ship.postcode, o.ship.country]
         .filter(function(x){return x && String(x).trim();}).join('\n');
@@ -201,13 +201,13 @@
         var r = await api('label', { method:'POST', body:JSON.stringify({order_id:id}) });
         if(r.status===401){ relock(); return; }
         var d = await r.json().catch(function(){return{};});
-        if(r.ok && d.ok!==false){ setMsg(id, d.skipped?'Label already created — open Click & Drop to print.':'Label created — open Click & Drop to print.', true); }
+        if(r.ok && d.ok!==false){ setMsg(id, d.skipped?'Label already created - open Click & Drop to print.':'Label created - open Click & Drop to print.', true); }
         else { setMsg(id, d.error||'Could not create label.', false); }
       }catch(e){ setMsg(id,'Network error.',false); }
       btn.disabled = false;
     },
     dispatch: async function(btn, id){
-      var tracking = window.prompt('Tracking number (optional — leave blank if none):','');
+      var tracking = window.prompt('Tracking number (optional - leave blank if none):','');
       if(tracking===null) return;
       btn.disabled = true; setMsg(id,'Marking dispatched…',true);
       try{
