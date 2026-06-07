@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Velox Design Lab — Run a Design | Velox Peptides</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <meta name="theme-color" content="#030407">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <style>
+    :root{ --g:#01D3A0; --g2:#6cf7d6; --bg:#030407; --bg2:#0a0d12; --bg3:#0e141b; --brd:#1a2230; --mut:#8aa0a0; --dim:#475262; --vio:#7b8cff; --amber:#f0b03b; --red:#f0637e; }
+    *{ box-sizing:border-box; }
+    body{ margin:0; background:var(--bg); color:#eef3f2; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+    .dlh{ border-bottom:1px solid #11181f; padding:14px 20px; display:flex; align-items:center; gap:14px; }
+    .dlh img{ height:28px; }
+    .dlh .nm{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; letter-spacing:.5px; font-size:18px; }
+    .dlh .nm span{ color:var(--g); }
+    .dlh .acc{ margin-left:auto; font-size:13px; color:var(--mut); text-decoration:none; }
+    .dlh .acc:hover{ color:var(--g); }
+    .wrap{ max-width:780px; margin:0 auto; padding:30px 20px 70px; }
+    h1{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:34px; letter-spacing:-.5px; margin:0 0 6px; }
+    h1 span{ color:var(--g); }
+    .lede{ color:var(--mut); font-size:15px; margin:0 0 22px; line-height:1.5; }
+    .quota{ display:inline-flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:12px; color:var(--g); border:1px solid rgba(1,211,160,.3); background:rgba(1,211,160,.06); padding:6px 13px; border-radius:20px; margin-bottom:22px; }
+    .card{ background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:20px; }
+    textarea{ width:100%; box-sizing:border-box; background:#05070a; border:1px solid #222833; color:#eef3f2; font-size:15px; padding:13px; border-radius:10px; font-family:inherit; resize:vertical; min-height:84px; }
+    textarea:focus{ outline:none; border-color:var(--g); }
+    .ex{ display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0; }
+    .ex button{ background:#101822; border:1px solid #283341; color:#9aa3ad; font-family:'DM Mono',monospace; font-size:11px; padding:6px 11px; border-radius:7px; cursor:pointer; }
+    .ex button:hover{ border-color:var(--g); color:var(--g); }
+    .run{ width:100%; margin-top:16px; background:var(--g); color:#04140f; border:0; border-radius:10px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; }
+    .run:disabled{ opacity:.6; cursor:default; }
+    .msg{ font-size:13px; color:var(--red); min-height:16px; margin-top:10px; }
+    .gate{ text-align:center; padding:40px 20px; }
+    .gate .run{ max-width:280px; display:inline-block; width:auto; padding:13px 28px; text-decoration:none; }
+
+    .brief{ margin-top:26px; background:var(--bg3); border:1px solid var(--brd); border-radius:12px; padding:18px; }
+    .brief .lbl{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); letter-spacing:1px; margin-bottom:8px; }
+    .brief p{ margin:0 0 8px; font-size:14px; line-height:1.55; }
+    .tag{ display:inline-block; font-family:'DM Mono',monospace; font-size:10px; padding:3px 9px; border-radius:5px; margin:3px 4px 0 0; border:1px solid var(--brd); color:var(--mut); }
+    .tag.g{ color:var(--g); border-color:rgba(1,211,160,.3); }
+
+    .cand{ margin-top:16px; background:var(--bg2); border:1px solid var(--brd); border-radius:12px; padding:18px; }
+    .cand-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+    .cand-id{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); }
+    .cand-name{ font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700; color:#fff; margin:2px 0 8px; }
+    .cand-comp{ font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:30px; line-height:1; }
+    .nov{ font-family:'DM Mono',monospace; font-size:10px; padding:3px 9px; border-radius:5px; }
+    .nov.novel{ background:rgba(1,211,160,.1); color:var(--g); border:1px solid rgba(1,211,160,.25); }
+    .nov.partial{ background:rgba(240,176,59,.1); color:var(--amber); border:1px solid rgba(240,176,59,.25); }
+    .nov.known{ background:rgba(240,99,126,.1); color:var(--red); border:1px solid rgba(240,99,126,.25); }
+    .seq{ font-family:'DM Mono',monospace; font-size:17px; letter-spacing:4px; padding:12px 14px; background:#05070a; border:1px solid var(--brd); border-radius:7px; margin:10px 0; overflow-x:auto; }
+    .bars{ display:grid; gap:6px; margin-top:8px; }
+    .bar{ display:flex; align-items:center; gap:10px; }
+    .bar-l{ font-family:'DM Mono',monospace; font-size:10px; color:var(--mut); width:108px; flex-shrink:0; }
+    .bar-t{ flex:1; height:3px; background:var(--brd); border-radius:2px; }
+    .bar-f{ height:100%; border-radius:2px; }
+    .bar-v{ font-family:'DM Mono',monospace; font-size:10px; width:26px; text-align:right; }
+    .hyp{ margin-top:10px; padding:9px 11px; background:rgba(123,140,255,.08); border:1px solid rgba(123,140,255,.2); border-radius:6px; font-size:12px; color:var(--vio); line-height:1.5; }
+    .meta{ font-family:'DM Mono',monospace; font-size:10px; color:var(--dim); margin-top:8px; }
+    .upsell{ margin-top:18px; text-align:center; background:var(--bg3); border:1px solid rgba(1,211,160,.25); border-radius:12px; padding:22px; }
+    .upsell a{ color:var(--g); font-weight:700; text-decoration:none; }
+    .foot{ border-top:1px solid #11181f; padding:20px; text-align:center; color:var(--dim); font-size:11px; line-height:1.6; }
+    .foot a{ color:var(--mut); }
+    .spin{ text-align:center; color:var(--mut); padding:30px; font-family:'DM Mono',monospace; font-size:13px; }
+  </style>
+</head>
+<body>
+<div class="dlh">
+  <a href="/" aria-label="Velox Peptides"><img src="/assets/images/veloxpeps2.png" alt="Velox Peptides"></a>
+  <span class="nm">VELOX <span>DESIGN LAB</span></span>
+  <a class="acc" href="/account/">My account</a>
+</div>
+
+<div class="wrap">
+  <h1>Design a <span>novel peptide</span></h1>
+  <p class="lede">Describe your research target in plain English. The AI returns six novel sequences — scored, novelty-checked and ready to synthesise. For in vitro research only.</p>
+
+  <div id="quotaBadge"></div>
+  <div id="app"><div class="spin">Loading…</div></div>
+
+  <div id="results"></div>
+</div>
+
+<div class="foot">
+  Velox Design Lab outputs are computational predictions for in vitro research use only. Not validated compounds; not for human or veterinary use.<br>
+  CRP Labs Ltd &middot; NI738125 &middot; <a href="/design-lab/">About Design Lab</a> &middot; <a href="/legal/research-use-policy/">Research Use Policy</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var SB_URL='https://stkjdtyhaxejxqmbzyua.supabase.co';
+  var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
+  var sb = window.supabase.createClient(SB_URL, SB_ANON);
+  var $=function(s){return document.querySelector(s);};
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  var AA_POS=new Set('KRH'),AA_NEG=new Set('DE'),AA_HYD=new Set('AILMFWPV'),AA_SPC=new Set('CGY');
+  function aaCol(a){ return AA_POS.has(a)?'#01D3A0':AA_NEG.has(a)?'#f0637e':AA_HYD.has(a)?'#01D3A0':AA_SPC.has(a)?'#f0b03b':'#8aa0a0'; }
+  function scoreCol(s){ return s>=75?'#01D3A0':s>=55?'#7b8cff':'#f0b03b'; }
+  var token=null;
+
+  async function init(){
+    var s=await sb.auth.getSession();
+    var sess=s&&s.data&&s.data.session;
+    if(!sess){ gate(); return; }
+    token=sess.access_token;
+    loadQuota();
+    renderTool();
+  }
+  function gate(){
+    $('#quotaBadge').innerHTML='';
+    $('#app').innerHTML='<div class="card gate"><p style="font-size:16px;margin:0 0 16px">Sign in to start designing — your first design is free.</p><a class="run" href="/account/?next=/design-lab/app/">Sign in / create account →</a></div>';
+  }
+  async function api(path, opts){
+    opts=opts||{}; opts.headers=Object.assign({'Authorization':'Bearer '+token,'Content-Type':'application/json'},opts.headers||{});
+    return fetch('/api/design-lab/'+path, opts);
+  }
+  async function loadQuota(){
+    try{ var r=await api('quota'); var q=await r.json(); showQuota(q); }catch(e){}
+  }
+  function showQuota(q){
+    if(!q||q.tier===undefined){ $('#quotaBadge').innerHTML=''; return; }
+    var txt = q.unlimited ? 'Unlimited designs · '+esc(q.tierLabel)
+      : esc(q.remaining)+' of '+esc(q.limit)+' designs left'+(q.window==='month'?' this month':'')+' · '+esc(q.tierLabel);
+    $('#quotaBadge').innerHTML='<div class="quota">⚗ '+txt+'</div>';
+  }
+  function renderTool(){
+    $('#app').innerHTML=
+      '<div class="card">'+
+        '<textarea id="target" placeholder="e.g. A short collagen-stimulating peptide, more stable than GHK-Cu, for in vitro skin-fibroblast research."></textarea>'+
+        '<div class="ex">'+
+          '<button data-ex="A collagen-stimulating peptide, more stable than GHK-Cu, for in vitro fibroblast research.">Collagen, beyond GHK-Cu</button>'+
+          '<button data-ex="A neuroprotective peptide, Semax-like, with improved protease stability, for in vitro neuronal studies.">Neuroprotective, Semax-like</button>'+
+          '<button data-ex="A gut anti-inflammatory peptide with oral-route stability, for in vitro epithelial research.">Gut anti-inflammatory</button>'+
+        '</div>'+
+        '<button class="run" id="runBtn">Run design pipeline →</button>'+
+        '<div class="msg" id="msg"></div>'+
+      '</div>';
+    $('#runBtn').addEventListener('click', run);
+    document.querySelectorAll('.ex button').forEach(function(b){ b.addEventListener('click', function(){ $('#target').value=b.getAttribute('data-ex'); }); });
+  }
+  async function run(){
+    var target=$('#target').value.trim();
+    $('#msg').textContent=''; $('#results').innerHTML='';
+    if(target.length<6){ $('#msg').textContent='Describe your research target first.'; return; }
+    var btn=$('#runBtn'); btn.disabled=true; btn.textContent='Designing… (up to ~30s)';
+    $('#results').innerHTML='<div class="spin">Interpreting target → generating sequences → scoring…</div>';
+    try{
+      var r=await api('generate',{method:'POST',body:JSON.stringify({target:target})});
+      var d=await r.json().catch(function(){return{};});
+      if(r.status===401){ gate(); return; }
+      if(r.status===403){ $('#results').innerHTML=''; $('#msg').textContent=''; renderUpsell(d.message); loadQuota(); return; }
+      if(!r.ok){ $('#results').innerHTML=''; $('#msg').textContent=d.error||'Something went wrong — try again.'; return; }
+      renderResults(d);
+      if(d.quota) showQuota(d.quota);
+    }catch(e){ $('#results').innerHTML=''; $('#msg').textContent='Network error — please try again.'; }
+    btn.disabled=false; btn.textContent='Run design pipeline →';
+  }
+  function renderUpsell(msg){
+    $('#results').innerHTML='<div class="upsell"><p style="margin:0 0 10px;color:#cdd3d9">'+esc(msg||'You\'ve hit your design limit.')+'</p><a href="/pro/">Upgrade your Velox Pro tier →</a></div>';
+  }
+  function seqHTML(seq){ return String(seq).split('').map(function(a){ return '<span style="color:'+aaCol(a)+'">'+esc(a)+'</span>'; }).join(''); }
+  function barHTML(label,val,col){ return '<div class="bar"><span class="bar-l">'+label+'</span><div class="bar-t"><div class="bar-f" style="width:'+val+'%;background:'+col+'"></div></div><span class="bar-v" style="color:'+col+'">'+val+'</span></div>'; }
+  function renderResults(d){
+    var b=d.brief||{};
+    var html='<div class="brief"><div class="lbl">INTERPRETED BRIEF</div><p>'+esc(b.target_mechanism||'')+'</p>'+
+      (b.desired_properties||[]).map(function(p){return '<span class="tag g">'+esc(p)+'</span>';}).join('')+
+      (b.reference_compounds&&b.reference_compounds.length?'<div style="margin-top:6px"><span style="font-size:11px;color:var(--mut)">References: </span>'+(b.reference_compounds||[]).map(function(r){return '<span class="tag">'+esc(r)+'</span>';}).join('')+'</div>':'')+
+      '</div>';
+    (d.candidates||[]).forEach(function(c){
+      var sc=c.scores||{}, nv=c.novelty||{};
+      var novCls = nv.badge==='novel'?'novel':nv.badge==='known'?'known':'partial';
+      var novTxt = nv.badge==='novel'?'✦ Likely novel':nv.badge==='known'?'⚠ Known sequence':'~ '+esc(nv.label||'Partially similar');
+      html+='<div class="cand">'+
+        '<div class="cand-top"><div><div class="cand-id">'+esc(c.id||'')+' · '+esc(sc.len||c.sequence.length)+' residues</div><div class="cand-name">'+esc(c.name||'Candidate')+'</div></div>'+
+          '<div style="text-align:right"><div class="cand-comp" style="color:'+scoreCol(sc.comp||0)+'">'+(sc.comp||0)+'</div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mut)">COMPOSITE</div></div></div>'+
+        '<div style="margin:6px 0"><span class="nov '+novCls+'">'+novTxt+'</span> <span class="tag">'+esc(c.scaffold_class||'')+'</span></div>'+
+        '<div class="seq">'+seqHTML(c.sequence)+'</div>'+
+        '<div class="bars">'+
+          barHTML('Synthesisability',sc.sy||0,'#01D3A0')+
+          barHTML('Solubility est.',sc.so||0,'#7b8cff')+
+          barHTML('Length opt.',sc.ls||0,'#f0b03b')+
+          barHTML('AA diversity',sc.dv||0,'#8aa0a0')+
+        '</div>'+
+        '<div class="meta">Net charge '+(sc.netCharge>0?'+':'')+esc(sc.netCharge)+' · GRAVY '+esc(sc.gravyScore)+' · Protease: '+esc(sc.protRisk)+' · est. £'+esc(sc.cost)+' synthesis</div>'+
+        (c.research_hypothesis?'<div class="hyp">'+esc(c.research_hypothesis)+'</div>':'')+
+      '</div>';
+    });
+    $('#results').innerHTML=html;
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
