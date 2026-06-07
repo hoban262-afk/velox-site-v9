@@ -27,6 +27,19 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Not configured' });
 
+  // Per-IP rate limit (anti-spam). Fails open on any error.
+  try {
+    const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.headers['x-real-ip'] || 'unknown';
+    const rl = await fetch(`${SUPABASE_URL}/rest/v1/rpc/check_rate_limit`, {
+      method: 'POST',
+      headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_key: `interest:${ip}`, p_limit: 10, p_window_seconds: 60 }),
+    });
+    if (rl.ok && (await rl.json().catch(() => true)) === false) {
+      return res.status(429).json({ error: 'Too many submissions. Please wait a moment.' });
+    }
+  } catch (e) { /* non-fatal */ }
+
   const b = req.body || {};
   const slug  = String(b.product_slug || '').trim().toLowerCase().slice(0, 80);
   const email = String(b.email || '').trim().toLowerCase().slice(0, 254);

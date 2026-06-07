@@ -17,6 +17,23 @@ export const config = { runtime: 'edge' };
 
 const SUCCESS_STATUSES = new Set(['completed', 'success', 'paid', 'captured', 'settled', 'complete']);
 
+// ── Independent payment verification ─────────────────────────────────────────
+// A webhook BODY is attacker-controllable when the shared secret isn't set, so we
+// never grant value (mark an order paid / activate Pro) on the body alone. We ask
+// Fena's own public status endpoint whether the referenced payment id is 'paid'.
+// Validated against live payments 2026-06-07:
+//   GET /public/payment-flow/single/{id}/data -> { data: { status: 'paid' | ... } }
+async function fenaPaymentPaid(paymentId) {
+  if (!paymentId) return false;
+  try {
+    const r = await fetch(`https://epos.api.prod-gcp.fena.co/public/payment-flow/single/${encodeURIComponent(paymentId)}/data`);
+    if (!r.ok) return false;
+    const j = await r.json().catch(() => null);
+    const s = j && j.data && j.data.status ? String(j.data.status).toLowerCase() : '';
+    return SUCCESS_STATUSES.has(s);
+  } catch { return false; }
+}
+
 function decodeJwtPayload(token) {
   try {
     const parts = String(token).split('.');
@@ -53,7 +70,14 @@ export default async function handler(req) {
   // (or send it as an x-webhook-secret header). When the env var is set we REQUIRE a
   // match; when it is unset we fail OPEN + warn, so deploying this never breaks the
   // live webhook before the secret is configured.
+  // Defence-in-depth: when a secret IS configured we reject any mismatch outright.
+  // When it is NOT configured we DON'T fail open — instead `secretOk` stays false
+  // and every value-granting action below independently re-confirms the payment
+  // with Fena's API (fenaPaymentPaid), so a forged body can never mark an order
+  // paid or activate Pro. Setting FENA_WEBHOOK_SECRET (and appending ?key=... to
+  // the Fena webhook URL) restores the fast path that trusts the signed event.
   const WEBHOOK_SECRET = process.env.FENA_WEBHOOK_SECRET;
+  let secretOk = false;
   if (WEBHOOK_SECRET) {
     let provided = req.headers.get('x-webhook-secret') || '';
     if (!provided) {
@@ -63,8 +87,9 @@ export default async function handler(req) {
       console.warn('[fena-webhook] rejected: missing/invalid shared secret');
       return new Response('Unauthorized', { status: 401 });
     }
+    secretOk = true;
   } else {
-    console.warn('[fena-webhook] FENA_WEBHOOK_SECRET not set — endpoint is UNAUTHENTICATED. Set it and append ?key=... to the Fena webhook URL.');
+    console.warn('[fena-webhook] FENA_WEBHOOK_SECRET not set — value grants will require live Fena verification. Set it + append ?key=... to the Fena webhook URL.');
   }
 
   const SUPABASE_URL              = process.env.SUPABASE_URL;
@@ -122,6 +147,15 @@ export default async function handler(req) {
     if (sub) {
       const active = SUCCESS_STATUSES.has(status) || status === 'active' || status === 'paid';
       const ended  = ['cancelled', 'rejected', 'warning', 'overdue'].includes(status);
+
+      // Only mutate a subscription / flip Pro entitlement on an authorised event:
+      // a valid shared secret, or live Fena confirmation that the payment is paid.
+      const authorised = secretOk || (active && await fenaPaymentPaid(paymentId));
+      if (!authorised) {
+        console.warn(`[fena-webhook] sub ${sub.id} event status="${status}" NOT authorised (secretOk=${secretOk}) — acknowledging without changes`);
+        return new Response('OK', { status: 200 });
+      }
+
       const patch  = { status: status || sub.status, updated_at: new Date().toISOString() };
       if (ended) patch.cancelled_at = new Date().toISOString();
       await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?id=eq.${sub.id}`, {
@@ -175,7 +209,7 @@ export default async function handler(req) {
     const filter = orderUuid
       ? `id=eq.${encodeURIComponent(orderUuid)}`
       : `notes=eq.${encodeURIComponent(reference)}`;
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?${filter}&select=id,status&order=created_at.desc&limit=1`, { headers: sbHeaders });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?${filter}&select=id,status,fena_payment_id&order=created_at.desc&limit=1`, { headers: sbHeaders });
     const rows = r.ok ? await r.json() : [];
     order = Array.isArray(rows) ? rows[0] : null;
   } catch (e) {
@@ -185,6 +219,17 @@ export default async function handler(req) {
   if (!order) {
     console.warn(`[fena-webhook] no order found (ref=${reference} uuid=${orderUuid}) — acknowledging`);
     return new Response('OK', { status: 200 });
+  }
+
+  // ── Authorise before granting fulfilment ────────────────────────────────────
+  // A valid shared secret, or live Fena confirmation the payment id is paid. This
+  // makes a forged "status:paid" body worthless even when no secret is configured.
+  if (order.status !== 'paid' && order.status !== 'dispatched') {
+    const authorised = secretOk || await fenaPaymentPaid(paymentId || order.fena_payment_id);
+    if (!authorised) {
+      console.warn(`[fena-webhook] order ${order.id} success event NOT verified (secretOk=${secretOk}, paymentId=${paymentId || order.fena_payment_id || 'none'}) — acknowledging without marking paid`);
+      return new Response('OK', { status: 200 });
+    }
   }
 
   // ── Mark paid (idempotent) ──────────────────────────────────────────────────

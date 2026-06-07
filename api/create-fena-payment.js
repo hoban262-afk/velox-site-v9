@@ -32,6 +32,31 @@ export default async function handler(req) {
   }
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
 
+  // ── Rate limit (financial-exposure guard) ───────────────────────────────────
+  // This endpoint is public and creates a Fena payment + a DB row on every call,
+  // so a scripted loop could spam Fena and bloat the orders table. Cap per-IP
+  // request rate. Fails OPEN on any error so a DB hiccup never blocks a real sale.
+  try {
+    const SBU = process.env.SUPABASE_URL, SVC = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (SBU && SVC) {
+      const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim()
+              || req.headers.get('x-real-ip') || 'unknown';
+      const rl = await fetch(`${SBU}/rest/v1/rpc/check_rate_limit`, {
+        method: 'POST',
+        headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_key: `fena-create:${ip}`, p_limit: 12, p_window_seconds: 60 }),
+      });
+      if (rl.ok) {
+        const allowed = await rl.json().catch(() => true);
+        if (allowed === false) {
+          console.warn(`[create-fena-payment] RATE LIMIT hit for ip=${ip}`);
+          return new Response(JSON.stringify({ error: 'Too many requests. Please wait a moment and try again.' }),
+            { status: 429, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com', 'Retry-After': '30' } });
+        }
+      }
+    }
+  } catch (e) { console.error('[create-fena-payment] rate-limit check threw (non-fatal):', e.message); }
+
   let body;
   try { body = await req.json(); }
   catch {

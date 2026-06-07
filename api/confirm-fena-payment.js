@@ -38,6 +38,25 @@ async function sbPatch(path, body) {
 
 const n = (v) => { const x = Number(v); return Number.isFinite(x) ? x : 0; };
 
+// ── Independent payment verification (the security backbone) ──────────────────
+// The redirect carries order_id/ref in the URL, so those alone can't prove the
+// customer actually paid — anyone who observes/guesses a ref could otherwise
+// trigger fulfilment for free. Instead we ask Fena's own public status endpoint
+// whether THIS payment id is 'paid'. Validated against live payments 2026-06-07:
+//   GET /public/payment-flow/single/{id}/data -> { data: { status: 'paid' | 'sent' | ... } }
+// (public, no auth; 404 "Payment not found" for unknown ids).
+const PAID_STATUSES = new Set(['paid', 'completed', 'settled', 'captured', 'complete', 'success']);
+async function fenaPaymentStatus(paymentId) {
+  if (!paymentId) return null;
+  try {
+    const r = await fetch(`https://epos.api.prod-gcp.fena.co/public/payment-flow/single/${encodeURIComponent(paymentId)}/data`);
+    if (!r.ok) return null;                       // 404 / error → cannot confirm
+    const j = await r.json().catch(() => null);
+    const s = j && j.data && j.data.status;
+    return s ? String(s).toLowerCase() : null;
+  } catch { return null; }
+}
+
 // Build the email payload sendEmails() expects from a stored order row.
 function emailPayloadFromOrder(order) {
   let items = order.items;
@@ -116,9 +135,26 @@ module.exports = async function handler(req, res) {
   const orderRef = order.notes || ref || String(order.id).slice(0, 8).toUpperCase();
   console.log(`[confirm-fena-payment] Resolved order ${order.id} (${orderRef}) status=${order.status}`);
 
+  // ── Verify the payment with Fena BEFORE granting anything ───────────────────
+  // Returning from the bank app is NOT proof of payment (open-banking payments
+  // can still be 'pending'/'sent' at redirect, and the redirect params are
+  // guessable). We only mark paid + fire fulfilment when Fena itself confirms the
+  // payment id is 'paid'. If it isn't paid yet — or we can't reach Fena — we show
+  // the customer a normal success page but leave the order 'pending'; the webhook
+  // (Fena's server-to-server status-update) completes fulfilment once it settles.
+  const alreadyDone = order.status === 'paid' || order.status === 'dispatched';
+  if (!alreadyDone) {
+    const verifyId = order.fena_payment_id || fenaOrderId || '';
+    const fenaStatus = await fenaPaymentStatus(verifyId);
+    if (!fenaStatus || !PAID_STATUSES.has(fenaStatus)) {
+      console.warn(`[confirm-fena-payment] NOT fulfilling ${orderRef}: Fena status="${fenaStatus || 'unknown'}" id="${verifyId}" — leaving pending for webhook`);
+      return res.status(200).json({ success: true, order_ref: orderRef, pending: true });
+    }
+    console.log(`[confirm-fena-payment] Fena confirmed PAID for ${orderRef} (id=${verifyId})`);
+  }
+
   // ── Mark paid (idempotent) ──────────────────────────────────────────────────
-  // The customer returned from Fena's bank authorisation, so we treat the order
-  // as paid here; the webhook is a second, independent confirmation.
+  // Reached only when Fena confirmed 'paid' (or the order was already paid).
   if (order.status !== 'paid' && order.status !== 'dispatched') {
     try {
       const patch = { status: 'paid' };
