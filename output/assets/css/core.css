@@ -5854,3 +5854,20 @@ a.nl[href="/guides/"]::before {
 .vp-search-results a{display:block;padding:10px 14px;color:#cdd3d9;text-decoration:none;font-size:14px;border-bottom:1px solid rgba(255,255,255,.05)}
 .vp-search-results a:last-child{border-bottom:0}
 .vp-search-results a:hover{background:rgba(1,211,160,.08);color:#fff}
+/* ── Search bar — hard guarantees (do NOT depend on search.js running) ──────────
+   1) The magnifier icon can NEVER balloon, whatever the cascade does.
+   2) The nav search is hidden on mobile/tablet so it can't overflow the header
+      (search.js also hides it at 900px, but this is the JS-independent guarantee,
+      immune to a stale-cached or blocked script). It reappears in the hamburger
+      menu via .mob-search below. */
+.vp-search-box svg,
+.vp-search-nav .vp-search-box svg{width:16px !important;height:16px !important;flex:0 0 auto !important;max-width:16px !important;max-height:16px !important}
+@media (max-width:900px){
+  .site-header .vp-search-nav,
+  .vp-search.vp-search-nav{display:none !important}
+}
+/* Full-width search inside the mobile hamburger menu */
+.mob-search{display:none}
+@media (max-width:900px){ .mob-search{display:block;margin:0 0 10px} }
+.mob-search .vp-search-box{min-width:0;width:100%}
+.mob-search .vp-search-results{position:static;margin-top:6px;max-height:300px}
