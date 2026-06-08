@@ -364,6 +364,17 @@
     gtag('js', new Date());
     gtag('config', 'G-YFPX0Q1G50');
   </script>
+<style>
+html{scroll-behavior:smooth}
+/* even, generous vertical rhythm so the homepage flows */
+.page-home .site-main > section:not(.hero):not([hidden]){margin:clamp(38px,5.5vw,82px) 0 0}
+.page-home .site-main > section:last-of-type{margin-bottom:clamp(38px,5.5vw,82px)}
+@media (prefers-reduced-motion: no-preference){
+  html.vp-js .site-main > section:not(.hero):not([hidden]){opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.16,.8,.3,1),transform .7s cubic-bezier(.16,.8,.3,1);will-change:opacity,transform}
+  html.vp-js .site-main > section.vp-sec-in{opacity:1;transform:none}
+}
+</style>
+<script>document.documentElement.classList.add('vp-js');</script>
 </head>
 <body class="page-home">
 
@@ -1259,5 +1270,19 @@
 </script>
   <script src="/assets/js/pricing.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
+<script>
+(function(){
+  var de=document.documentElement;
+  if(!de.classList.contains('vp-js'))return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var secs=[].slice.call(document.querySelectorAll('.site-main > section')).filter(function(x){return !x.classList.contains('hero') && !x.hasAttribute('hidden');});
+  if(!secs.length)return;
+  function revealAll(){secs.forEach(function(x){x.classList.add('vp-sec-in');});}
+  if(!('IntersectionObserver' in window)){revealAll();return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vp-sec-in');io.unobserve(e.target);}});},{threshold:0.06,rootMargin:'0px 0px -6% 0px'});
+  secs.forEach(function(x){io.observe(x);});
+  setTimeout(revealAll,4000);
+})();
+</script>
 </body>
 </html>
