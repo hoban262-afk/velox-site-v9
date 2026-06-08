@@ -176,7 +176,7 @@
     if(tab==='receptors') return esc(p.receptors);
     if(tab==='research') return esc(p.research);
     if(tab==='properties') return '<div class="chips">'+
-        '<div class="cmp-chip"><b>Molecular weight</b>'+esc(p.mw)+' g/mol</div>'+
+        '<div class="cmp-chip"><b>Molecular weight</b>'+(p.mw!=null?esc(p.mw)+' g/mol':'—')+'</div>'+
         '<div class="cmp-chip"><b>Solubility</b>'+esc(p.solubility)+'</div>'+
         '<div class="cmp-chip"><b>Category</b>'+esc(p.catLabel)+'</div>'+
       '</div>';
