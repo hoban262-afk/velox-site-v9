@@ -25,7 +25,8 @@ const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const sbH = { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json' };
 
 // ── Refinement quota limits per tier ─────────────────────────────────────────
-const REFINE_LIMITS = { free: 1, solo: 3, group: 5, lab: 10 };
+// Single Pro model: Pro gets effectively unlimited refinements; free gets 1.
+const REFINE_LIMITS = { free: 1, solo: 500, group: 500, lab: 500 };
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 async function authUser(req) {

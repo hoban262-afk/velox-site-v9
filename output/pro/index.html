@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Velox Pro - Member Pricing for Researchers | Velox Peptides</title>
-  <meta name="description" content="Join Velox Pro: 10–25% off every order, free tracked UK shipping, more AI peptide designs, first dibs on restocks, subscribe-&-save and more. Solo, Group and Lab membership tiers.">
+  <meta name="description" content="Velox Pro — one membership, £6.99/mo (£59.99/yr). Unlimited AI Design Lab, the full Tool Suite, 10% off every order, free tracked UK shipping, 2× loyalty points and subscribe-&-save.">
   <link rel="canonical" href="https://veloxpeps.com/pro/">
 
   <!-- Open Graph -->
@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veloxpeps.com/pro/">
   <meta property="og:title" content="Velox Pro - Member Pricing for Researchers">
-  <meta property="og:description" content="10–25% off every order, free tracked UK shipping, more AI peptide designs, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
+  <meta property="og:description" content="One membership, £6.99/mo. Unlimited AI Design Lab, the full Tool Suite, 10% off every order, free tracked UK shipping and 2× loyalty points.">
   <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -21,7 +21,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Velox Pro - Member Pricing for Researchers">
-  <meta name="twitter:description" content="10–25% off every order, free tracked UK shipping, more AI peptide designs, first dibs on restocks and subscribe-&-save. Solo, Group and Lab tiers.">
+  <meta name="twitter:description" content="One membership, £6.99/mo. Unlimited AI Design Lab, the full Tool Suite, 10% off every order, free tracked UK shipping and 2× loyalty points.">
   <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
 
   <!-- Icons and manifest -->
@@ -70,8 +70,7 @@
     .pro-save-note { font-size:12px; color:#8c95a0; margin-bottom:36px; }
 
     /* ── Tiers grid ─────────────────────────────────────── */
-    .tiers { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:stretch; max-width:1240px; margin:0 auto; padding:14px 0 40px; }
-    @media (max-width:1000px){ .tiers{ grid-template-columns:repeat(2,1fr); max-width:760px; gap:18px; } }
+    .tiers { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; align-items:stretch; max-width:720px; margin:0 auto; padding:14px 0 40px; }
     @media (max-width:560px){ .tiers{ grid-template-columns:1fr; max-width:420px; gap:22px; } }
     .tier .roi { font-size:11.5px; color:#01D3A0; font-weight:600; min-height:30px; margin:6px 4px 0; line-height:1.35; }
     .tier.featured .roi { color:#043f30; }
@@ -200,7 +199,7 @@
   <section class="pro-hero">
     <div class="page-intro" style="padding:0">
       <h1 class="page-h1">Velox <span class="pro-word">Pro</span></h1>
-      <p class="page-lede">Members get an automatic discount on <strong style="color:#fff">every item</strong> the moment they log in - plus free tracked UK shipping, first dibs on restocks, and subscribe-&-save. Choose the tier that fits your volume.</p>
+      <p class="page-lede">One membership unlocks the <strong style="color:#fff">full Velox Tool Suite</strong> — unlimited AI Design Lab, the comparison tool, Build-Your-Stack and the Protocol Scheduler — plus <strong style="color:#fff">10% off every item</strong>, free tracked UK shipping, 2× loyalty points and subscribe-&-save. £6.99/month, or £59.99/year (two months free).</p>
     </div>
 
     <div class="toggle" id="billing-toggle">
@@ -297,18 +296,14 @@
   var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
 
   var FEATURES = {
-    free: ['3 AI designs / month', '1 design refinement / month', 'Plain-English explanations + grading', 'Save &amp; share your designs', 'Standard pricing &amp; shipping', '1× loyalty points'],
-    solo: ['10% off every item, always on', '⚗ Velox Design Lab — 20 AI designs/mo', '✎ 3 design refinements/mo', 'Free Royal Mail Tracked 24 — every order', '2× loyalty points', 'Subscribe-&amp;-save auto-reorder', 'First dibs on restocks', 'Full CoA / batch documentation', 'Priority email support'],
-    group: ['15% off every item, always on', '⚗ Velox Design Lab — 50 AI designs/mo', '✎ 5 design refinements/mo', 'Everything in Solo, plus:', 'Free shipping — no threshold', 'Up to 3 team seats + saved addresses', 'Shared team design library', '3× loyalty points', 'Early restocks + new-compound previews', 'Priority support queue'],
-    lab: ['25% off every item, always on', '⚗ Velox Design Lab — unlimited designs (fair use)', '✎ 10 design refinements/mo', '🧪 15% off custom synthesis of your designs', 'Everything in Group, plus:', 'Free next-day + cold-chain shipping', 'Unlimited seats + business account', '4× loyalty points', 'Reserved stock + pre-launch access', 'VAT invoices, PO &amp; Net-7 terms (on approval)', 'Dedicated account manager']
+    free: ['Try Velox Design Lab free', 'Full comparison tool', 'Try the Protocol Scheduler', 'Standard pricing &amp; shipping', '1× loyalty points'],
+    solo: ['✦ The full Velox Tool Suite — unlocked', '⚗ Design Lab — <b>unlimited</b> AI peptide designs', '✎ Unlimited design refinements', '⚖ Comparison tool + Build-Your-Stack', '🗓 Protocol Scheduler / Research Register', '10% off every item, always on', 'Free Royal Mail Tracked 24 — every order', '2× loyalty points', 'Subscribe-&amp;-save auto-reorder', 'Save, share &amp; export everything', 'Priority support']
   };
   var ROI = {
-    solo: 'Free Tracked-24 + 10% ≈ pays for itself in one order a month',
-    group: 'Pays for itself at ~£130/mo of orders — plus 50 designs',
-    lab: 'Pays for itself at ~£200/mo — built for high-volume labs'
+    solo: 'Unlocks every tool + 10% off — free shipping alone pays for it in one order a month'
   };
-  var ORDER = ['solo', 'group', 'lab'];
-  var FEATURED = 'group';
+  var ORDER = ['solo'];
+  var FEATURED = 'solo';
   var plan = 'monthly';
   var tiers = [];
 
@@ -379,7 +374,7 @@
   fetch(SB_URL + '/rest/v1/membership_tiers?active=eq.true&order=sort_order&select=*', { headers: { apikey: SB_ANON, Authorization: 'Bearer ' + SB_ANON } })
     .then(function (r) { return r.ok ? r.json() : []; })
     .then(function (rows) {
-      tiers = (rows && rows.length) ? rows : ORDER.map(function (k, i) { return { key: k, name: { solo: 'Solo Researcher', group: 'Group Researchers', lab: 'Lab Researchers' }[k], discount_pct: [10, 15, 25][i], monthly_price_pence: [699, 1999, 4999][i], annual_price_pence: [5900, 17900, 44900][i] }; });
+      tiers = (rows && rows.length) ? rows : [{ key: 'solo', name: 'Velox Pro', discount_pct: 10, monthly_price_pence: 699, annual_price_pence: 5999 }];
       render();
     })
     .catch(function () { setMsg('Could not load membership plans - please refresh.'); });

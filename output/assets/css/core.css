@@ -1403,8 +1403,11 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .mob-menu{display:none;position:fixed;top:60px;left:0;right:0;background:rgba(3,4,7,.98);border-bottom:1px solid var(--brd);z-index:299;padding:8px 0 20px;flex-direction:column;gap:2px;max-height:calc(100vh - 60px);overflow-y:auto;}
 .mob-menu a{display:block;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:var(--t2);padding:11px 20px;text-decoration:none;transition:color .15s;}
 .mob-menu a:hover{color:#fff;background:rgba(255,255,255,.04);}
-.mob-nl-sub{order:5;padding-left:20px !important;font-size:13px !important;color:var(--t3) !important;}
-.mob-nl-sub:hover{color:var(--g) !important;}
+.mob-nl-sub{order:5;padding-left:28px !important;font-size:13px !important;color:var(--t3) !important;position:relative;min-height:46px;display:flex;align-items:center;}
+.mob-nl-sub:hover,.mob-nl-sub:active{color:var(--g) !important;background:rgba(255,255,255,.05) !important;}
+/* Left accent bar so dropdown children read as a grouped set under their parent */
+.mob-nl-sub::before{content:'';position:absolute;left:20px;top:8px;bottom:8px;width:2px;background:var(--brd);border-radius:2px;}
+.mob-nl-sub:hover::before,.mob-nl-sub:active::before{background:var(--g);}
 /* Group the Shop categories into one tidy block at the very bottom of the mobile menu */
 .mob-nl:not(.mob-nl-sub)+.mob-nl-sub{margin-top:10px;border-top:1px solid var(--brd);padding-top:14px !important;}
 
@@ -5900,11 +5903,16 @@ a.nl[href="/guides/"]::before {
 /* Guide Hub / About dropdowns (reuse existing .nl-drop / .nl-menu component) */
 .site-header .nav-links .nl-drop{position:relative;display:inline-flex;align-items:center;}
 .site-header .nav-links .nl-drop > .nl{display:inline-flex;align-items:center;gap:5px;}
-.site-header .nav-links .nl-menu{left:50%;transform:translateX(-50%);top:calc(100% + 6px);min-width:170px;}
+.site-header .nav-links .nl-menu{left:50%;transform:translateX(-50%);top:calc(100% + 6px);min-width:170px;display:flex;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .15s ease, visibility .15s ease;transition-delay:.28s;}
 .site-header .nav-links .nl-drop:hover .nl-menu,
-.site-header .nav-links .nl-drop:focus-within .nl-menu{display:flex;}
-.site-header .nav-links .nl-drop:hover .nl-caret{transform:rotate(180deg);}
+.site-header .nav-links .nl-drop:focus-within .nl-menu,
+.site-header .nav-links .nl-menu.open{visibility:visible;opacity:1;pointer-events:auto;transition-delay:0s;}
+.site-header .nav-links .nl-drop:hover .nl-caret,
+.site-header .nav-links .nl-drop:focus-within .nl-caret{transform:rotate(180deg);}
 .site-header .nav-links .nl-menu .nl-item{font-size:13px;color:var(--t2);text-decoration:none;}
+/* Invisible hover bridge spanning the gap between the tab and its menu, so the
+   cursor never leaves the hover target mid-move (fixes the dropdown vanishing). */
+.site-header .nav-links .nl-drop::after{content:'';position:absolute;left:-8px;right:-8px;top:100%;height:14px;}
 
 /* Search bar: exactly one outline (on the box; none on form/input) */
 .vp-search.vp-search-nav{border:0;background:none;padding:0;box-shadow:none;}
