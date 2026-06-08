@@ -59,6 +59,15 @@
 
   <!-- Tools -->
   <url><loc>https://veloxpeps.com/tools/reconstitution-calculator/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://veloxpeps.com/tools/compare/</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Top programmatic comparison URLs (server-rendered per-comparison meta) -->
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=bpc-157,tb-500</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=retatrutide,tirzepatide</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=cjc-1295,ipamorelin</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=selank,semax</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=ipamorelin,tesamorelin</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=bpc-157,ghk-cu</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
   <!-- About, FAQ, Contact, Shipping -->
   <url><loc>https://veloxpeps.com/about/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
