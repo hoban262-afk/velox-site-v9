@@ -512,7 +512,7 @@
     </a>
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
-      <a class="nl" href="/design-lab/">Design Lab</a>
+      <div class="nl-drop"><a class="nl nl-drop-btn" href="/design-lab/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/">✦ Design Lab</a><a class="nl-item" href="/tools/compare/">⚖ Compare peptides</a><a class="nl-item" href="/tools/scheduler/">🗓 Protocol Scheduler</a></div></div>
       <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
@@ -545,7 +545,7 @@
     </div>
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true"><form class="vp-search mob-search" role="search" onsubmit="return false"><div class="vp-search-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="vp-search-input" type="search" placeholder="Search compounds&hellip;" aria-label="Search the catalogue" autocomplete="off"></div><div class="vp-search-results" hidden></div></form>
-    <a href="/compounds/" class="mob-nl">Shop</a><a href="/design-lab/" class="mob-nl">Design Lab</a>
+    <a href="/compounds/" class="mob-nl">Shop</a><a href="/design-lab/" class="mob-nl">Design Lab</a><a href="/tools/compare/" class="mob-nl">Compare peptides</a><a href="/tools/scheduler/" class="mob-nl">Protocol Scheduler</a>
     <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub"> - Cognitive</a>
     <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub"> - Metabolic</a>
     <a href="/compounds/recovery/" class="mob-nl mob-nl-sub"> - Recovery</a>
@@ -618,6 +618,8 @@
           <p><strong>Short answer: Retatrutide is more than a GLP-1.</strong> It is a "triple agonist" (a molecule that switches on three different targets at once). It acts on the GLP-1 receptor and two others as well: the GIP receptor and the glucagon receptor. A pure GLP-1 compound, like semaglutide, switches on just one receptor. Retatrutide switches on three.</p>
           <p>So when people ask "is reta a GLP-1?" the honest answer is: <strong>yes and no</strong>. Yes, the GLP-1 receptor is one of its three targets. But no, it is not <em>only</em> a GLP-1 - calling it a plain GLP-1 misses two-thirds of what it does. The rest of this guide explains, in plain English, exactly what each of those receptors is and why researchers study a molecule that hits all three.</p>
         </section>
+        <div class="vlx-compare" data-ids="retatrutide,semaglutide,tirzepatide"></div>
+
 
 
         <!-- ── Section 1: What is a GLP-1? ── -->
@@ -1049,5 +1051,7 @@
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/newsletter-popup.js"></script>
   <script src="/assets/js/search.js" defer></script>
+<script src="/assets/js/peptide-data.js"></script>
+<script src="/assets/js/compare-widget.js" defer></script>
 </body>
 </html>

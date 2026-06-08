@@ -93,7 +93,8 @@ export default async function handler(req) {
     const t = Array.isArray(rows) ? rows[0] : null;
     if (!t) return json({ error: 'Unknown membership tier' }, 400);
     amountPence = plan === 'annual' ? t.annual_price_pence : t.monthly_price_pence;
-    frequency   = plan === 'annual' ? 'YEARLY' : 'MONTHLY';
+    // Fena recurring only accepts: ONE_WEEK | ONE_MONTH | THREE_MONTHS | ONE_YEAR
+    frequency   = plan === 'annual' ? 'ONE_YEAR' : 'ONE_MONTH';
     discountPercent = t.discount_pct;
   } else {
     // Subscribe-&-save: fixed monthly basket, priced from product_variants (DB truth).
@@ -121,7 +122,7 @@ export default async function handler(req) {
     }
     subtotal = subtotal * (1 - discountPercent / 100);
     amountPence = Math.round(subtotal * 100);
-    frequency = 'MONTHLY';
+    frequency = 'ONE_MONTH'; // Fena enum (was 'MONTHLY' — rejected by the API)
   }
   if (!amountPence || amountPence <= 0) return json({ error: 'Invalid subscription amount' }, 400);
 

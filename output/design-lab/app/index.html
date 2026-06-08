@@ -460,7 +460,9 @@ function toast(msg,type){
 
 // ── API helper ────────────────────────────────────────────────────────────
 async function api(path,opts){
-  opts=opts||{}; opts.headers=Object.assign({'Authorization':'Bearer '+token,'Content-Type':'application/json'},opts.headers||{});
+  opts=opts||{}; var h=Object.assign({'Content-Type':'application/json'},opts.headers||{});
+  if(token) h['Authorization']='Bearer '+token;   // omit when anonymous
+  opts.headers=h;
   return fetch('/api/design-lab/'+path,opts);
 }
 
@@ -469,20 +471,25 @@ async function init(){
   try{
     var s=await sb.auth.getSession();
     var sess=s&&s.data&&s.data.session;
-    if(!sess){ gate(); return; }
-    token=sess.access_token;
-    renderTool();
-    document.getElementById('libToggle').style.display='';
-    loadQuota();
-    loadLibrary();
-  }catch(e){ gate(); }
+    if(sess){
+      token=sess.access_token;
+      renderTool();
+      document.getElementById('libToggle').style.display='';
+      loadQuota();
+      loadLibrary();
+    }else{
+      // Anonymous: allow ONE free design with no account, then prompt sign-in / Pro.
+      token=null;
+      renderTool();
+    }
+  }catch(e){ token=null; renderTool(); }
 }
 
 function gate(){
   document.querySelectorAll('.tmpl').forEach(function(t){ t.style.pointerEvents='none'; t.style.opacity='.4'; });
   $('#app').innerHTML='<div class="gate">'+
     '<div class="gbig">Design your <span>first peptide</span></div>'+
-    '<div class="gsub">3 free designs every month — just sign in with your email. No card needed.</div>'+
+    '<div class="gsub">Your first design is free — no account needed. Go Velox Pro for unlimited.</div>'+
     '<a class="btn-g" href="/account/?next=/design-lab/app/">Sign in / create account →</a>'+
     '</div>';
 }
@@ -538,8 +545,8 @@ async function run(){
     var _sid=''; try{_sid=localStorage.getItem('vp_sid')||'';}catch(e){}
     var r=await api('generate',{method:'POST',body:JSON.stringify({target:target,sid:_sid})});
     var d=await r.json().catch(function(){ return {}; });
-    if(r.status===401){ prog.abort(); gate(); return; }
-    if(r.status===403){ prog.abort(); renderUpsell(d.message,d.quota); loadQuota(); }
+    if(r.status===401){ prog.abort(); renderUpsell(d.message||'That was your free design.',null,{signin:true}); return; }
+    if(r.status===403){ prog.abort(); renderUpsell(d.message,d.quota,{signin:!token}); if(token) loadQuota(); }
     else if(!r.ok){ prog.abort(); if(msgEl) msgEl.textContent=d.error||'Something went wrong — try again.'; }
     else{
       currentRunId=d.runId||null; currentShareToken=d.shareToken||null; currentBrief=d.brief||null;
@@ -547,8 +554,8 @@ async function run(){
         renderResults(d);
         fireConfetti();
         if(d.quota){ quotaData=d.quota; renderQuota(d.quota); }
-        renderSaveBar();
-        setTimeout(loadLibrary,800);
+        if(token){ renderSaveBar(); setTimeout(loadLibrary,800); }
+        if(d.anonymous) appendAnonCta();
       });
     }
   }catch(e){ prog.abort(); if(msgEl) msgEl.textContent='Network error — please try again.'; }
@@ -728,12 +735,22 @@ async function libAction(e){
 }
 
 // ── Upsell ────────────────────────────────────────────────────────────────
-function renderUpsell(msg,quota){
+function renderUpsell(msg,quota,opts){
+  opts=opts||{};
   var fairUse=quota&&quota.fairUse;
-  var cta=fairUse
-    ? '<a href="mailto:support@veloxpeps.com?subject=Design%20Lab%20fair-use%20cap">Email us to lift the cap →</a>'
-    : '<a href="/pro/">Upgrade your Velox tier →</a>';
-  $('#results').innerHTML='<div class="upsell"><p>'+esc(msg||'You\'ve used all your designs for this period.')+'</p>'+cta+'</div>';
+  var pro=fairUse
+    ? '<a class="up-cta" href="mailto:support@veloxpeps.com?subject=Design%20Lab%20fair-use%20cap">Email us to lift the cap →</a>'
+    : '<a class="up-cta" href="/pro/">Go Velox Pro — unlimited designs →</a>';
+  var signin=opts.signin?'<a class="up-cta2" href="/account/?next=/design-lab/app/" style="display:inline-block;margin-top:10px;color:var(--g);font-size:13px">Sign in / create a free account</a>':'';
+  $('#results').innerHTML='<div class="upsell"><p>'+esc(msg||'You\'ve used all your designs for this period.')+'</p>'+pro+signin+'</div>';
+}
+// After an anonymous free design, nudge the visitor to sign in / go Pro for more.
+function appendAnonCta(){
+  var el=document.createElement('div'); el.className='upsell'; el.style.marginTop='22px';
+  el.innerHTML='<p><b>That was your free design.</b> Sign in for one more, or go Velox Pro for <b>unlimited</b> designs, the full Tool Suite and member pricing.</p>'+
+    '<a class="up-cta" href="/pro/">Go Velox Pro →</a> '+
+    '<a class="up-cta2" href="/account/?next=/design-lab/app/" style="display:inline-block;margin-top:10px;color:var(--g);font-size:13px">Sign in / create a free account</a>';
+  $('#results').appendChild(el);
 }
 
 // ── HTML helpers ──────────────────────────────────────────────────────────

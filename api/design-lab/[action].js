@@ -195,12 +195,13 @@ module.exports = async function handler(req, res) {
   if (action === 'generate') {
     if (method !== 'POST') return res.status(405).end();
     if (!ANTHROPIC_KEY) return res.status(503).json({ error: 'Design Lab is not configured yet.' });
+    // Access model: Velox Pro = unlimited. Everyone else gets ONE free design —
+    // signed-in free (1 lifetime, tracked per user) or anonymous (1 per device/IP,
+    // no account needed). After that, Pro is required.
     const user = await authUser(req);
-    if (!user) return res.status(401).json({ error: 'Please sign in to use Velox Design Lab.' });
 
-    // Anti-Sybil: per-IP cap so one person can't spin up many free accounts to
-    // farm generations. Set above a single Lab user's ~7/day and roomy enough for
-    // shared institutional IPs where several paid members work behind one address.
+    // Anti-Sybil: per-IP daily cap (applies to everyone) so one network can't farm
+    // generations. Generous for shared institutional IPs.
     if (!(await ipAllowed(req, 'dl-gen', 60, 86400))) {
       return res.status(429).json({ error: 'Too many designs from this network today. Please try again tomorrow or upgrade your Velox Pro tier.' });
     }
@@ -209,12 +210,24 @@ module.exports = async function handler(req, res) {
     if (target.length < 6) return res.status(400).json({ error: 'Describe your research target in a sentence or two.' });
     if (target.length > 1200) return res.status(400).json({ error: 'Please keep the description under 1200 characters.' });
 
-    const q = await quotaFor(user.id);
-    if (!q.unlimited && q.remaining <= 0) {
-      const msg = q.fairUse
-        ? `You're flying — you've reached this month's fair-use limit of ${q.limit} designs. Email support@veloxpeps.com and we'll lift the cap for your research.`
-        : `You've used all ${q.limit} of your ${q.tierLabel} designs${q.window === 'month' ? ' this month' : ''}. Upgrade your Velox Pro tier for more.`;
-      return res.status(403).json({ error: 'limit_reached', message: msg, quota: q });
+    let q = null;
+    if (user) {
+      q = await quotaFor(user.id);
+      if (!q.unlimited && q.remaining <= 0) {
+        return res.status(403).json({
+          error: 'limit_reached',
+          message: `You've used your free design. Upgrade to Velox Pro for unlimited designs and the full Tool Suite.`,
+          quota: q,
+        });
+      }
+    } else {
+      // Anonymous: one free design per device/network (≈365-day window), then Pro.
+      if (!(await ipAllowed(req, 'dl-anon', 1, 31536000))) {
+        return res.status(401).json({
+          error: 'free_used',
+          message: 'That was your free design. Sign in for one more, or go Velox Pro for unlimited designs.',
+        });
+      }
     }
 
     // Brief stage
@@ -254,7 +267,12 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: 'The designer hiccuped — please try again.', detail: genErr && genErr.message });
     }
 
-    // Record usage and save the run (parallel)
+    // Anonymous designs aren't saved (no account to own them) — return results only.
+    if (!user) {
+      return res.status(200).json({ brief, candidates, anonymous: true });
+    }
+
+    // Record usage and save the run (parallel) — signed-in only.
     const sid = String((req.body && req.body.sid) || '').replace(/[^a-z0-9]/gi, '').slice(0, 40) || null;
     const [, savedRun] = await Promise.allSettled([
       recordUsage(user.id, target, candidates.length, q.tier),

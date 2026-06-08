@@ -83,6 +83,11 @@
   }
   .toastc{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#fff;color:#04140f;font-weight:700;font-size:13px;padding:10px 18px;border-radius:999px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;}
   .toastc.show{opacity:1;}
+  .cmp-acct{position:fixed;left:50%;transform:translateX(-50%);bottom:82px;z-index:80;display:none;align-items:center;gap:12px;background:var(--bg2);border:1px solid rgba(1,211,160,.35);border-radius:12px;padding:11px 14px;max-width:92vw;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+  .cmp-acct.show{display:flex;}
+  .cmp-acct span{font-size:13px;color:#cdd6dd;}
+  .cmp-acct a{background:var(--g);color:#04140f;font-weight:800;font-size:12.5px;padding:7px 13px;border-radius:8px;text-decoration:none;white-space:nowrap;}
+  .cmp-acct button{background:none;border:none;color:var(--mut);font-size:18px;cursor:pointer;line-height:1;}
 </style>
 </head>
 <body>
@@ -90,8 +95,8 @@
   <a class="nav-logo" href="/" aria-label="Velox Peptides"><img class="nav-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="auto"></a>
   <div class="nav-links">
     <a class="nl" href="/compounds/">Shop</a>
-    <a class="nl" href="/design-lab/">Design Lab</a>
-    <a class="nl active" href="/tools/compare/">Compare</a>
+    <div class="nl-drop"><a class="nl nl-drop-btn active" href="/design-lab/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/">✦ Design Lab</a><a class="nl-item" href="/tools/compare/">⚖ Compare peptides</a><a class="nl-item" href="/tools/scheduler/">🗓 Protocol Scheduler</a></div></div>
+    
     <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
   </div>
 </nav></header>
@@ -105,6 +110,7 @@
 
   <div class="cmp-bar">
     <button class="cmp-btn primary" id="shareBtn">🔗 Copy share link</button>
+    <button class="cmp-btn" id="stackBtn">🃏 Build stack card</button>
     <button class="cmp-btn" id="resetBtn">↺ Reset</button>
     <a class="cmp-btn" href="/design-lab/">✦ Or design a brand-new one →</a>
   </div>
@@ -124,6 +130,19 @@
     <div class="cmp-grid" id="pickerGrid"></div>
   </div>
 </div>
+<!-- Build-Your-Stack card overlay -->
+<div class="cmp-picker" id="stack" role="dialog" aria-modal="true" aria-label="Your research stack card">
+  <div class="cmp-picker-box" style="max-width:560px;text-align:center">
+    <button class="cmp-picker-close" id="stackClose" aria-label="Close">×</button>
+    <h3 style="text-align:left">Your research stack</h3>
+    <canvas id="stackCanvas" width="1080" height="1350" style="width:100%;max-width:380px;border-radius:14px;border:1px solid var(--brd);background:#04070b"></canvas>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px">
+      <button class="cmp-btn primary" id="stackDl">⬇ Download image</button>
+      <button class="cmp-btn" id="stackShare">⇪ Share</button>
+    </div>
+  </div>
+</div>
+<div class="cmp-acct" id="acctNudge"><span>Enjoying this? Create a free account to save &amp; build more comparisons.</span><a href="/account/?next=/tools/compare/">Create free account</a><button id="acctClose" aria-label="Dismiss">×</button></div>
 <div class="toastc" id="toastc"></div>
 
 <script src="/assets/js/peptide-data.js"></script>
@@ -217,7 +236,19 @@
   }
 
   function remove(id){ ids = ids.filter(function(x){return x!==id;}); renderRows(); syncURL(); }
-  function add(id){ if(ids.indexOf(id)===-1 && ids.length<MAX){ ids.push(id); renderRows(); syncURL(); } closePicker(); }
+  function add(id){ if(ids.indexOf(id)===-1 && ids.length<MAX){ ids.push(id); renderRows(); syncURL(); } closePicker(); accountGate(); }
+
+  // ── Account nudge (#8): viewing is always free; after the first interactive
+  // build, prompt non-signed-in visitors to create a free account. Non-blocking. ──
+  function isSignedIn(){ try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&k.indexOf("sb-")===0&&k.indexOf("-auth-token")!==-1&&localStorage.getItem(k)) return true; } }catch(e){} return false; }
+  function accountGate(){
+    if(isSignedIn()) return;
+    var uses=0; try{ uses=+localStorage.getItem("vlx_cmp_uses")||0; localStorage.setItem("vlx_cmp_uses",uses+1); }catch(e){}
+    if(uses>=1 && !sessionStorage.getItem("vlx_cmp_nudged")){
+      try{ sessionStorage.setItem("vlx_cmp_nudged","1"); }catch(e){}
+      $('acctNudge').classList.add('show');
+    }
+  }
 
   // ── picker ──
   function renderPicker(q){
@@ -237,6 +268,77 @@
   $('pickerClose').addEventListener('click', closePicker);
   $('picker').addEventListener('click', function(e){ if(e.target===$('picker')) closePicker(); });
   $('pickerSearch').addEventListener('input', function(){ renderPicker(this.value); });
+  // ── Build-Your-Stack card ──
+  function synergyNote(list){
+    var idset = list.map(function(p){return p.id;});
+    var has=function(id){return idset.indexOf(id)!==-1;};
+    if(has('bpc-157')&&has('tb-500')) return 'BPC-157 + TB-500: complementary tissue-repair pathways (angiogenesis + cell migration).';
+    var ghrh=idset.some(function(id){return ['cjc-1295','sermorelin','tesamorelin'].indexOf(id)!==-1;});
+    var ghrp=idset.some(function(id){return ['ipamorelin','ghrp-2','ghrp-6','hexarelin'].indexOf(id)!==-1;});
+    if(ghrh&&ghrp) return 'GHRH + ghrelin-receptor agonists are studied together for amplified GH release.';
+    var cats=[]; list.forEach(function(p){ if(cats.indexOf(p.catLabel)===-1) cats.push(p.catLabel); });
+    if(cats.length===1) return 'All compounds sit in one research area — ' + cats[0] + '.';
+    return 'Selected for complementary research across ' + cats.length + ' areas.';
+  }
+  function drawStack(){
+    var list = ids.map(function(id){return BY[id];}).filter(Boolean);
+    var c = $('stackCanvas'), x = c.getContext('2d'), W=1080, H=1350;
+    x.fillStyle='#04070b'; x.fillRect(0,0,W,H);
+    // top accent
+    var grd=x.createLinearGradient(0,0,W,0); grd.addColorStop(0,'#01D3A0'); grd.addColorStop(1,'#6cf7d6');
+    x.fillStyle=grd; x.fillRect(0,0,W,12);
+    // wordmark
+    x.fillStyle='#fff'; x.font='900 54px "Barlow Condensed", Arial'; x.textBaseline='alphabetic';
+    x.fillText('VELOX', 70, 110); x.fillStyle='#01D3A0'; x.fillText(' PEPTIDES', 70+x.measureText('VELOX').width, 110);
+    x.fillStyle='#8aa0a0'; x.font='500 24px "DM Mono", monospace'; x.fillText('RESEARCH STACK', 72, 150);
+    // rows
+    var y=230, total=0, nostock=0;
+    list.forEach(function(p){
+      // tile
+      x.fillStyle='#0e141b'; roundRect(x,70,y,W-140,150,18); x.fill();
+      x.fillStyle=p.catColor; x.beginPath(); x.arc(150,y+75,46,0,7); x.fill();
+      x.fillStyle='#04140f'; x.font='900 44px "Barlow Condensed", Arial'; x.textAlign='center'; x.fillText(p.name.charAt(0),150,y+92); x.textAlign='left';
+      // name + cat
+      x.fillStyle='#fff'; x.font='800 40px Inter, Arial'; x.fillText(p.name, 226, y+62);
+      x.fillStyle=p.catColor; x.font='500 22px "DM Mono", monospace'; x.fillText(p.catLabel.toUpperCase(), 226, y+100);
+      // price
+      x.textAlign='right';
+      if(p.buyUrl){ total+=p.price; x.fillStyle='#01D3A0'; x.font='900 46px "Barlow Condensed", Arial'; x.fillText('£'+(p.price%1===0?p.price:p.price.toFixed(2)), W-92, y+92); }
+      else { nostock++; x.fillStyle='#8aa0a0'; x.font='500 22px "DM Mono", monospace'; x.fillText('commission', W-92, y+88); }
+      x.textAlign='left';
+      y+=168;
+    });
+    // total
+    y+=10; x.strokeStyle='#1a2230'; x.beginPath(); x.moveTo(70,y); x.lineTo(W-70,y); x.stroke(); y+=66;
+    x.fillStyle='#8aa0a0'; x.font='600 30px Inter, Arial'; x.fillText('Total (in-stock)', 72, y);
+    x.fillStyle='#fff'; x.font='900 56px "Barlow Condensed", Arial'; x.textAlign='right';
+    x.fillText('£'+(Math.round(total*100)/100), W-92, y+8); x.textAlign='left';
+    if(nostock){ y+=42; x.fillStyle='#7b8cff'; x.font='500 22px "DM Mono", monospace'; x.fillText('+ '+nostock+' to commission via Design Lab', 72, y); }
+    // synergy
+    y+=74; x.fillStyle='#01D3A0'; x.font='500 22px "DM Mono", monospace'; x.fillText('✦ SYNERGY', 72, y); y+=42;
+    x.fillStyle='#cdd6dd'; x.font='400 30px Inter, Arial'; wrapText(x, synergyNote(list), 72, y, W-150, 40);
+    // footer
+    x.fillStyle='#4b5563'; x.font='500 24px "DM Mono", monospace';
+    x.fillText('veloxpeps.com/tools/compare', 72, H-90);
+    x.fillText('For in vitro research use only.', 72, H-52);
+  }
+  function roundRect(x,rx,ry,w,h,r){ x.beginPath(); x.moveTo(rx+r,ry); x.arcTo(rx+w,ry,rx+w,ry+h,r); x.arcTo(rx+w,ry+h,rx,ry+h,r); x.arcTo(rx,ry+h,rx,ry,r); x.arcTo(rx,ry,rx+w,ry,r); x.closePath(); }
+  function wrapText(x,t,rx,ry,maxw,lh){ var words=t.split(' '),line='',yy=ry; for(var i=0;i<words.length;i++){ var test=line+words[i]+' '; if(x.measureText(test).width>maxw&&i>0){ x.fillText(line,rx,yy); line=words[i]+' '; yy+=lh; } else line=test; } x.fillText(line,rx,yy); }
+  function openStack(){ drawStack(); $('stack').classList.add('open'); accountGate(); }
+  function closeStack(){ $('stack').classList.remove('open'); }
+  $('stackBtn').addEventListener('click', openStack);
+  $('stackClose').addEventListener('click', closeStack);
+  $('stack').addEventListener('click', function(e){ if(e.target===$('stack')) closeStack(); });
+  $('stackDl').addEventListener('click', function(){ var a=document.createElement('a'); a.download='velox-research-stack.png'; a.href=$('stackCanvas').toDataURL('image/png'); a.click(); toast('Stack card downloaded'); });
+  $('stackShare').addEventListener('click', function(){
+    $('stackCanvas').toBlob(function(blob){
+      var file=new File([blob],'velox-research-stack.png',{type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){ navigator.share({files:[file],title:'My Velox research stack',text:'Built with Velox compare'}).catch(function(){}); }
+      else { var a=document.createElement('a'); a.download='velox-research-stack.png'; a.href=URL.createObjectURL(blob); a.click(); toast('Saved — share the image'); }
+    },'image/png');
+  });
+
+  $('acctClose').addEventListener('click', function(){ $('acctNudge').classList.remove('show'); });
   $('shareBtn').addEventListener('click', function(){ navigator.clipboard && navigator.clipboard.writeText(location.href); toast('Link copied — share your comparison'); });
   $('resetBtn').addEventListener('click', function(){ ids=['bpc-157','tb-500']; tab='overview'; renderTabs(); renderRows(); syncURL(); });
 

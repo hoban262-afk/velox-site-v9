@@ -515,7 +515,7 @@
     </a>
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
-      <a class="nl" href="/design-lab/">Design Lab</a>
+      <div class="nl-drop"><a class="nl nl-drop-btn" href="/design-lab/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/">✦ Design Lab</a><a class="nl-item" href="/tools/compare/">⚖ Compare peptides</a><a class="nl-item" href="/tools/scheduler/">🗓 Protocol Scheduler</a></div></div>
       <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
@@ -548,7 +548,7 @@
     </div>
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true"><form class="vp-search mob-search" role="search" onsubmit="return false"><div class="vp-search-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="vp-search-input" type="search" placeholder="Search compounds&hellip;" aria-label="Search the catalogue" autocomplete="off"></div><div class="vp-search-results" hidden></div></form>
-    <a href="/compounds/" class="mob-nl">Shop</a><a href="/design-lab/" class="mob-nl">Design Lab</a>
+    <a href="/compounds/" class="mob-nl">Shop</a><a href="/design-lab/" class="mob-nl">Design Lab</a><a href="/tools/compare/" class="mob-nl">Compare peptides</a><a href="/tools/scheduler/" class="mob-nl">Protocol Scheduler</a>
     <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub"> - Cognitive</a>
     <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub"> - Metabolic</a>
     <a href="/compounds/recovery/" class="mob-nl mob-nl-sub"> - Recovery</a>
@@ -593,6 +593,8 @@
           <h2 class="rl-h2" id="sec-verdict">Quick verdict</h2>
           <p><strong>BPC-157 and TB-500 are both peptides (short chains of amino acids, the building blocks of proteins) studied in tissue repair - the body fixing damage. But studies show they work in different ways. BPC-157 is studied for angiogenesis (the growing of new blood vessels) and for protecting the gut, while TB-500 is studied for helping cells move to where repair is needed.</strong> For research on new blood vessels, tendons and ligaments (the tough bands that connect muscle to bone and bone to bone), or protecting the gut lining, BPC-157 has more studies behind it. For research on how cells move and how wounds close over, TB-500 is the more direct tool. Because the two work in ways that fit together, researchers often study them at the same time - which is why Velox Peptides offers them mixed in one vial as a <a href="/compounds/bpc157-tb500-mix/">BPC-157 &amp; TB-500 research blend</a>. These are research observations only, not therapeutic effects.</p>
         </section>
+        <div class="vlx-compare" data-ids="bpc-157,tb-500"></div>
+
 
         <section class="rl-section" aria-labelledby="sec-overview">
           <h2 class="rl-h2" id="sec-overview">Overview: why these two are compared</h2>
@@ -880,5 +882,7 @@
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/newsletter-popup.js"></script>
   <script src="/assets/js/search.js" defer></script>
+<script src="/assets/js/peptide-data.js"></script>
+<script src="/assets/js/compare-widget.js" defer></script>
 </body>
 </html>
