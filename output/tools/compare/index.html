@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare Research Peptides — Velox Peptides</title>
+<meta name="description" content="Compare research peptides side by side — mechanism, receptor targets, research data, molecular weight, solubility and pricing. Compare up to 5 at once. For in vitro research use only.">
+<link rel="canonical" href="https://veloxpeps.com/tools/compare/">
+<meta property="og:title" content="Compare Research Peptides — Velox Peptides">
+<meta property="og:description" content="Side-by-side comparison of research peptides — mechanism, receptors, research data, molecular weight, solubility and pricing.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://veloxpeps.com/tools/compare/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="/assets/css/core.css">
+<style>
+  :root{ --g:#01D3A0; --bg:#04070b; --bg2:#0a0e13; --bg3:#0e141b; --brd:#1a2230; --mut:#8aa0a0; --dim:#4b5563; }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif;}
+  .cmp-wrap{max-width:1080px;margin:0 auto;padding:32px 20px 140px;}
+  .cmp-head h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(34px,6vw,56px);line-height:.95;margin:0 0 10px;}
+  .cmp-head h1 .ac{color:var(--g);}
+  .cmp-head p{color:var(--mut);font-size:15px;max-width:620px;line-height:1.6;margin:0 0 6px;}
+  .cmp-head .legal{font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);}
+  .cmp-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0 8px;}
+  .cmp-btn{font-family:Inter,sans-serif;font-weight:700;font-size:13px;border-radius:10px;padding:9px 16px;cursor:pointer;border:1px solid var(--brd);background:var(--bg3);color:#cdd6dd;transition:.15s;text-decoration:none;display:inline-flex;align-items:center;gap:7px;}
+  .cmp-btn:hover{border-color:var(--g);color:#fff;}
+  .cmp-btn.primary{background:var(--g);color:#04140f;border-color:var(--g);}
+
+  /* rows */
+  .cmp-rows{margin-top:18px;display:flex;flex-direction:column;gap:14px;}
+  .cmp-row{background:var(--bg2);border:1px solid var(--brd);border-radius:18px;padding:14px;display:grid;grid-template-columns:minmax(150px,200px) 1fr auto;gap:16px;align-items:center;position:relative;animation:rowIn .3s ease;}
+  @keyframes rowIn{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+  .cmp-id{display:flex;gap:12px;align-items:center;min-width:0;}
+  .cmp-thumb{width:64px;height:64px;border-radius:12px;flex-shrink:0;object-fit:cover;background:#05070a;border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;}
+  .cmp-nm{min-width:0;}
+  .cmp-nm .n{font-family:'Space Grotesk','Inter',sans-serif;font-weight:800;font-size:17px;line-height:1.1;}
+  .cmp-nm .a{font-size:11.5px;color:var(--mut);margin-top:2px;}
+  .cmp-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-top:6px;}
+  .cmp-content{font-size:14.5px;line-height:1.55;color:#dfe6ea;min-width:0;}
+  .cmp-content .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .cmp-chip{background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:8px 12px;font-size:13px;}
+  .cmp-chip b{display:block;font-family:'DM Mono',monospace;font-size:9px;color:var(--mut);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;font-weight:500;}
+  .cmp-price{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;color:var(--g);line-height:1;}
+  .cmp-buy{display:inline-block;margin-top:8px;background:var(--g);color:#04140f;font-weight:800;font-size:13px;padding:9px 15px;border-radius:9px;text-decoration:none;}
+  .cmp-nostock{color:var(--mut);font-size:13.5px;}
+  .cmp-nostock a{color:var(--g);text-decoration:none;}
+  .cmp-remove{position:absolute;top:10px;right:12px;width:26px;height:26px;border-radius:50%;border:1px solid var(--brd);background:var(--bg3);color:var(--mut);cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  .cmp-remove:hover{border-color:#f0637e;color:#f0637e;}
+
+  .cmp-add{border:1.5px dashed rgba(1,211,160,.4);background:rgba(1,211,160,.04);border-radius:18px;padding:20px;text-align:center;cursor:pointer;color:var(--g);font-weight:700;font-size:15px;transition:.15s;}
+  .cmp-add:hover{background:rgba(1,211,160,.08);}
+  .cmp-add[aria-disabled="true"]{opacity:.4;cursor:not-allowed;}
+
+  /* sticky category tab bar */
+  .cmp-tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(8,11,16,.96);backdrop-filter:blur(10px);border-top:1px solid var(--brd);z-index:60;}
+  .cmp-tabs-in{max-width:1080px;margin:0 auto;display:flex;gap:4px;padding:8px 12px;overflow-x:auto;justify-content:center;}
+  .cmp-tab{flex:0 0 auto;background:none;border:none;cursor:pointer;color:var(--mut);font-family:Inter,sans-serif;font-weight:600;font-size:12.5px;padding:9px 14px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:74px;transition:.15s;}
+  .cmp-tab .ic{font-size:17px;}
+  .cmp-tab.on{background:#fff;color:#04140f;}
+  .cmp-tab:not(.on):hover{color:#fff;}
+
+  /* picker overlay */
+  .cmp-picker{position:fixed;inset:0;z-index:120;background:rgba(3,5,8,.7);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+  .cmp-picker.open{display:flex;}
+  .cmp-picker-box{background:var(--bg2);border:1px solid var(--brd);border-radius:18px;max-width:680px;width:100%;padding:20px;}
+  .cmp-picker-box h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 12px;}
+  .cmp-search{width:100%;background:#05070a;border:1px solid var(--brd);border-radius:10px;color:#fff;font-size:15px;padding:12px 14px;outline:none;margin-bottom:14px;}
+  .cmp-search:focus{border-color:var(--g);}
+  .cmp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;}
+  .cmp-pick{display:flex;gap:10px;align-items:center;background:var(--bg3);border:1px solid var(--brd);border-radius:12px;padding:10px;cursor:pointer;text-align:left;transition:.13s;}
+  .cmp-pick:hover{border-color:var(--g);}
+  .cmp-pick .pt{width:38px;height:38px;border-radius:8px;flex-shrink:0;object-fit:cover;background:#05070a;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;}
+  .cmp-pick .pn{font-weight:700;font-size:13.5px;line-height:1.1;}
+  .cmp-pick .pa{font-size:10.5px;color:var(--mut);}
+  .cmp-picker-close{float:right;background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;}
+
+  @media(max-width:680px){
+    .cmp-row{grid-template-columns:1fr;gap:12px;}
+    .cmp-id{align-items:flex-start;}
+    .cmp-remove{top:12px;right:12px;}
+  }
+  .toastc{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#fff;color:#04140f;font-weight:700;font-size:13px;padding:10px 18px;border-radius:999px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;}
+  .toastc.show{opacity:1;}
+</style>
+</head>
+<body>
+<header class="site-header"><nav class="nav" aria-label="Primary">
+  <a class="nav-logo" href="/" aria-label="Velox Peptides"><img class="nav-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="auto"></a>
+  <div class="nav-links">
+    <a class="nl" href="/compounds/">Shop</a>
+    <a class="nl" href="/design-lab/">Design Lab</a>
+    <a class="nl active" href="/tools/compare/">Compare</a>
+    <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+  </div>
+</nav></header>
+
+<main class="cmp-wrap">
+  <div class="cmp-head">
+    <h1>Compare <span class="ac">research peptides.</span></h1>
+    <p>Pick up to five peptides and see them side by side — mechanism, receptor targets, research data, molecular weight, solubility and pricing. Switch the lens at the bottom.</p>
+    <p class="legal">For in vitro research use only. Summaries are research-framed; not medical advice.</p>
+  </div>
+
+  <div class="cmp-bar">
+    <button class="cmp-btn primary" id="shareBtn">🔗 Copy share link</button>
+    <button class="cmp-btn" id="resetBtn">↺ Reset</button>
+    <a class="cmp-btn" href="/design-lab/">✦ Or design a brand-new one →</a>
+  </div>
+
+  <div class="cmp-rows" id="rows"></div>
+</main>
+
+<!-- category tab bar -->
+<nav class="cmp-tabs" aria-label="Comparison facet"><div class="cmp-tabs-in" id="tabs"></div></nav>
+
+<!-- add-peptide picker -->
+<div class="cmp-picker" id="picker" role="dialog" aria-modal="true" aria-label="Add a peptide">
+  <div class="cmp-picker-box">
+    <button class="cmp-picker-close" id="pickerClose" aria-label="Close">×</button>
+    <h3>Add a peptide</h3>
+    <input class="cmp-search" id="pickerSearch" type="search" placeholder="Search peptides…" autocomplete="off">
+    <div class="cmp-grid" id="pickerGrid"></div>
+  </div>
+</div>
+<div class="toastc" id="toastc"></div>
+
+<script src="/assets/js/peptide-data.js"></script>
+<script>
+(function(){
+  var ALL = window.VELOX_PEPTIDES || [];
+  var BY = window.VELOX_PEPTIDE_BY_ID || {};
+  var MAX = 5;
+  var TABS = [
+    {k:'overview', label:'Overview', ic:'🔬'},
+    {k:'mechanism', label:'Mechanism', ic:'⚙️'},
+    {k:'receptors', label:'Receptors', ic:'🎯'},
+    {k:'research', label:'Research', ic:'📊'},
+    {k:'properties', label:'Properties', ic:'⚗️'},
+    {k:'pricing', label:'Pricing', ic:'£'},
+  ];
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  // ── state from URL ──
+  var params = new URLSearchParams(location.search);
+  var ids = (params.get('ids')||'').split(',').map(function(x){return x.trim();}).filter(function(x){return BY[x];});
+  // Pretty SEO path: /compare/bpc-157-vs-tb-500/  → ids from the "-vs-" slug
+  if(!ids.length){
+    var m = location.pathname.match(/\/compare\/([^/]+)/);
+    if(m) ids = m[1].split('-vs-').map(function(x){return x.trim();}).filter(function(x){return BY[x];});
+  }
+  if(!ids.length) ids = ['bpc-157','tb-500'];           // sensible default for an empty/SEO landing
+  ids = ids.slice(0,MAX);
+  var tab = params.get('tab'); if(!TABS.some(function(t){return t.k===tab;})) tab='overview';
+
+  function syncURL(){
+    var u = new URL(location.href);
+    u.searchParams.set('ids', ids.join(','));
+    u.searchParams.set('tab', tab);
+    history.replaceState(null,'',u);
+    // SEO-ish: reflect the comparison in the title
+    var names = ids.map(function(id){return (BY[id]||{}).name||id;});
+    document.title = 'Compare ' + names.join(' vs ') + ' — Velox Peptides';
+  }
+
+  function thumb(p, cls){
+    if(p.imgUrl) return '<img class="'+cls+'" src="'+p.imgUrl+'" alt="'+esc(p.name)+'" loading="lazy">';
+    return '<div class="'+cls+'" style="color:'+p.catColor+'">'+esc(p.name.charAt(0))+'</div>';
+  }
+
+  function facet(p){
+    if(tab==='overview') return esc(p.blurb);
+    if(tab==='mechanism') return esc(p.mechanism);
+    if(tab==='receptors') return esc(p.receptors);
+    if(tab==='research') return esc(p.research);
+    if(tab==='properties') return '<div class="chips">'+
+        '<div class="cmp-chip"><b>Molecular weight</b>'+esc(p.mw)+' g/mol</div>'+
+        '<div class="cmp-chip"><b>Solubility</b>'+esc(p.solubility)+'</div>'+
+        '<div class="cmp-chip"><b>Category</b>'+esc(p.catLabel)+'</div>'+
+      '</div>';
+    if(tab==='pricing'){
+      if(p.buyUrl) return '<div class="cmp-price">£'+(p.price%1===0?p.price:p.price.toFixed(2))+'</div>'+
+        '<a class="cmp-buy" href="'+p.buyUrl+'">Order '+esc(p.name)+' →</a>';
+      return '<div class="cmp-nostock">Not stocked at Velox yet. <a href="/design-lab/order/?name='+encodeURIComponent(p.name)+'">Commission a synthesis →</a> or <a href="/design-lab/">design a novel alternative</a>.</div>';
+    }
+    return '';
+  }
+
+  function renderRows(){
+    var html = ids.map(function(id){
+      var p = BY[id]; if(!p) return '';
+      return '<div class="cmp-row">'+
+        '<div class="cmp-id">'+thumb(p,'cmp-thumb')+
+          '<div class="cmp-nm"><div class="n">'+esc(p.name)+'</div>'+
+          (p.aka?'<div class="a">'+esc(p.aka)+'</div>':'')+
+          '<span class="cmp-tag" style="background:'+p.catColor+'22;color:'+p.catColor+'">'+esc(p.catLabel)+(p.buyUrl?' · in stock':'')+'</span>'+
+          '</div></div>'+
+        '<div class="cmp-content">'+facet(p)+'</div>'+
+        '<div></div>'+
+        (ids.length>1?'<button class="cmp-remove" data-rm="'+id+'" aria-label="Remove '+esc(p.name)+'">×</button>':'')+
+      '</div>';
+    }).join('');
+    if(ids.length<MAX) html += '<div class="cmp-add" id="addRow">+ Add a peptide ('+ids.length+'/'+MAX+')</div>';
+    else html += '<div class="cmp-add" aria-disabled="true">Maximum of '+MAX+' reached</div>';
+    $('rows').innerHTML = html;
+    $('rows').querySelectorAll('[data-rm]').forEach(function(b){ b.addEventListener('click',function(){ remove(b.getAttribute('data-rm')); }); });
+    var ar=$('addRow'); if(ar) ar.addEventListener('click', openPicker);
+  }
+
+  function renderTabs(){
+    $('tabs').innerHTML = TABS.map(function(t){
+      return '<button class="cmp-tab'+(t.k===tab?' on':'')+'" data-tab="'+t.k+'"><span class="ic">'+t.ic+'</span>'+esc(t.label)+'</button>';
+    }).join('');
+    $('tabs').querySelectorAll('[data-tab]').forEach(function(b){ b.addEventListener('click',function(){ tab=b.getAttribute('data-tab'); renderTabs(); renderRows(); syncURL(); }); });
+  }
+
+  function remove(id){ ids = ids.filter(function(x){return x!==id;}); renderRows(); syncURL(); }
+  function add(id){ if(ids.indexOf(id)===-1 && ids.length<MAX){ ids.push(id); renderRows(); syncURL(); } closePicker(); }
+
+  // ── picker ──
+  function renderPicker(q){
+    q=(q||'').toLowerCase();
+    var avail = ALL.filter(function(p){ return ids.indexOf(p.id)===-1 && (!q || (p.name+' '+(p.aka||'')+' '+p.catLabel).toLowerCase().indexOf(q)!==-1); });
+    $('pickerGrid').innerHTML = avail.map(function(p){
+      return '<button class="cmp-pick" data-add="'+p.id+'">'+thumb(p,'pt')+
+        '<div><div class="pn">'+esc(p.name)+'</div><div class="pa">'+esc(p.aka||p.catLabel)+'</div></div></button>';
+    }).join('') || '<div style="color:var(--mut);font-size:14px;padding:8px">No matches.</div>';
+    $('pickerGrid').querySelectorAll('[data-add]').forEach(function(b){ b.addEventListener('click',function(){ add(b.getAttribute('data-add')); }); });
+  }
+  function openPicker(){ if(ids.length>=MAX) return; $('pickerSearch').value=''; renderPicker(''); $('picker').classList.add('open'); setTimeout(function(){$('pickerSearch').focus();},50); }
+  function closePicker(){ $('picker').classList.remove('open'); }
+
+  function toast(t){ var el=$('toastc'); el.textContent=t; el.classList.add('show'); setTimeout(function(){el.classList.remove('show');},1600); }
+
+  $('pickerClose').addEventListener('click', closePicker);
+  $('picker').addEventListener('click', function(e){ if(e.target===$('picker')) closePicker(); });
+  $('pickerSearch').addEventListener('input', function(){ renderPicker(this.value); });
+  $('shareBtn').addEventListener('click', function(){ navigator.clipboard && navigator.clipboard.writeText(location.href); toast('Link copied — share your comparison'); });
+  $('resetBtn').addEventListener('click', function(){ ids=['bpc-157','tb-500']; tab='overview'; renderTabs(); renderRows(); syncURL(); });
+
+  renderTabs(); renderRows(); syncURL();
+})();
+</script>
+</body>
+</html>

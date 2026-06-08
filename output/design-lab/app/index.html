@@ -87,6 +87,12 @@
     .share-btn.active{ background:rgba(1,211,160,.1); border-color:rgba(1,211,160,.3); color:var(--g); }
     .share-link{ font-family:'DM Mono',monospace; font-size:11px; color:var(--mut); background:#05070a; border:1px solid var(--brd); border-radius:6px; padding:7px 11px; cursor:pointer; word-break:break-all; flex-basis:100%; transition:.12s; }
     .share-link:hover{ border-color:var(--g); color:var(--g); }
+    .share-panel{ flex-basis:100%; }
+    .share-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:9px; }
+    .share-actions .sa{ font-family:inherit; font-size:12.5px; font-weight:600; text-decoration:none; cursor:pointer; border-radius:8px; padding:8px 13px; border:1px solid var(--brd); background:var(--bg3,#0e141b); color:#cdd6dd; transition:.13s; display:inline-flex; align-items:center; gap:5px; }
+    .share-actions .sa:hover{ border-color:var(--g); color:#fff; }
+    .share-actions .sa.x:hover{ border-color:#fff; }
+    .share-actions .cp,.share-actions .nx{ background:rgba(1,211,160,.1); border-color:rgba(1,211,160,.3); color:var(--g); }
 
     /* Library */
     #libPanel{ display:none; background:var(--bg2); border:1px solid var(--brd); border-radius:14px; padding:20px; margin-bottom:24px; }
@@ -591,6 +597,30 @@ async function saveRunName(){
   }catch(e){ toast('Network error.','err'); }
   btn.disabled=false; btn.textContent='Save name';
 }
+var SHARE_MSG='I designed a novel research peptide with Velox Design Lab ✦ — design yours free:';
+function shareButtonsHTML(link){
+  return '<div class="share-link" data-link>'+esc(link)+'</div>'+
+    '<div class="share-actions">'+
+      '<a class="sa x" target="_blank" rel="noopener" data-x>𝕏 Post</a>'+
+      '<a class="sa tg" target="_blank" rel="noopener" data-tg>✈ Telegram</a>'+
+      '<a class="sa wa" target="_blank" rel="noopener" data-wa>WhatsApp</a>'+
+      '<a class="sa rd" target="_blank" rel="noopener" data-rd>Reddit</a>'+
+      '<button class="sa nx" data-native>⇪ Share…</button>'+
+      '<button class="sa cp" data-copy>⧉ Copy</button>'+
+    '</div>';
+}
+function wireShareButtons(root,link){
+  var u=encodeURIComponent(link), t=encodeURIComponent(SHARE_MSG);
+  var set=function(sel,href){ var a=root.querySelector(sel); if(a) a.href=href; };
+  set('[data-x]','https://twitter.com/intent/tweet?text='+t+'&url='+u);
+  set('[data-tg]','https://t.me/share/url?url='+u+'&text='+t);
+  set('[data-wa]','https://wa.me/?text='+t+'%20'+u);
+  set('[data-rd]','https://www.reddit.com/submit?url='+u+'&title='+encodeURIComponent('Novel research peptide — Velox Design Lab'));
+  var ll=root.querySelector('[data-link]'); if(ll) ll.addEventListener('click',function(){ navigator.clipboard.writeText(link).then(function(){toast('Link copied!');}); });
+  var cp=root.querySelector('[data-copy]'); if(cp) cp.addEventListener('click',function(){ navigator.clipboard.writeText(link).then(function(){toast('Link copied!');}); });
+  var nx=root.querySelector('[data-native]');
+  if(nx){ if(navigator.share){ nx.addEventListener('click',function(){ navigator.share({title:'Velox Design Lab',text:SHARE_MSG,url:link}).catch(function(){}); }); } else { nx.style.display='none'; } }
+}
 async function toggleShare(){
   if(!currentRunId||!currentShareToken) return;
   var btn=$('#shareBtn'); if(!btn) return;
@@ -603,13 +633,11 @@ async function toggleShare(){
       if(newState){
         btn.classList.add('active'); btn.textContent='✓ Link shared';
         var link=window.location.origin+'/design-lab/r/'+currentShareToken;
-        var el=document.createElement('div'); el.className='share-link'; el.textContent=link; el.title='Click to copy';
-        el.addEventListener('click',function(){ navigator.clipboard.writeText(link).then(function(){ toast('Link copied!'); }); });
-        var sb=$('.save-bar'); if(sb) sb.appendChild(el);
-        toast('Share link ready — click the link to copy it!');
+        var sb=$('.save-bar'); if(sb){ var sp=document.createElement('div'); sp.className='share-panel'; sp.innerHTML=shareButtonsHTML(link); sb.appendChild(sp); wireShareButtons(sp,link); }
+        toast('Share link ready — pick a platform or copy it!');
       }else{
         btn.classList.remove('active'); btn.textContent='🔗 Get share link';
-        var sl=document.querySelector('.share-link'); if(sl) sl.remove();
+        var sp2=document.querySelector('.share-panel'); if(sp2) sp2.remove();
         toast('Sharing turned off.');
       }
     }else toast('Could not update share — try again.','err');
