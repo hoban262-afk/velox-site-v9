@@ -73,7 +73,7 @@
     </a>
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
-      <div class="nl-drop"><a class="nl nl-drop-btn active" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Compare peptides</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a></div></div>
+      <div class="nl-drop"><a class="nl nl-drop-btn active" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Compare peptides</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution calc</a></div></div>
       <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
@@ -106,7 +106,7 @@
     </div>
   </nav>
   <div class="mob-menu" id="mob-menu" aria-hidden="true"><form class="vp-search mob-search" role="search" onsubmit="return false"><div class="vp-search-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="vp-search-input" type="search" placeholder="Search compounds&hellip;" aria-label="Search the catalogue" autocomplete="off"></div><div class="vp-search-results" hidden></div></form>
-    <a href="/compounds/" class="mob-nl">Shop</a><a href="/design-lab/" class="mob-nl">Design Lab</a><a href="/tools/compare/" class="mob-nl">Compare peptides</a><a href="/tools/scheduler/" class="mob-nl">Protocol Scheduler</a>
+    <a href="/compounds/" class="mob-nl">Shop</a><a href="/design-lab/" class="mob-nl">Design Lab</a><a href="/tools/compare/" class="mob-nl">Compare peptides</a><a href="/tools/scheduler/" class="mob-nl">Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution calc</a>
     <a href="/compounds/cognitive/" class="mob-nl mob-nl-sub"> - Cognitive</a>
     <a href="/compounds/metabolic/" class="mob-nl mob-nl-sub"> - Metabolic</a>
     <a href="/compounds/recovery/" class="mob-nl mob-nl-sub"> - Recovery</a>
@@ -201,20 +201,20 @@
               <feGaussianBlur stdDeviation="3.2" result="b"/>
               <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
-            <clipPath id="syrClip"><rect id="syr-clip" x="31" y="53" width="0" height="38" rx="3"/></clipPath>
+            <clipPath id="syrClip"><rect id="syr-clip" x="389" y="53" width="0" height="38" rx="3"/></clipPath>
           </defs>
           <g id="syr-ticks"></g>
           <rect x="30" y="52" width="360" height="40" rx="6" fill="#05070a" stroke="#2a323a" stroke-width="2"/>
-          <rect class="syr-fill" id="syr-fill" x="31" y="53" width="0" height="38" rx="3" fill="url(#syrGrad)" filter="url(#syrGlow)"/>
+          <rect class="syr-fill" id="syr-fill" x="389" y="53" width="0" height="38" rx="3" fill="url(#syrGrad)" filter="url(#syrGlow)"/>
           <g clip-path="url(#syrClip)">
             <rect id="syr-shine" x="-40" y="50" width="22" height="44" fill="#ffffff" opacity="0.22" transform="skewX(-20)">
               <animate attributeName="x" from="-40" to="430" dur="2.4s" repeatCount="indefinite"/>
             </rect>
           </g>
-          <ellipse class="syr-men" id="syr-men" cx="31" cy="72" rx="3.5" ry="19" fill="#7dffe0">
+          <ellipse class="syr-men" id="syr-men" cx="389" cy="72" rx="3.5" ry="19" fill="#7dffe0">
             <animate attributeName="opacity" values="0.45;0.95;0.45" dur="1.5s" repeatCount="indefinite"/>
           </ellipse>
-          <line class="syr-plunger" id="syr-plunger" x1="31" y1="46" x2="31" y2="98" stroke="#e7e9ec" stroke-width="3"/>
+          <line class="syr-plunger" id="syr-plunger" x1="389" y1="46" x2="389" y2="98" stroke="#e7e9ec" stroke-width="3"/>
           <rect x="14" y="66" width="18" height="12" fill="#11161b"/>
           <rect x="4" y="60" width="14" height="24" rx="3" fill="#161c22" stroke="#2a323a"/>
           <rect x="390" y="70" width="14" height="4" fill="#2a323a"/>
@@ -378,7 +378,8 @@
   function buildTicks() {
     var g = el('syr-ticks'); if (!g) return; var s = '';
     for (var u = 0; u <= 100; u++) {            // a line for every 1 unit
-      var x = (BX + (u / 100) * BW).toFixed(1);
+      // 0 units at the NEEDLE end (right), increasing toward the plunger (left)
+      var x = (BX + ((100 - u) / 100) * BW).toFixed(1);
       var major = (u % 5 === 0);                // a bigger notch every 5 units
       s += '<line x1="' + x + '" y1="' + (major ? 43 : 48) + '" x2="' + x + '" y2="52" stroke="' + (major ? '#5a6570' : '#2a323a') + '" stroke-width="1"/>';
       if (u % 10 === 0) s += '<text x="' + x + '" y="37" fill="#6b7280" font-size="9" font-family="monospace" text-anchor="middle">' + u + '</text>';
@@ -405,9 +406,12 @@
       animW = w0 + (targetW - w0) * e;
       animU = u0 + (units - u0) * e;
       var fill = el('syr-fill'), clip = el('syr-clip'), men = el('syr-men'), pl = el('syr-plunger');
-      if (fill) fill.setAttribute('width', animW.toFixed(1));
-      if (clip) clip.setAttribute('width', animW.toFixed(1));
-      var px = (BX + animW).toFixed(1);
+      // Liquid is drawn IN through the needle (right end): anchor the fill at the
+      // right and grow it leftward; the meniscus/plunger sits at its back (left) edge.
+      var fx = (BX + BW - animW).toFixed(1);
+      if (fill) { fill.setAttribute('x', fx); fill.setAttribute('width', animW.toFixed(1)); }
+      if (clip) { clip.setAttribute('x', fx); clip.setAttribute('width', animW.toFixed(1)); }
+      var px = fx;
       if (men) men.setAttribute('cx', px);
       if (pl) { pl.setAttribute('x1', px); pl.setAttribute('x2', px); }
       if (readout) readout.innerHTML = valid
