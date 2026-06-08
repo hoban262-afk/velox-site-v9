@@ -4,54 +4,79 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Protocol Scheduler — Research Register | Velox Peptides</title>
-<meta name="description" content="A simple research register: plan a compound schedule across a calendar and export it to your own calendar app. An organisational tool for in vitro research record-keeping — no dosing or medical guidance.">
+<meta name="description" content="A clean research register: plan one or more compounds across a calendar and export to your own calendar app. An organisational tool for in vitro research record-keeping — no dosing or medical guidance.">
 <link rel="canonical" href="https://veloxpeps.com/tools/scheduler/">
 <meta property="og:title" content="Protocol Scheduler — Velox Peptides">
-<meta property="og:description" content="Plan and export a research schedule to your calendar. An organisational tool for in vitro research record-keeping.">
+<meta property="og:description" content="Plan and export a multi-compound research schedule to your calendar. An organisational tool for in vitro research record-keeping.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800;900&display=swap">
 <link rel="stylesheet" href="/assets/css/core.css">
 <style>
   :root{ --g:#01D3A0; --bg:#04070b; --bg2:#0a0e13; --bg3:#0e141b; --brd:#1a2230; --mut:#8aa0a0; --dim:#4b5563; }
   *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif;}
-  .ps-wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px;}
-  .ps-head h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(34px,6vw,54px);line-height:.95;margin:0 0 6px;}
+  .ps-wrap{max-width:1080px;margin:0 auto;padding:34px 20px 90px;}
+  .ps-head h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(36px,6vw,56px);line-height:.92;margin:0 0 8px;}
   .ps-head h1 .ac{color:var(--g);}
-  .ps-head .sub{color:var(--mut);font-size:15px;max-width:640px;line-height:1.6;margin:6px 0 0;}
-  .ps-disc{margin:16px 0 0;font-size:12.5px;color:#cdd6dd;background:rgba(240,176,59,.07);border:1px solid rgba(240,176,59,.28);border-radius:10px;padding:11px 14px;line-height:1.55;}
-  .ps-grid{display:grid;grid-template-columns:330px 1fr;gap:22px;margin-top:24px;align-items:start;}
-  @media(max-width:780px){.ps-grid{grid-template-columns:1fr;}}
-  .ps-card{background:var(--bg2);border:1px solid var(--brd);border-radius:16px;padding:18px;}
-  .ps-field{margin-bottom:14px;}
-  .ps-field label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
-  .ps-field input,.ps-field select,.ps-field textarea{width:100%;background:#05070a;border:1px solid var(--brd);border-radius:10px;color:#fff;font-size:15px;padding:11px 13px;outline:none;font-family:inherit;}
-  .ps-field input:focus,.ps-field select:focus,.ps-field textarea:focus{border-color:var(--g);}
-  .ps-gen{width:100%;background:var(--g);color:#04140f;font-weight:800;font-size:15px;border:none;border-radius:11px;padding:13px;cursor:pointer;}
-  .ps-out{min-height:200px;}
-  .ps-empty{color:var(--dim);text-align:center;padding:60px 20px;font-size:14px;}
-  .ps-cal-hd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
-  .ps-cal-hd .t{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;text-transform:uppercase;}
+  .ps-head .sub{color:var(--mut);font-size:15px;max-width:660px;line-height:1.6;margin:6px 0 0;}
+  .ps-disc{margin:16px 0 0;font-size:12px;color:#cdd6dd;background:rgba(240,176,59,.07);border:1px solid rgba(240,176,59,.26);border-radius:10px;padding:10px 14px;line-height:1.5;}
+
+  .ps-grid{display:grid;grid-template-columns:380px 1fr;gap:24px;margin-top:26px;align-items:start;}
+  @media(max-width:820px){.ps-grid{grid-template-columns:1fr;}}
+  .ps-panel{background:var(--bg2);border:1px solid var(--brd);border-radius:18px;padding:18px;}
+  .ps-panel .lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:12px;}
+
+  /* compound rows */
+  .sc-row{background:var(--bg3);border:1px solid var(--brd);border-radius:14px;padding:13px 13px 13px 16px;margin-bottom:11px;position:relative;}
+  .sc-row .dot{position:absolute;left:6px;top:14px;bottom:14px;width:4px;border-radius:3px;}
+  .sc-name{width:100%;background:#05070a;border:1px solid var(--brd);border-radius:9px;color:#fff;font-size:15px;font-weight:600;padding:10px 12px;outline:none;}
+  .sc-name:focus{border-color:var(--g);}
+  .sc-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px;}
+  .sc-mini label{display:block;font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
+  .sc-mini select,.sc-mini input{width:100%;background:#05070a;border:1px solid var(--brd);border-radius:8px;color:#fff;font-size:13.5px;padding:8px 10px;outline:none;font-family:inherit;}
+  .sc-mini select:focus,.sc-mini input:focus{border-color:var(--g);}
+  .sc-custom{display:none;}
+  .sc-rm{position:absolute;right:9px;top:9px;width:22px;height:22px;border-radius:50%;border:1px solid var(--brd);background:var(--bg2);color:var(--mut);cursor:pointer;font-size:13px;line-height:1;}
+  .sc-rm:hover{border-color:#f0637e;color:#f0637e;}
+  .ps-add{width:100%;background:rgba(1,211,160,.05);border:1.5px dashed rgba(1,211,160,.4);color:var(--g);font-weight:700;font-size:14px;border-radius:12px;padding:13px;cursor:pointer;}
+  .ps-add:hover{background:rgba(1,211,160,.1);}
+  .ps-add[disabled]{opacity:.4;cursor:not-allowed;}
+  .ps-genwrap{margin-top:14px;}
+  .ps-gen{width:100%;background:var(--g);color:#04140f;font-weight:800;font-size:15px;border:none;border-radius:12px;padding:14px;cursor:pointer;}
+  .ps-gen:hover{filter:brightness(1.05);}
+
+  /* output */
+  .ps-out{min-height:240px;}
+  .ps-empty{color:var(--dim);text-align:center;padding:80px 20px;font-size:14px;line-height:1.6;}
+  .ps-empty .big{font-size:34px;margin-bottom:10px;opacity:.5;}
+  .ps-cal-hd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px;}
+  .ps-cal-hd .t{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;text-transform:uppercase;}
   .ps-actions{display:flex;gap:8px;flex-wrap:wrap;}
   .ps-btn{font-size:13px;font-weight:700;border-radius:9px;padding:9px 14px;cursor:pointer;border:1px solid var(--brd);background:var(--bg3);color:#cdd6dd;text-decoration:none;}
   .ps-btn:hover{border-color:var(--g);color:#fff;}
   .ps-btn.primary{background:var(--g);color:#04140f;border-color:var(--g);}
-  .ps-month{margin-bottom:18px;}
-  .ps-month .mn{font-family:'DM Mono',monospace;font-size:12px;color:var(--mut);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;}
-  .ps-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
-  .ps-dow{font-family:'DM Mono',monospace;font-size:10px;color:var(--dim);text-align:center;padding:2px 0;}
-  .ps-day{aspect-ratio:1;border:1px solid var(--brd);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--mut);background:#070b10;}
+  .ps-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:14px 0 18px;}
+  .ps-leg{display:flex;align-items:center;gap:7px;font-size:13px;color:#dfe6ea;}
+  .ps-leg .sw{width:11px;height:11px;border-radius:3px;}
+  .ps-leg .ct{color:var(--mut);font-size:11.5px;}
+  .ps-months{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px;}
+  .ps-month .mn{font-family:'DM Mono',monospace;font-size:11px;color:var(--mut);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;}
+  .ps-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .ps-dow{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);text-align:center;}
+  .ps-day{position:relative;aspect-ratio:1;border:1px solid var(--brd);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:var(--mut);background:#070b10;gap:3px;}
   .ps-day.blank{border:none;background:none;}
-  .ps-day.on{background:rgba(1,211,160,.16);border-color:var(--g);color:#fff;font-weight:700;}
-  .ps-day.start{background:var(--g);color:#04140f;font-weight:800;}
-  .ps-count{font-size:13px;color:var(--mut);margin-top:6px;}
+  .ps-day.has{color:#fff;font-weight:700;border-color:rgba(255,255,255,.14);}
+  .ps-dots{display:flex;gap:2px;height:5px;align-items:center;}
+  .ps-dots i{width:5px;height:5px;border-radius:50%;display:block;}
+
   /* gate */
-  .ps-gate{position:fixed;inset:0;z-index:120;background:rgba(3,5,8,.8);display:none;align-items:center;justify-content:center;padding:24px;}
+  .ps-gate{position:fixed;inset:0;z-index:120;background:rgba(3,5,8,.82);display:none;align-items:center;justify-content:center;padding:24px;}
   .ps-gate.open{display:flex;}
   .ps-gate-box{background:var(--bg2);border:1px solid rgba(1,211,160,.3);border-radius:18px;max-width:440px;text-align:center;padding:30px 26px;}
   .ps-gate-box h3{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:26px;margin:0 0 8px;}
   .ps-gate-box p{color:var(--mut);font-size:14px;line-height:1.6;margin:0 0 18px;}
   .toastc{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#fff;color:#04140f;font-weight:700;font-size:13px;padding:10px 18px;border-radius:999px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;}
   .toastc.show{opacity:1;}
+  @media print{ .site-header,.ps-panel,.ps-disc,.ps-actions,.ps-gate{display:none!important;} .ps-grid{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -60,8 +85,6 @@
   <div class="nav-links">
     <a class="nl" href="/compounds/">Shop</a>
     <div class="nl-drop"><a class="nl nl-drop-btn active" href="/design-lab/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Compare peptides</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a></div></div>
-    
-    
     <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
   </div>
 </nav></header>
@@ -69,43 +92,21 @@
 <main class="ps-wrap">
   <div class="ps-head">
     <h1>Protocol <span class="ac">Scheduler.</span></h1>
-    <div class="sub">A simple <strong style="color:#fff">research register</strong>. Pick a compound, a start date and a frequency, and it lays out a calendar you can export to your own calendar app. You fill in your own details.</div>
-    <div class="ps-disc">⚠ This is an organisational tool for <strong>in vitro research record-keeping only</strong>. It does <strong>not</strong> provide dosing, medical, or human-use guidance, and implies no human or veterinary use. Schedules and labels are entirely your own.</div>
+    <div class="sub">A clean <strong style="color:#fff">research register</strong>. Add one or more compounds, each with its own frequency and cycle, and see them laid out on a single calendar you can export to your own calendar app.</div>
+    <div class="ps-disc">⚠ Organisational tool for <strong>in vitro research record-keeping only</strong>. It does <strong>not</strong> provide dosing, medical, or human-use guidance, and implies no human or veterinary use. Schedules and labels are entirely your own.</div>
   </div>
 
   <div class="ps-grid">
-    <div class="ps-card">
-      <div class="ps-field"><label for="f-compound">Compound</label>
-        <input id="f-compound" list="cmpList" placeholder="e.g. BPC-157" autocomplete="off">
-        <datalist id="cmpList"></datalist>
-      </div>
-      <div class="ps-field"><label for="f-label">Label / notes (your own)</label>
-        <input id="f-label" placeholder="e.g. Study A — group 1" maxlength="60">
-      </div>
-      <div class="ps-field"><label for="f-start">Start date</label>
-        <input id="f-start" type="date">
-      </div>
-      <div class="ps-field"><label for="f-freq">Frequency</label>
-        <select id="f-freq">
-          <option value="1">Every day</option>
-          <option value="2">Every 2 days</option>
-          <option value="3">Every 3 days</option>
-          <option value="mt">Twice a week (Mon &amp; Thu)</option>
-          <option value="7">Weekly</option>
-          <option value="custom">Custom interval…</option>
-        </select>
-      </div>
-      <div class="ps-field" id="customWrap" style="display:none"><label for="f-custom">Custom interval (days)</label>
-        <input id="f-custom" type="number" min="1" max="60" value="5">
-      </div>
-      <div class="ps-field"><label for="f-weeks">Cycle length (weeks)</label>
-        <input id="f-weeks" type="number" min="1" max="26" value="4">
-      </div>
-      <button class="ps-gen" id="genBtn">Generate schedule →</button>
+    <div class="ps-panel">
+      <div class="lbl">Compounds in this register</div>
+      <div id="rows"></div>
+      <button class="ps-add" id="addBtn">+ Add another compound</button>
+      <div class="ps-genwrap"><button class="ps-gen" id="genBtn">Generate calendar →</button></div>
+      <datalist id="cmpList"></datalist>
     </div>
 
-    <div class="ps-card ps-out" id="out">
-      <div class="ps-empty">Your generated calendar will appear here.<br>Fill in the form and hit Generate.</div>
+    <div class="ps-panel ps-out" id="out">
+      <div class="ps-empty"><div class="big">🗓</div>Your combined calendar will appear here.<br>Add your compounds and hit Generate.</div>
     </div>
   </div>
 </main>
@@ -124,103 +125,131 @@
 <script src="/assets/js/peptide-data.js"></script>
 <script>
 (function(){
-  var $=function(id){return document.getElementById(id);};
+  var $=function(s){return document.getElementById(s);};
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
   function toast(t){var el=$('toastc');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},1700);}
+  var COLORS=['#01D3A0','#7b8cff','#f0b03b','#f0637e','#6cf7d6','#c08bff'];
+  var MAX=6, MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  // datalist of compounds
-  var PEP = window.VELOX_PEPTIDES||[];
-  $('cmpList').innerHTML = PEP.map(function(p){ return '<option value="'+esc(p.name)+'">'; }).join('');
+  var PEP=window.VELOX_PEPTIDES||[];
+  $('cmpList').innerHTML=PEP.map(function(p){return '<option value="'+esc(p.name)+'">';}).join('');
+  var today=new Date().toISOString().slice(0,10);
 
-  // default start = today
-  var t=new Date(); $('f-start').value = t.toISOString().slice(0,10);
+  // ── builder rows (DOM-backed so edits persist) ──
+  function rowHTML(i){
+    return '<div class="sc-row" data-i="'+i+'"><span class="dot" style="background:'+COLORS[i%COLORS.length]+'"></span>'+
+      (i>0?'<button class="sc-rm" title="Remove">×</button>':'')+
+      '<input class="sc-name" list="cmpList" placeholder="Compound — e.g. BPC-157" autocomplete="off">'+
+      '<div class="sc-mini">'+
+        '<div><label>Frequency</label><select class="sc-freq">'+
+          '<option value="1">Every day</option><option value="2">Every 2 days</option><option value="3">Every 3 days</option>'+
+          '<option value="mt">Mon &amp; Thu</option><option value="7">Weekly</option><option value="custom">Custom…</option>'+
+        '</select></div>'+
+        '<div><label>Start date</label><input class="sc-start" type="date" value="'+today+'"></div>'+
+        '<div class="sc-custom"><label>Interval (days)</label><input class="sc-int" type="number" min="1" max="60" value="5"></div>'+
+        '<div><label>Cycle (weeks)</label><input class="sc-weeks" type="number" min="1" max="26" value="4"></div>'+
+      '</div></div>';
+  }
+  function wireRow(row){
+    var rm=row.querySelector('.sc-rm'); if(rm) rm.addEventListener('click',function(){ row.remove(); refreshDots(); });
+    var fr=row.querySelector('.sc-freq'); fr.addEventListener('change',function(){ row.querySelector('.sc-custom').style.display=this.value==='custom'?'block':'none'; });
+  }
+  function addRow(){
+    var n=$('rows').children.length; if(n>=MAX){ return; }
+    var wrap=document.createElement('div'); wrap.innerHTML=rowHTML(n); var row=wrap.firstChild;
+    $('rows').appendChild(row); wireRow(row); refreshDots();
+  }
+  function refreshDots(){
+    Array.prototype.forEach.call($('rows').children,function(row,i){ row.querySelector('.dot').style.background=COLORS[i%COLORS.length]; var rm=row.querySelector('.sc-rm'); });
+    $('addBtn').disabled = $('rows').children.length>=MAX;
+  }
+  addRow(); // seed first row
 
-  $('f-freq').addEventListener('change', function(){ $('customWrap').style.display = this.value==='custom'?'block':'none'; });
-
-  // ── Pro / free-use gate ──
+  // ── Pro / free gate ──
   var isPro=false;
   try{
     var sb=window.supabase.createClient('https://stkjdtyhaxejxqmbzyua.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0');
-    sb.auth.getSession().then(function(s){ var u=s&&s.data&&s.data.session&&s.data.session.user; if(!u) return; sb.from('profiles').select('is_pro,pro_until').eq('id',u.id).maybeSingle().then(function(r){ var p=r&&r.data; if(p&&p.is_pro&&(!p.pro_until||new Date(p.pro_until)>new Date())) isPro=true; }); });
+    sb.auth.getSession().then(function(s){ var u=s&&s.data&&s.data.session&&s.data.session.user; if(!u)return; sb.from('profiles').select('is_pro,pro_until').eq('id',u.id).maybeSingle().then(function(r){ var p=r&&r.data; if(p&&p.is_pro&&(!p.pro_until||new Date(p.pro_until)>new Date())) isPro=true; }); });
   }catch(e){}
-  function freeUsed(){ return (+localStorage.getItem('vlx_sched_uses')||0) >= 1; }
-  function markUsed(){ try{ localStorage.setItem('vlx_sched_uses', (+localStorage.getItem('vlx_sched_uses')||0)+1); }catch(e){} }
+  function freeUsed(){ return (+localStorage.getItem('vlx_sched_uses')||0)>=1; }
+  function markUsed(){ try{ localStorage.setItem('vlx_sched_uses',(+localStorage.getItem('vlx_sched_uses')||0)+1); }catch(e){} }
 
   // ── schedule maths ──
-  function buildDates(){
-    var start=new Date($('f-start').value+'T00:00:00'); if(isNaN(start)) return null;
-    var weeks=Math.max(1,Math.min(26, parseInt($('f-weeks').value,10)||4));
-    var end=new Date(start); end.setDate(end.getDate()+weeks*7-1);
-    var freq=$('f-freq').value, dates=[];
-    if(freq==='mt'){
-      var d=new Date(start);
-      for(; d<=end; d.setDate(d.getDate()+1)){ var dw=d.getDay(); if(dw===1||dw===4) dates.push(new Date(d)); }
-    } else {
-      var step = freq==='custom' ? Math.max(1,parseInt($('f-custom').value,10)||5) : parseInt(freq,10);
-      for(var dd=new Date(start); dd<=end; dd.setDate(dd.getDate()+step)) dates.push(new Date(dd));
-    }
-    return {start:start,end:end,dates:dates};
+  function readRows(){
+    return Array.prototype.map.call($('rows').children,function(row,i){
+      var name=(row.querySelector('.sc-name').value||'').trim();
+      if(!name) return null;
+      var start=new Date(row.querySelector('.sc-start').value+'T00:00:00'); if(isNaN(start)) return null;
+      var weeks=Math.max(1,Math.min(26,parseInt(row.querySelector('.sc-weeks').value,10)||4));
+      var freq=row.querySelector('.sc-freq').value;
+      var step=freq==='custom'?Math.max(1,parseInt(row.querySelector('.sc-int').value,10)||5):(freq==='mt'?'mt':parseInt(freq,10));
+      return {name:name,start:start,weeks:weeks,step:step,color:COLORS[i%COLORS.length]};
+    }).filter(Boolean);
   }
-
+  function datesFor(c){
+    var end=new Date(c.start); end.setDate(end.getDate()+c.weeks*7-1); var out=[];
+    if(c.step==='mt'){ for(var d=new Date(c.start); d<=end; d.setDate(d.getDate()+1)){ var w=d.getDay(); if(w===1||w===4) out.push(new Date(d)); } }
+    else { for(var dd=new Date(c.start); dd<=end; dd.setDate(dd.getDate()+c.step)) out.push(new Date(dd)); }
+    return {dates:out,end:end};
+  }
   function fmt(d){ return d.toISOString().slice(0,10).replace(/-/g,''); }
-  function renderCal(info){
-    var sset={}; info.dates.forEach(function(d){ sset[d.toDateString()]=1; });
-    var startKey=info.start.toDateString();
-    // months from start to end
-    var html='';
-    var cur=new Date(info.start.getFullYear(), info.start.getMonth(), 1);
-    var last=new Date(info.end.getFullYear(), info.end.getMonth(), 1);
-    var MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-    while(cur<=last){
-      var y=cur.getFullYear(), m=cur.getMonth();
-      html+='<div class="ps-month"><div class="mn">'+MN[m]+' '+y+'</div>';
-      html+='<div class="ps-week">'+['M','T','W','T','F','S','S'].map(function(x){return '<div class="ps-dow">'+x+'</div>';}).join('')+'</div>';
-      var first=new Date(y,m,1); var lead=(first.getDay()+6)%7; // Mon-first
-      var dim=new Date(y,m+1,0).getDate();
-      var cells=[]; for(var i=0;i<lead;i++) cells.push('<div class="ps-day blank"></div>');
-      for(var dn=1;dn<=dim;dn++){ var dt=new Date(y,m,dn); var cls='ps-day'; if(dt.toDateString()===startKey)cls+=' start'; else if(sset[dt.toDateString()])cls+=' on'; cells.push('<div class="'+cls+'">'+dn+'</div>'); }
-      html+='<div class="ps-week" style="margin-top:5px">'+cells.join('')+'</div></div>';
-      cur.setMonth(cur.getMonth()+1);
-    }
-    return html;
-  }
-
-  function makeICS(info, name, label){
-    var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Velox Peptides//Protocol Scheduler//EN','CALSCALE:GREGORIAN'];
-    var sum=(name||'Compound')+(label?(' — '+label):'')+' (research register)';
-    info.dates.forEach(function(d,i){
-      var next=new Date(d); next.setDate(next.getDate()+1);
-      lines.push('BEGIN:VEVENT','UID:velox-'+fmt(d)+'-'+i+'@veloxpeps.com','DTSTART;VALUE=DATE:'+fmt(d),'DTEND;VALUE=DATE:'+fmt(next),'SUMMARY:'+sum.replace(/[,;\\]/g,' '),'DESCRIPTION:For in vitro research record-keeping only. No dosing or human-use guidance.','END:VEVENT');
-    });
-    lines.push('END:VCALENDAR');
-    return lines.join('\r\n');
-  }
 
   function generate(){
     if(!isPro && freeUsed()){ $('gate').classList.add('open'); return; }
-    var name=$('f-compound').value.trim()||'Compound', label=$('f-label').value.trim();
-    var info=buildDates(); if(!info){ toast('Pick a valid start date.'); return; }
-    if(!info.dates.length){ toast('No dates in range — check your inputs.'); return; }
-    var ics=makeICS(info,name,label);
-    $('out').innerHTML =
-      '<div class="ps-cal-hd"><div class="t">'+esc(name)+(label?' · '+esc(label):'')+'</div>'+
-      '<div class="ps-actions">'+
-        '<button class="ps-btn primary" id="dlIcs">⬇ Add to calendar (.ics)</button>'+
-        '<button class="ps-btn" id="printBtn">🖨 Print</button>'+
-      '</div></div>'+
-      '<div class="ps-count">'+info.dates.length+' scheduled days over '+($('f-weeks').value)+' week(s) · '+info.start.toLocaleDateString('en-GB')+' → '+info.end.toLocaleDateString('en-GB')+'</div>'+
-      renderCal(info);
-    $('dlIcs').addEventListener('click', function(){
-      var blob=new Blob([ics],{type:'text/calendar'}); var a=document.createElement('a');
-      a.href=URL.createObjectURL(blob); a.download=(name.replace(/[^a-z0-9]+/gi,'-').toLowerCase()||'schedule')+'-register.ics'; a.click(); toast('Calendar file downloaded');
+    var rows=readRows();
+    if(!rows.length){ toast('Add at least one compound with a start date.'); return; }
+    // compute per-compound dates + global range
+    var gStart=null,gEnd=null, byDay={}, ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Velox Peptides//Protocol Scheduler//EN','CALSCALE:GREGORIAN'];
+    rows.forEach(function(c,ci){
+      var r=datesFor(c); c.count=r.dates.length;
+      if(!gStart||c.start<gStart) gStart=new Date(c.start);
+      if(!gEnd||r.end>gEnd) gEnd=new Date(r.end);
+      r.dates.forEach(function(d){
+        var k=d.toDateString(); (byDay[k]=byDay[k]||[]).push(ci);
+        var nx=new Date(d); nx.setDate(nx.getDate()+1);
+        ics.push('BEGIN:VEVENT','UID:velox-'+ci+'-'+fmt(d)+'@veloxpeps.com','DTSTART;VALUE=DATE:'+fmt(d),'DTEND;VALUE=DATE:'+fmt(nx),'SUMMARY:'+(c.name+' (research register)').replace(/[,;\\]/g,' '),'DESCRIPTION:For in vitro research record-keeping only. No dosing or human-use guidance.','END:VEVENT');
+      });
     });
-    $('printBtn').addEventListener('click', function(){ window.print(); });
+    ics.push('END:VCALENDAR');
+
+    // legend
+    var legend=rows.map(function(c){ return '<div class="ps-leg"><span class="sw" style="background:'+c.color+'"></span>'+esc(c.name)+' <span class="ct">· '+c.count+' days</span></div>'; }).join('');
+
+    // calendar months
+    var cur=new Date(gStart.getFullYear(),gStart.getMonth(),1), last=new Date(gEnd.getFullYear(),gEnd.getMonth(),1), months='';
+    while(cur<=last){
+      var y=cur.getFullYear(),m=cur.getMonth();
+      months+='<div class="ps-month"><div class="mn">'+MN[m]+' '+y+'</div>'+
+        '<div class="ps-week">'+['M','T','W','T','F','S','S'].map(function(x){return '<div class="ps-dow">'+x+'</div>';}).join('')+'</div>';
+      var first=new Date(y,m,1), lead=(first.getDay()+6)%7, dim=new Date(y,m+1,0).getDate(), cells=[];
+      for(var i=0;i<lead;i++) cells.push('<div class="ps-day blank"></div>');
+      for(var dn=1;dn<=dim;dn++){
+        var key=new Date(y,m,dn).toDateString(), hits=byDay[key];
+        if(hits&&hits.length){
+          var dots=hits.slice(0,4).map(function(ci){return '<i style="background:'+rows[ci].color+'"></i>';}).join('');
+          var names=hits.map(function(ci){return rows[ci].name;}).join(', ');
+          cells.push('<div class="ps-day has" title="'+esc(names)+'">'+dn+'<div class="ps-dots">'+dots+'</div></div>');
+        } else cells.push('<div class="ps-day">'+dn+'</div>');
+      }
+      months+='<div class="ps-week" style="margin-top:4px">'+cells.join('')+'</div></div>';
+      cur.setMonth(cur.getMonth()+1);
+    }
+
+    $('out').innerHTML=
+      '<div class="ps-cal-hd"><div class="t">Your register</div>'+
+      '<div class="ps-actions"><button class="ps-btn primary" id="dlIcs">⬇ Add to calendar (.ics)</button><button class="ps-btn" id="printBtn">🖨 Print</button></div></div>'+
+      '<div style="font-size:13px;color:var(--mut);margin-bottom:4px">'+rows.length+' compound'+(rows.length>1?'s':'')+' · '+gStart.toLocaleDateString('en-GB')+' → '+gEnd.toLocaleDateString('en-GB')+'</div>'+
+      '<div class="ps-legend">'+legend+'</div>'+
+      '<div class="ps-months">'+months+'</div>';
+    $('dlIcs').addEventListener('click',function(){ var b=new Blob([ics.join('\r\n')],{type:'text/calendar'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='velox-research-register.ics'; a.click(); toast('Calendar file downloaded'); });
+    $('printBtn').addEventListener('click',function(){ window.print(); });
     if(!isPro) markUsed();
   }
 
-  $('genBtn').addEventListener('click', generate);
-  $('gateClose').addEventListener('click', function(){ $('gate').classList.remove('open'); });
-  $('gate').addEventListener('click', function(e){ if(e.target===$('gate')) $('gate').classList.remove('open'); });
+  $('addBtn').addEventListener('click',addRow);
+  $('genBtn').addEventListener('click',generate);
+  $('gateClose').addEventListener('click',function(){ $('gate').classList.remove('open'); });
+  $('gate').addEventListener('click',function(e){ if(e.target===$('gate')) $('gate').classList.remove('open'); });
 })();
 </script>
 </body>
