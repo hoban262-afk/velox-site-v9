@@ -632,8 +632,10 @@ footer{background:var(--bg2);border-top:1px solid var(--brd);padding:52px 32px 2
   overflow:visible;
 }
 .nl-menu.open{display:flex;}
-.nl-item{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--t2);padding:9px 12px;border-radius:var(--r);text-align:left;width:100%;transition:all .13s;display:flex;align-items:center;gap:9px;}
+.nl-item{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--t2);padding:9px 12px;border-radius:var(--r);text-align:left;width:100%;transition:all .13s;display:flex;align-items:center;gap:10px;white-space:nowrap;}
 .nl-item:hover{color:#fff;background:var(--bg4);}
+.nl-item>svg{flex:0 0 auto;opacity:.65;transition:opacity .13s;}
+.nl-item:hover>svg{opacity:1;}
 .nl-item-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .nl-divider{height:1px;background:var(--brd);margin:4px 0;}
 
@@ -5903,7 +5905,7 @@ a.nl[href="/guides/"]::before {
 /* Guide Hub / About dropdowns (reuse existing .nl-drop / .nl-menu component) */
 .site-header .nav-links .nl-drop{position:relative;display:inline-flex;align-items:center;}
 .site-header .nav-links .nl-drop > .nl{display:inline-flex;align-items:center;gap:5px;}
-.site-header .nav-links .nl-menu{left:50%;transform:translateX(-50%);top:calc(100% + 6px);min-width:170px;display:flex;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .15s ease, visibility .15s ease;transition-delay:.28s;}
+.site-header .nav-links .nl-menu{left:50%;transform:translateX(-50%);top:calc(100% + 6px);min-width:max-content;display:flex;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .15s ease, visibility .15s ease;transition-delay:.28s;}
 .site-header .nav-links .nl-drop:hover .nl-menu,
 .site-header .nav-links .nl-drop:focus-within .nl-menu,
 .site-header .nav-links .nl-menu.open{visibility:visible;opacity:1;pointer-events:auto;transition-delay:0s;}
