@@ -160,33 +160,36 @@ export default async function handler(req) {
   const redirectUrl = `${BASE_URL}/account/?sub=${encodeURIComponent(subId || '')}&ref=${encodeURIComponent(reference)}`;
 
   // ── Create the recurring standing order with Fena ───────────────────────────
+  // Build the payload as an object so we can echo it back on failure for debugging.
+  const fenaBody = {
+    reference,
+    // Recurring endpoint wants amount as a NUMBER (the single-payment endpoint
+    // takes a 2dp string, but this service rejects the string as "required").
+    amount: Number(amountStr),
+    frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
+    // Fena requires numberOfPayments (it treats standing orders as a fixed
+    // count). Long horizon ⇒ effectively ongoing; customer cancels in-bank.
+    numberOfPayments: numberOfPaymentsFor(frequency),
+    // Fena's recurring API requires `recurringPaymentDate` (the date the bank
+    // first runs the standing order). Send several name variants for compatibility.
+    recurringPaymentDate: firstDate,
+    firstPaymentDate: firstDate,
+    startDate: firstDate,
+    customerEmail: email, customerName: user?.user_metadata?.name || body.customerName || '',
+    items: [], customRedirectUrl: redirectUrl,
+  };
   try {
     const fenaRes = await fetch(FENA_RECURRING_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'integration-id': ID, 'secret-key': SECRET },
-      body: JSON.stringify({
-        reference,
-        // Recurring endpoint wants amount as a NUMBER (the single-payment endpoint
-        // takes a 2dp string, but this service rejects the string as "required").
-        amount: Number(amountStr),
-        frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
-        // Fena requires numberOfPayments (it treats standing orders as a fixed
-        // count). Long horizon ⇒ effectively ongoing; customer cancels in-bank.
-        numberOfPayments: numberOfPaymentsFor(frequency),
-        // Fena's recurring API requires `recurringPaymentDate` (the date the bank
-        // first runs the standing order). Send both names for compatibility.
-        recurringPaymentDate: firstDate,
-        firstPaymentDate: firstDate,
-        customerEmail: email, customerName: user?.user_metadata?.name || body.customerName || '',
-        items: [], customRedirectUrl: redirectUrl,
-      }),
+      body: JSON.stringify(fenaBody),
     });
     const rawText = await fenaRes.text();
     console.log(`[create-fena-recurring] Fena ${fenaRes.status}: ${rawText.slice(0, 400)}`);
     let data = {}; try { data = JSON.parse(rawText); } catch { data = { _raw: rawText }; }
 
     if (!fenaRes.ok || !data.created) {
-      return json({ error: (data.message || data.error || `Fena HTTP ${fenaRes.status}`), debug: data }, 502);
+      return json({ error: (data.message || data.error || `Fena HTTP ${fenaRes.status}`), debug: data, sent: fenaBody }, 502);
     }
     const link  = data.result && data.result.link;
     const fenaId = data.result && data.result.id;
