@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/design-lab/[action].js": { "maxDuration": 60 },
-    "api/compare.js": { "includeFiles": "lib/compare-shell.html" }
+    "api/compare.js": { "includeFiles": "lib/compare-shell.html" },
+    "api/send-order.js": { "maxDuration": 30 }
   },
   "crons": [
     {
