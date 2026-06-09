@@ -108,11 +108,11 @@
     { "source": "/design-lab/r/:token", "destination": "/api/design-lab/share?t=:token" },
     { "source": "/design-lab/leaderboard", "destination": "/api/design-lab/leaderboard" },
     { "source": "/design-lab/leaderboard/", "destination": "/api/design-lab/leaderboard" },
-    { "source": "/tools/compare", "destination": "/api/compare" },
-    { "source": "/tools/compare/", "destination": "/api/compare" },
-    { "source": "/tools/compare/:slug", "destination": "/api/compare?slug=:slug" },
-    { "source": "/compare/:slug", "destination": "/api/compare?slug=:slug" },
-    { "source": "/compare/:slug/", "destination": "/api/compare?slug=:slug" }
+    { "source": "/tools/compare", "destination": "/api/design-lab/compare" },
+    { "source": "/tools/compare/", "destination": "/api/design-lab/compare" },
+    { "source": "/tools/compare/:slug", "destination": "/api/design-lab/compare?slug=:slug" },
+    { "source": "/compare/:slug", "destination": "/api/design-lab/compare?slug=:slug" },
+    { "source": "/compare/:slug/", "destination": "/api/design-lab/compare?slug=:slug" }
   ],
   "redirects": [
     {
