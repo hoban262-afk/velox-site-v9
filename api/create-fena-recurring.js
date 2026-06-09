@@ -93,8 +93,8 @@ export default async function handler(req) {
     const t = Array.isArray(rows) ? rows[0] : null;
     if (!t) return json({ error: 'Unknown membership tier' }, 400);
     amountPence = plan === 'annual' ? t.annual_price_pence : t.monthly_price_pence;
-    // Fena recurring only accepts: ONE_WEEK | ONE_MONTH | THREE_MONTHS | ONE_YEAR
-    frequency   = plan === 'annual' ? 'ONE_YEAR' : 'ONE_MONTH';
+    // Fena recurring requires lowercase: one_week | one_month | three_months | one_year
+    frequency   = plan === 'annual' ? 'one_year' : 'one_month';
     discountPercent = t.discount_pct;
   } else {
     // Subscribe-&-save: fixed monthly basket, priced from product_variants (DB truth).
@@ -122,7 +122,7 @@ export default async function handler(req) {
     }
     subtotal = subtotal * (1 - discountPercent / 100);
     amountPence = Math.round(subtotal * 100);
-    frequency = 'ONE_MONTH'; // Fena enum (was 'MONTHLY' — rejected by the API)
+    frequency = 'one_month'; // Fena enum — lowercase required (one_week|one_month|three_months|one_year)
   }
   if (!amountPence || amountPence <= 0) return json({ error: 'Invalid subscription amount' }, 400);
 
@@ -154,7 +154,9 @@ export default async function handler(req) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'integration-id': ID, 'secret-key': SECRET },
       body: JSON.stringify({
-        reference, amount: amountStr, frequency, firstPaymentDate: firstDate,
+        reference, amount: amountStr,
+        frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
+        firstPaymentDate: firstDate,
         customerEmail: email, customerName: user?.user_metadata?.name || body.customerName || '',
         items: [], customRedirectUrl: redirectUrl,
       }),
