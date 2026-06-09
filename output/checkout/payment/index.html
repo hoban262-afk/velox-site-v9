@@ -329,6 +329,53 @@
       .fena-banks-row { gap: 5px; }
       .fena-bank-pill { font-size: 10px; padding: 3px 7px; }
     }
+
+    /* ── EU checkout: Fena (UK open banking) can't process EU payments, so hide
+       it and make bank transfer the primary, prominent method. ───────────────── */
+    body.eu-checkout .fena-hero-card,
+    body.eu-checkout .fena-why-box { display: none !important; }
+
+    body.eu-checkout .bank-fallback {
+      border: 2px solid #01D3A0;
+      background: linear-gradient(135deg, #030f0b 0%, #020806 100%);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    body.eu-checkout .bank-fallback > summary {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      padding: 20px 22px 14px;
+      cursor: default;
+      pointer-events: none;          /* stays open; not a collapsible fallback for EU */
+    }
+    body.eu-checkout .bank-fallback > summary::before { display: none; }
+    body.eu-checkout .bank-fallback-body { padding: 0 22px 22px; }
+    body.eu-checkout #bank-pay-btn {
+      width: 100%;
+      min-height: 56px;
+      background: #01D3A0;
+      color: #04140f;
+      font-size: 17px;
+      font-weight: 800;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    body.eu-checkout #bank-pay-btn:hover { background: #00c090; }
+    .eu-pay-intro { display: none; }
+    body.eu-checkout .eu-pay-intro {
+      display: block;
+      background: rgba(1,211,160,.09);
+      border: 1px solid rgba(1,211,160,.32);
+      border-radius: 9px;
+      padding: 12px 14px;
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: #d6dbe1;
+      line-height: 1.55;
+    }
   </style>
 
   <!-- Open Graph -->
@@ -563,6 +610,7 @@
           <details class="bank-fallback">
             <summary>Prefer to pay by manual bank transfer?</summary>
             <div class="bank-fallback-body">
+              <p class="eu-pay-intro"><strong style="color:#01D3A0">Pay by bank transfer.</strong> For EU orders we take payment by direct bank transfer using the IBAN below. Use your order ID as the reference and we dispatch as soon as it clears (Faster Payments / SEPA usually 1&ndash;2 working days).</p>
               <div class="bank-note-amber">
                 <strong>⚠ Manual transfer - order on hold for 24 hours.</strong><br>
                 Your order will be reserved but NOT confirmed until we receive your payment. Please transfer the exact amount using your order ID as the reference.
@@ -1056,5 +1104,33 @@
 <script src="/assets/js/conversion.js" defer></script>
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
+  <script>
+  /* EU orders: Fena (UK open banking) can't process them, so hide Fena and make
+     bank transfer the primary method. Region is stored by the checkout step. */
+  (function () {
+    function readChk() {
+      try { return JSON.parse(sessionStorage.getItem('vp_checkout') || localStorage.getItem('vp_checkout') || '{}'); }
+      catch (e) { return {}; }
+    }
+    function isEU() { return String((readChk().region || '')).toUpperCase() === 'EU'; }
+    function apply() {
+      if (!isEU()) return;
+      document.body.classList.add('eu-checkout');
+      // Page heading + lede are Fena-specific — rewrite for EU bank transfer.
+      var h1 = document.querySelector('.page-h1');
+      if (h1) h1.textContent = 'Pay by bank transfer';
+      var lede = document.querySelector('.page-lede');
+      if (lede) lede.textContent = 'Pay securely by direct bank transfer using the IBAN below. Add your order ID as the reference and we dispatch as soon as it clears.';
+      var bf = document.querySelector('.bank-fallback');
+      if (bf) {
+        bf.open = true;                                  // always-open primary panel
+        var sum = bf.querySelector('summary');
+        if (sum) sum.textContent = 'Pay by bank transfer';
+      }
+    }
+    if (document.readyState !== 'loading') apply();
+    else document.addEventListener('DOMContentLoaded', apply);
+  })();
+  </script>
 </body>
 </html>
