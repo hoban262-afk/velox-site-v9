@@ -10,9 +10,6 @@
  * Canonical is self-referencing on a NORMALISED (sorted, deduped) ?ids URL, so
  * ?ids=tb-500,bpc-157 and ?ids=bpc-157,tb-500 consolidate to one indexable page.
  */
-const fs = require('fs');
-const path = require('path');
-
 const SITE = 'https://veloxpeps.com';
 const OG_IMAGE = `${SITE}/assets/images/og-default.png`;
 const MAX = 5;
@@ -20,7 +17,9 @@ const MAX = 5;
 const DATA = require('../lib/peptide-data.json');
 const BY = {};
 for (const p of DATA) BY[p.id] = p;
-const SHELL = fs.readFileSync(path.join(__dirname, '..', 'lib', 'compare-shell.html'), 'utf8');
+// Bundled via require() — esbuild includes it automatically, so we no longer need
+// the vercel.json `functions.includeFiles` entry (whose pattern was failing the build).
+const SHELL = require('../lib/compare-shell.js');
 
 function esc(s) {
   return String(s == null ? '' : s)
