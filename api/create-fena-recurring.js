@@ -36,18 +36,8 @@ const CORS = {
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
 
-// Fena requires numberOfPayments on a standing order (it models them as a fixed
-// count, not open-ended). We pick a long horizon so a subscription never silently
-// expires — the customer can cancel anytime in their own banking app.
-const SUB_HORIZON_YEARS = 10;
-const PAYMENTS_PER_YEAR = { one_week: 52, one_month: 12, three_months: 4, one_year: 1 };
-function numberOfPaymentsFor(frequency) {
-  const perYear = PAYMENTS_PER_YEAR[frequency] || 12;
-  return perYear * SUB_HORIZON_YEARS;
-}
-
-// First payment must be >= 3 working days out (skip Sat/Sun). Returns YYYY-MM-DD.
-function firstPaymentDate(workingDays = 3) {
+// First payment must be >= N working days out (skip Sat/Sun). Returns YYYY-MM-DD.
+function firstPaymentDate(workingDays = 6) {
   const d = new Date();
   let added = 0;
   while (added < workingDays) {
@@ -138,9 +128,11 @@ export default async function handler(req) {
   if (!amountPence || amountPence <= 0) return json({ error: 'Invalid subscription amount' }, 400);
 
   const amountStr  = (amountPence / 100).toFixed(2);
-  const rawRef     = (body.reference || (kind === 'pro' ? 'PRO' : 'SUB') + Date.now().toString(36));
-  const reference  = (rawRef.replace(/[^A-Za-z0-9]/g, '').slice(0, 12)) || 'VPSUB';
-  const firstDate  = firstPaymentDate(3);
+  // Fena reference must match ^[a-z0-9-]+$ (lowercase only), <=12 chars.
+  const rawRef     = (body.reference || (kind === 'pro' ? 'pro' : 'sub') + Date.now().toString(36));
+  const reference  = (rawRef.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 12)) || 'vpsub';
+  // Fena requires the first payment date to be >= 6 working days in the future.
+  const firstDate  = firstPaymentDate(6);
 
   // ── Record the subscription as 'draft' before redirecting (source of truth) ──
   let subId = null;
@@ -161,22 +153,18 @@ export default async function handler(req) {
 
   // ── Create the recurring standing order with Fena ───────────────────────────
   // Build the payload as an object so we can echo it back on failure for debugging.
+  // Field names per Fena partner-api recurring spec (verified 2026-06-09):
+  //   reference, recurringAmount (2dp string), recurringPaymentDate (>=6 working
+  //   days out), numberOfPayments (0 = indefinite), frequency (enum).
   const fenaBody = {
     reference,
-    // Amount must be the 2-decimal STRING (e.g. "55.30") — same as the single
-    // endpoint. A number is rejected by Fena as "amount is required".
-    amount: amountStr,
-    frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
-    // Fena requires numberOfPayments (it treats standing orders as a fixed
-    // count). Long horizon ⇒ effectively ongoing; customer cancels in-bank.
-    numberOfPayments: numberOfPaymentsFor(frequency),
-    // Fena's recurring API requires `recurringPaymentDate` (the date the bank
-    // first runs the standing order). Send several name variants for compatibility.
-    recurringPaymentDate: firstDate,
-    firstPaymentDate: firstDate,
-    startDate: firstDate,
-    customerEmail: email, customerName: user?.user_metadata?.name || body.customerName || '',
-    items: [], customRedirectUrl: redirectUrl,
+    recurringAmount: amountStr,                 // the per-cycle amount Fena charges
+    recurringPaymentDate: firstDate,            // first standing-order run date
+    numberOfPayments: 0,                        // 0 = indefinite (until customer cancels)
+    frequency: String(frequency).toLowerCase(), // one_week|one_month|three_months|one_year
+    customerEmail: email,
+    customerName: user?.user_metadata?.name || body.customerName || '',
+    customRedirectUrl: redirectUrl,             // honoured by the open-payments host
   };
   try {
     const fenaRes = await fetch(FENA_RECURRING_ENDPOINT, {
