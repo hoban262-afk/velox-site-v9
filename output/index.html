@@ -408,6 +408,17 @@ html{scroll-behavior:smooth}
 .page-home .vp-hto-card{background:#0e141b!important;border:1px solid #1b2029!important;border-radius:12px!important;padding:24px 22px!important}
 
 .page-home .vp-hto-card-num{color:#01D3A0!important}</style>
+<style>
+/* mobile: 2-up vials + tidy category tiles */
+/* ── mobile homepage refinements ── */
+@media (max-width:560px){
+  /* vials 2 per row */
+  .page-home .prod-grid,.page-home .prod-grid-4{grid-template-columns:1fr 1fr!important;gap:10px!important}
+  /* category names fit on one line (no lone "T" on ANTIOXIDANT) */
+  .page-home .cat-tile-name{font-size:15px!important;line-height:1.15!important}
+  .page-home .cat-tile{padding:18px 14px!important}
+}
+</style>
 </head>
 <body class="page-home">
 
