@@ -191,6 +191,9 @@ module.exports = async function handler(req, res) {
   // standalone /api/design-lab-share|leaderboard routes don't deploy.
   if (action === 'share')       { return require('../design-lab-share')(req, res); }
   if (action === 'leaderboard') { return require('../design-lab-leaderboard')(req, res); }
+  // Comparison tool: /tools/compare/* rewrites land here because the standalone
+  // /api/compare function gets dropped from deployments the same way.
+  if (action === 'compare')     { return require('../compare')(req, res); }
 
   // ── quota ──────────────────────────────────────────────────────────────────
   if (action === 'quota') {
