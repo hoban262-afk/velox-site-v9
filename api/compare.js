@@ -94,12 +94,21 @@ module.exports = function handler(req, res) {
   const sorted = parseIds(req).sort();
   const m = buildMeta(sorted);
 
+  // When ≥1 compound is selected, the share preview is rendered on the fly by
+  // /api/og-compare (dark card with the compound names). Otherwise fall back to
+  // the generic brand image.
+  const ogImage = sorted.length
+    ? `${SITE}/api/og-compare?ids=${sorted.join(',')}`
+    : OG_IMAGE;
+
   const headExtra =
-    `<meta property="og:image" content="${OG_IMAGE}">`
+    `<meta property="og:image" content="${esc(ogImage)}">`
+    + `<meta property="og:image:width" content="1200">`
+    + `<meta property="og:image:height" content="630">`
     + `<meta name="twitter:card" content="summary_large_image">`
     + `<meta name="twitter:title" content="${esc(m.ogTitle)}">`
     + `<meta name="twitter:description" content="${esc(m.desc)}">`
-    + `<meta name="twitter:image" content="${OG_IMAGE}">`
+    + `<meta name="twitter:image" content="${esc(ogImage)}">`
     + `<style>.cmp-seo{max-width:1080px;margin:0 auto;padding:8px 20px 56px;color:#8aa0a0}`
     + `.cmp-seo h2{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;color:#fff;font-size:24px;margin:24px 0 10px}`
     + `.cmp-seo-intro{line-height:1.6;font-size:14px;margin:0 0 18px;max-width:760px}`
