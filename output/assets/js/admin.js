@@ -401,6 +401,27 @@
     loadDesignLab();
     registerSW();
     wirePush();
+    setupAutoRefresh();
+  }
+
+  // Keep the dashboard live: re-pull the changing data every 60s while the tab is
+  // visible, and immediately when you switch back to it (was: load-once on open,
+  // so everything except the live counter looked frozen).
+  var _autoRefreshSet = false;
+  function setupAutoRefresh() {
+    if (_autoRefreshSet) return;
+    _autoRefreshSet = true;
+    function refresh() {
+      try {
+        loadOrders(); loadActions(); loadInterest(); loadSubscribers();
+        loadMarketing(); loadAnalytics(); loadHealth(); loadDeal();
+        loadMargins(); loadReviews(); loadDesignLab();
+        if (window.veloxStatsRefresh) window.veloxStatsRefresh();
+        if (window.veloxPlusRefresh) window.veloxPlusRefresh();
+      } catch (e) {}
+    }
+    setInterval(function () { if (document.visibilityState === 'visible') refresh(); }, 60000);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') refresh(); });
   }
 
   // ── MARGINS (profit dashboard) ──────────────────────────────────────────────
