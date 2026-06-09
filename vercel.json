@@ -91,6 +91,10 @@
     {
       "path": "/api/indexnow",
       "schedule": "30 6 * * *"
+    },
+    {
+      "path": "/api/deal-rotate",
+      "schedule": "20 * * * *"
     }
   ],
   "headers": [

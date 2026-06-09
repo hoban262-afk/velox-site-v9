@@ -10,8 +10,24 @@
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const { restorePrice } = require('../lib/deal-price');
+const { rotateDeal } = require('../lib/deal-rotate');
 
 const n = (v) => { const x = Number(v); return Number.isFinite(x) ? x : 0; };
+
+// Shape a deal_of_day row + its product into the public payload.
+async function shape(SUPABASE_URL, sb, deal) {
+  const pr = await sb(`product_variants?slug=eq.${encodeURIComponent(deal.slug)}&size=eq.${encodeURIComponent(deal.size)}&select=name,base_price,sale_price,in_stock&limit=1`);
+  const pv = pr.ok ? await pr.json() : [];
+  const prod = Array.isArray(pv) ? pv[0] : null;
+  if (!prod) return null;
+  const base = n(prod.base_price), pct = n(deal.discount_pct);
+  const dealPrice = deal.applied && prod.sale_price != null ? n(prod.sale_price) : Math.round(base * (1 - pct / 100) * 100) / 100;
+  return {
+    slug: deal.slug, size: deal.size, name: prod.name, headline: deal.headline || null,
+    base_price: base, deal_price: dealPrice, discount_pct: pct, applied: !!deal.applied,
+    ends_at: deal.ends_at || null, url: `/compounds/${deal.slug}/`, image: `/assets/images/${deal.slug}.png`,
+  };
+}
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://veloxpeps.com');
@@ -25,50 +41,19 @@ module.exports = async function handler(req, res) {
   try {
     const dr = await sb('deal_of_day?active=eq.true&select=*&order=updated_at.desc&limit=1');
     const rows = dr.ok ? await dr.json() : [];
-    const deal = Array.isArray(rows) ? rows[0] : null;
-    if (!deal) return res.status(200).json({ deal: null });
+    let deal = Array.isArray(rows) ? rows[0] : null;
 
-    // Auto-expire: countdown passed → restore price, mark inactive, no deal.
-    if (deal.ends_at && new Date(deal.ends_at).getTime() <= Date.now()) {
-      await restorePrice(SUPABASE_URL, SERVICE, deal);
-      if (deal.id) {
-        await fetch(`${SUPABASE_URL}/rest/v1/deal_of_day?id=eq.${encodeURIComponent(deal.id)}`, {
-          method: 'PATCH', headers: sbHeaders,
-          body: JSON.stringify({ active: false, applied: false }),
-        }).catch(() => {});
-      }
-      return res.status(200).json({ deal: null });
+    // No deal, or countdown passed → rotate to a fresh random weekly deal so the
+    // homepage always shows one (also runs from the /api/deal-rotate cron).
+    const expired = deal && deal.ends_at && new Date(deal.ends_at).getTime() <= Date.now();
+    if (!deal || expired) {
+      deal = await rotateDeal(SUPABASE_URL, SERVICE).catch(() => null);
+      if (!deal) return res.status(200).json({ deal: null });
     }
 
-    // Join the product for its name + prices.
-    const pr = await sb(`product_variants?slug=eq.${encodeURIComponent(deal.slug)}&size=eq.${encodeURIComponent(deal.size)}&select=name,base_price,sale_price,in_stock&limit=1`);
-    const pv = pr.ok ? await pr.json() : [];
-    const prod = Array.isArray(pv) ? pv[0] : null;
-    if (!prod) return res.status(200).json({ deal: null });
-
-    const base = n(prod.base_price);
-    const pct = n(deal.discount_pct);
-    // If the deal is applied, the live sale_price IS the deal price; otherwise compute it.
-    const dealPrice = deal.applied && prod.sale_price != null
-      ? n(prod.sale_price)
-      : Math.round(base * (1 - pct / 100) * 100) / 100;
-
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).json({
-      deal: {
-        slug: deal.slug,
-        size: deal.size,
-        name: prod.name,
-        headline: deal.headline || null,
-        base_price: base,
-        deal_price: dealPrice,
-        discount_pct: pct,
-        applied: !!deal.applied,
-        ends_at: deal.ends_at || null,
-        url: `/compounds/${deal.slug}/`,
-        image: `/assets/images/${deal.slug}.png`,
-      },
-    });
+    const shaped = await shape(SUPABASE_URL, sb, deal);
+    return res.status(200).json({ deal: shaped });
   } catch (e) {
     console.error('[deal]', e.message);
     return res.status(200).json({ deal: null });

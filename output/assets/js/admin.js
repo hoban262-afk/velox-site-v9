@@ -109,7 +109,7 @@
     overview: 'Overview', stats: 'Stats', actions: 'Approvals', orders: 'Orders', margins: 'Margins',
     interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
     campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings',
-    deal: 'Deal of the Day', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing',
+    deal: 'Deal of the Week', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing',
     'design-lab': 'Design Lab'
   };
   var BN_PRIMARY = { overview: 1, orders: 1, margins: 1, customers: 1 };
@@ -813,7 +813,7 @@
     } catch (e) { pushStatus('Test failed: ' + esc(e.message), '#f87171'); }
   }
 
-  // ── DEAL OF THE DAY ─────────────────────────────────────────────────────────
+  // ── DEAL OF THE WEEK ─────────────────────────────────────────────────────────
   var DEAL_VARIANTS = [];
   var dealBound = false;
 
@@ -899,7 +899,7 @@
       slug: parts[0], size: parts[1], discount_pct: pct,
       headline: (document.getElementById('deal-headline') || {}).value || '',
       ends_at: endsVal ? new Date(endsVal).toISOString() : null,
-      // Saving a Deal of the Day always publishes it live as a REAL discount —
+      // Saving a Deal of the Week always publishes it live as a REAL discount —
       // that's the whole point. Use "Clear deal" to take it down. (Previously
       // these read checkboxes that defaulted UNCHECKED whenever the prior deal
       // was inactive, so every save silently stayed hidden and un-discounted.)
@@ -914,13 +914,13 @@
       var d = await r.json().catch(function () { return {}; });
       if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = (d && d.error) || ('HTTP ' + r.status); } return; }
       if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Deal is live on the homepage.'; }
-      if (window.showToast) showToast('Deal of the Day updated', 'ok');
+      if (window.showToast) showToast('Deal of the Week updated', 'ok');
       var st = document.getElementById('deal-status'); if (st) st.textContent = 'Live: ' + parts[0] + ' · ' + pct + '% off';
     } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
   }
 
   async function clearDeal() {
-    if (!confirm('Remove the Deal of the Day from the homepage?')) return;
+    if (!confirm('Remove the Deal of the Week from the homepage?')) return;
     var msg = document.getElementById('deal-msg');
     try {
       var s = await window._sb.auth.getSession();
