@@ -194,6 +194,8 @@ module.exports = async function handler(req, res) {
   // Comparison tool: /tools/compare/* rewrites land here because the standalone
   // /api/compare function gets dropped from deployments the same way.
   if (action === 'compare')     { return require('../compare')(req, res); }
+  // Admin dispatch emails: standalone /api/send-dispatch is also dropped; /api/send-dispatch rewrite points here.
+  if (action === 'send-dispatch') { return require('../send-dispatch')(req, res); }
 
   // ── quota ──────────────────────────────────────────────────────────────────
   if (action === 'quota') {
