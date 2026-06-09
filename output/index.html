@@ -372,6 +372,34 @@ html{scroll-behavior:smooth}
 /* no motion: render everything statically so nothing can stay hidden */
 .page-home .vp-ani,.page-home .vp-in-view,.page-home [class*="vp-hero-"],.page-home [class*="vp-detail-"],.page-home [class*="vp-spec-"]{opacity:1!important;transform:none!important;animation:none!important}
 </style>
+<style>
+/* premium polish — homepage sections float on the page; restrained accent */
+/* ─── PREMIUM POLISH v1 (homepage only) ─── */
+/* section wrappers float on the page bg instead of being grey boxes */
+.page-home .hp-sec > .sec-i > .hp-block{background:transparent!important;border:0!important;border-radius:0!important;padding:0!important}
+/* drop the repeated bright-green top stripe everywhere */
+.page-home .hp-block{border-top:1px solid #242730}
+/* keep real content cards as clean surfaces (no green stripe) */
+.page-home .std-card,.page-home .cat-tile,.page-home .cc,.page-home .stack-card{border-top:1px solid var(--brd)}
+/* mute the per-section mono eyebrows so the accent feels considered, not repeated */
+.page-home .hp-block-eyebrow{color:#67767a}
+</style>
+<style>
+/* premium polish v2 — more air, lighter internal lines */
+/* v2 — more air + lighter internal lines */
+.page-home .site-main > section:not(.hero):not([hidden]){margin-top:clamp(60px,7.5vw,120px)!important}
+.page-home .vp-vs-table,.page-home .vp-vs-row,.page-home .vp-vs-cell{border-color:#181c23!important}
+.page-home .vp-aov-tier,.page-home .vp-hto-card,.page-home .vp-hto-no-card{border-color:#1b1f27!important}
+</style>
+<style>
+/* premium polish v3 — cleaner comparison table */
+/* v3 — cleaner, lighter you-vs-them comparison table */
+.page-home .vp-vs-table{background:transparent!important;border-color:#151a21!important;border-radius:14px}
+.page-home .vp-vs-row + .vp-vs-row{border-top-color:#151a21!important}
+.page-home .vp-vs-cell{padding:18px 20px!important;font-size:13.5px!important}
+.page-home .vp-vs-cell.them{border-left-color:#151a21!important}
+.page-home .vp-vs-cell.us{background:rgba(1,211,160,.05)!important;border-left-color:rgba(1,211,160,.26)!important}
+</style>
 </head>
 <body class="page-home">
 
