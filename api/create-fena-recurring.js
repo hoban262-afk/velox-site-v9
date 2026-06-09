@@ -36,6 +36,16 @@ const CORS = {
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
 
+// Fena requires numberOfPayments on a standing order (it models them as a fixed
+// count, not open-ended). We pick a long horizon so a subscription never silently
+// expires — the customer can cancel anytime in their own banking app.
+const SUB_HORIZON_YEARS = 10;
+const PAYMENTS_PER_YEAR = { one_week: 52, one_month: 12, three_months: 4, one_year: 1 };
+function numberOfPaymentsFor(frequency) {
+  const perYear = PAYMENTS_PER_YEAR[frequency] || 12;
+  return perYear * SUB_HORIZON_YEARS;
+}
+
 // First payment must be >= 3 working days out (skip Sat/Sun). Returns YYYY-MM-DD.
 function firstPaymentDate(workingDays = 3) {
   const d = new Date();
@@ -157,6 +167,9 @@ export default async function handler(req) {
       body: JSON.stringify({
         reference, amount: amountStr,
         frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
+        // Fena requires numberOfPayments (it treats standing orders as a fixed
+        // count). Long horizon ⇒ effectively ongoing; customer cancels in-bank.
+        numberOfPayments: numberOfPaymentsFor(frequency),
         // Fena's recurring API requires `recurringPaymentDate` (the date the bank
         // first runs the standing order). Send both names for compatibility.
         recurringPaymentDate: firstDate,
