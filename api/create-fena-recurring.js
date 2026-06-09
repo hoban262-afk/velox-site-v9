@@ -165,7 +165,10 @@ export default async function handler(req) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'integration-id': ID, 'secret-key': SECRET },
       body: JSON.stringify({
-        reference, amount: amountStr,
+        reference,
+        // Recurring endpoint wants amount as a NUMBER (the single-payment endpoint
+        // takes a 2dp string, but this service rejects the string as "required").
+        amount: Number(amountStr),
         frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
         // Fena requires numberOfPayments (it treats standing orders as a fixed
         // count). Long horizon ⇒ effectively ongoing; customer cancels in-bank.
