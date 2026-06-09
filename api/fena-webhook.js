@@ -83,13 +83,20 @@ export default async function handler(req) {
     if (!provided) {
       try { provided = new URL(req.url).searchParams.get('key') || ''; } catch { /* ignore */ }
     }
-    if (provided !== WEBHOOK_SECRET) {
-      console.warn('[fena-webhook] rejected: missing/invalid shared secret');
-      return new Response('Unauthorized', { status: 401 });
+    if (provided === WEBHOOK_SECRET) {
+      secretOk = true;
+    } else {
+      // Fena's configured webhook URL doesn't carry our ?key=... — do NOT reject.
+      // A 401 here silently drops real payments, leaving orders stuck 'pending'
+      // with no alert/fulfilment. Fall through with secretOk=false: every
+      // value-granting action below independently re-confirms the payment with
+      // Fena's live API (fenaPaymentPaid), so a forged body still can't mark an
+      // order paid. Append ?key=<FENA_WEBHOOK_SECRET> to the Fena webhook URL to
+      // restore the trusted fast path.
+      console.warn('[fena-webhook] no/invalid shared secret — proceeding with live Fena verification');
     }
-    secretOk = true;
   } else {
-    console.warn('[fena-webhook] FENA_WEBHOOK_SECRET not set — value grants will require live Fena verification. Set it + append ?key=... to the Fena webhook URL.');
+    console.warn('[fena-webhook] FENA_WEBHOOK_SECRET not set — value grants will require live Fena verification.');
   }
 
   const SUPABASE_URL              = process.env.SUPABASE_URL;
@@ -233,6 +240,7 @@ export default async function handler(req) {
   }
 
   // ── Mark paid (idempotent) ──────────────────────────────────────────────────
+  let justPaid = false;
   if (order.status !== 'paid' && order.status !== 'dispatched') {
     try {
       const patch = { status: 'paid' };
@@ -244,6 +252,7 @@ export default async function handler(req) {
         console.error('[fena-webhook] PATCH failed:', pr.status, (await pr.text()).slice(0, 200));
         return new Response('DB error', { status: 500 });
       }
+      justPaid = true;
       console.log(`[fena-webhook] Order ${order.id} → paid`);
     } catch (e) {
       console.error('[fena-webhook] PATCH threw:', e.message);
@@ -253,7 +262,11 @@ export default async function handler(req) {
     console.log(`[fena-webhook] Order ${order.id} already ${order.status} — skipping`);
   }
 
-  // ── Fire-and-forget: Click & Drop label + Xero invoice (idempotent) ─────────
+  // ── Fulfilment + order alert ────────────────────────────────────────────────
+  // Click & Drop + Xero are idempotent (safe on every webhook). The order ALERT
+  // (email + WhatsApp + push) fires ONLY on the pending→paid transition, so Fena
+  // retries can't re-notify. This is the browser-independent alert path — without
+  // it, a customer who pays but doesn't return to the site triggers no alert.
   const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
   if (INTERNAL_SECRET) {
     const trigger = (path) => fetch(`https://veloxpeps.com${path}`, {
@@ -261,7 +274,9 @@ export default async function handler(req) {
       headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
       body: JSON.stringify({ order_id: order.id }),
     }).catch((e) => console.error(`[fena-webhook] ${path} trigger failed:`, e.message));
-    await Promise.allSettled([trigger('/api/clickdrop/push'), trigger('/api/xero/create-invoice')]);
+    const jobs = [trigger('/api/clickdrop/push'), trigger('/api/xero/create-invoice')];
+    if (justPaid) jobs.push(trigger('/api/send-order'));
+    await Promise.allSettled(jobs);
   }
 
   return new Response('OK', { status: 200 });

@@ -507,11 +507,63 @@ async function isAuthorized(req) {
   } catch { return false; }
 }
 
+// Build the sendEmails() payload from a stored order row. Lets internal callers
+// (the Fena webhook) trigger the alert with just { order_id } instead of the full
+// payload — so a paid-via-webhook order still emails/WhatsApps/pushes the team.
+async function buildPayloadFromOrderId(orderId) {
+  const SB_URL = process.env.SUPABASE_URL, SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SB_URL || !SB_SERVICE) return null;
+  const r = await fetch(`${SB_URL}/rest/v1/orders?id=eq.${encodeURIComponent(orderId)}&select=*&limit=1`, {
+    headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
+  });
+  if (!r.ok) return null;
+  const rows = await r.json().catch(() => null);
+  const o = Array.isArray(rows) ? rows[0] : null;
+  if (!o) return null;
+  const num = (v) => { const x = Number(v); return Number.isFinite(x) ? x : 0; };
+  let items = o.items;
+  if (typeof items === 'string') { try { items = JSON.parse(items); } catch { items = []; } }
+  if (!Array.isArray(items)) items = [];
+  const orderItemsText = items.map((it) => {
+    const qty = num(it.qty || it.quantity) || 1;
+    const line = num(it.price) * qty;
+    return `${it.name || 'Item'}${it.size ? ' ' + it.size : ''} x${qty} - £${line.toFixed(2)}`;
+  }).join('\n');
+  const subtotal = num(o.subtotal) || num(o.total);
+  const total = num(o.total);
+  return {
+    order_number: o.notes || String(o.id).slice(0, 8).toUpperCase(),
+    customer_name: o.customer_name || 'Customer',
+    customer_email: o.customer_email || '',
+    customer_phone: o.ship_phone || '',
+    addr1: o.ship_line1 || '', addr2: o.ship_line2 || '',
+    city: o.ship_city || '', postcode: o.ship_postcode || '',
+    country: o.ship_country || 'United Kingdom',
+    shipping_address: [o.ship_line1, o.ship_line2, o.ship_city, o.ship_postcode, o.ship_country].filter(Boolean).join(', '),
+    shipping_method: 'Royal Mail Tracked 24',
+    order_items: orderItemsText,
+    order_subtotal: subtotal.toFixed(2),
+    shipping_cost: Math.max(0, Number((total - subtotal).toFixed(2))).toFixed(2),
+    discount_code: '', discount_saving: '0.00',
+    order_total: total.toFixed(2),
+    currency: 'GBP', region: 'UK', payment_method: 'fena',
+  };
+}
+
 async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
   if (!(await isAuthorized(req))) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    await sendEmails(req.body);
+    let payload = req.body || {};
+    let idemKey;
+    // Internal callers can pass just { order_id }; build the full payload from DB.
+    // idempotencyKey (= order ref) dedupes emails if the browser-return path also fires.
+    if (payload.order_id && !payload.order_items) {
+      payload = await buildPayloadFromOrderId(payload.order_id);
+      if (!payload) return res.status(404).json({ error: 'Order not found' });
+      idemKey = payload.order_number;
+    }
+    await sendEmails(payload, idemKey);
     res.status(200).json({ ok: true });
   } catch (e) {
     console.error('[send-order] Error:', e.message);
