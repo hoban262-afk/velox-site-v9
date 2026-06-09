@@ -29,12 +29,12 @@
       return;
     }
 
-    var conc  = (pep * 1000) / water;          // mcg/ml
-    var vol   = dose / conc;                    // ml
+    var conc  = pep / water;                    // mg/ml
+    var vol   = dose / conc;                    // ml  (dose in mg)
     var units = vol * 100;                      // insulin syringe units
-    var apps  = (pep * 1000) / dose;            // total applications
+    var apps  = pep / dose;                     // total applications
 
-    if (concEl)  concEl.textContent  = fmtNum(Math.round(conc)) + ' mcg/ml';
+    if (concEl)  concEl.textContent  = fmtNum(Math.round(conc * 1000) / 1000) + ' mg/ml';
     if (volEl)   volEl.textContent   = vol.toFixed(4) + ' ml';
     if (unitsEl) unitsEl.textContent = fmtNum(Math.round(units * 100) / 100) + ' units';
     if (appsEl)  appsEl.textContent  = fmtNum(Math.round(apps)) + ' applications';
