@@ -622,9 +622,17 @@ html{scroll-behavior:smooth}
     document.getElementById('dotd-name').textContent = deal.name + ' · ' + deal.size;
     var hl = document.getElementById('dotd-headline');
     if (deal.headline) { hl.textContent = deal.headline; } else { hl.style.display = 'none'; }
-    document.getElementById('dotd-was').textContent = '£' + Number(deal.base_price).toFixed(2);
+    var pctOff = Math.round(Number(deal.discount_pct) || 0);
+    var wasEl = document.getElementById('dotd-was');
+    var badgeEl = document.getElementById('dotd-badge');
     document.getElementById('dotd-now').textContent = '£' + Number(deal.deal_price).toFixed(2);
-    document.getElementById('dotd-badge').textContent = Math.round(deal.discount_pct) + '% OFF';
+    if (pctOff > 0) {
+      wasEl.textContent = '£' + Number(deal.base_price).toFixed(2); wasEl.style.display = '';
+      badgeEl.textContent = pctOff + '% OFF'; badgeEl.style.display = '';
+    } else {
+      // No real discount — show the plain price, no strikethrough or badge.
+      wasEl.style.display = 'none'; badgeEl.style.display = 'none';
+    }
     sec.hidden = false;
     // Subscribe & lock the deal price (creates a recurring reorder at this price).
     var subWrap = document.getElementById('dotd-sub');
