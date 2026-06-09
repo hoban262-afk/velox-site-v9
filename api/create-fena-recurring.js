@@ -122,7 +122,8 @@ export default async function handler(req) {
     }
     subtotal = subtotal * (1 - discountPercent / 100);
     amountPence = Math.round(subtotal * 100);
-    frequency = 'one_month'; // Fena enum — lowercase required (one_week|one_month|three_months|one_year)
+    // Customer-chosen cadence (Fena enums). Default monthly; quarterly also allowed.
+    frequency = body.frequency === 'three_months' ? 'three_months' : 'one_month';
   }
   if (!amountPence || amountPence <= 0) return json({ error: 'Invalid subscription amount' }, 400);
 

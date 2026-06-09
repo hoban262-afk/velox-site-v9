@@ -112,8 +112,13 @@ module.exports = async function handler(req, res) {
         subtotal += unit * qty;
         return { slug: it.slug, name: it.name || it.slug, size: it.size, qty, price: unit };
       });
-      const disc = n(sub.discount_percent);
-      const total = Math.round(subtotal * (1 - disc / 100) * 100) / 100;
+      // The order total is the LOCKED amount the bank standing order actually
+      // charges (amount_pence captured at subscribe time) — this preserves the
+      // saved deal price even after the Deal of the Week rotates and the live
+      // product price reverts. Fall back to a recompute only if amount is missing.
+      const total = sub.amount_pence != null
+        ? Math.round(Number(sub.amount_pence)) / 100
+        : Math.round(subtotal * (1 - n(sub.discount_percent) / 100) * 100) / 100;
       const addr = await addressFor(sub.user_id);
 
       await sbPost('orders', {
@@ -122,7 +127,7 @@ module.exports = async function handler(req, res) {
         items: lineItems,
         subtotal: Math.round(subtotal * 100) / 100,
         total,
-        discount: Math.round((subtotal - total) * 100) / 100,
+        discount: Math.max(0, Math.round((subtotal - total) * 100) / 100),
         shipping: 0,                       // subscribe-&-save members ship free
         status: 'pending',                 // admin confirms the standing-order charge, then dispatches
         payment_method: 'fena-sub',
@@ -134,9 +139,13 @@ module.exports = async function handler(req, res) {
         ship_country: (addr && addr.country) || 'GB', ship_phone: addr && addr.phone,
       });
 
+      // Advance the next order date by the subscription's chosen cadence.
       const base = sub.next_expected_date || sub.first_payment_date || today;
+      let nextDate;
+      if (sub.frequency === 'one_week') { const d = new Date(base); d.setDate(d.getDate() + 7); nextDate = ymd(d); }
+      else { const months = sub.frequency === 'three_months' ? 3 : sub.frequency === 'one_year' ? 12 : 1; nextDate = ymd(addMonths(base, months)); }
       await sbPatch(`subscriptions?id=eq.${sub.id}`, {
-        next_expected_date: ymd(addMonths(base, 1)),
+        next_expected_date: nextDate,
         updated_at: new Date().toISOString(),
       });
       summary.created++;

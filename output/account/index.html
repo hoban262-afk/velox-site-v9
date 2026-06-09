@@ -165,6 +165,11 @@
         <div id="pro-card-body"></div>
       </div>
 
+      <div class="card" id="subs-card" style="display:none">
+        <h3>Your saved deals &amp; subscriptions</h3>
+        <div id="subs-card-body"></div>
+      </div>
+
       <div class="card" id="storage-card" style="display:none">
         <h3>Storage &amp; stability log <span style="color:var(--t3);font-weight:400"> - Pro</span></h3>
         <p style="font-size:13px;color:var(--t3);margin:0 0 14px">Log a reconstituted vial and we'll track its stability window - 28 days at 2–8°C with bacteriostatic water, 24h without.</p>
@@ -314,6 +319,76 @@
             '<p style="font-size:13px;color:#9CA3AF;margin:0 0 12px">Get an automatic discount on every order, free tracked UK shipping and first dibs on restocks.</p>' +
             '<a class="btn-p" href="/pro/" style="display:inline-block;width:auto;padding:11px 22px;text-decoration:none">Explore Velox Peps Pro &rarr;</a>';
         }
+        try { renderSubs(tok, uid); } catch (e) {}
+      } catch (e) {}
+    }
+
+    // ── Saved deals & Subscribe-&-Save reorders ──────────────────────────────
+    var FREQ_LABEL = { one_week: 'Weekly', one_month: 'Monthly', three_months: 'Every 3 months', one_year: 'Yearly' };
+    function titleSlug(s){ return String(s||'').replace(/-/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }); }
+    function itemsLabel(items){
+      if (!Array.isArray(items) || !items.length) return 'Your saved item';
+      return items.map(function(it){ return esc(titleSlug(it.slug) + (it.size ? ' ' + it.size : '') + ((Number(it.qty)||1) > 1 ? ' ×' + it.qty : '')); }).join(', ');
+    }
+    var BANK_NOTE = 'We won’t send any more orders. <strong style="color:#fff">Important:</strong> the recurring payment is a bank standing order set up through open banking, so we can’t stop it — cancel it yourself in your <strong style="color:#fff">banking app</strong> (search for &ldquo;Velox&rdquo; under standing orders). Need help? Email <a href="mailto:support@veloxpeps.com" style="color:#01D3A0">support@veloxpeps.com</a>.';
+
+    async function renderSubs(tok, uid){
+      try {
+        if (!tok || !uid) return;
+        var card = document.getElementById('subs-card'), body = document.getElementById('subs-card-body');
+        if (!card || !body) return;
+        var r = await fetch(SB + '/rest/v1/subscriptions?user_id=eq.' + uid + '&kind=eq.reorder&status=in.(active,paid,sent,pending)&select=id,items,amount_pence,frequency,status,next_expected_date,first_payment_date&order=created_at.desc', { headers: { apikey: ANON, Authorization: 'Bearer ' + tok } });
+        var subs = r.ok ? await r.json() : [];
+        if (!Array.isArray(subs) || !subs.length) { card.style.display = 'none'; return; }
+        card.style.display = '';
+        body.innerHTML = subs.map(function(sub){
+          var price = '£' + (Number(sub.amount_pence||0) / 100).toFixed(2);
+          var next = sub.next_expected_date || sub.first_payment_date;
+          var nextTxt = next ? (' &middot; next on ' + new Date(next + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short' })) : '';
+          return '<div class="sub-row" data-id="' + esc(sub.id) + '" style="border:1px solid #1f262d;border-radius:12px;padding:14px;margin-bottom:10px">' +
+            '<div style="font-weight:700;color:#fff">' + itemsLabel(sub.items) + '</div>' +
+            '<div style="font-size:13px;color:#9CA3AF;margin-top:3px">Price locked at <strong style="color:#01D3A0">' + price + '</strong> &middot; ' + (FREQ_LABEL[sub.frequency] || 'Monthly') + nextTxt + '</div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">' +
+              '<button class="btn-o" data-act="freq" style="width:auto;padding:8px 14px;font-size:13px">Change frequency</button>' +
+              '<button class="btn-o danger" data-act="cancel" style="width:auto;padding:8px 14px;font-size:13px">Cancel</button>' +
+            '</div>' +
+            '<div class="acc-msg sub-msg"></div>' +
+          '</div>';
+        }).join('');
+
+        body.querySelectorAll('.sub-row').forEach(function(row){
+          var id = row.getAttribute('data-id');
+          var sub = subs.filter(function(s){ return String(s.id) === String(id); })[0];
+          var msg = row.querySelector('.sub-msg');
+          row.querySelector('[data-act="cancel"]').addEventListener('click', async function(){
+            if (!confirm('Cancel this saved-deal subscription? We’ll stop sending orders.')) return;
+            this.disabled = true; this.textContent = 'Cancelling…';
+            try {
+              var cr = await fetch('/api/sub-cancel', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + tok }, body: JSON.stringify({ id: id }) });
+              if (cr.ok) { row.querySelectorAll('button').forEach(function(b){ b.remove(); }); if (msg){ msg.className='acc-msg'; msg.innerHTML = '✓ Cancelled. ' + BANK_NOTE; } }
+              else { var d = await cr.json().catch(function(){return{};}); if (msg){ msg.className='acc-msg err'; msg.textContent = d.error || 'Could not cancel — try again.'; } this.disabled=false; this.textContent='Cancel'; }
+            } catch(e){ if(msg){ msg.className='acc-msg err'; msg.textContent='Network error.'; } }
+          });
+          row.querySelector('[data-act="freq"]').addEventListener('click', function(){
+            if (msg) msg.innerHTML =
+              '<div style="margin-top:6px">A recurring bank payment’s frequency can’t be changed once set up, so this creates a <strong style="color:#fff">new</strong> standing order at the new frequency — then cancel the old one in your banking app.' +
+              '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px">' +
+                '<select id="nf-' + esc(id) + '" class="f-inp" style="width:auto;margin:0;padding:8px 10px"><option value="one_month">Monthly</option><option value="three_months">Every 3 months</option></select>' +
+                '<button class="btn-p" id="nfb-' + esc(id) + '" style="width:auto;padding:8px 16px">Set up new standing order</button>' +
+              '</div></div>';
+            var nb = document.getElementById('nfb-' + id);
+            if (nb) nb.addEventListener('click', async function(){
+              this.disabled = true; this.textContent = 'Setting up…';
+              var nf = (document.getElementById('nf-' + id) || {}).value || 'one_month';
+              try {
+                var rr = await fetch('/api/create-fena-recurring', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + tok }, body: JSON.stringify({ kind:'reorder', items: sub.items, frequency: nf }) });
+                var dd = await rr.json().catch(function(){return{};});
+                if (rr.ok && dd.paymentUrl) { location.href = dd.paymentUrl; }
+                else { this.disabled=false; this.textContent='Set up new standing order'; alert(dd.error || 'Could not start the new subscription.'); }
+              } catch(e){ this.disabled=false; this.textContent='Set up new standing order'; alert('Network error.'); }
+            });
+          });
+        });
       } catch (e) {}
     }
     function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}

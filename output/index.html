@@ -598,6 +598,17 @@ html{scroll-behavior:smooth}
       <div class="dotd-count" id="dotd-count" hidden>Ends in <span id="dotd-timer"></span></div>
     </div>
   </a>
+  <div class="dotd-sub" id="dotd-sub" style="display:none;margin-top:12px;text-align:center">
+    <div style="display:inline-flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center">
+      <select id="dotd-freq" style="background:#0e141b;border:1px solid #2a323a;color:#fff;border-radius:9px;padding:10px 12px;font:inherit">
+        <option value="one_month">Ship monthly</option>
+        <option value="three_months">Ship every 3 months</option>
+      </select>
+      <button id="dotd-sub-btn" style="background:#01D3A0;color:#04140f;font-weight:800;border:0;border-radius:9px;padding:11px 18px;cursor:pointer;font:inherit">&#128274; Subscribe &amp; lock this price</button>
+    </div>
+    <div style="font-size:12.5px;color:#9aa3ad;margin-top:8px">Keep this price for as long as you stay subscribed &mdash; even after the deal rotates. Cancel anytime in your account.</div>
+    <div id="dotd-sub-msg" style="font-size:13px;margin-top:6px"></div>
+  </div>
 </section>
 <script>
 (function () {
@@ -615,6 +626,26 @@ html{scroll-behavior:smooth}
     document.getElementById('dotd-now').textContent = '£' + Number(deal.deal_price).toFixed(2);
     document.getElementById('dotd-badge').textContent = Math.round(deal.discount_pct) + '% OFF';
     sec.hidden = false;
+    // Subscribe & lock the deal price (creates a recurring reorder at this price).
+    var subWrap = document.getElementById('dotd-sub');
+    if (subWrap) {
+      subWrap.style.display = 'block';
+      var subBtn = document.getElementById('dotd-sub-btn');
+      subBtn.addEventListener('click', async function () {
+        var msg = document.getElementById('dotd-sub-msg');
+        var freq = (document.getElementById('dotd-freq') || {}).value || 'one_month';
+        var tok = null;
+        try { if (window._sb) { var ss = await window._sb.auth.getSession(); tok = ss && ss.data && ss.data.session && ss.data.session.access_token; } } catch (e) {}
+        if (!tok) { location.href = '/account/?next=' + encodeURIComponent('/'); return; }
+        subBtn.disabled = true; subBtn.textContent = 'Setting up…';
+        try {
+          var rr = await fetch('/api/create-fena-recurring', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify({ kind: 'reorder', items: [{ slug: deal.slug, size: deal.size, qty: 1 }], frequency: freq }) });
+          var dd = await rr.json().catch(function () { return {}; });
+          if (rr.ok && dd.paymentUrl) { location.href = dd.paymentUrl; }
+          else { subBtn.disabled = false; subBtn.innerHTML = '&#128274; Subscribe &amp; lock this price'; if (msg) { msg.style.color = '#f0637e'; msg.textContent = dd.error || 'Could not start subscription — try again.'; } }
+        } catch (e) { subBtn.disabled = false; subBtn.innerHTML = '&#128274; Subscribe &amp; lock this price'; if (msg) { msg.style.color = '#f0637e'; msg.textContent = 'Network error.'; } }
+      });
+    }
     if (deal.ends_at) {
       var end = new Date(deal.ends_at).getTime();
       var cEl = document.getElementById('dotd-count'), tEl = document.getElementById('dotd-timer');
