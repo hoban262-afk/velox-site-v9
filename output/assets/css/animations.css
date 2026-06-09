@@ -479,3 +479,51 @@
   .vp-stock-badge { font-size: 0.6rem !important; }
   .vp-popular-badge { font-size: 7.5px; padding: 2px 6px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  PREMIUM POLISH — site-wide (mirrors homepage premium polish v1–v4)
+ *  v1: section wrappers float on the page instead of grey boxes; the
+ *      repeated green top stripe is reserved for cards/CTAs.
+ * ═══════════════════════════════════════════════════════════════════ */
+body:not(.page-home) .cp-section{
+  background:transparent;
+  border:1px solid transparent;
+  border-top:1px solid #242730;
+  border-radius:0;
+  padding:36px 28px 6px;
+  margin:clamp(36px,4.5vw,72px) auto 0;
+}
+body:not(.page-home) .cp-section:last-of-type{margin-bottom:clamp(36px,4.5vw,72px);}
+body:not(.page-home) .cp-section#coa{border-top-color:rgba(245,200,66,.35);}
+/* compliance block keeps its amber identity, softened */
+body:not(.page-home) .cp-compliance{
+  border-radius:14px;
+  border-top:1px solid rgba(245,200,66,.25);
+  margin:clamp(36px,4.5vw,72px) auto;
+}
+/* muted section eyebrows — the accent reads considered, not repeated */
+body:not(.page-home) .page-eyebrow,
+body:not(.page-home) .cp-eyebrow{color:#67767a;}
+
+/* v2: even, generous vertical rhythm on long-form content pages */
+.page-research .rl-section + .rl-section{margin-top:clamp(40px,5vw,80px);}
+.page-about .site-main > section + section,
+.page-faq .site-main > section + section,
+.page-contact .site-main > section + section,
+.page-pro .site-main > section + section,
+.page-shipping .site-main > section + section{margin-top:clamp(36px,4.5vw,72px);}
+
+/* mobile refinements (portable homepage v4 bits): 2-up vials, tidy tiles */
+@media (max-width:560px){
+  body:not(.page-home) .prod-grid,
+  body:not(.page-home) .prod-grid-4{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+  body:not(.page-home) .cat-tile-name{font-size:15px!important;line-height:1.15!important;}
+  body:not(.page-home) .cat-tile{padding:18px 14px!important;}
+  body:not(.page-home) .cp-section{padding:26px 18px 4px;}
+}
+
+/* scroll-reveal for content sections (class added only by animations.js) */
+@media (prefers-reduced-motion: no-preference){
+  .vp-secrev{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.16,.8,.3,1),transform .7s cubic-bezier(.16,.8,.3,1);will-change:opacity,transform;}
+  .vp-secrev.vp-sec-in{opacity:1;transform:none;}
+}

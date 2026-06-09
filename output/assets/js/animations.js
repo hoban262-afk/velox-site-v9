@@ -245,3 +245,31 @@
   }
 
 }());
+
+/* ═══ Premium polish — generic section scroll-reveal (site-wide) ═══
+   Homepage has its own inline reveal; compound/stack pages already reveal
+   .cp-section via initDetailPage. This covers remaining content pages. */
+(function () {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  function init() {
+    var b = document.body;
+    if (!b) return;
+    var cls = ' ' + b.className + ' ';
+    if (/ page-(home|compound|stack|checkout|cart) /.test(cls)) return;
+    var secs = Array.prototype.slice.call(document.querySelectorAll('.site-main > section'))
+      .filter(function (x, i) { return i > 0 && !x.hasAttribute('hidden'); });
+    if (!secs.length) return;
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('vp-sec-in');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -6% 0px' });
+    secs.forEach(function (x) { x.classList.add('vp-secrev'); io.observe(x); });
+    setTimeout(function () { secs.forEach(function (x) { x.classList.add('vp-sec-in'); }); }, 4000);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
