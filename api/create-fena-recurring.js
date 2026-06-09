@@ -157,6 +157,9 @@ export default async function handler(req) {
       body: JSON.stringify({
         reference, amount: amountStr,
         frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
+        // Fena's recurring API requires `recurringPaymentDate` (the date the bank
+        // first runs the standing order). Send both names for compatibility.
+        recurringPaymentDate: firstDate,
         firstPaymentDate: firstDate,
         customerEmail: email, customerName: user?.user_metadata?.name || body.customerName || '',
         items: [], customRedirectUrl: redirectUrl,
