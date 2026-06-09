@@ -163,9 +163,9 @@ export default async function handler(req) {
   // Build the payload as an object so we can echo it back on failure for debugging.
   const fenaBody = {
     reference,
-    // Recurring endpoint wants amount as a NUMBER (the single-payment endpoint
-    // takes a 2dp string, but this service rejects the string as "required").
-    amount: Number(amountStr),
+    // Amount must be the 2-decimal STRING (e.g. "55.30") — same as the single
+    // endpoint. A number is rejected by Fena as "amount is required".
+    amount: amountStr,
     frequency: String(frequency).toLowerCase(), // Fena requires lowercase enum
     // Fena requires numberOfPayments (it treats standing orders as a fixed
     // count). Long horizon ⇒ effectively ongoing; customer cancels in-bank.
