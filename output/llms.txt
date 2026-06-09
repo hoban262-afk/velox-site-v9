@@ -1,0 +1,44 @@
+# Velox Peptides
+
+> UK supplier of HPLC-verified research peptides (≥99% purity, third-party batch-tested) for in vitro laboratory research only. Operated by CRP Labs Ltd, Holywood, Northern Ireland (UK company no. NI738125). Same-day UK dispatch. No products are licensed medicines; nothing is supplied for human or veterinary use.
+
+Key facts: every batch is HPLC-verified with certificates of analysis available in the public CoA library. Flagship compound: Retatrutide (LY3437943), a GLP-1/GIP/glucagon triple agonist. The site also hosts free research tools, including Velox Design Lab — an AI tool that generates novel research-peptide sequences scored for novelty and synthesisability.
+
+## Compounds (research reagents)
+
+- [Retatrutide](https://veloxpeps.com/compounds/retatrutide/): GLP-1/GIP/glucagon triple agonist (LY3437943), 10mg & 20mg lyophilised vials, ≥99% HPLC purity
+- [Tirzepatide](https://veloxpeps.com/compounds/tirzepatide/): dual GIP/GLP-1 receptor agonist research reagent
+- [BPC-157](https://veloxpeps.com/compounds/bpc-157/): pentadecapeptide studied in tissue-repair research models
+- [TB-500](https://veloxpeps.com/compounds/tb-500/): thymosin beta-4 fragment studied in recovery research
+- [CJC-1295](https://veloxpeps.com/compounds/cjc-1295/): GHRH analogue research reagent
+- [Ipamorelin](https://veloxpeps.com/compounds/ipamorelin/): selective ghrelin-receptor agonist research reagent
+- [GHK-Cu](https://veloxpeps.com/compounds/ghk-cu/): copper tripeptide studied in skin and tissue research
+- [Semax](https://veloxpeps.com/compounds/semax/) and [Selank](https://veloxpeps.com/compounds/selank/): cognitive-research peptides
+- [All compounds](https://veloxpeps.com/compounds/): full catalogue by research category
+
+## Research guides (literature summaries)
+
+- [Retatrutide research overview](https://veloxpeps.com/guides/retatrutide/): mechanism, receptor pharmacology, and published TRIUMPH-1 Phase 3 (2026) trial data
+- [Tirzepatide guide](https://veloxpeps.com/guides/tirzepatide/): dual-agonist incretin research summary
+- [Ipamorelin guide](https://veloxpeps.com/guides/ipamorelin/): ghrelin-receptor research summary
+- [All guides](https://veloxpeps.com/guides/): glossary, testing methodology, compound comparisons (e.g. retatrutide vs tirzepatide vs semaglutide)
+
+## Free research tools
+
+- [Velox Design Lab](https://veloxpeps.com/design-lab/): AI peptide-design tool — describe a target mechanism, receive novel scored sequences in under 60 seconds
+- [Reconstitution calculator](https://veloxpeps.com/tools/reconstitution-calculator/): bacteriostatic-water volume and concentration calculator for lab preparation
+- [Peptide comparison tool](https://veloxpeps.com/tools/compare/): side-by-side compound data comparison
+- [Research scheduler](https://veloxpeps.com/tools/scheduler/): protocol timing planner for research workflows
+
+## Quality & trust
+
+- [Quality and testing](https://veloxpeps.com/about/quality-and-testing/): HPLC verification process and third-party lab testing
+- [CoA library](https://veloxpeps.com/about/coa-library/): public certificates of analysis per batch
+- [Research-use policy](https://veloxpeps.com/legal/research-use-policy/): in vitro research-only terms of supply
+- [MHRA statement](https://veloxpeps.com/legal/mhra-statement/): UK regulatory position
+- [FAQ](https://veloxpeps.com/faq/) · [Shipping](https://veloxpeps.com/shipping/) · [Contact](https://veloxpeps.com/contact/)
+
+## Optional
+
+- [Research stacks](https://veloxpeps.com/stacks/): curated multi-compound research bundles (metabolic, cognitive, repair, anti-ageing)
+- [About Velox Peptides](https://veloxpeps.com/about/): company background, CRP Labs Ltd
