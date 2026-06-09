@@ -184,6 +184,14 @@ module.exports = async function handler(req, res) {
   const action = String((req.query && req.query.action) || '').toLowerCase();
   const method = req.method || 'GET';
 
+  // ── share + leaderboard (delegated) ──────────────────────────────────────────
+  // These render the public shared-design page and the leaderboard. They live in
+  // sibling files but are routed THROUGH this (reliably-deployed) function via
+  // require() — Vercel bundles the required files in, so they work even when the
+  // standalone /api/design-lab-share|leaderboard routes don't deploy.
+  if (action === 'share')       { return require('../design-lab-share')(req, res); }
+  if (action === 'leaderboard') { return require('../design-lab-leaderboard')(req, res); }
+
   // ── quota ──────────────────────────────────────────────────────────────────
   if (action === 'quota') {
     const user = await authUser(req);
