@@ -191,7 +191,7 @@
       </style>
 
       <div class="syr-card" id="syr-panel" style="display:none">
-        <div class="syr-card-hdr"><span class="syr-pro-pill">Pro</span> Visual draw guide</div>
+        <div class="syr-card-hdr">Visual draw guide</div>
         <svg class="syr-svg" viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg" aria-label="Syringe draw level">
           <defs>
             <linearGradient id="syrGrad" x1="0" y1="0" x2="0" y2="1">
@@ -224,11 +224,8 @@
         <div class="syr-warn" id="syr-warn"></div>
       </div>
 
-      <div class="syr-locked-box" id="syr-locked" style="display:none">
-        <div style="font-size:14px;color:#fff;font-weight:700;margin-bottom:6px">&#128274; Visual draw guide - a Velox Peps Pro feature</div>
-        <p style="font-size:13px;color:#9aa3ad;margin:0 0 14px">Watch an animated syringe fill to your exact draw level as you calculate. Included with every Pro membership.</p>
-        <a href="/pro/" class="btn-p" style="display:inline-block;width:auto;padding:10px 22px;text-decoration:none">Unlock with Pro &rarr;</a>
-      </div>
+      <!-- Visual draw guide is now free for everyone (no Pro gate) -->
+      <div class="syr-locked-box" id="syr-locked" style="display:none"></div>
     </div>
 
     <div class="calc-notes">
@@ -436,16 +433,14 @@
     });
   }
 
-  isMember().then(function (pro) {
-    if (pro) {
-      var panel = el('syr-panel'); if (panel) panel.style.display = '';
-      buildTicks();
-      ['calc-pep', 'calc-water', 'calc-dose'].forEach(function (id) { var e = el(id); if (e) e.addEventListener('input', update); });
-      update();
-    } else {
-      var locked = el('syr-locked'); if (locked) locked.style.display = '';
-    }
-  });
+  // Visual draw guide — free for everyone (no Pro gate).
+  (function () {
+    var panel = el('syr-panel'); if (panel) panel.style.display = '';
+    var locked = el('syr-locked'); if (locked) locked.style.display = 'none';
+    buildTicks();
+    ['calc-pep', 'calc-water', 'calc-dose'].forEach(function (id) { var e = el(id); if (e) e.addEventListener('input', update); });
+    update();
+  }());
 }());
 </script>
 </body>
