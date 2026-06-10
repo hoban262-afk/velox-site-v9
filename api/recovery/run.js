@@ -50,6 +50,47 @@ async function sbPatch(path, body) {
   if (!r.ok) throw new Error(`Supabase PATCH ${path} -> ${r.status} ${(await r.text()).slice(0, 160)}`);
 }
 
+// ── Live Fena payment verification (self-heal stranded paid orders) ───────────
+// A 'pending' Fena order can be genuinely PAID yet stuck: the settlement webhook
+// can fire too early (Fena status still 'sent') and the customer may never land
+// back on /checkout/payment-complete/. Before nagging a pending order as an
+// abandoned cart, ask Fena's own public status endpoint whether it settled — the
+// SAME contract confirm-fena-payment.js and fena-webhook.js use:
+//   GET /public/payment-flow/single/{id}/data -> { data: { status: 'paid' | 'sent' | ... } }
+const PAID_STATUSES = new Set(['paid', 'completed', 'settled', 'captured', 'complete', 'success']);
+async function fenaPaymentPaid(paymentId) {
+  if (!paymentId) return false;
+  try {
+    const r = await fetch(`https://epos.api.prod-gcp.fena.co/public/payment-flow/single/${encodeURIComponent(paymentId)}/data`);
+    if (!r.ok) return false;                       // 404 / error → cannot confirm, treat as unpaid
+    const j = await r.json().catch(() => null);
+    const stts = j && j.data && j.data.status ? String(j.data.status).toLowerCase() : '';
+    return PAID_STATUSES.has(stts);
+  } catch { return false; }
+}
+
+// Flip a stranded-but-paid order to 'paid' and fire the SAME fulfilment the
+// webhook / browser-confirm paths do (Click & Drop label, Xero invoice, order
+// emails). Idempotent: caller only passes still-pending orders, and each trigger
+// endpoint is individually safe to re-run.
+async function reconcilePaidOrder(order) {
+  await sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { status: 'paid' });
+  const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
+  if (INTERNAL_SECRET) {
+    const trigger = (path) => fetch(`${SITE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-internal-secret': INTERNAL_SECRET },
+      body: JSON.stringify({ order_id: order.id }),
+    }).catch((e) => console.error(`[recovery/run] ${path} trigger failed:`, e.message));
+    await Promise.allSettled([
+      trigger('/api/clickdrop/push'),
+      trigger('/api/xero/create-invoice'),
+      trigger('/api/send-order'),
+    ]);
+  }
+  console.log(`[recovery/run] RECONCILED order ${order.id} pending → paid (Fena confirmed settled)`);
+}
+
 // Same HMAC scheme as api/newsletter/unsubscribe.js
 function signEmailToken(email) {
   const e = String(email).toLowerCase();
@@ -124,7 +165,7 @@ module.exports = async function handler(req, res) {
 
   if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: 'Resend not configured' });
 
-  const summary = { scanned: 0, sent: 0, skipped_unsub: 0, errors: 0, by_stage: { 1: 0, 2: 0, 3: 0 } };
+  const summary = { scanned: 0, reconciled: 0, sent: 0, skipped_unsub: 0, errors: 0, by_stage: { 1: 0, 2: 0, 3: 0 } };
 
   let candidates = [];
   try {
@@ -134,7 +175,7 @@ module.exports = async function handler(req, res) {
     candidates = await sbGet(
       'orders?status=eq.pending&payment_method=eq.fena' +
       `&total=gt.0&created_at=lt.${encodeURIComponent(cutoff)}` +
-      '&select=id,created_at,customer_name,customer_email,items,total,recovery_stage' +
+      '&select=id,created_at,customer_name,customer_email,items,total,recovery_stage,fena_payment_id' +
       '&order=created_at.asc&limit=200'
     );
   } catch (e) {
@@ -145,6 +186,21 @@ module.exports = async function handler(req, res) {
   for (const order of candidates) {
     if (summary.sent >= MAX_PER_RUN) break;
     summary.scanned++;
+
+    // ── Self-heal: if Fena says this 'pending' order actually settled, flip it to
+    // paid + fulfil instead of emailing an abandoned-cart reminder to someone who
+    // already paid. Only fulfils on Fena's own confirmation, so a never-completed
+    // attempt (e.g. a redirect-and-abandon) still correctly enters the sequence.
+    if (order.fena_payment_id && await fenaPaymentPaid(order.fena_payment_id)) {
+      try {
+        await reconcilePaidOrder(order);
+        summary.reconciled++;
+      } catch (e) {
+        console.error('[recovery/run] reconcile failed for', order.id, e.message);
+        summary.errors++;
+      }
+      continue; // never nag a paid customer
+    }
 
     const stage = dueStage(order);
     if (!stage) continue;
