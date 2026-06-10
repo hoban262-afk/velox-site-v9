@@ -46,11 +46,13 @@ async function main() {
     (S[v.slug] = S[v.slug] || {})[norm(v.size)] = { qty, inStock };
   }
 
-  // Retatrutide 20mg derives from 10mg (dispatched as 2× 10mg vials)
+  // Retatrutide 20mg and 10mg 10-pack derive from 10mg shared pool
   const ret10 = S.retatrutide?.[norm('10mg')];
   if (ret10) {
-    const dq = Math.floor(ret10.qty / 2);
-    S.retatrutide[norm('20mg')] = { qty: dq, inStock: dq > 0 };
+    const dq20   = Math.floor(ret10.qty / 2);
+    const dqPack = Math.floor(ret10.qty / 10);
+    S.retatrutide[norm('20mg')]         = { qty: dq20,   inStock: dq20   > 0 };
+    S.retatrutide[norm('10mg 10-pack')] = { qty: dqPack, inStock: dqPack > 0 };
   }
 
   let touched = 0;
