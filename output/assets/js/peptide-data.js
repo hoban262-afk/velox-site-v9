@@ -160,7 +160,7 @@
       'GIP-R + GLP-1R + glucagon receptor.',
       'A leading subject of metabolic-research interest for combined incretin action.',
       4731.0,'Water-soluble'],
-    ['tirzepatide','Tirzepatide','GIP/GLP-1 dual agonist','metabolic','tirzepatide','tirzepatide',40.00,
+    ['tirzepatide','Tirzepatide','GIP/GLP-1 dual agonist','metabolic',null,null,null,
       'A dual GIP/GLP-1 receptor agonist.',
       'A single peptide activating both GIP and GLP-1 receptors, studied for metabolic and incretin research.',
       'GIP receptor + GLP-1 receptor.',

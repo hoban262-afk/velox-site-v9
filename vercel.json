@@ -210,6 +210,16 @@
       "source": "/compounds/melanotan-ii",
       "destination": "/compounds/",
       "permanent": true
+    },
+    {
+      "source": "/compounds/tirzepatide/",
+      "destination": "/compounds/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/tirzepatide",
+      "destination": "/compounds/",
+      "permanent": true
     }
   ]
 }
