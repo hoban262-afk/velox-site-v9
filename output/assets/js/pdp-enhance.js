@@ -103,5 +103,15 @@
   });
   if (btn) btn.addEventListener('click', function () { setTimeout(updateNudge, 60); });
 
+  // pricing.js hydrates data-price from product_variants AFTER this script's
+  // initial render — without this the sticky bar keeps showing the stale
+  // hardcoded HTML price (e.g. £24.99 while the buy box shows the live £29).
+  document.addEventListener('vp:prices-updated', refresh);
+  // Fallback: if hydration resolved from sessionStorage cache, the event can
+  // fire before this listener attaches (deferred scripts run in order, and the
+  // cache path resolves on a microtask between them). Re-read shortly after.
+  setTimeout(refresh, 800);
+  setTimeout(refresh, 2500);
+
   refresh();
 }());

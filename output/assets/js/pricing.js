@@ -51,6 +51,9 @@
         try { hydratePDP(bySlug); } catch (e) {}
         try { hydrateCards(bySlug); } catch (e) {}
         try { hydrateBundles(rows); } catch (e) {}
+        // Tell listeners (e.g. the mobile sticky buy bar) that data-price
+        // attributes have been re-hydrated so cached prices can refresh.
+        try { document.dispatchEvent(new CustomEvent('vp:prices-updated')); } catch (e) {}
       })
       .catch(function () { /* network/RLS issue — hardcoded prices remain */ });
   }
