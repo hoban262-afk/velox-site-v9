@@ -68,6 +68,17 @@
   .ps-dots{display:flex;gap:2px;height:5px;align-items:center;}
   .ps-dots i{width:5px;height:5px;border-radius:50%;display:block;}
 
+  /* restock offer card */
+  .ps-restock{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(1,211,160,.10),rgba(1,211,160,.03));border:1px solid rgba(1,211,160,.32);border-radius:16px;padding:16px 20px;margin:0 0 20px;}
+  .ps-restock-l{display:flex;align-items:center;gap:12px;}
+  .ps-restock-dot{width:9px;height:9px;border-radius:50%;background:#01D3A0;box-shadow:0 0 0 4px rgba(1,211,160,.18);flex:none;}
+  .ps-restock-t{font-weight:800;font-size:16px;color:#fff;}
+  .ps-restock-s{font-size:13px;color:var(--mut);margin-top:2px;}
+  .ps-restock-r{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .ps-restock-code{display:flex;flex-direction:column;line-height:1.1;}
+  .ps-restock-code .rc-l{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#01D3A0;font-family:monospace;}
+  .ps-restock-code b{font-family:monospace;font-size:18px;color:#01D3A0;letter-spacing:.06em;}
+
   /* gate */
   .ps-gate{position:fixed;inset:0;z-index:120;background:rgba(3,5,8,.82);display:none;align-items:center;justify-content:center;padding:24px;}
   .ps-gate.open{display:flex;}
@@ -162,6 +173,20 @@
     <div class="ps-disc">⚠ Organisational tool for <strong>in vitro research record-keeping only</strong>. It does <strong>not</strong> provide dosing, medical, or human-use guidance, and implies no human or veterinary use. Schedules and labels are entirely your own.</div>
   </div>
 
+  <div class="ps-restock" id="restockCard" hidden>
+    <div class="ps-restock-l">
+      <span class="ps-restock-dot" aria-hidden="true"></span>
+      <div>
+        <div class="ps-restock-t">Running low on <span id="rsCompound">your research stock</span>?</div>
+        <div class="ps-restock-s">Your research register shows it&rsquo;s near restock &mdash; here&rsquo;s <strong id="rsPct">20</strong>% off your reorder.</div>
+      </div>
+    </div>
+    <div class="ps-restock-r">
+      <div class="ps-restock-code"><span class="rc-l">Code</span><b id="rsCode">VELOX-XXXXXX</b></div>
+      <a class="ps-btn primary" id="rsCta" href="/compounds/">Restock now &rarr;</a>
+    </div>
+  </div>
+
   <div class="ps-grid">
     <div class="ps-panel">
       <div class="lbl">Compounds in this register</div>
@@ -235,9 +260,25 @@
   var isPro=false;
   try{
     var sb=window.supabase.createClient('https://stkjdtyhaxejxqmbzyua.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0');
-    sb.auth.getSession().then(function(s){ var u=s&&s.data&&s.data.session&&s.data.session.user; if(!u)return; sb.from('profiles').select('is_pro,pro_until').eq('id',u.id).maybeSingle().then(function(r){ var p=r&&r.data; if(p&&p.is_pro&&(!p.pro_until||new Date(p.pro_until)>new Date())) isPro=true; }); });
+    sb.auth.getSession().then(function(s){ var sess=s&&s.data&&s.data.session; var u=sess&&sess.user; if(!u)return; sb.from('profiles').select('is_pro,pro_until').eq('id',u.id).maybeSingle().then(function(r){ var p=r&&r.data; if(p&&p.is_pro&&(!p.pro_until||new Date(p.pro_until)>new Date())) isPro=true; }); loadRestock(sess.access_token); });
   }catch(e){}
-  function freeUsed(){ return (+localStorage.getItem('vlx_sched_uses')||0)>=1; }
+  // Surface the logged-in user's restock offer (purchase-bound 20% code) on the
+  // scheduler. Quiet on any failure — never blocks the tool.
+  function loadRestock(token){
+    if(!token) return;
+    fetch('/api/recovery/restock-offer',{headers:{Authorization:'Bearer '+token}})
+      .then(function(r){return r.json();})
+      .then(function(o){
+        if(!o||!o.due||!o.code) return;
+        var card=document.getElementById('restockCard'); if(!card) return;
+        var setT=function(id,v){var el=document.getElementById(id); if(el) el.textContent=v;};
+        setT('rsCompound', o.compound||'your research stock');
+        setT('rsPct', String(o.pct||20));
+        setT('rsCode', o.code);
+        card.hidden=false;
+      }).catch(function(){});
+  }
+    function freeUsed(){ return (+localStorage.getItem('vlx_sched_uses')||0)>=1; }
   function markUsed(){ try{ localStorage.setItem('vlx_sched_uses',(+localStorage.getItem('vlx_sched_uses')||0)+1); }catch(e){} }
 
   // ── schedule maths ──
