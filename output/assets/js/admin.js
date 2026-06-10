@@ -2194,8 +2194,28 @@
       if (sellsEl) sellsEl.textContent = '£' + Number(sale != null ? sale : base).toFixed(2);
       if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Saved'; }
       if (window.showToast) showToast('Price updated', 'ok');
+      scheduleRedeploy();
     });
   };
+
+  // After price saves, trigger a site rebuild (debounced 45s so a batch of
+  // edits = one deploy). The build runs scripts/sync-prices.mjs, which bakes
+  // the new prices into the static HTML + JSON-LD that crawlers see.
+  var redeployTimer = null;
+  function scheduleRedeploy() {
+    if (redeployTimer) clearTimeout(redeployTimer);
+    redeployTimer = setTimeout(async function () {
+      redeployTimer = null;
+      try {
+        var s = await window._sb.auth.getSession();
+        var t = s && s.data && s.data.session && s.data.session.access_token;
+        if (!t) return;
+        var r = await fetch('/api/admin/redeploy', { method: 'POST', headers: { Authorization: 'Bearer ' + t } });
+        var d = await r.json().catch(function () { return {}; });
+        if (d.queued && window.showToast) showToast('Rebuilding site with new prices (~1 min)', 'ok');
+      } catch (e) { /* non-fatal — pricing.js still shows live prices */ }
+    }, 45000);
+  }
 
   // ── BUNDLES (price auto-computes from components × discount) ─────────────────
   function loadBundlesAdmin() {

@@ -1,4 +1,5 @@
 {
+  "buildCommand": "node scripts/sync-prices.mjs",
   "functions": {
     "api/design-lab/[action].js": { "maxDuration": 60 },
     "api/send-order.js": { "maxDuration": 30 }
