@@ -42,6 +42,10 @@
       "schedule": "0 8 * * 1"
     },
     {
+      "path": "/api/analytics/gsc-run",
+      "schedule": "30 6 * * *"
+    },
+    {
       "path": "/api/analytics/ga-run",
       "schedule": "0 6 * * *"
     },
