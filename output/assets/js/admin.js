@@ -110,7 +110,7 @@
     interest: 'Interest', customers: 'Customers', pricing: 'Pricing', reviews: 'Reviews',
     campaign: 'Campaign', subscribers: 'Subscribers', affiliates: 'Affiliates', settings: 'Settings',
     deal: 'Deal of the Week', traffic: 'Traffic', seo: 'Search (SEO)', marketing: 'Marketing',
-    'design-lab': 'Design Lab'
+    'design-lab': 'Design Lab', journeys: 'Journeys'
   };
   var BN_PRIMARY = { overview: 1, orders: 1, margins: 1, customers: 1 };
 
@@ -121,7 +121,7 @@
     customers: ['customers', 'subscribers', 'interest', 'affiliates'],
     marketing: ['marketing', 'campaign', 'reviews'],
     catalog:   ['pricing', 'deal'],
-    insights:  ['margins', 'traffic', 'seo'],
+    insights:  ['margins', 'traffic', 'journeys', 'seo'],
     settings:  ['settings'],
   };
   var TAB_GROUP = {};

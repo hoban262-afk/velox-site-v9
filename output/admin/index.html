@@ -301,6 +301,7 @@
         <div class="sb-sec">Insights</div>
         <button class="sb-item" data-tab="margins" onclick="switchTab('margins')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V11"/><path d="M12 21V4"/><path d="M18 21v-7"/></svg> Margins</button>
         <button class="sb-item" data-tab="traffic" onclick="switchTab('traffic')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 5-6"/></svg> Traffic</button>
+        <button class="sb-item" data-tab="journeys" onclick="switchTab('journeys');window.veloxLoadJourneys&amp;&amp;window.veloxLoadJourneys()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 6h8a4 4 0 0 1 0 8H9a4 4 0 0 0 0 8h8"/></svg> Journeys</button>
         <button class="sb-item" data-tab="seo" onclick="switchTab('seo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search (SEO)</button>
         <button class="sb-item" data-tab="design-lab" onclick="switchTab('design-lab')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6L4.6 18a2 2 0 0 0 1.7 3h11.4a2 2 0 0 0 1.7-3L14 9V3"/><path d="M7.5 14h9"/></svg> Design Lab</button>
 
@@ -359,6 +360,7 @@
       <div class="admin-subtabs" data-group="insights" hidden>
         <button class="admin-subtab" data-tab="margins" onclick="switchTab('margins')">Margins</button>
         <button class="admin-subtab" data-tab="traffic" onclick="switchTab('traffic')">Traffic</button>
+        <button class="admin-subtab" data-tab="journeys" onclick="switchTab('journeys');window.veloxLoadJourneys&amp;&amp;window.veloxLoadJourneys()">Journeys</button>
         <button class="admin-subtab" data-tab="seo" onclick="switchTab('seo')">Search (SEO)</button>
       </div>
     </div>
@@ -966,6 +968,18 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
     </div>
 
     <!-- Traffic & conversion -->
+    <!-- Journeys (admin-plus.js → /api/admin/journeys) -->
+    <div class="admin-panel" id="panel-journeys">
+      <div class="adm-section">
+        <div class="adm-sec-hdr">
+          <div class="adm-sec-title">Order journeys</div>
+          <button class="status-select" type="button" style="cursor:pointer;padding:6px 14px" onclick="window.veloxLoadJourneys&amp;&amp;window.veloxLoadJourneys(true)">Refresh</button>
+        </div>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 16px;line-height:1.5">Where each order came from and every page the visitor saw before buying — first-party <code>visits</code> data, no third-party cookies. Orders since 10 Jun 2026 are matched exactly via the checkout session id; older orders are best-effort matched to the nearest checkout event (&plusmn;45 min) and marked &#8776;.</p>
+        <div id="journeys-body"><div class="adm-loading">Loading&hellip;</div></div>
+      </div>
+    </div>
+
     <div class="admin-panel" id="panel-traffic">
       <div class="adm-section">
         <div class="adm-sec-hdr">

@@ -569,3 +569,86 @@
 
   window.veloxPlusRefresh = loadData;
 }());
+
+// ── Order journeys tab (/api/admin/journeys) ────────────────────────────────
+(function () {
+  'use strict';
+  var LOADED = false;
+
+  async function token() {
+    try { var s = await window._sb.auth.getSession(); return s && s.data && s.data.session && s.data.session.access_token; }
+    catch (e) { return null; }
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+  function fmtT(iso) { try { var d = new Date(iso); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
+  function srcBadge(src) {
+    var colors = { 'Instagram': '#E1306C', 'ChatGPT': '#01D3A0', 'Google': '#4285F4', 'Bing': '#008373', 'X / Twitter': '#888', 'Facebook': '#1877F2', 'Reddit': '#FF4500', 'Direct / none': '#6b7280', 'Internal': '#6b7280' };
+    var c = colors[src] || '#8b5cf6';
+    return '<span style="display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;background:' + c + '22;color:' + c + '">' + esc(src) + '</span>';
+  }
+
+  window.veloxLoadJourneys = async function (force) {
+    var body = document.getElementById('journeys-body');
+    if (!body || (LOADED && !force)) return;
+    body.innerHTML = '<div class="adm-loading">Loading journeys&hellip;</div>';
+    var t = await token();
+    if (!t) { body.innerHTML = '<div class="adm-empty">Not signed in.</div>'; return; }
+    var data = null;
+    try {
+      var r = await fetch('/api/admin/journeys?days=60', { headers: { Authorization: 'Bearer ' + t } });
+      data = await r.json();
+      if (!r.ok) throw new Error(data.error || r.status);
+    } catch (e) {
+      body.innerHTML = '<div class="adm-empty">Journeys unavailable: ' + esc(e.message) + '</div>';
+      return;
+    }
+    LOADED = true;
+
+    // Source rollup strip
+    var roll = Object.keys(data.bySource || {}).sort(function (a, b) { return data.bySource[b].revenue - data.bySource[a].revenue; })
+      .map(function (s) {
+        var v = data.bySource[s];
+        return '<div style="background:var(--card,#0d1117);border:1px solid var(--line,#1f2937);border-radius:10px;padding:10px 14px;min-width:130px">' +
+          srcBadge(s) + '<div style="font-size:18px;font-weight:800;margin-top:6px">&pound;' + v.revenue.toFixed(2) + '</div>' +
+          '<div style="font-size:11px;color:var(--t3,#6b7280)">' + v.orders + ' order' + (v.orders === 1 ? '' : 's') + '</div></div>';
+      }).join('');
+
+    var rows = (data.orders || []).map(function (o, i) {
+      var j = o.journey;
+      var matchNote = o.match === 'approx' ? ' <span title="Matched to nearest checkout event (no session id on this order)" style="color:#f59e0b;font-weight:700">&asymp;</span>' :
+                      o.match === 'none' ? ' <span style="color:var(--t3,#6b7280)">(no session data)</span>' : '';
+      var head =
+        '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;cursor:pointer" onclick="var d=document.getElementById(\'jrow' + i + '\');d.style.display=d.style.display===\'none\'?\'block\':\'none\'">' +
+        '<strong>' + esc(o.customer_name || o.customer_email || 'Customer') + '</strong>' +
+        '<span style="color:var(--t3,#6b7280);font-size:12px">' + fmtT(o.created_at) + '</span>' +
+        '<span>&pound;' + Number(o.total || 0).toFixed(2) + '</span>' +
+        '<span style="font-size:11px;text-transform:uppercase;color:var(--t3,#6b7280)">' + esc(o.status) + ' &middot; ' + esc(o.payment_method || '') + '</span>' +
+        (j ? srcBadge(j.source) : srcBadge('Direct / none')) + matchNote +
+        (o.affiliate_code_used ? '<span style="font-size:11px;color:#01D3A0">code: ' + esc(o.affiliate_code_used) + '</span>' : '') +
+        '</div>';
+      var detail = '';
+      if (j) {
+        var steps = j.steps.map(function (s) {
+          return '<div style="display:flex;gap:10px;align-items:baseline;padding:3px 0;border-bottom:1px dashed var(--line,#1f2937)">' +
+            '<span style="font-size:11px;color:var(--t3,#6b7280);min-width:88px">' + fmtT(s.at) + '</span>' +
+            '<code style="font-size:12px">' + esc(s.path) + '</code>' +
+            (s.views > 1 ? '<span style="font-size:11px;color:var(--t3,#6b7280)">&times;' + s.views + '</span>' : '') + '</div>';
+        }).join('');
+        detail =
+          '<div id="jrow' + i + '" style="display:none;margin:10px 0 4px;padding:12px;background:var(--card,#0d1117);border:1px solid var(--line,#1f2937);border-radius:10px">' +
+          '<div style="font-size:12px;color:var(--t3,#6b7280);margin-bottom:8px">Landed on <code>' + esc(j.landing) + '</code>' +
+          (j.sourceRef ? ' from <code style="word-break:break-all">' + esc(j.sourceRef) + '</code>' : ' (no external referrer)') +
+          ' &middot; ' + j.pageviews + ' pageviews' + (j.durationMin != null ? ' &middot; ' + j.durationMin + ' min on site' : '') + '</div>' +
+          steps + '</div>';
+      } else {
+        detail = '<div id="jrow' + i + '" style="display:none;margin:10px 0 4px;font-size:12px;color:var(--t3,#6b7280)">No session data for this order &mdash; it predates session capture and no checkout event fell within &plusmn;45 min.</div>';
+      }
+      return '<div style="padding:12px 0;border-bottom:1px solid var(--line,#1f2937)">' + head + detail + '</div>';
+    }).join('');
+
+    body.innerHTML =
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">' + roll + '</div>' +
+      '<div style="font-size:11px;color:var(--t3,#6b7280);margin-bottom:6px">Click an order to expand its page-by-page journey. Last ' + data.days + ' days, newest first.</div>' +
+      (rows || '<div class="adm-empty">No orders in the window.</div>');
+  };
+}());

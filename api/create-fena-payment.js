@@ -206,6 +206,7 @@ export default async function handler(req) {
         ship_postcode:  meta.postcode || null,
         ship_country:   meta.country  || 'GB',
         ship_phone:     meta.customer_phone || null,
+        sid:            (typeof meta.sid === 'string' && meta.sid.length <= 64) ? meta.sid : null,
       };
       const ins = await fetch(`${SB_URL}/rest/v1/orders`, {
         method:  'POST',

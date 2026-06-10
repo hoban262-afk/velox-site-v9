@@ -804,6 +804,7 @@
               ship_postcode:   chk.postcode || null,
               ship_country:    chk.country || 'GB',
               ship_phone:      chk.phone || null,
+              sid:             (function () { try { return localStorage.getItem('vp_sid') || null; } catch (e) { return null; } })(),
             }]);
             if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
           } catch (sbErr) {

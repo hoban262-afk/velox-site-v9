@@ -1016,6 +1016,7 @@
         total:            total.toFixed(2),
         currency:         'GBP',
         region:           'UK',
+        sid:              (function () { try { return localStorage.getItem('vp_sid') || null; } catch (e) { return null; } })(),
       };
 
       // 7. Disable button + start spinner text
