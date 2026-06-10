@@ -854,8 +854,6 @@ var DL_COMPOUND_MAP=[
    title:'Growth-hormone research', items:[['CJC-1295','/compounds/cjc-1295/'],['Tesamorelin','/compounds/tesamorelin/'],['MOTS-c','/compounds/mots-c/']]},
   {kw:/nootrop|cognit|memory|neuroprotect|\bbrain\b|bdnf|focus|anxiet|\bmood\b|neurotroph|synap/i,
    title:'Cognitive research', items:[['Semax','/compounds/semax/'],['Selank','/compounds/selank/'],['Dihexa','/compounds/dihexa/']]},
-  {kw:/melano|pigment|\btan\b|melanocortin|mc1r|mc4r/i,
-   title:'Melanocortin research', items:[['Melanotan II','/compounds/melanotan-ii/']]},
   {kw:/mitochond|antioxidant|cellular|\bnad\b|glutathione|longevit|senescen|copper|ghk|oxidativ/i,
    title:'Cellular & antioxidant research', items:[['NAD+','/compounds/nad-plus/'],['Glutathione','/compounds/glutathione/'],['GHK-Cu','/compounds/ghk-cu/']]}
 ];
@@ -879,14 +877,13 @@ var DL_CATALOG={
  'selank':{n:'Selank',u:'/compounds/selank/',cat:'cognitive',catU:'/compounds/cognitive/'},
  'dihexa':{n:'Dihexa',u:'/compounds/dihexa/',cat:'cognitive',catU:'/compounds/cognitive/'},
  'dsip':{n:'DSIP',u:'/compounds/dsip/',cat:'cognitive / sleep',catU:'/compounds/cognitive/'},
- 'melanotan-ii':{n:'Melanotan II',u:'/compounds/melanotan-ii/',cat:'melanocortin',catU:'/compounds/'},
  'nad-plus':{n:'NAD+',u:'/compounds/nad-plus/',cat:'cellular',catU:'/compounds/antioxidant/'},
  'glutathione':{n:'Glutathione',u:'/compounds/glutathione/',cat:'antioxidant',catU:'/compounds/antioxidant/'}
 };
 // known-peptide name (from the novelty check) → the stocked SKU it corresponds to
-var DL_KNOWN_TO_SLUG={'BPC-157':'bpc-157','GHK (copper tripeptide)':'ghk-cu','KPV':'kpv','Semax':'semax','Selank':'selank','MOTS-c':'mots-c','CJC-1295 core':'cjc-1295','TB-500 active fragment':'tb-500','Thymosin Beta-4 core':'tb-500','MT-II core':'melanotan-ii','PT-141 core':'melanotan-ii'};
+var DL_KNOWN_TO_SLUG={'BPC-157':'bpc-157','GHK (copper tripeptide)':'ghk-cu','KPV':'kpv','Semax':'semax','Selank':'selank','MOTS-c':'mots-c','CJC-1295 core':'cjc-1295','TB-500 active fragment':'tb-500','Thymosin Beta-4 core':'tb-500'};
 // brief-text aliases → SKU (most specific first)
-var DL_ALIASES=[['retatrutide',/retatru|triple agonist|glp-?1[^.]{0,30}g(ip|lucagon)|incretin/i],['tesamorelin',/tesamor/i],['cjc-1295',/cjc-?1295|ghrh|mod ?grf/i],['mots-c',/mots-?c/i],['bpc157-tb500-mix',/bpc[^.]{0,12}tb-?500|tb-?500[^.]{0,12}bpc/i],['bpc-157',/bpc-?157/i],['tb-500',/tb-?500|thymosin beta/i],['ghk-cu',/ghk|copper (tri)?peptide/i],['kpv',/\bkpv\b/i],['semax',/semax/i],['selank',/selank/i],['dihexa',/dihexa/i],['dsip',/\bdsip\b|delta sleep/i],['melanotan-ii',/melanotan|mt-?2\b|mt-?ii|pt-?141|bremelanotide|melanocortin/i],['nad-plus',/\bnad\+?\b/i],['glutathione',/glutathione/i]];
+var DL_ALIASES=[['retatrutide',/retatru|triple agonist|glp-?1[^.]{0,30}g(ip|lucagon)|incretin/i],['tesamorelin',/tesamor/i],['cjc-1295',/cjc-?1295|ghrh|mod ?grf/i],['mots-c',/mots-?c/i],['bpc157-tb500-mix',/bpc[^.]{0,12}tb-?500|tb-?500[^.]{0,12}bpc/i],['bpc-157',/bpc-?157/i],['tb-500',/tb-?500|thymosin beta/i],['ghk-cu',/ghk|copper (tri)?peptide/i],['kpv',/\bkpv\b/i],['semax',/semax/i],['selank',/selank/i],['dihexa',/dihexa/i],['dsip',/\bdsip\b|delta sleep/i],['nad-plus',/\bnad\+?\b/i],['glutathione',/glutathione/i]];
 
 function pickClosest(b,cands){
   // 1) strongest signal: a candidate is sequence-similar to a STOCKED peptide

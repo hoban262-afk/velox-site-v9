@@ -183,7 +183,8 @@
     var form = document.querySelector('form[data-compound]');
     if (!form) return;
     var slug = form.getAttribute('data-compound');
-    if (!trackedSlugs[slug]) return;
+    var hasRealData = !!form.querySelector('input[name="size"][data-stock]');
+    if (!trackedSlugs[slug] && !hasRealData) return;
 
     /* Create the status element and insert after .cp-sizes */
     var cpSizes = form.querySelector('.cp-sizes');
@@ -199,7 +200,17 @@
       var checked = form.querySelector('input[name="size"]:checked');
       var val = checked ? checked.value : null;
       if (!val) { statusEl.textContent = ''; return; }
-      var count = getStockCount(slug, val);
+      var stockAttr   = checked.getAttribute('data-stock');
+      var inStockAttr = checked.getAttribute('data-in-stock');
+      var btn = form.querySelector('.cp-order-btn');
+      if (inStockAttr === 'false') {
+        statusEl.style.color = '#FF4444';
+        statusEl.textContent = 'Out of stock';
+        if (btn) btn.disabled = true;
+        return;
+      }
+      if (btn) btn.disabled = false;
+      var count = (stockAttr !== null) ? Number(stockAttr) : getStockCount(slug, val);
       statusEl.style.color = stockColor(count);
       statusEl.textContent = stockText(count);
     }

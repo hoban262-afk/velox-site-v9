@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/sync-prices.mjs",
+  "buildCommand": "node scripts/sync-prices.mjs && node scripts/sync-stock.mjs",
   "functions": {
     "api/design-lab/[action].js": { "maxDuration": 60 },
     "api/send-order.js": { "maxDuration": 30 }
@@ -199,6 +199,16 @@
     {
       "source": "/research",
       "destination": "/guides",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/melanotan-ii/",
+      "destination": "/compounds/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/melanotan-ii",
+      "destination": "/compounds/",
       "permanent": true
     }
   ]
