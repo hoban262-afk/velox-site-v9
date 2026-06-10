@@ -261,7 +261,7 @@
   function fmt(d){ return d.toISOString().slice(0,10).replace(/-/g,''); }
 
   function generate(){
-    if(!isPro && freeUsed()){ $('gate').classList.add('open'); return; }
+    /* Protocol Scheduler is free for everyone — gate removed to drive repeat usage. */
     var rows=readRows();
     if(!rows.length){ toast('Add at least one compound with a start date.'); return; }
     // compute per-compound dates + global range
