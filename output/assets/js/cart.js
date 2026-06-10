@@ -85,18 +85,25 @@
       });
     });
 
-    // Totals — volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 15%.
-    // Pens and BAC water are excluded: never discounted and never count toward the tier.
+    // Totals — vial volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 15%.
+    // Pens, BAC water and 10-packs are excluded: never on the vial track, never count to its tier.
     function isPen(i) { return /pen/i.test(i.size || ''); }
     function isBac(i) { return i.slug === 'bacteriostatic-water'; }
-    function isExcluded(i) { return isPen(i) || isBac(i); }
+    function is10pack(i) { return /10-?pack/i.test(i.size || ''); }
+    function isExcluded(i) { return isPen(i) || isBac(i) || is10pack(i); }
+    // 10-pack volume — separate track, stacks only 10-packs: 2=10%, 3=17.5%, 4=25%, 5+=30%.
+    function packVolumeRate(q) { return q >= 5 ? 0.30 : (q === 4 ? 0.25 : (q === 3 ? 0.175 : (q === 2 ? 0.10 : 0))); }
     var subtotal = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
     var totalQty = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
     var discQty  = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : (i.qty || 1)); }, 0);
     var discBase = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : i.price * (i.qty || 1)); }, 0);
     var rate = discQty >= 4 ? 0.15 : (discQty === 3 ? 0.10 : (discQty === 2 ? 0.05 : 0));
     var volSaving = Math.round(discBase * rate * 100) / 100;
-    var discSub = Math.max(0, subtotal - volSaving);
+    var packQty  = cart.reduce(function (s, i) { return s + (is10pack(i) ? (i.qty || 1) : 0); }, 0);
+    var packBase = cart.reduce(function (s, i) { return s + (is10pack(i) ? i.price * (i.qty || 1) : 0); }, 0);
+    var packRate = packVolumeRate(packQty);
+    var packSaving = Math.round(packBase * packRate * 100) / 100;
+    var discSub = Math.max(0, subtotal - volSaving - packSaving);
     var isMember = (window.VELOX_MEMBER_PCT || 0) > 0;   // Velox Peps Pro = free shipping
     var shipping = (isMember || discSub >= FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
     var total = discSub + shipping;
@@ -105,6 +112,7 @@
     if (shippingEl) shippingEl.textContent = shipping === 0 ? 'Free' : fmt(shipping);
     if (totalEl)    totalEl.textContent = fmt(total);
     renderVolumeRow(volSaving, rate);
+    renderPackVolumeRow(packSaving, packRate);
 
     // Update nav count
     var countEl = document.getElementById('nav-cart-count');
@@ -114,6 +122,25 @@
 
     // Free-shipping progress nudge — based on the discounted subtotal (matches checkout).
     renderFreeShipNudge(discSub);
+  }
+
+  function renderPackVolumeRow(saving, rate) {
+    var totalRow = document.querySelector('.cart-sum-total');
+    if (!totalRow || !totalRow.parentNode) return;
+    var row = document.getElementById('vp-pack-vol-row');
+    if (saving > 0) {
+      if (!row) {
+        row = document.createElement('div');
+        row.id = 'vp-pack-vol-row';
+        row.className = 'cart-sum-row';
+        row.style.color = '#01D3A0';
+        totalRow.parentNode.insertBefore(row, totalRow);
+      }
+      row.innerHTML = '<span>10-Pack volume discount (' + (rate * 100) + '% off)</span>' +
+        '<span>−' + fmt(saving) + '</span>';
+    } else if (row) {
+      row.remove();
+    }
   }
 
   function renderVolumeRow(saving, rate) {

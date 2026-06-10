@@ -69,23 +69,51 @@
     return savingGBP;
   }
 
-  // Volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 20% (by quantity of DISCOUNTABLE
-  // vials). Pens are never discounted and never count toward the tier.
+  // Volume discount (single vials): 2 vials 5%, 3 vials 10%, 4+ vials 20% (by quantity of
+  // DISCOUNTABLE vials). Pens, BAC water and 10-packs are EXCLUDED — never discounted on
+  // this track and never count toward the vial tier.
   function isPen(i) { return /pen/i.test(i.size || ''); }
-  function discountableGBP(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
-  function discountableQty(cart) { return cart.reduce(function (s, i) { return s + (isPen(i) ? 0 : (i.qty || 1)); }, 0); }
+  function is10pack(i) { return /10-?pack/i.test(i.size || ''); }
+  function isBacW(i) { return i.slug === 'bacteriostatic-water'; }
+  function vialExcluded(i) { return isPen(i) || isBacW(i) || is10pack(i); }
+  function discountableGBP(cart) { return cart.reduce(function (s, i) { return s + (vialExcluded(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
+  function discountableQty(cart) { return cart.reduce(function (s, i) { return s + (vialExcluded(i) ? 0 : (i.qty || 1)); }, 0); }
   function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.10 : (q === 2 ? 0.05 : 0)); }
-  // Promotional saving (GBP) = larger of (code, volume) on the discountable subtotal only.
-  // Code + volume never stack, so promo ≤ 20% of the discountable subtotal.
+
+  // 10-PACK volume discount — a SEPARATE system that applies ONLY to 10-packs and stacks
+  // 10-packs together (total count of 10-pack units across the basket):
+  //   2 = 10%, 3 = 17.5%, 4 = 25%, 5+ = 30%.
+  // Independent of the vial tier and of discount codes: 10-packs never receive a code or
+  // vial-volume discount, only this one.
+  function packGBP(cart) { return cart.reduce(function (s, i) { return s + (is10pack(i) ? i.price * (i.qty || 1) : 0); }, 0); }
+  function packQty(cart) { return cart.reduce(function (s, i) { return s + (is10pack(i) ? (i.qty || 1) : 0); }, 0); }
+  function packVolumeRate(q) { return q >= 5 ? 0.30 : (q === 4 ? 0.25 : (q === 3 ? 0.175 : (q === 2 ? 0.10 : 0))); }
+  function packVolumeGBP(cart) { return Math.round(packGBP(cart) * packVolumeRate(packQty(cart)) * 100) / 100; }
+
+  // Promotional saving (GBP) = [larger of (code, vial-volume) on the vial subtotal]
+  //   PLUS the 10-pack volume saving (separate track, on the 10-pack subtotal).
+  // Code + vial-volume never stack; the 10-pack tier is its own track and never touches vials.
   function bestPromoGBP(cart, codeDiscount) {
     var base = discountableGBP(cart);
     var codeSaving = (codeDiscount && codeDiscount.saving) || 0;
     var rate = vpVolumeRate(discountableQty(cart));
     var volSaving = Math.round(base * rate * 100) / 100;
+
+    var vialPromo, vialLabel, vialCode;
     if (volSaving > codeSaving) {
-      return { saving: volSaving, label: 'Volume discount −' + Math.round(rate * 100) + '%', code: 'VOLUME-' + Math.round(rate * 100) };
+      vialPromo = volSaving; vialLabel = 'Volume discount −' + Math.round(rate * 100) + '%'; vialCode = 'VOLUME-' + Math.round(rate * 100);
+    } else {
+      vialPromo = codeSaving; vialLabel = codeDiscount ? codeDiscount.code : ''; vialCode = codeDiscount ? codeDiscount.code : '';
     }
-    return { saving: codeSaving, label: codeDiscount ? codeDiscount.code : '', code: codeDiscount ? codeDiscount.code : '' };
+
+    var packRate = packVolumeRate(packQty(cart));
+    var packSaving = packVolumeGBP(cart);
+
+    var totalSaving = Math.round((vialPromo + packSaving) * 100) / 100;
+    var labels = [], codes = [];
+    if (vialPromo > 0 && vialLabel) { labels.push(vialLabel); codes.push(vialCode); }
+    if (packSaving > 0) { labels.push('10-Pack volume −' + (packRate * 100) + '%'); codes.push('PACKVOL-' + Math.round(packRate * 1000)); }
+    return { saving: totalSaving, label: labels.join(' + '), code: codes.join('+') };
   }
 
   // Kept for existing callers — just re-renders the summary (which now applies discounts).
