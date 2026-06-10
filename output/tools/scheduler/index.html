@@ -258,9 +258,10 @@
 
   // ── Pro / free gate ──
   var isPro=false;
+  var RS_TOKEN=null;
   try{
     var sb=window.supabase.createClient('https://stkjdtyhaxejxqmbzyua.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0');
-    sb.auth.getSession().then(function(s){ var sess=s&&s.data&&s.data.session; var u=sess&&sess.user; if(!u)return; sb.from('profiles').select('is_pro,pro_until').eq('id',u.id).maybeSingle().then(function(r){ var p=r&&r.data; if(p&&p.is_pro&&(!p.pro_until||new Date(p.pro_until)>new Date())) isPro=true; }); loadRestock(sess.access_token); });
+    sb.auth.getSession().then(function(s){ var sess=s&&s.data&&s.data.session; var u=sess&&sess.user; if(!u)return; sb.from('profiles').select('is_pro,pro_until').eq('id',u.id).maybeSingle().then(function(r){ var p=r&&r.data; if(p&&p.is_pro&&(!p.pro_until||new Date(p.pro_until)>new Date())) isPro=true; }); RS_TOKEN=sess.access_token; loadRestock(RS_TOKEN); });
   }catch(e){}
   // Surface the logged-in user's restock offer (purchase-bound 20% code) on the
   // scheduler. Quiet on any failure — never blocks the tool.
@@ -305,6 +306,15 @@
     /* Protocol Scheduler is free for everyone — gate removed to drive repeat usage. */
     var rows=readRows();
     if(!rows.length){ toast('Add at least one compound with a start date.'); return; }
+
+    // Persist this register's cadence so the restock nudge (email + this card on a
+    // later visit) fires ~7 days before each compound's entered cycle-end.
+    try {
+      if (RS_TOKEN) {
+        var cad = rows.map(function(c){ return { name:c.name, cycleEnd:datesFor(c).end.toISOString() }; });
+        fetch('/api/recovery/cadence-save',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+RS_TOKEN},body:JSON.stringify({rows:cad})}).catch(function(){});
+      }
+    } catch(e){}
     // compute per-compound dates + global range
     var gStart=null,gEnd=null, byDay={}, ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Velox Peptides//Protocol Scheduler//EN','CALSCALE:GREGORIAN'];
     rows.forEach(function(c,ci){

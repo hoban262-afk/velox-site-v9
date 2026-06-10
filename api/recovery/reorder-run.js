@@ -1,18 +1,21 @@
 /**
- * GET/POST /api/recovery/reorder-run — reorder/replenishment cron worker
+ * GET/POST /api/recovery/reorder-run — cadence-driven restock cron
  *
- * Once a day, finds paid/dispatched orders that were placed in the reorder
- * window (28–60 days ago) and haven't had a reminder yet, then sends one
- * reorder email and stamps reorder_email_sent_at so it's never repeated.
+ * Once a day, finds research-register cadences (from the Protocol Scheduler) whose
+ * cycle-end is ~LEAD_DAYS away, confirms the customer actually PURCHASED that
+ * compound (the order check), then sends one restock email carrying a bound,
+ * single-use discount code and stamps the cadence so it's never repeated.
  *
- * Skips a customer who already placed a newer order (they've effectively
- * already reordered). Auth + suppression match api/recovery/run.js.
+ * Auth + suppression match api/recovery/run.js.
  */
 
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
 const { buildReorderEmail } = require('../../lib/reorder-email');
-const { depletionTime, restockCodeFor, LEAD_DAYS, CYCLE_DAYS_PER_UNIT, CODE_PCT, CODE_TTL_DAYS } = require('../../lib/restock');
+const {
+  cadenceDue, findPurchaseOrder, restockCodeFor,
+  LEAD_DAYS, GRACE_DAYS, CODE_PCT, CODE_TTL_DAYS,
+} = require('../../lib/restock');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -62,78 +65,63 @@ async function isUnsubscribed(email) {
   } catch { return false; }
 }
 
-// Has this customer placed any order newer than the candidate? If so they've
-// likely already reordered — skip the nudge.
-async function hasNewerOrder(email, afterIso) {
-  try {
-    const rows = await sbGet(
-      `orders?customer_email=eq.${encodeURIComponent(email)}` +
-      `&created_at=gt.${encodeURIComponent(afterIso)}` +
-      `&status=in.(paid,dispatched,pending)&select=id&limit=1`
-    );
-    return Array.isArray(rows) && rows.length > 0;
-  } catch { return false; }
-}
-
 module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Supabase not configured' });
   if (!authorised(req)) return res.status(401).json({ error: 'Unauthorised' });
   if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: 'Resend not configured' });
 
-  const summary = { scanned: 0, sent: 0, skipped_notdue: 0, skipped_newer: 0, skipped_unsub: 0, errors: 0 };
+  const summary = { scanned: 0, sent: 0, skipped_nopurchase: 0, skipped_unsub: 0, errors: 0 };
 
   const now = Date.now();
-  // Pull paid orders old enough that even the soonest possible depletion (the
-  // default cycle) is within LEAD_DAYS, but not older than MAX_AGE_DAYS. The
-  // exact, per-order depletion check happens in JS below.
-  const earliest = new Date(now - (CYCLE_DAYS_PER_UNIT - LEAD_DAYS) * 864e5).toISOString();
-  const oldest   = new Date(now - MAX_AGE_DAYS * 864e5).toISOString();
+  const upper = new Date(now + LEAD_DAYS * 864e5).toISOString();   // cycle-end at most LEAD_DAYS away
+  const lower = new Date(now - GRACE_DAYS * 864e5).toISOString();  // and not more than GRACE_DAYS past
 
-  let candidates = [];
+  let cadences = [];
   try {
-    candidates = await sbGet(
-      'orders?status=in.(paid,dispatched)' +
-      `&created_at=lte.${encodeURIComponent(earliest)}&created_at=gte.${encodeURIComponent(oldest)}` +
-      '&reorder_email_sent_at=is.null' +
-      '&select=id,created_at,customer_name,customer_email,items&order=created_at.asc&limit=200'
+    cadences = await sbGet(
+      'research_cadence?nudge_sent_at=is.null' +
+      `&cycle_end=lte.${encodeURIComponent(upper)}&cycle_end=gte.${encodeURIComponent(lower)}` +
+      '&select=id,email,compound_key,compound_name,cycle_end&order=cycle_end.asc&limit=200'
     );
   } catch (e) {
     console.error('[reorder-run] query failed:', e.message);
     return res.status(500).json({ error: 'Query failed', detail: e.message });
   }
 
-  for (const order of candidates) {
+  for (const row of cadences) {
     if (summary.sent >= MAX_PER_RUN) break;
     summary.scanned++;
-    if (!order.customer_email) continue;
+    if (!row.email || !cadenceDue(row, now)) continue;
 
-    // Purchase-bound timing: only fire within LEAD_DAYS of estimated depletion.
-    // Not-due orders are left untouched (no stamp) so they're re-checked daily.
-    if (now < depletionTime(order) - LEAD_DAYS * 864e5) { summary.skipped_notdue++; continue; }
+    const stamp = (extra) => sbPatch(
+      `research_cadence?id=eq.${encodeURIComponent(row.id)}`,
+      Object.assign({ nudge_sent_at: new Date().toISOString() }, extra || {})
+    ).catch(() => {});
 
-    const stamp = () => sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { reorder_email_sent_at: new Date().toISOString() }).catch(() => {});
+    if (await isUnsubscribed(row.email)) { summary.skipped_unsub++; await stamp(); continue; }
 
-    if (await hasNewerOrder(order.customer_email, order.created_at)) { summary.skipped_newer++; await stamp(); continue; }
-    if (await isUnsubscribed(order.customer_email))                 { summary.skipped_unsub++; await stamp(); continue; }
+    // ── ORDER CHECK ── only nudge for a compound they actually bought.
+    let order = null;
+    try { order = await findPurchaseOrder(row.email, row.compound_key); }
+    catch (e) { summary.errors++; continue; }
+    if (!order) { summary.skipped_nopurchase++; continue; }   // no stamp — they may buy within the window
 
-    // Mint the bound, single-use 20% restock code (tied to this real prior
-    // purchase + email; expires; one use) — the fraud-proof core of the offer.
     let code = '';
     try { code = await restockCodeFor(order); }
-    catch (e) { console.error('[reorder-run] code mint failed', order.id, e.message); summary.errors++; continue; }
+    catch (e) { console.error('[reorder-run] code mint failed', row.id, e.message); summary.errors++; continue; }
 
     const links = {
       reorderUrl:     `${SITE}/api/recovery/reorder?token=${encodeURIComponent(signReorderToken(order.id))}`,
-      unsubscribeUrl: `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(signEmailToken(order.customer_email))}`,
+      unsubscribeUrl: `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(signEmailToken(row.email))}`,
     };
 
     let email;
     try { email = buildReorderEmail(order, links, { code: code, pct: CODE_PCT, expiresLabel: CODE_TTL_DAYS + ' days' }); }
-    catch (e) { console.error('[reorder-run] build failed', order.id, e.message); summary.errors++; continue; }
+    catch (e) { console.error('[reorder-run] build failed', row.id, e.message); summary.errors++; continue; }
 
     try {
       const sendRes = await sendMail({
-        to: order.customer_email, subject: email.subject, html: email.html,
+        to: row.email, subject: email.subject, html: email.html,
         flow: 'reorder', orderId: order.id,
         headers: {
           'List-Unsubscribe': `<${links.unsubscribeUrl}>`,
@@ -141,11 +129,11 @@ module.exports = async function handler(req, res) {
         },
       });
       if (!sendRes.ok) { summary.errors++; continue; }
-      await stamp();
+      await stamp({ code: code });
       summary.sent++;
-      console.log(`[reorder-run] order ${order.id} -> ${order.customer_email}`);
+      console.log(`[reorder-run] cadence ${row.id} (${row.compound_key}) -> ${row.email}`);
     } catch (e) {
-      console.error('[reorder-run] send failed', order.id, e.message);
+      console.error('[reorder-run] send failed', row.id, e.message);
       summary.errors++;
     }
   }

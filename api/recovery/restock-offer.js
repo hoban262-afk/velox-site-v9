@@ -1,22 +1,18 @@
 /**
  * GET /api/recovery/restock-offer — in-scheduler restock offer (authenticated)
  *
- * Returns the logged-in user's current restock offer, if any: a compound from a
- * past paid order that's estimated to be ~LEAD_DAYS from running low, plus the
- * bound single-use discount code (the SAME code the email cron would mint, via
- * lib/restock). Used by the Protocol Scheduler to surface a "restock" card.
+ * Returns the logged-in user's current restock offer, if any: a compound whose
+ * scheduler cycle-end (research_cadence) is ~LEAD_DAYS away AND which they have
+ * actually purchased (the order check), plus the bound single-use code (same one
+ * the email cron mints). Used by the Protocol Scheduler to show a restock card.
  *
- * SECURITY: requires the user's Supabase access token (Authorization: Bearer).
- * It verifies the token against Supabase Auth and only ever reads orders for
- * THAT verified email — never anyone else's. No token / not logged in ->
- * { due:false } (quiet, never errors the page).
- *
- * COMPLIANCE: supply-continuity framing only. No dosing/human-use language.
+ * SECURITY: requires the user's Supabase access token; only ever reads that
+ * verified email's cadence + orders. No token -> { due:false } (quiet).
+ * COMPLIANCE: research-register supply-continuity framing only.
  */
-
 const {
-  isDue, depletionTime, restockCodeFor, primaryCompound,
-  CODE_PCT, CODE_TTL_DAYS, MAX_AGE_DAYS,
+  cadenceDue, findPurchaseOrder, restockCodeFor,
+  LEAD_DAYS, GRACE_DAYS, CODE_PCT, CODE_TTL_DAYS,
 } = require('../../lib/restock');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -27,7 +23,6 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ due: false });
   if (!SUPABASE_URL || !SERVICE) return res.status(200).json({ due: false });
 
-  // ── Verify the caller ──────────────────────────────────────────────────────
   const authz = (req.headers['authorization'] || '').replace(/^Bearer\s+/i, '');
   if (!authz) return res.status(200).json({ due: false });
 
@@ -40,39 +35,35 @@ module.exports = async function handler(req, res) {
   } catch (e) { /* fall through */ }
   if (!email) return res.status(200).json({ due: false });
 
-  // ── That user's recent paid/dispatched orders only ─────────────────────────
-  let orders = [];
+  const now = Date.now();
+  const upper = new Date(now + LEAD_DAYS * 864e5).toISOString();
+  const lower = new Date(now - GRACE_DAYS * 864e5).toISOString();
+
+  let cadences = [];
   try {
-    const oldest = new Date(Date.now() - MAX_AGE_DAYS * 864e5).toISOString();
-    const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/orders?customer_email=eq.${encodeURIComponent(email)}` +
-      `&status=in.(paid,dispatched)&created_at=gte.${encodeURIComponent(oldest)}` +
-      `&select=id,created_at,customer_email,items&order=created_at.desc&limit=50`,
+    cadences = await fetch(
+      `${SUPABASE_URL}/rest/v1/research_cadence?email=eq.${encodeURIComponent(email)}` +
+      `&cycle_end=lte.${encodeURIComponent(upper)}&cycle_end=gte.${encodeURIComponent(lower)}` +
+      `&select=compound_key,compound_name,cycle_end&order=cycle_end.asc&limit=20`,
       { headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}` } }
-    );
-    orders = r.ok ? await r.json() : [];
+    ).then((r) => (r.ok ? r.json() : []));
   } catch (e) { return res.status(200).json({ due: false }); }
 
-  const now = Date.now();
-  const due = orders.filter((o) => isDue(o, now)).sort((a, b) => depletionTime(a) - depletionTime(b));
-  if (!due.length) return res.status(200).json({ due: false });
+  if (!Array.isArray(cadences) || !cadences.length) return res.status(200).json({ due: false });
 
-  // If they've already placed a newer order than the due one, they've restocked.
-  const offer = due[0];
-  const offerT = new Date(offer.created_at).getTime();
-  if (orders.some((o) => new Date(o.created_at).getTime() > offerT)) {
-    return res.status(200).json({ due: false });
+  // Soonest due cadence that the user has actually purchased.
+  for (const row of cadences) {
+    if (!cadenceDue(row, now)) continue;
+    let order = null;
+    try { order = await findPurchaseOrder(email, row.compound_key); } catch (e) { order = null; }
+    if (!order) continue;
+    let code = '';
+    try { code = await restockCodeFor(order); } catch (e) { continue; }
+    return res.status(200).json({
+      due: true,
+      compound: row.compound_name || 'your research stock',
+      code: code, pct: CODE_PCT, expiresInDays: CODE_TTL_DAYS,
+    });
   }
-
-  let code = '';
-  try { code = await restockCodeFor(offer); }
-  catch (e) { return res.status(200).json({ due: false }); }
-
-  return res.status(200).json({
-    due: true,
-    compound: primaryCompound(offer.items),
-    code: code,
-    pct: CODE_PCT,
-    expiresInDays: CODE_TTL_DAYS,
-  });
+  return res.status(200).json({ due: false });
 };
