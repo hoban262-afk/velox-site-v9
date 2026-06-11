@@ -82,8 +82,8 @@ module.exports = async function handler(req, res) {
 
     const [oRes, vRes, eRes] = await Promise.all([
       sb(`orders?select=created_at,total,status,items,customer_email&status=in.(paid,dispatched)&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.asc&limit=20000`),
-      sb(`visits?select=sid,path,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.asc&limit=80000`),
-      sb(`events?select=sid,event,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&limit=80000`),
+      sb(`visits?select=sid,path,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.desc&limit=80000`),
+      sb(`events?select=sid,event,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.desc&limit=80000`),
     ]);
     const orders = oRes.ok ? await oRes.json() : [];
     const visits = vRes.ok ? await vRes.json() : [];

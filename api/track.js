@@ -33,10 +33,24 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({ sid, event, path }),
       });
     } else {
-      await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
         method: 'POST', headers: sbHeaders,
         body: JSON.stringify({ sid, path, ref }),
       });
+      // Self-heal: a `visits` schema drift (e.g. the optional `ref` column being
+      // dropped/renamed) would otherwise make every insert 400 and silently
+      // freeze ALL visit logging. Surface it, then retry with the minimal columns
+      // the admin stats reader needs (sid, path; created_at defaults server-side).
+      if (!r.ok) {
+        const detail = await r.text().catch(() => '');
+        console.error('[track] visits insert failed', r.status, detail.slice(0, 200));
+        if (r.status === 400 || r.status === 404) {
+          await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
+            method: 'POST', headers: sbHeaders,
+            body: JSON.stringify({ sid, path }),
+          });
+        }
+      }
     }
-  } catch (e) { /* best-effort */ }
+  } catch (e) { console.error('[track] beacon error', e && e.message); }
 };
