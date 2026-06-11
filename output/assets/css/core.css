@@ -4977,21 +4977,21 @@ body {
 /* ── Category tiles — top border + name colour + action link colour ── */
 a.cat-tile[href*="/cognitive/"]      { border: 1px solid rgba(155,109,255,.20) !important; }
 a.cat-tile[href*="/metabolic/"]      { border: 1px solid rgba(255,229,0,.20) !important; }
-a.cat-tile[href*="/healing-and-repair/"] { border: 1px solid rgba(79,195,247,.20) !important; }
+a.cat-tile[href*="/recovery/"] { border: 1px solid rgba(79,195,247,.20) !important; }
 a.cat-tile[href*="/growth/"]         { border: 1px solid rgba(105,217,140,.20) !important; }
-a.cat-tile[href*="/anti-ageing/"]    { border: 1px solid rgba(255,107,157,.20) !important; }
+a.cat-tile[href*="/antioxidant/"]    { border: 1px solid rgba(255,107,157,.20) !important; }
 
 a.cat-tile[href*="/cognitive/"]      .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(155,109,255,.65); display: inline-block; padding-bottom: 2px; }
 a.cat-tile[href*="/metabolic/"]      .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(255,229,0,.65); display: inline-block; padding-bottom: 2px; }
-a.cat-tile[href*="/healing-and-repair/"] .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(79,195,247,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href*="/recovery/"] .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(79,195,247,.65); display: inline-block; padding-bottom: 2px; }
 a.cat-tile[href*="/growth/"]         .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(105,217,140,.65); display: inline-block; padding-bottom: 2px; }
-a.cat-tile[href*="/anti-ageing/"]    .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(255,107,157,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href*="/antioxidant/"]    .cat-tile-name { color: #fff !important; border-bottom: 1px solid rgba(255,107,157,.65); display: inline-block; padding-bottom: 2px; }
 /* hover: border brightens to 40% opacity */
 a.cat-tile[href*="/cognitive/"]:hover      { border-color: rgba(155,109,255,.40) !important; }
 a.cat-tile[href*="/metabolic/"]:hover      { border-color: rgba(255,229,0,.40) !important; }
-a.cat-tile[href*="/healing-and-repair/"]:hover { border-color: rgba(79,195,247,.40) !important; }
+a.cat-tile[href*="/recovery/"]:hover { border-color: rgba(79,195,247,.40) !important; }
 a.cat-tile[href*="/growth/"]:hover         { border-color: rgba(105,217,140,.40) !important; }
-a.cat-tile[href*="/anti-ageing/"]:hover    { border-color: rgba(255,107,157,.40) !important; }
+a.cat-tile[href*="/antioxidant/"]:hover    { border-color: rgba(255,107,157,.40) !important; }
 
 /* ── Product cards — top border, badge label colour, hover glow ── */
 /* product card category border-top colours removed */
