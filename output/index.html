@@ -512,7 +512,7 @@ html{scroll-behavior:smooth}
         </div>
         <span class="hsi-div" aria-hidden="true"></span>
         <div class="h-stat-item">
-          <span class="hsi-v">5,310+</span>
+          <span class="hsi-v" data-order-count>5,310+</span>
           <span class="hsi-l">Orders</span>
         </div>
       </div>
@@ -531,7 +531,7 @@ html{scroll-behavior:smooth}
         <span class="h-dispatch-txt"></span>
       </div>
       <div class="hero-trust-bar">
-        <b>HPLC Verified</b> &middot; <b>CoA Supplied</b> &middot; <b>Royal Mail Tracked 24</b> &middot; <b>No card fees, lower prices</b> &middot; <b>5,310+ orders shipped</b>
+        <b>HPLC Verified</b> &middot; <b>CoA Supplied</b> &middot; <b>Royal Mail Tracked 24</b> &middot; <b>No card fees, lower prices</b> &middot; <b><span data-order-count>5,310+</span> orders shipped</b>
       </div>
       <p class="h-compliance"><strong>For in vitro research use only.</strong> Not for human or veterinary consumption.</p>
     </div>
@@ -679,7 +679,7 @@ html{scroll-behavior:smooth}
   <div class="vp-spbar-i">
     <span class="vp-spbar-item">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
-      <span><b>5,310+</b> orders shipped</span>
+      <span><b data-order-count>5,310+</b> orders shipped</span>
     </span>
     <span class="vp-spbar-item">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v6l-4 8a2 2 0 0 0 2 3h8a2 2 0 0 0 2-3l-4-8V2"/><line x1="8" y1="2" x2="16" y2="2"/></svg>
@@ -1357,5 +1357,25 @@ html{scroll-behavior:smooth}
 </script>
   <script src="/assets/js/pricing.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
+<script>
+(function () {
+  // Social-proof order counter — starts at BASE on BASE_DATE and ticks up by
+  // 5–10 orders every 1–2 days. Deterministic: stable per day, identical across
+  // every placement, no flicker and no backend needed.
+  var BASE = 5310, BASE_DATE = Date.UTC(2026, 5, 11), DAY = 86400000;
+  var days = Math.max(0, Math.floor((Date.now() - BASE_DATE) / DAY));
+  var seed = 20260611 >>> 0;
+  function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+  var total = BASE, cursor = 0;
+  while (true) {
+    cursor += 1 + Math.floor(rnd() * 2);  // next bump lands in 1–2 days
+    if (cursor > days) break;
+    total += 5 + Math.floor(rnd() * 6);    // +5–10 orders per bump
+  }
+  var txt = total.toLocaleString('en-GB') + '+';
+  var nodes = document.querySelectorAll('[data-order-count]');
+  for (var i = 0; i < nodes.length; i++) nodes[i].textContent = txt;
+})();
+</script>
 </body>
 </html>
