@@ -411,38 +411,136 @@
     if(cats.length===1) return 'All compounds sit in one research area — ' + cats[0] + '.';
     return 'Selected for complementary research across ' + cats.length + ' areas.';
   }
+  function stackTitle(list){
+    var cats={}; list.forEach(function(p){ cats[p.catLabel]=1; });
+    var keys=Object.keys(cats);
+    if(list.length===1) return {a:list[0].name, b:'Profile'};
+    if(keys.length===1)  return {a:keys[0], b:'Protocol'};
+    return {a:'Multi-Pathway', b:'Protocol'};
+  }
+  // Shareable research-stack card. Dynamic height — adapts to 1–5 compounds.
   function drawStack(){
     var list = ids.map(function(id){return BY[id];}).filter(Boolean);
-    var c = $('stackCanvas'), x = c.getContext('2d'), W=1080, H=1350;
-    x.fillStyle='#04070b'; x.fillRect(0,0,W,H);
-    var grd=x.createLinearGradient(0,0,W,0); grd.addColorStop(0,'#01D3A0'); grd.addColorStop(1,'#6cf7d6');
-    x.fillStyle=grd; x.fillRect(0,0,W,12);
-    x.fillStyle='#fff'; x.font='900 54px "Barlow Condensed", Arial'; x.textBaseline='alphabetic';
-    x.fillText('VELOX', 70, 110); x.fillStyle='#01D3A0'; x.fillText(' PEPTIDES', 70+x.measureText('VELOX').width, 110);
-    x.fillStyle='#8aa0a0'; x.font='500 24px "DM Mono", monospace'; x.fillText('RESEARCH STACK', 72, 150);
-    var y=230, total=0, nostock=0;
-    list.forEach(function(p){
-      x.fillStyle='#0e141b'; roundRect(x,70,y,W-140,150,18); x.fill();
-      x.fillStyle=p.catColor; x.beginPath(); x.arc(150,y+75,46,0,7); x.fill();
-      x.fillStyle='#04140f'; x.font='900 44px "Barlow Condensed", Arial'; x.textAlign='center'; x.fillText(p.name.charAt(0),150,y+92); x.textAlign='left';
-      x.fillStyle='#fff'; x.font='800 40px Inter, Arial'; x.fillText(p.name, 226, y+62);
-      x.fillStyle=p.catColor; x.font='500 22px "DM Mono", monospace'; x.fillText(p.catLabel.toUpperCase(), 226, y+100);
-      x.textAlign='right';
-      if(p.buyUrl){ total+=p.price; x.fillStyle='#01D3A0'; x.font='900 46px "Barlow Condensed", Arial'; x.fillText('£'+(p.price%1===0?p.price:p.price.toFixed(2)), W-92, y+92); }
-      else { nostock++; x.fillStyle='#8aa0a0'; x.font='500 22px "DM Mono", monospace'; x.fillText('commission', W-92, y+88); }
-      x.textAlign='left';
-      y+=168;
-    });
-    y+=10; x.strokeStyle='#1a2230'; x.beginPath(); x.moveTo(70,y); x.lineTo(W-70,y); x.stroke(); y+=66;
-    x.fillStyle='#8aa0a0'; x.font='600 30px Inter, Arial'; x.fillText('Total (in-stock)', 72, y);
-    x.fillStyle='#fff'; x.font='900 56px "Barlow Condensed", Arial'; x.textAlign='right';
-    x.fillText('£'+(Math.round(total*100)/100), W-92, y+8); x.textAlign='left';
-    if(nostock){ y+=42; x.fillStyle='#7b8cff'; x.font='500 22px "DM Mono", monospace'; x.fillText('+ '+nostock+' to commission via Design Lab', 72, y); }
-    y+=74; x.fillStyle='#01D3A0'; x.font='500 22px "DM Mono", monospace'; x.fillText('✦ SYNERGY', 72, y); y+=42;
-    x.fillStyle='#cdd6dd'; x.font='400 30px Inter, Arial'; wrapText(x, synergyNote(list), 72, y, W-150, 40);
-    x.fillStyle='#4b5563'; x.font='500 24px "DM Mono", monospace';
-    x.fillText('veloxpeps.com/tools/compare', 72, H-90);
-    x.fillText('For in vitro research use only.', 72, H-52);
+    var c=$('stackCanvas'), x=c.getContext('2d');
+    var W=1080, pad=64, cx=pad, cw=W-pad*2, GRN='#01D3A0';
+    var T=stackTitle(list);
+    function ls(v){ if('letterSpacing' in x) x.letterSpacing=v; }
+    function wrapLines(text, font, maxw, maxLines){
+      x.font=font; ls('0px');
+      var words=String(text==null?'':text).split(/\s+/), lines=[], line='';
+      for(var i=0;i<words.length;i++){
+        var t=line?line+' '+words[i]:words[i];
+        if(x.measureText(t).width>maxw && line){ lines.push(line); line=words[i]; }
+        else line=t;
+      }
+      if(line) lines.push(line);
+      if(maxLines && lines.length>maxLines){
+        lines=lines.slice(0,maxLines);
+        var last=lines[maxLines-1];
+        while(last.length && x.measureText(last+'…').width>maxw) last=last.slice(0,-1);
+        lines[maxLines-1]=last.replace(/\s+$/,'')+'…';
+      }
+      return lines;
+    }
+    function render(draw){
+      var y=10; // below top accent bar
+      // ── header ──
+      var hTop=y;
+      if(draw){
+        x.textAlign='left'; x.textBaseline='alphabetic';
+        x.fillStyle=GRN; x.font='700 24px "DM Mono", monospace'; ls('5px');
+        x.fillText('RESEARCH STACK', cx, hTop+44); ls('0px');
+        x.fillStyle='#fff'; x.font='900 78px "Barlow Condensed", Arial'; x.fillText(T.a.toUpperCase(), cx, hTop+120);
+        x.fillStyle=GRN; x.fillText(T.b.toUpperCase(), cx, hTop+192);
+        x.textAlign='right'; x.fillStyle='#5b6b7a'; x.font='500 22px "DM Mono", monospace';
+        x.fillText(list.length+' COMPOUND'+(list.length>1?'S':''), W-pad, hTop+40); x.textAlign='left';
+        var bsz=58, bgap=8, by=hTop+62;
+        for(var i=0;i<list.length;i++){
+          var bp=list[i], bX=W-pad-(list.length-i)*(bsz+bgap)+bgap;
+          x.fillStyle=bp.catColor+'22'; roundRect(x,bX,by,bsz,bsz,13); x.fill();
+          x.strokeStyle=bp.catColor+'66'; x.lineWidth=2; x.stroke();
+          x.fillStyle=bp.catColor; x.font='800 30px "Barlow Condensed", Arial';
+          x.textAlign='center'; x.textBaseline='middle'; x.fillText(bp.name.charAt(0),bX+bsz/2,by+bsz/2+2);
+          x.textAlign='left'; x.textBaseline='alphabetic';
+        }
+      }
+      y=hTop+222;
+      if(draw){ x.strokeStyle='#18222e'; x.lineWidth=1; x.beginPath(); x.moveTo(cx,y); x.lineTo(W-pad,y); x.stroke(); }
+      y+=46;
+      // ── compound cards ──
+      for(var ci=0; ci<list.length; ci++){
+        var p=list[ci];
+        var cardTop=y, cpx=30, cpy=28, innerW=cw-cpx*2;
+        var cellGap=16, cellW=(innerW-cellGap)/2, cellPad=18, valW=cellW-cellPad*2;
+        var stats=[
+          ['MECHANISM', p.mechanism||'—'],
+          ['RECEPTOR TARGET', p.receptors||'—'],
+          ['MOL. WEIGHT', (typeof p.mw==='number'? p.mw+' g/mol':'—')],
+          ['SOLUBILITY', p.solubility||'—']
+        ];
+        var cl=[]; for(var s=0;s<4;s++) cl.push(wrapLines(stats[s][1],'500 24px Inter, Arial',valW,2));
+        var r0=Math.max(cl[0].length,cl[1].length), r1=Math.max(cl[2].length,cl[3].length);
+        var ch0=16+16+10+r0*30+16, ch1=16+16+10+r1*30+16;
+        var gridTop=cpy+74+18, gridH=ch0+14+ch1, cardH=gridTop+gridH+cpy;
+        if(draw){
+          x.fillStyle='#10161e'; roundRect(x,cx,cardTop,cw,cardH,18); x.fill();
+          x.strokeStyle='#1b2531'; x.lineWidth=1; x.stroke();
+          x.textAlign='left';
+          x.fillStyle='#fff'; x.font='800 40px Inter, Arial'; x.fillText(p.name,cx+cpx,cardTop+cpy+36);
+          if(p.aka){ x.fillStyle='#6b8299'; x.font='400 22px Inter, Arial'; x.fillText(p.aka,cx+cpx,cardTop+cpy+64); }
+          var pill=(p.catLabel||'').toUpperCase(); x.font='700 17px "DM Mono", monospace'; ls('1px');
+          var pw=x.measureText(pill).width+26, ppx=cx+cw-cpx-pw, ppy=cardTop+cpy+4;
+          x.fillStyle=p.catColor+'1f'; roundRect(x,ppx,ppy,pw,30,7); x.fill();
+          x.strokeStyle=p.catColor+'55'; x.lineWidth=1; x.stroke();
+          x.fillStyle=p.catColor; x.fillText(pill,ppx+13,ppy+20); ls('0px');
+          var gridY=cardTop+gridTop;
+          var cells=[ [0,0,0], [1,0,1], [0,1,2], [1,1,3] ];
+          for(var k=0;k<4;k++){
+            var col=cells[k][0], row=cells[k][1], si=cells[k][2];
+            var hh=row?ch1:ch0;
+            var X=cx+cpx+col*(cellW+cellGap), Y=gridY+(row?ch0+14:0);
+            x.fillStyle='#0a0e13'; roundRect(x,X,Y,cellW,hh,8); x.fill();
+            x.fillStyle='#4a5568'; x.font='700 15px "DM Mono", monospace'; ls('1.5px');
+            x.fillText(stats[si][0],X+cellPad,Y+30); ls('0px');
+            x.fillStyle='#c4d4e0'; x.font='500 24px Inter, Arial';
+            for(var li=0;li<cl[si].length;li++) x.fillText(cl[si][li],X+cellPad,Y+62+li*30);
+          }
+        }
+        y=cardTop+cardH+22;
+      }
+      // ── synergy analysis (2+ compounds) ──
+      if(list.length>1){
+        var sTop=y, spx=30, spy=26;
+        var sLines=wrapLines(synergyNote(list),'400 30px Inter, Arial', cw-spx*2, 8);
+        var boxH=spy+30+18+sLines.length*42+spy;
+        if(draw){
+          x.fillStyle='#06231a'; roundRect(x,cx,sTop,cw,boxH,16); x.fill();
+          x.strokeStyle=GRN+'33'; x.lineWidth=1; x.stroke();
+          x.fillStyle=GRN; x.font='700 22px "DM Mono", monospace'; ls('3px');
+          x.fillText('⚡ SYNERGY ANALYSIS', cx+spx, sTop+spy+22); ls('0px');
+          x.fillStyle='#a8cabb'; x.font='400 30px Inter, Arial';
+          for(var sj=0;sj<sLines.length;sj++) x.fillText(sLines[sj], cx+spx, sTop+spy+72+sj*42);
+        }
+        y=sTop+boxH+24;
+      }
+      // ── footer ──
+      var fTop=y;
+      if(draw){
+        x.strokeStyle='#18222e'; x.lineWidth=1; x.beginPath(); x.moveTo(cx,fTop); x.lineTo(W-pad,fTop); x.stroke();
+        x.textAlign='left'; x.fillStyle='#fff'; x.font='800 26px Inter, Arial';
+        x.fillText('VELOX',cx,fTop+46); var vw=x.measureText('VELOX').width;
+        x.fillStyle=GRN; x.fillText(' PEPTIDES',cx+vw,fTop+46);
+        x.fillStyle='#4a5568'; x.font='500 20px "DM Mono", monospace'; x.fillText('veloxpeps.com/tools/compare',cx,fTop+76);
+        x.textAlign='right'; x.fillStyle='#3a4a58'; x.fillText('For in vitro research use only',W-pad,fTop+76); x.textAlign='left';
+      }
+      return fTop+110;
+    }
+    var H=Math.ceil(render(false));
+    c.width=W; c.height=H;
+    x.fillStyle='#0a0e13'; x.fillRect(0,0,W,H);
+    var g=x.createLinearGradient(0,0,W,0); g.addColorStop(0,'#0a0e13'); g.addColorStop(.5,GRN); g.addColorStop(1,'#0a0e13');
+    x.fillStyle=g; x.fillRect(0,0,W,10);
+    render(true);
   }
   function roundRect(x,rx,ry,w,h,r){ x.beginPath(); x.moveTo(rx+r,ry); x.arcTo(rx+w,ry,rx+w,ry+h,r); x.arcTo(rx+w,ry+h,rx,ry+h,r); x.arcTo(rx,ry+h,rx,ry,r); x.arcTo(rx,ry,rx+w,ry,r); x.closePath(); }
   function wrapText(x,t,rx,ry,maxw,lh){ var words=t.split(' '),line='',yy=ry; for(var i=0;i<words.length;i++){ var test=line+words[i]+' '; if(x.measureText(test).width>maxw&&i>0){ x.fillText(line,rx,yy); line=words[i]+' '; yy+=lh; } else line=test; } x.fillText(line,rx,yy); }
