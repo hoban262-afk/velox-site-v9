@@ -16,6 +16,23 @@
   var SB_URL  = 'https://stkjdtyhaxejxqmbzyua.supabase.co';
   var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
 
+  // Bespoke fixed bundle prices — the bundles table only carries a flat
+  // discount_pct, which can't land on these exact retail prices. When a slug is
+  // listed here this price wins over the computed sum×(1−discount), and it flows
+  // to the stack-page buy box, the cart and the checkout total (the card prices
+  // on the shop pages are baked statically to the same values, so they match).
+  var BUNDLE_PRICE = {
+    'cognitive':            55.98,
+    'cognitive-and-sleep':  79.98,
+    'gh-peptide':           99.98,
+    'anti-ageing':         119.98,
+    'metabolic':           147.98,
+    'skin-and-aesthetic':   93.98,
+    'ultimate-repair':      79.98,
+    'repair-and-metabolic':127.98,
+    'gh-and-metabolic':    159.98,
+  };
+
   function money(n) { var v = Math.round(Number(n) * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
   // Velox Peps Pro member discount (0 unless a signed-in member). Applied to the
   // effective price so it flows to BOTH the displayed price and the data-price
@@ -129,6 +146,7 @@
         b.comps.forEach(function (c) { var bp = baseBy[c.product_slug + '|' + c.size]; if (bp != null) sum += bp * (c.qty || 1); });
         b.was = Math.round(sum * 100) / 100;
         b.price = Math.round(sum * (1 - b.discount / 100) * 100) / 100;
+        if (BUNDLE_PRICE[slug] != null) b.price = BUNDLE_PRICE[slug];   // bespoke fixed price wins
         b.save = sum > 0 ? Math.round((1 - b.price / sum) * 100) : 0;
       });
 
