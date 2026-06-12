@@ -18,6 +18,18 @@
     } catch (e) { return iso; }
   }
 
+  // Date + time of day — used in the orders tables so we can see when an order
+  // was placed, not just the date.
+  function fmtDateTime(iso) {
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+    } catch (e) { return iso; }
+  }
+
   function statusBadge(s) {
     var cls = { paid:'s-paid', dispatched:'s-dispatched', cancelled:'s-cancelled', pending:'s-pending' }[s] || 's-pending';
     return '<span class="status-badge ' + cls + '">' + esc(s) + '</span>';
@@ -1491,7 +1503,7 @@
         var ref = o.notes || o.id.slice(0, 8).toUpperCase();
         return '<tr style="cursor:pointer" onclick="toggleOrderDetails(\'' + o.id + '\')">' +
           '<td style="color:var(--g,#01D3A0);width:14px">▸</td>' +
-          '<td style="color:var(--t2)">' + fmtDate(o.created_at) + '</td>' +
+          '<td style="color:var(--t2)">' + fmtDateTime(o.created_at) + '</td>' +
           '<td><span style="font-family:monospace;font-size:11px;color:var(--t2)">' + esc(ref) + '</span></td>' +
           '<td><div style="color:#fff;font-size:13px;">' + esc(o.customer_name) + '</div>' +
             '<div style="color:var(--t3);font-size:11px;">' + esc(o.customer_email) + '</div></td>' +
@@ -1545,7 +1557,7 @@
       '<thead><tr><th>Date</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>' +
       '<tbody>' + orders.map(function (o) {
         return '<tr>' +
-          '<td style="color:var(--t2)">' + fmtDate(o.created_at) + '</td>' +
+          '<td style="color:var(--t2)">' + fmtDateTime(o.created_at) + '</td>' +
           '<td><div style="color:#fff">' + esc(o.customer_name) + '</div>' +
             '<div style="color:var(--t3);font-size:11px;">' + esc(o.customer_email) + '</div></td>' +
           '<td style="color:var(--g);font-weight:600;">£' + parseFloat(o.total || 0).toFixed(2) + '</td>' +
