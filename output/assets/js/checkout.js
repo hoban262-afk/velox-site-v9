@@ -187,6 +187,15 @@
   }
 
   var cart = getCart();
+  // When pricing.js re-prices stored lines from the live source, refresh our
+  // in-memory cart (used by both the summary AND the submit handler that builds
+  // the charged total) and re-render, so checkout never charges a stale price.
+  try {
+    document.addEventListener('vp:cart-repriced', function () {
+      cart = getCart();
+      try { renderCartSummary(cart, currentRegion()); } catch (e) {}
+    });
+  } catch (e) {}
   var appliedDiscount = null;
   var appliedPoints = 0;            // loyalty points being redeemed this order
   var appliedPointsSavingGBP = 0;   // their £ value (100 points = £1)

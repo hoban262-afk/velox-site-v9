@@ -197,5 +197,8 @@
   // Re-render once Velox Peps Pro status resolves (free shipping + member prices
   // appear without a manual refresh).
   try { window.addEventListener('velox:member', render); } catch (e) {}
+  // Re-render after pricing.js re-prices stored lines from the live source, so
+  // the cart always reflects the current shop price (no stale snapshots).
+  try { document.addEventListener('vp:cart-repriced', render); } catch (e) {}
 
 }());

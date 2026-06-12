@@ -134,7 +134,39 @@
 
       try { hydrateBundleBuyBox(bundleMap, baseBy); } catch (e) {}
       try { hydrateBundleCards(bundleMap, baseBy, slugByName); } catch (e) {}
+      try { repriceStoredCart(variantRows, bundleMap); } catch (e) {}
     }).catch(function () { /* keep fallback */ });
+  }
+
+  // ── Cart re-pricing — the single source of truth for what gets charged ──────
+  // The cart stores a price snapshot taken at add-time. If a price/discount has
+  // since changed (or pricing.js hadn't finished hydrating the buy box at add
+  // time), that snapshot goes stale and rides through to checkout. Here we
+  // re-price every stored line from the SAME live computation the shop pages use
+  // — singles via eff() (sale/base + member rate), bundles via the discounted
+  // bundle price — so the cart, checkout and charged total always match the
+  // price shown on the shop pages. Runs on every page (incl. cart + checkout).
+  function repriceStoredCart(variantRows, bundleMap) {
+    var cart;
+    try { cart = JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { return; }
+    if (!Array.isArray(cart) || !cart.length) return;
+    var effBy = {};
+    variantRows.forEach(function (v) { effBy[v.slug + '|' + v.size] = eff(v); });
+    var changed = false;
+    cart.forEach(function (it) {
+      if (!it || typeof it !== 'object') return;
+      var np = null;
+      var b = bundleMap[it.slug];
+      if (b && typeof b.price === 'number' && b.price > 0) {
+        np = b.price;                                   // bundle line (slug = stack slug)
+      } else {
+        var k = it.slug + '|' + it.size;
+        if (effBy[k] != null && effBy[k] > 0) np = effBy[k]; // single variant line
+      }
+      if (np != null && Math.abs(np - (Number(it.price) || 0)) > 0.005) { it.price = np; changed = true; }
+    });
+    if (changed) { try { localStorage.setItem('vp_cart', JSON.stringify(cart)); } catch (e) {} }
+    try { document.dispatchEvent(new CustomEvent('vp:cart-repriced')); } catch (e) {}
   }
 
   // Stack page buy box + component pills.
