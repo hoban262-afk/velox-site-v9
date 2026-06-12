@@ -884,6 +884,10 @@
   if (discApplyBtn) {
     discApplyBtn.addEventListener('click', function () { setTimeout(updateFenaTotal, 60); });
   }
+  // Refresh the Pay Now amount after pricing.js re-prices the cart from the live
+  // source, so the displayed total matches what gets sent to Fena (the click
+  // handler already reads the cart fresh at submit time).
+  try { document.addEventListener('vp:cart-repriced', updateFenaTotal); } catch (e) {}
 
   // ── Error + fallback helpers ───────────────────────────────────────────────
   var fenaBtn = document.getElementById('fena-pay-btn');
