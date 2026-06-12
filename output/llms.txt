@@ -21,6 +21,7 @@ Key facts: every batch is HPLC-verified with certificates of analysis available 
 - [Tirzepatide guide](https://veloxpeps.com/guides/tirzepatide/): dual-agonist incretin research summary
 - [Ipamorelin guide](https://veloxpeps.com/guides/ipamorelin/): ghrelin-receptor research summary
 - [Retatrutide in Type 2 Diabetes: TRANSCEND-T2D-1](https://veloxpeps.com/guides/retatrutide-type-2-diabetes/): Phase 3 trial data (The Lancet, June 2026) — A1C reduction and weight loss in early-onset T2D
+- [FDA Peptide Reclassification 2026](https://veloxpeps.com/guides/fda-peptide-reclassification-2026/): 12 peptides including BPC-157, TB-500, MOTS-c, Semax, DSIP, GHK-Cu and KPV removed from FDA 503A Category 2 (April 2026); PCAC review July 2026
 - [All guides](https://veloxpeps.com/guides/): glossary, testing methodology, compound comparisons (e.g. retatrutide vs tirzepatide vs semaglutide)
 
 ## Free research tools
