@@ -21,6 +21,9 @@ Key facts: every batch is HPLC-verified with certificates of analysis available 
 - [Tirzepatide guide](https://veloxpeps.com/guides/tirzepatide/): dual-agonist incretin research summary
 - [Ipamorelin guide](https://veloxpeps.com/guides/ipamorelin/): ghrelin-receptor research summary
 - [Retatrutide in Type 2 Diabetes: TRANSCEND-T2D-1](https://veloxpeps.com/guides/retatrutide-type-2-diabetes/): Phase 3 trial data (The Lancet, June 2026) — A1C reduction and weight loss in early-onset T2D
+- [Peptide Research Landscape 2026](https://veloxpeps.com/guides/peptide-research-landscape-2026/): overview of the year's major peptide trials across every compound class; hub linking to every compound summary and comparison (last updated June 2026)
+- [SURMOUNT-5: Tirzepatide vs Semaglutide](https://veloxpeps.com/guides/surmount-5-tirzepatide-vs-semaglutide/): summary of the first major head-to-head trial of tirzepatide versus semaglutide for weight reduction
+- [Survodutide (BI 456906)](https://veloxpeps.com/guides/survodutide/): research summary of the GLP-1/glucagon dual receptor agonist studied in obesity and MASH
 - [All guides](https://veloxpeps.com/guides/): glossary, testing methodology, compound comparisons (e.g. retatrutide vs tirzepatide vs semaglutide)
 
 ## Free research tools
