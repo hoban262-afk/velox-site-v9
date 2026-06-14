@@ -85,19 +85,21 @@
       });
     });
 
-    // Totals — vial volume discount: 2 vials 5%, 3 vials 10%, 4+ vials 15%.
-    // Pens, BAC water and 10-packs are excluded: never on the vial track, never count to its tier.
+    // Totals — vial volume discount: SPEND-based on the discountable vial subtotal —
+    //   £75 → 5%, £150 → 10%, £200 → 15%, £250 → 20%.
+    // Pens, BAC water and 10-packs are excluded: never on the vial track, never count to its threshold.
     function isPen(i) { return /pen/i.test(i.size || ''); }
     function isBac(i) { return i.slug === 'bacteriostatic-water'; }
     function is10pack(i) { return /10-?pack/i.test(i.size || ''); }
     function isExcluded(i) { return isPen(i) || isBac(i) || is10pack(i); }
+    // SPEND ladder — input is the discountable vial subtotal in GBP.
+    function vialVolumeRate(spend) { return spend >= 250 ? 0.20 : (spend >= 200 ? 0.15 : (spend >= 150 ? 0.10 : (spend >= 75 ? 0.05 : 0))); }
     // 10-pack volume — separate track, stacks only 10-packs: 2=10%, 3=17.5%, 4=25%, 5+=30%.
     function packVolumeRate(q) { return q >= 5 ? 0.30 : (q === 4 ? 0.25 : (q === 3 ? 0.175 : (q === 2 ? 0.10 : 0))); }
     var subtotal = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
     var totalQty = cart.reduce(function (s, i) { return s + (i.qty || 1); }, 0);
-    var discQty  = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : (i.qty || 1)); }, 0);
     var discBase = cart.reduce(function (s, i) { return s + (isExcluded(i) ? 0 : i.price * (i.qty || 1)); }, 0);
-    var rate = discQty >= 4 ? 0.15 : (discQty === 3 ? 0.10 : (discQty === 2 ? 0.05 : 0));
+    var rate = vialVolumeRate(discBase);
     var volSaving = Math.round(discBase * rate * 100) / 100;
     var packQty  = cart.reduce(function (s, i) { return s + (is10pack(i) ? (i.qty || 1) : 0); }, 0);
     var packBase = cart.reduce(function (s, i) { return s + (is10pack(i) ? i.price * (i.qty || 1) : 0); }, 0);
@@ -113,6 +115,7 @@
     if (totalEl)    totalEl.textContent = fmt(total);
     renderVolumeRow(volSaving, rate);
     renderPackVolumeRow(packSaving, packRate);
+    renderVolumeNudge(discBase, rate);
 
     // Update nav count
     var countEl = document.getElementById('nav-cart-count');
@@ -160,6 +163,28 @@
     } else if (row) {
       row.remove();
     }
+  }
+
+  // Spend-tier nudge — the goal-gradient prompt that makes the spend ladder convert.
+  // Shows how little more is needed to reach the next vial discount tier.
+  function renderVolumeNudge(discBase, rate) {
+    var totalRow = document.querySelector('.cart-sum-total');
+    if (!totalRow || !totalRow.parentNode) return;
+    var TIERS = [{ min: 75, pct: 5 }, { min: 150, pct: 10 }, { min: 200, pct: 15 }, { min: 250, pct: 20 }];
+    var n = document.getElementById('vp-vol-nudge');
+    var next = null;
+    for (var k = 0; k < TIERS.length; k++) { if (discBase < TIERS[k].min) { next = TIERS[k]; break; } }
+    // Only show when there are discountable vials in the basket and a next tier exists.
+    if (discBase <= 0 || !next) { if (n) n.remove(); return; }
+    if (!n) {
+      n = document.createElement('div');
+      n.id = 'vp-vol-nudge';
+      n.className = 'cart-sum-row';
+      n.style.cssText = 'display:block;color:#01D3A0;font-size:12px;margin:2px 0 6px';
+      totalRow.parentNode.insertBefore(n, totalRow);
+    }
+    var remaining = Math.round((next.min - discBase) * 100) / 100;
+    n.innerHTML = 'Spend <strong>' + fmt(remaining) + '</strong> more on vials to unlock <strong>' + next.pct + '% off</strong>';
   }
 
   function renderFreeShipNudge(subtotal) {

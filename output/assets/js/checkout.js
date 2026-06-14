@@ -69,16 +69,19 @@
     return savingGBP;
   }
 
-  // Volume discount (single vials): 2 vials 5%, 3 vials 10%, 4+ vials 20% (by quantity of
-  // DISCOUNTABLE vials). Pens, BAC water and 10-packs are EXCLUDED — never discounted on
-  // this track and never count toward the vial tier.
+  // Volume discount (single vials): SPEND-based on the DISCOUNTABLE vial subtotal —
+  //   £75 → 5%, £150 → 10%, £200 → 15%, £250 → 20%.
+  // Pens, BAC water and 10-packs are EXCLUDED — never discounted on this track and never
+  // count toward the spend threshold. (Replaces the old per-vial-quantity tiers.)
   function isPen(i) { return /pen/i.test(i.size || ''); }
   function is10pack(i) { return /10-?pack/i.test(i.size || ''); }
   function isBacW(i) { return i.slug === 'bacteriostatic-water'; }
   function vialExcluded(i) { return isPen(i) || isBacW(i) || is10pack(i); }
   function discountableGBP(cart) { return cart.reduce(function (s, i) { return s + (vialExcluded(i) ? 0 : i.price * (i.qty || 1)); }, 0); }
   function discountableQty(cart) { return cart.reduce(function (s, i) { return s + (vialExcluded(i) ? 0 : (i.qty || 1)); }, 0); }
-  function vpVolumeRate(q) { return q >= 4 ? 0.20 : (q === 3 ? 0.10 : (q === 2 ? 0.05 : 0)); }
+  // SPEND ladder — input is the discountable vial subtotal in GBP, not a unit count.
+  function vpVolumeRate(spend) { return spend >= 250 ? 0.20 : (spend >= 200 ? 0.15 : (spend >= 150 ? 0.10 : (spend >= 75 ? 0.05 : 0))); }
+  var MAX_VIAL_PCT = 0.25; // stacking cap: vial-side discount (volume OR code) never exceeds this share of the vial base
 
   // 10-PACK volume discount — a SEPARATE system that applies ONLY to 10-packs and stacks
   // 10-packs together (total count of 10-pack units across the basket):
@@ -96,7 +99,7 @@
   function bestPromoGBP(cart, codeDiscount) {
     var base = discountableGBP(cart);
     var codeSaving = (codeDiscount && codeDiscount.saving) || 0;
-    var rate = vpVolumeRate(discountableQty(cart));
+    var rate = vpVolumeRate(base);
     var volSaving = Math.round(base * rate * 100) / 100;
 
     var vialPromo, vialLabel, vialCode;
@@ -105,6 +108,9 @@
     } else {
       vialPromo = codeSaving; vialLabel = codeDiscount ? codeDiscount.code : ''; vialCode = codeDiscount ? codeDiscount.code : '';
     }
+    // Stacking cap — never let the vial-side discount exceed MAX_VIAL_PCT of the vial base.
+    var vialCapGBP = Math.round(base * MAX_VIAL_PCT * 100) / 100;
+    if (vialPromo > vialCapGBP) vialPromo = vialCapGBP;
 
     var packRate = packVolumeRate(packQty(cart));
     var packSaving = packVolumeGBP(cart);
