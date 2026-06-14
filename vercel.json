@@ -192,6 +192,11 @@
       "permanent": true
     },
     {
+      "source": "/research/:slug/",
+      "destination": "/guides/:slug/",
+      "permanent": true
+    },
+    {
       "source": "/research/:path*",
       "destination": "/guides/:path*",
       "permanent": true
