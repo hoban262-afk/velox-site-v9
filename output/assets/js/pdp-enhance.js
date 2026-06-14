@@ -24,6 +24,10 @@
   css.textContent = [
     '.vp-ship-nudge{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12.5px;color:#9CA3AF;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.22);border-radius:8px;padding:9px 12px;line-height:1.4}',
     '.vp-ship-nudge b{color:#01D3A0;font-weight:600}',
+    '.vp-vol-nudge{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12.5px;color:#9CA3AF;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.22);border-radius:8px;padding:9px 12px;line-height:1.4}',
+    '.vp-vol-nudge b{color:#01D3A0;font-weight:600}',
+    '.vp-vol-nudge .vpn-bar{flex:0 0 60px;height:5px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}',
+    '.vp-vol-nudge .vpn-fill{display:block;height:100%;background:#01D3A0;width:0;transition:width .35s ease}',
     '.vp-ship-nudge .vpn-bar{flex:0 0 60px;height:5px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}',
     '.vp-ship-nudge .vpn-fill{display:block;height:100%;background:#01D3A0;width:0;transition:width .35s ease}',
     '.vp-sticky-buy{display:none}',
@@ -47,6 +51,23 @@
     return c.reduce(function (s, i) { return s + (parseFloat(i.price) || 0) * (i.qty || 1); }, 0);
   }
 
+  // Vial volume discount mirrors cart.js / checkout.js: SPEND-based on the DISCOUNTABLE
+  // vial subtotal (pens, BAC water and 10-packs excluded). £75->5, £150->10, £200->15, £250->20%.
+  var VOL_TIERS = [{ min: 75, pct: 5 }, { min: 150, pct: 10 }, { min: 200, pct: 15 }, { min: 250, pct: 20 }];
+  function isPenSz(sz) { return /pen/i.test(sz || ''); }
+  function is10packSz(sz) { return /10-?pack/i.test(sz || ''); }
+  function itemExcluded(i) { return isPenSz(i.size) || is10packSz(i.size) || i.slug === 'bacteriostatic-water'; }
+  function vialSubtotal() {
+    var c = [];
+    try { c = JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { c = []; }
+    return c.reduce(function (s, i) { return s + (itemExcluded(i) ? 0 : (parseFloat(i.price) || 0) * (i.qty || 1)); }, 0);
+  }
+  function selectedIsVial() {
+    var sl = selected();
+    if (!sl) return false;
+    return !isPenSz(sl.value) && !is10packSz(sl.value) && (form.getAttribute('data-compound') !== 'bacteriostatic-water');
+  }
+
   // ── (1) Free-shipping nudge in the buy box ─────────────────────────────────
   var btn = document.getElementById('add-to-order-btn');
   var nudge = document.createElement('div');
@@ -66,6 +87,26 @@
       nudge.innerHTML = '<span class="vpn-bar"><span class="vpn-fill" style="width:100%"></span></span>' +
         '<span><b>✓ Free UK shipping unlocked</b></span>';
     }
+  }
+
+  // ── (2b) Volume-discount progress nudge in the buy box ─────────────────────
+  var volNudge = document.createElement('div');
+  volNudge.className = 'vp-vol-nudge';
+  volNudge.id = 'vp-pdp-vol';
+  if (nudge && nudge.parentNode) nudge.parentNode.insertBefore(volNudge, nudge.nextSibling);
+  else form.appendChild(volNudge);
+
+  function updateVolNudge() {
+    // Projected discountable vial spend = vials already in cart + the selected vial (if any).
+    var projected = vialSubtotal() + (selectedIsVial() ? selectedPrice() : 0);
+    var next = null;
+    for (var k = 0; k < VOL_TIERS.length; k++) { if (projected < VOL_TIERS[k].min) { next = VOL_TIERS[k]; break; } }
+    if (projected <= 0 || !next) { volNudge.style.display = 'none'; return; }
+    volNudge.style.display = 'flex';
+    var remaining = Math.round((next.min - projected) * 100) / 100;
+    var pct = Math.max(0, Math.min(100, (projected / next.min) * 100));
+    volNudge.innerHTML = '<span class="vpn-bar"><span class="vpn-fill" style="width:' + pct + '%"></span></span>' +
+      '<span>Add <b>' + fmt(remaining) + '</b> more to unlock <b>' + next.pct + '% off</b></span>';
   }
 
   // ── (3) Mobile sticky add-to-order bar ─────────────────────────────────────
@@ -97,7 +138,7 @@
   });
 
   // ── Wire updates ────────────────────────────────────────────────────────────
-  function refresh() { updateNudge(); updateBar(); }
+  function refresh() { updateNudge(); updateVolNudge(); updateBar(); }
   form.querySelectorAll('input[name="size"]').forEach(function (i) {
     i.addEventListener('change', refresh);
   });

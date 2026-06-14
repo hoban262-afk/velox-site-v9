@@ -116,6 +116,7 @@
     renderVolumeRow(volSaving, rate);
     renderPackVolumeRow(packSaving, packRate);
     renderVolumeNudge(discBase, rate);
+    renderPackVolumeNudge(packBase, packQty);
 
     // Update nav count
     var countEl = document.getElementById('nav-cart-count');
@@ -163,6 +164,29 @@
     } else if (row) {
       row.remove();
     }
+  }
+
+  // 10-pack goal-gradient nudge — count-based: 2=10%, 3=17.5%, 4=25%, 5+=30%.
+  // Shows how many more 10-packs unlock the next pack tier (separate from the vial ladder).
+  function renderPackVolumeNudge(packBase, packQty) {
+    var totalRow = document.querySelector('.cart-sum-total');
+    if (!totalRow || !totalRow.parentNode) return;
+    var PACK_TIERS = [{ q: 2, pct: 10 }, { q: 3, pct: 17.5 }, { q: 4, pct: 25 }, { q: 5, pct: 30 }];
+    var n = document.getElementById('vp-pack-nudge');
+    var next = null;
+    for (var k = 0; k < PACK_TIERS.length; k++) { if (packQty < PACK_TIERS[k].q) { next = PACK_TIERS[k]; break; } }
+    // Only when there is at least one 10-pack in the basket and a higher tier remains.
+    if (packQty <= 0 || !next) { if (n) n.remove(); return; }
+    if (!n) {
+      n = document.createElement('div');
+      n.id = 'vp-pack-nudge';
+      n.className = 'cart-sum-row';
+      n.style.cssText = 'display:block;color:#01D3A0;font-size:12px;margin:2px 0 6px';
+      totalRow.parentNode.insertBefore(n, totalRow);
+    }
+    var need = next.q - packQty;
+    n.innerHTML = 'Add <strong>' + need + '</strong> more 10-pack' + (need === 1 ? '' : 's') +
+      ' to unlock <strong>' + next.pct + '% off</strong>';
   }
 
   // Spend-tier nudge — the goal-gradient prompt that makes the spend ladder convert.
