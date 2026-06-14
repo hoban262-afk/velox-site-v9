@@ -83,7 +83,7 @@ module.exports = async function handler(req, res) {
     var existing = await exRes.json();
     if (Array.isArray(existing) && existing.length) {
       return res.status(200).json({ success: true, already: true, codeHint: 'VELOX-',
-        message: "You're already on the list — check your inbox for your code." });
+        message: "You're already on the list. Check your inbox for your code." });
     }
 
     // ── Generate a unique code (retry once on the rare collision) ───────────
@@ -121,7 +121,7 @@ module.exports = async function handler(req, res) {
         await resend.emails.send({
           from: FROM, to: email,
           replyTo: 'support@veloxpeps.com',
-          subject: 'Your handbook + 10% off code — Velox Peptides',
+          subject: 'Your handbook + 10% off code from Velox Peptides',
           html: welcomeEmailHtml(code, email),
           // Plain-text alternative improves inbox placement (HTML-only scores worse)
           text: 'Welcome to the Velox research community.\n\n' +
