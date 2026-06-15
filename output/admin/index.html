@@ -323,7 +323,8 @@
 
     <div class="admin-topbar">
       <div class="admin-topbar-l">
-        <div class="admin-screen-title" id="screen-title">Overview</div>
+        <button class="vx-map-btn" onclick="showMap()" title="Back to command map">&#9678; Map</button>
+        <div class="admin-screen-title" id="screen-title">Command map</div>
       </div>
       <button class="admin-logout" id="admin-logout">Sign out</button>
     </div>
@@ -449,7 +450,11 @@
     <div class="toast-wrap" id="toast-wrap"></div>
 
     <!-- Overview -->
-    <div class="admin-panel active" id="panel-overview">
+    <div class="admin-panel active" id="panel-map">
+      <div class="vx-map-hint">Your whole operation, connected. Click any node to open it &middot; drag to rearrange.</div>
+      <div id="vx-map-graph"></div>
+    </div>
+    <div class="admin-panel" id="panel-overview">
       <div class="adm-section">
         <div class="adm-sec-hdr">
           <div style="display:flex;align-items:center;gap:12px">
@@ -1012,5 +1017,16 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="/assets/js/admin-charts.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
+  <style>
+    .admin-sidebar{display:none !important;}
+    .admin-main{width:100%;}
+    .vx-map-btn{background:rgba(1,211,160,.12);color:#01D3A0;border:1px solid rgba(1,211,160,.4);border-radius:8px;font-size:12.5px;font-weight:600;padding:6px 12px;margin-right:10px;cursor:pointer;}
+    .vx-map-btn:hover{background:rgba(1,211,160,.22);}
+    #panel-map{padding:0 !important;}
+    .vx-map-hint{color:#6b7280;font-size:12.5px;padding:18px 24px 0;}
+    #vx-map-graph{width:100%;padding:4px 12px 18px;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="/assets/js/admin-map.js" defer></script>
 </body>
 </html>
