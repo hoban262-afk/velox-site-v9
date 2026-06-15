@@ -1352,27 +1352,34 @@
     var el = document.getElementById('reviews-table-wrap');
     if (!el) return;
     if (!reviews.length) { el.innerHTML = '<p class="adm-empty">No reviews submitted yet.</p>'; return; }
+    function rvRow(rv) {
+      return '<tr>' +
+        '<td style="color:var(--t2)">' + fmtDate(rv.created_at) + '</td>' +
+        '<td style="color:#fff">' + esc(rv.product_name || rv.product_slug) + '</td>' +
+        '<td style="color:#f5b301;white-space:nowrap">' + reviewStars(rv.rating) + '</td>' +
+        '<td style="color:var(--t2)">' + esc(rv.author_name) + '</td>' +
+        '<td style="color:var(--t2);max-width:280px">' +
+          (rv.title ? '<strong style="color:#fff">' + esc(rv.title) + '</strong><br>' : '') +
+          esc(rv.body || '') + '</td>' +
+        '<td>' + statusBadge(rv.status) + '</td>' +
+        '<td>' +
+          '<select class="status-select" onchange="updateReviewStatus(\'' + rv.id + '\', this.value)">' +
+            ['pending','approved','rejected'].map(function (s) {
+              return '<option value="' + s + '"' + (rv.status === s ? ' selected' : '') + '>' + s + '</option>';
+            }).join('') +
+          '</select>' +
+        '</td>' +
+      '</tr>';
+    }
+    function rvGrp(label, color) { return '<tr><td colspan="7" style="padding:16px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    var rvPend = reviews.filter(function (rv) { return rv.status === 'pending'; });
+    var rvDone = reviews.filter(function (rv) { return rv.status !== 'pending'; });
+    var rvBody = '';
+    if (rvPend.length) rvBody += rvGrp('Pending moderation \u00b7 ' + rvPend.length, '#f59e0b') + rvPend.map(rvRow).join('');
+    if (rvDone.length) rvBody += rvGrp('Reviewed \u00b7 ' + rvDone.length, '#6b7280') + rvDone.map(rvRow).join('');
     el.innerHTML = '<table class="adm-table">' +
       '<thead><tr><th>Date</th><th>Product</th><th>Rating</th><th>Reviewer</th><th>Review</th><th>Status</th><th>Action</th></tr></thead>' +
-      '<tbody>' + reviews.map(function (rv) {
-        return '<tr>' +
-          '<td style="color:var(--t2)">' + fmtDate(rv.created_at) + '</td>' +
-          '<td style="color:#fff">' + esc(rv.product_name || rv.product_slug) + '</td>' +
-          '<td style="color:#f5b301;white-space:nowrap">' + reviewStars(rv.rating) + '</td>' +
-          '<td style="color:var(--t2)">' + esc(rv.author_name) + '</td>' +
-          '<td style="color:var(--t2);max-width:280px">' +
-            (rv.title ? '<strong style="color:#fff">' + esc(rv.title) + '</strong><br>' : '') +
-            esc(rv.body || '') + '</td>' +
-          '<td>' + statusBadge(rv.status) + '</td>' +
-          '<td>' +
-            '<select class="status-select" onchange="updateReviewStatus(\'' + rv.id + '\', this.value)">' +
-              ['pending','approved','rejected'].map(function (s) {
-                return '<option value="' + s + '"' + (rv.status === s ? ' selected' : '') + '>' + s + '</option>';
-              }).join('') +
-            '</select>' +
-          '</td>' +
-        '</tr>';
-      }).join('') + '</tbody></table>';
+      '<tbody>' + rvBody + '</tbody></table>';
   }
 
   window.updateReviewStatus = function (id, newStatus) {
@@ -1934,14 +1941,24 @@
 
     var q = ((document.getElementById('cust-search') || {}).value || '').trim().toLowerCase();
     if (q) list = list.filter(function (c) { return (c.name || '').toLowerCase().indexOf(q) > -1 || (c.email || '').toLowerCase().indexOf(q) > -1; });
-    if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers yet.</div>'; return; }
-    wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' +
-      list.map(function (c) {
-        return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
-          '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
-          '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
-          '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
-      }).join('') + '</tbody></table>';
+    var cpill = document.querySelector('#cust-pills .vxo-pill.active');
+    var cf = cpill ? cpill.getAttribute('data-f') : '';
+    if (cf === 'repeat') list = list.filter(function (c) { return c.orders > 1; });
+    else if (cf === 'oneoff') list = list.filter(function (c) { return c.orders <= 1; });
+    if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers match.</div>'; return; }
+    function custRow(c) {
+      return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
+        '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
+        '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
+        '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
+    }
+    function custGrp(label, color) { return '<tr><td colspan="4" style="padding:14px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    var rep = list.filter(function (c) { return c.orders > 1; });
+    var one = list.filter(function (c) { return c.orders <= 1; });
+    var body = '';
+    if (rep.length) body += custGrp('Repeat buyers \u00b7 ' + rep.length, '#01D3A0') + rep.map(custRow).join('');
+    if (one.length) body += custGrp('One-off \u00b7 ' + one.length, '#6b7280') + one.map(custRow).join('');
+    wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' + body + '</tbody></table>';
   }
 
   // ── SUBSCRIBERS ───────────────────────────────────────────────────────────

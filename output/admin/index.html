@@ -667,7 +667,12 @@
           <div class="adm-sec-title">Customers</div>
           <input id="cust-search" class="status-select" placeholder="Search name or email" style="max-width:220px">
         </div>
-        <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 12px">Everyone who's ordered, ranked by total spend. Repeat buyers are your most valuable.</p>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 10px">Everyone who's ordered, ranked by total spend. Repeat buyers are your most valuable.</p>
+        <div class="vxo-pills" id="cust-pills" style="margin:0 0 12px">
+          <button type="button" class="vxo-pill active" data-f="" onclick="vxcFilter(this)">All</button>
+          <button type="button" class="vxo-pill" data-f="repeat" onclick="vxcFilter(this)">Repeat</button>
+          <button type="button" class="vxo-pill" data-f="oneoff" onclick="vxcFilter(this)">One-off</button>
+        </div>
         <div class="stat-grid" id="cust-stats"></div>
         <div id="customers-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>

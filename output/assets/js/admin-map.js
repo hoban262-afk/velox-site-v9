@@ -335,6 +335,14 @@
     if (window.applyPricingFilter) window.applyPricingFilter();
   };
 
+  // Customers filter pills re-trigger renderCustomers via the existing search listener.
+  window.vxcFilter = function (btn) {
+    var pills = document.querySelectorAll('#cust-pills .vxo-pill');
+    for (var i = 0; i < pills.length; i++) pills[i].classList.remove('active');
+    btn.classList.add('active');
+    var s = document.getElementById('cust-search'); if (s) s.dispatchEvent(new Event('input'));
+  };
+
   function createFab(){
     if (document.getElementById('vxm-fab')) return;
     var b = document.createElement('button');
