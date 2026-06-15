@@ -115,6 +115,11 @@
 
     @media (max-width: 760px) { .coa-grid { grid-template-columns: 1fr; } }
 
+    /* core.css hides .hero-panel on phones (homepage decoration). The CoA
+       cards reuse .hero-panel for real content, so force them back on. The
+       two-class selector outranks the global .hero-panel rule. */
+    @media (max-width: 767px) { .coa-grid .coa-card { display: block; } }
+
     /* Batch-report card - reuses the homepage hero-panel look (.hp-*) */
     .coa-card { margin-top: 0; padding: 24px 24px 22px; }
     .coa-card .hp-lbl { margin-bottom: 16px; }
