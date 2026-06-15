@@ -50,6 +50,7 @@
   window.showMap = function () {
     if (window.switchTab) window.switchTab('map');
     var s = document.getElementById('screen-title'); if (s) s.textContent = 'Command map';
+    document.body.classList.add('vxm-on-map');
     loadLive();
   };
 
@@ -95,6 +96,7 @@
       if (card && window.switchTab) {
         closeEditor();
         var id = card.getAttribute('data-tab');
+        document.body.classList.remove('vxm-on-map');
         window.switchTab(id);
         if (id === 'journeys' && window.veloxLoadJourneys) window.veloxLoadJourneys();
       }
@@ -316,7 +318,24 @@
     });
   }
 
-  function init() { build(); window.showMap(); }
+  // Orders filter pills drive the existing #ord-filter (admin.js applyOrderFilter).
+  window.vxoFilter = function (btn) {
+    var pills = document.querySelectorAll('#ord-pills .vxo-pill');
+    for (var i = 0; i < pills.length; i++) pills[i].classList.remove('active');
+    btn.classList.add('active');
+    var f = document.getElementById('ord-filter');
+    if (f) { f.value = btn.getAttribute('data-st'); f.dispatchEvent(new Event('change')); }
+  };
+
+  function createFab(){
+    if (document.getElementById('vxm-fab')) return;
+    var b = document.createElement('button');
+    b.id = 'vxm-fab'; b.type = 'button'; b.setAttribute('aria-label', 'Back to command map');
+    b.innerHTML = '<span style="font-size:15px">&#9678;</span> Map';
+    b.addEventListener('click', function () { window.showMap(); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } });
+    document.body.appendChild(b);
+  }
+  function init() { build(); createFab(); window.showMap(); }
   if (document.readyState !== 'loading') setTimeout(init, 60);
   else document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 60); });
   window.addEventListener('load', function () { setTimeout(function () { build(); window.showMap(); }, 150); });

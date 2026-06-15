@@ -1494,12 +1494,11 @@
       el.innerHTML = '<p class="adm-empty">No orders yet.</p>';
       return;
     }
-    el.innerHTML = '<table class="adm-table">' +
-      '<thead><tr>' +
-        '<th></th><th>Date</th><th>Reference</th><th>Customer</th><th>Items</th>' +
-        '<th>Total</th><th>Status</th><th>Action</th>' +
-      '</tr></thead>' +
-      '<tbody>' + orders.map(function (o) {
+    var VX_ACT = { pending: 1, paid: 1 };
+    var vxTop = orders.filter(function (o) { return VX_ACT[o.status]; });
+    var vxRest = orders.filter(function (o) { return !VX_ACT[o.status]; });
+    function vxGrp(label, color) { return '<tr><td colspan="8" style="padding:16px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    function vxRow(o) {
         var ref = o.notes || o.id.slice(0, 8).toUpperCase();
         return '<tr style="cursor:pointer" onclick="toggleOrderDetails(\'' + o.id + '\')">' +
           '<td style="color:var(--g,#01D3A0);width:14px">▸</td>' +
@@ -1519,7 +1518,15 @@
           '</td>' +
         '</tr>' +
         '<tr id="ord-det-' + o.id + '" style="display:none"><td colspan="8" style="padding:0 12px 14px">' + orderDetailsHtml(o) + '</td></tr>';
-      }).join('') + '</tbody></table>';
+    }
+    var vxBody = '';
+    if (vxTop.length) vxBody += vxGrp('Needs action \u00b7 ' + vxTop.length, '#01D3A0') + vxTop.map(vxRow).join('');
+    if (vxRest.length) vxBody += vxGrp('Completed & other \u00b7 ' + vxRest.length, '#6b7280') + vxRest.map(vxRow).join('');
+    el.innerHTML = '<table class="adm-table">' +
+      '<thead><tr>' +
+        '<th></th><th>Date</th><th>Reference</th><th>Customer</th><th>Items</th>' +
+        '<th>Total</th><th>Status</th><th>Action</th>' +
+      '</tr></thead><tbody>' + vxBody + '</tbody></table>';
   }
 
   function exportOrdersCSV() {

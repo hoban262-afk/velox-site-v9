@@ -251,6 +251,16 @@
       .stat-grid   { grid-template-columns:1fr; }
       .admin-tab   { padding:11px 11px; }
     }
+    #vxm-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:590;display:inline-flex;align-items:center;gap:7px;background:#01D3A0;color:#04231b;border:none;border-radius:999px;font-size:14px;font-weight:700;padding:13px 20px;box-shadow:0 6px 20px rgba(0,0,0,.45);cursor:pointer;}
+    #vxm-fab:active{transform:scale(.97);}
+    body.vxm-on-map #vxm-fab{display:none;}
+    .vxo-toggle{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);color:#cbd5e1;border:1px solid rgba(255,255,255,.14);border-radius:9px;font-size:13px;font-weight:600;padding:9px 15px;cursor:pointer;}
+    .vxo-toggle:hover{border-color:#01D3A0;color:#fff;}
+    #ord-create-wrap{display:none;margin-top:14px;} #ord-create-wrap.open{display:block;}
+    .vxo-pills{display:flex;gap:7px;flex-wrap:wrap;}
+    .vxo-pill{background:rgba(255,255,255,.04);color:#9ca3af;border:1px solid rgba(255,255,255,.1);border-radius:999px;font-size:12.5px;font-weight:600;padding:7px 14px;cursor:pointer;}
+    .vxo-pill:hover{color:#fff;} .vxo-pill.active{background:rgba(1,211,160,.14);color:#01D3A0;border-color:rgba(1,211,160,.5);}
+    #ord-filter{display:none;}
   </style>
 </head>
 <body style="margin:0;background:#030407;">
@@ -323,7 +333,6 @@
 
     <div class="admin-topbar">
       <div class="admin-topbar-l">
-        <button class="vx-map-btn" onclick="showMap()" title="Back to command map">&#9678; Map</button>
         <div class="admin-screen-title" id="screen-title">Command map</div>
       </div>
       <button class="admin-logout" id="admin-logout">Sign out</button>
@@ -608,8 +617,8 @@
     <!-- Orders -->
     <div class="admin-panel" id="panel-orders">
       <div class="adm-section">
-        <div class="adm-sec-hdr"><div class="adm-sec-title">Create order</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Create order</div><button type="button" class="vxo-toggle" onclick="var w=document.getElementById('ord-create-wrap');w.classList.toggle('open');this.firstChild.textContent=w.classList.contains('open')?'− Close':'+ New order';"><span>+ New order</span></button></div>
+        <div id="ord-create-wrap"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
           <input id="ord-name" class="status-select" placeholder="Customer name" style="max-width:160px">
           <input id="ord-email" class="status-select" placeholder="Customer email" style="max-width:180px">
           <input id="ord-subtotal" class="status-select" type="number" step="0.01" min="0" placeholder="Subtotal £" style="max-width:120px">
@@ -622,7 +631,7 @@
           </select>
           <button class="btn-p" id="ord-create" style="width:auto;padding:9px 18px">Create order</button>
         </div>
-        <div id="ord-create-msg" style="font-size:12px;margin-top:8px"></div>
+        <div id="ord-create-msg" style="font-size:12px;margin-top:8px"></div></div>
       </div>
       <div class="adm-section">
         <div class="adm-sec-hdr">
@@ -630,7 +639,7 @@
           <button class="btn-p" id="orders-export" style="width:auto;padding:7px 16px;font-size:12px">Export CSV</button>
         </div>
         <p style="font-size:12px;color:var(--t3,#6b7280);margin:0 0 12px">Click any order to see its contents, discount, shipping and delivery address.</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
           <input id="ord-search" class="status-select" placeholder="Search name, email or reference" style="flex:1;min-width:200px">
           <select id="ord-filter" class="status-select">
             <option value="">All statuses</option>
@@ -639,6 +648,13 @@
             <option value="dispatched">dispatched</option>
             <option value="cancelled">cancelled</option>
           </select>
+        </div>
+        <div class="vxo-pills" id="ord-pills" style="margin-bottom:14px">
+          <button type="button" class="vxo-pill active" data-st="" onclick="vxoFilter(this)">All</button>
+          <button type="button" class="vxo-pill" data-st="pending" onclick="vxoFilter(this)">Pending</button>
+          <button type="button" class="vxo-pill" data-st="paid" onclick="vxoFilter(this)">Paid</button>
+          <button type="button" class="vxo-pill" data-st="dispatched" onclick="vxoFilter(this)">Dispatched</button>
+          <button type="button" class="vxo-pill" data-st="cancelled" onclick="vxoFilter(this)">Cancelled</button>
         </div>
         <div id="orders-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
