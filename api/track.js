@@ -2,12 +2,12 @@
  * POST /api/track — first-party beacon (public, no PII).
  * Page view:  { sid, path?, ref? }            → inserts one row into `visits`.
  * Funnel event:{ sid, event, path? }          → inserts one row into `events`
- *   (event ∈ add_to_cart | begin_checkout). Kept in a separate table so it does
- *   not inflate page-view/traffic counts. Fire-and-forget.
+ *   (event ∈ product_view | add_to_cart | begin_checkout). Kept in a separate
+ *   table so it does not inflate page-view/traffic counts. Fire-and-forget.
  */
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const ALLOWED_EVENTS = new Set(['add_to_cart', 'begin_checkout']);
+const ALLOWED_EVENTS = new Set(['product_view', 'add_to_cart', 'begin_checkout']);
 
 module.exports = async function handler(req, res) {
   // Same-origin beacon; respond fast regardless.
