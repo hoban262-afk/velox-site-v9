@@ -1,10 +1,6 @@
-/* admin-map.js — live, operational "command center" landing for the Velox admin.
- * Boxes show LIVE figures from window._sb and open inline editors that WRITE through
- * the SAME guarded paths the panels use:
- *   - Stock & price -> window._sb.from('product_variants').update(...) + /api/admin/redeploy
- *   - Deal of the Week -> POST/DELETE /api/admin/deal (Bearer session token)
- *   - Order dispatch/cancel -> window.updateOrderStatus() (tracking prompt + dispatch email)
- * Navigation calls the existing switchTab(). No changes to admin.js. */
+/* admin-map.js — Velox admin "command center": mobile-first box grid as the
+ * landing nav, with live figures and modal editors that WRITE through the same
+ * guarded paths the panels use. Styles live in admin/index.html. No admin.js changes. */
 (function () {
   'use strict';
 
@@ -51,31 +47,6 @@
   function gbp2(n){ return '£' + (Math.round((Number(n)||0)*100)/100).toFixed(2); }
   async function token(){ try { var s = await window._sb.auth.getSession(); return s && s.data && s.data.session && s.data.session.access_token; } catch (e) { return null; } }
 
-  function injectCss(){
-    if (document.getElementById('vxm-css')) return;
-    var st = document.createElement('style'); st.id = 'vxm-css';
-    st.textContent =
-      '.vxm-stat{display:block;color:#01D3A0;font-size:12px;font-weight:600;margin-top:9px;min-height:14px;}' +
-      '.vxm-act{margin-top:10px;}' +
-      '.vxm-act-btn{background:rgba(255,255,255,.05);color:#cbd5e1;border:1px solid rgba(255,255,255,.12);border-radius:7px;font-size:11.5px;font-weight:600;padding:5px 11px;cursor:pointer;}' +
-      '.vxm-act-btn:hover{border-color:var(--ac,#01D3A0);color:#fff;}' +
-      '#vxm-editor{display:none;margin:18px 24px 6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:12px;overflow:hidden;}' +
-      '.vxm-ed-h{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.07);color:#fff;font-size:14px;font-weight:600;}' +
-      '.vxm-x{background:none;border:none;color:#9ca3af;font-size:20px;line-height:1;cursor:pointer;}' +
-      '.vxm-ed-body{padding:10px 14px 14px;overflow-x:auto;}' +
-      '.vxm-st{width:100%;border-collapse:collapse;font-size:12.5px;min-width:520px;}' +
-      '.vxm-st th{text-align:left;color:#6b7280;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.07);}' +
-      '.vxm-st td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:#e5e7eb;vertical-align:middle;}' +
-      '.vxm-st input[type=number]{width:74px;background:#0d0d0d;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;padding:5px 7px;text-align:right;}' +
-      '.vxm-fld{display:block;color:#9ca3af;font-size:11px;margin:10px 2px 4px;}' +
-      '.vxm-in,.vxm-sel{width:100%;max-width:420px;background:#0d0d0d;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#fff;padding:8px 10px;font-size:13px;}' +
-      '.vxm-save{background:rgba(1,211,160,.14);color:#01D3A0;border:1px solid rgba(1,211,160,.4);border-radius:6px;font-size:11.5px;font-weight:600;padding:6px 13px;cursor:pointer;}' +
-      '.vxm-save:hover{background:rgba(1,211,160,.24);}' +
-      '.vxm-danger{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.4);border-radius:6px;font-size:11.5px;font-weight:600;padding:6px 13px;cursor:pointer;}' +
-      '.vxm-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;}';
-    document.head.appendChild(st);
-  }
-
   window.showMap = function () {
     if (window.switchTab) window.switchTab('map');
     var s = document.getElementById('screen-title'); if (s) s.textContent = 'Command map';
@@ -86,7 +57,6 @@
     var host = document.getElementById('vx-map-graph');
     if (!host || host.__built) return;
     host.__built = true;
-    injectCss();
     var html = '<div class="vxm-wrap">';
     SECTIONS.forEach(function (sec) {
       html += '<div class="vxm-sech">' + esc(sec.label) + '</div><div class="vxm-grid">';
@@ -101,10 +71,11 @@
       });
       html += '</div>';
     });
-    html += '</div><div id="vxm-editor"></div>';
+    html += '</div><div id="vxm-editor" role="dialog" aria-modal="true"></div>';
     host.innerHTML = html;
 
     host.addEventListener('click', function (e) {
+      if (e.target.id === 'vxm-editor') { closeEditor(); return; }   // backdrop
       var act = e.target.closest('[data-act]');
       if (act) {
         e.stopPropagation();
@@ -122,11 +93,14 @@
       }
       var card = e.target.closest('.vxm-card');
       if (card && window.switchTab) {
+        closeEditor();
         var id = card.getAttribute('data-tab');
         window.switchTab(id);
         if (id === 'journeys' && window.veloxLoadJourneys) window.veloxLoadJourneys();
       }
     });
+
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeEditor(); });
   }
   window.__vxBuildMap = build;
 
@@ -157,15 +131,21 @@
     }).catch(function(){});
   }
 
-  // ── Editor shell ─────────────────────────────────────────────────────────────
+  // ── Modal shell ──────────────────────────────────────────────────────────────
   function openEditor(title){
     var box = document.getElementById('vxm-editor'); if (!box) return null;
-    box.innerHTML = '<div class="vxm-ed-h"><span>' + esc(title) + '</span><button class="vxm-x" data-act="close-ed" aria-label="Close">&times;</button></div><div class="vxm-ed-body">Loading…</div>';
-    box.style.display = 'block';
-    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    box.innerHTML = '<div class="vxm-modal-card">' +
+      '<div class="vxm-ed-h"><span>' + esc(title) + '</span><button class="vxm-x" data-act="close-ed" aria-label="Close">&times;</button></div>' +
+      '<div class="vxm-ed-body">Loading…</div></div>';
+    box.classList.add('open');
+    document.body.style.overflow = 'hidden';
     return box.querySelector('.vxm-ed-body');
   }
-  function closeEditor(){ var b = document.getElementById('vxm-editor'); if (b) b.style.display = 'none'; }
+  function closeEditor(){
+    var b = document.getElementById('vxm-editor'); if (!b) return;
+    b.classList.remove('open'); b.innerHTML = '';
+    document.body.style.overflow = '';
+  }
 
   var rdTimer = null;
   function scheduleRedeploy(){
@@ -181,7 +161,7 @@
     }, 8000);
   }
 
-  // ── 1) Stock & price editor (product_variants) ───────────────────────────────
+  // ── 1) Stock & price ─────────────────────────────────────────────────────────
   function openStockEditor(){
     if (!window._sb) return;
     var body = openEditor('Stock & price'); if (!body) return;
@@ -190,18 +170,18 @@
       .then(function (r) {
         if (r.error) { body.innerHTML = '<p style="color:#f87171">Could not load: ' + esc(r.error.message) + '</p>'; return; }
         var rows = r.data || [];
-        var h = '<table class="vxm-st"><thead><tr><th>Product</th><th>Size</th><th>Base £</th><th>In stock</th><th>Qty (blank = ∞)</th><th></th></tr></thead><tbody>';
+        var h = '<table class="vxm-st"><thead><tr><th>Product</th><th>Size</th><th>Base £</th><th>In</th><th>Qty</th><th></th></tr></thead><tbody>';
         rows.forEach(function (v) {
           h += '<tr>' +
             '<td style="color:#fff">' + esc(v.name) + '</td>' +
             '<td style="color:#9ca3af">' + esc(v.size) + '</td>' +
             '<td><input type="number" step="0.01" min="0" id="vxs-' + v.id + '-base" value="' + (v.base_price == null ? '' : v.base_price) + '" data-orig="' + (v.base_price == null ? '' : v.base_price) + '"></td>' +
-            '<td><input type="checkbox" id="vxs-' + v.id + '-in"' + (v.in_stock ? ' checked' : '') + '></td>' +
+            '<td style="text-align:center"><input type="checkbox" id="vxs-' + v.id + '-in"' + (v.in_stock ? ' checked' : '') + '></td>' +
             '<td><input type="number" step="1" min="0" id="vxs-' + v.id + '-qty" value="' + (v.stock_qty == null ? '' : v.stock_qty) + '" placeholder="∞"></td>' +
             '<td style="white-space:nowrap"><button class="vxm-save" data-act="save-stock" data-id="' + v.id + '" data-name="' + esc(v.name) + ' ' + esc(v.size) + '">Save</button> <span id="vxs-' + v.id + '-msg" style="font-size:11.5px"></span></td>' +
             '</tr>';
         });
-        h += '</tbody></table>';
+        h += '</tbody></table><p style="color:#6b7280;font-size:11.5px;margin:10px 2px 0">Qty blank = unlimited. Base-price changes ask to confirm and rebuild the site.</p>';
         body.innerHTML = h;
       });
   }
@@ -214,7 +194,7 @@
     var msg  = document.getElementById('vxs-' + id + '-msg');
     if (!inEl || !bEl || !window._sb) return;
     var base = parseFloat(bEl.value);
-    if (isNaN(base) || base <= 0) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Base price required.'; } return; }
+    if (isNaN(base) || base <= 0) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Base?'; } return; }
     base = Math.round(base * 100) / 100;
     var orig = parseFloat(bEl.getAttribute('data-orig'));
     if (!isNaN(orig) && base !== orig) {
@@ -234,7 +214,7 @@
     });
   }
 
-  // ── 2) Deal of the Week (reuses /api/admin/deal) ─────────────────────────────
+  // ── 2) Deal of the Week ────────────────────────────────────────────────────────
   function openDealEditor(){
     if (!window._sb) return;
     var body = openEditor('Deal of the Week'); if (!body) return;
@@ -246,12 +226,12 @@
         return '<option value="' + esc(v.slug) + '|' + esc(v.size) + '"' + (current && current.slug === v.slug && current.size === v.size ? ' selected' : '') + '>' + esc(v.name) + ' · ' + esc(v.size) + ' (' + gbp2(v.base_price) + ')</option>';
       }).join('');
       body.innerHTML =
-        '<div style="color:' + (current ? '#01D3A0' : '#9ca3af') + ';font-size:12.5px;margin-bottom:6px">' +
+        '<div style="color:' + (current ? '#01D3A0' : '#9ca3af') + ';font-size:12.5px;margin-bottom:4px">' +
           (current ? ('Live: ' + esc(current.slug) + ' · ' + current.discount_pct + '% off') : 'No deal running') + '</div>' +
         '<label class="vxm-fld">Product</label><select class="vxm-sel" id="vxd-product">' + opts + '</select>' +
-        '<label class="vxm-fld">Discount %</label><input class="vxm-in" type="number" min="1" max="95" step="1" id="vxd-pct" value="' + (current ? current.discount_pct : '') + '" style="max-width:140px">' +
+        '<label class="vxm-fld">Discount %</label><input class="vxm-in" type="number" min="1" max="95" step="1" id="vxd-pct" value="' + (current ? current.discount_pct : '') + '" style="max-width:160px">' +
         '<label class="vxm-fld">Headline (optional)</label><input class="vxm-in" type="text" id="vxd-headline" value="' + esc(current && current.headline ? current.headline : '') + '">' +
-        '<div class="vxm-row"><button class="vxm-save" data-act="save-deal">Save & publish</button>' +
+        '<div class="vxm-row"><button class="vxm-save" data-act="save-deal">Save &amp; publish</button>' +
         '<button class="vxm-danger" data-act="clear-deal">Clear deal</button>' +
         '<span id="vxd-msg" style="font-size:12px"></span></div>';
     });
@@ -291,7 +271,7 @@
     } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
   }
 
-  // ── 3) Order dispatch / cancel (reuses window.updateOrderStatus) ─────────────
+  // ── 3) Order dispatch / cancel ─────────────────────────────────────────────────
   function openOrdersEditor(){
     if (!window._sb) return;
     var body = openEditor('Pending orders'); if (!body) return;
@@ -307,7 +287,7 @@
             '<td style="color:#9ca3af">' + esc((o.created_at || '').slice(0, 10)) + '</td>' +
             '<td><div style="color:#fff">' + esc(o.customer_name) + '</div><div style="color:#6b7280;font-size:11px">' + esc(o.customer_email) + '</div></td>' +
             '<td style="color:#01D3A0;font-weight:600">' + gbp2(o.total) + '</td>' +
-            '<td style="white-space:nowrap"><button class="vxm-save" data-act="dispatch" data-id="' + o.id + '">Mark dispatched</button> ' +
+            '<td style="white-space:nowrap"><button class="vxm-save" data-act="dispatch" data-id="' + o.id + '">Dispatch</button> ' +
             '<button class="vxm-danger" data-act="cancel-order" data-id="' + o.id + '">Cancel</button></td>' +
             '</tr>';
         });
@@ -319,11 +299,10 @@
   function orderAction(id, status){
     if (status === 'cancelled' && !window.confirm('Cancel this order?')) return;
     if (typeof window.updateOrderStatus === 'function') {
-      window.updateOrderStatus(id, status);            // full path: tracking prompt + dispatch email
-      setTimeout(function () { openOrdersEditor(); loadLive(); }, 1400);
+      window.updateOrderStatus(id, status);
+      setTimeout(function () { if (document.getElementById('vxm-editor').classList.contains('open')) openOrdersEditor(); loadLive(); }, 1400);
       return;
     }
-    // Fallback (cache not ready): minimal direct update.
     var patch = { status: status };
     if (status === 'dispatched') {
       var tn = window.prompt('Royal Mail tracking number (blank = none):', '');
