@@ -254,6 +254,75 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  // ── Cancelled-cart pass ──────────────────────────────────────────────────────
+  // Fena marks abandoned Pay-by-Bank attempts cancelled/rejected fast, which pulls
+  // them out of the pending sequence before it can chase them — they sit at
+  // recovery_stage 0, never emailed. Give those one final recovery touch: a single
+  // email carrying a 15% code + a resume link (which revives the order to pending
+  // so they can re-pay the SAME order). Marked recovery_stage 50 = one-shot sent.
+  summary.cancel_chased = 0;
+  try {
+    const lo = new Date(Date.now() - 72 * 3.6e6).toISOString();        // not older than 72h
+    const hi = new Date(Date.now() - STAGES[1] * 3.6e6).toISOString(); // at least 30 min old
+    const cancelled = await sbGet(
+      'orders?status=eq.cancelled&payment_method=eq.fena&recovery_stage=eq.0' +
+      `&total=gt.0&created_at=gt.${encodeURIComponent(lo)}&created_at=lt.${encodeURIComponent(hi)}` +
+      '&select=id,created_at,customer_name,customer_email,items,total,recovery_stage,fena_payment_id' +
+      '&order=created_at.asc&limit=50'
+    );
+    for (const order of cancelled) {
+      if (summary.sent >= MAX_PER_RUN) break;
+      if (!order.customer_email) continue;
+      summary.scanned++;
+
+      // Self-heal: a 'cancelled' order Fena actually settled → fulfil, don't nag.
+      if (order.fena_payment_id && await fenaPaymentPaid(order.fena_payment_id)) {
+        try { await reconcilePaidOrder(order); summary.reconciled++; }
+        catch (e) { console.error('[recovery/run] cancel-reconcile failed', order.id, e.message); summary.errors++; }
+        continue;
+      }
+
+      if (await isUnsubscribed(order.customer_email)) {
+        try { await sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { recovery_stage: 50 }); } catch {}
+        summary.skipped_unsub++;
+        continue;
+      }
+
+      const links = {
+        resumeUrl:      `${SITE}/api/recovery/resume?token=${encodeURIComponent(signOrderToken(order.id))}`,
+        unsubscribeUrl: `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(signEmailToken(order.customer_email))}`,
+      };
+      try { links.discountCode = await recoveryCodeFor(order); }
+      catch (e) { console.error('[recovery/run] cancel code gen failed', order.id, e.message); }
+
+      let email;
+      try { email = buildRecoveryEmail(3, order, links); }
+      catch (e) { console.error('[recovery/run] cancel build failed', order.id, e.message); summary.errors++; continue; }
+
+      try {
+        const sendRes = await sendMail({
+          to: order.customer_email, subject: email.subject, html: email.html,
+          flow: 'abandoned', stage: 3, orderId: order.id,
+          headers: {
+            'List-Unsubscribe': `<${links.unsubscribeUrl}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
+        });
+        if (!sendRes.ok) { summary.errors++; continue; }
+        await sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, {
+          recovery_stage: 50, last_recovery_email_at: new Date().toISOString(),
+        });
+        summary.sent++; summary.cancel_chased++;
+        console.log(`[recovery/run] cancelled order ${order.id} -> one-shot recovery -> ${order.customer_email}`);
+      } catch (e) {
+        console.error('[recovery/run] cancel send/patch failed', order.id, e.message);
+        summary.errors++;
+      }
+    }
+  } catch (e) {
+    console.error('[recovery/run] cancelled-pass query failed:', e.message);
+  }
+
   console.log('[recovery/run] done', JSON.stringify(summary));
   return res.status(200).json({ ok: true, ...summary });
 };

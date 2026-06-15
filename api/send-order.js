@@ -89,14 +89,13 @@ function emailFooter() {
   return `</table></td></tr></table></body></html>`;
 }
 
-/* ── 1. Customer email - instant payment (Fena or GoCardless) ─────────────── */
+/* ── 1. Customer email - instant payment (Fena Pay by Bank) ─────────────── */
 function buildCustomerInstantHtml(d, itemsHtml) {
   const sym          = currencySymbol(d);
   const isEU         = d.region === 'EU';
-  const isFena       = d.payment_method === 'fena';
   const shippingName = d.shipping_method || (isEU ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24');
   const deliveryTime = isEU ? '3&ndash;5 working days' : '1&ndash;2 working days';
-  const providerName = isFena ? 'Fena Pay by Bank' : 'GoCardless Instant Bank Pay';
+  const providerName = 'Fena Pay by Bank';
 
   return emailHeader('Order Confirmed') + `
 <tr><td align="center" style="padding:0 40px 8px">
@@ -382,7 +381,7 @@ ${mhraFooter()}
 /* ── Shared sendEmails() ────────────────────────────────────────────────────── */
 /**
  * Fires the admin notification and the appropriate customer email.
- * Called by both the HTTP handler and the GoCardless webhook.
+ * Called by the HTTP handler and the Fena payment-confirm / webhook paths.
  *
  * @param {object} d          - Order data payload
  * @param {string} [idempotencyKey] - Optional order reference used as Resend idempotency
@@ -405,7 +404,7 @@ async function sendEmails(d, idempotencyKey) {
     .join('');
 
   // Build Resend send-options - idempotency key prevents duplicate emails when both
-  // the redirect handler (verify-payment) and the GoCardless webhook fire for the same order.
+  // the payment-complete confirm and the Fena webhook fire for the same order.
   // Resend deduplicates within a 24-hour window using these keys.
   const adminOpts    = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-admin`    } : {};
   const customerOpts = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-customer` } : {};

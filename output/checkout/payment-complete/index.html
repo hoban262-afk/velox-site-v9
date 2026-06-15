@@ -694,13 +694,6 @@
     return;
   }
 
-  // ── GoCardless path (disabled - kept for reference) ────────────────────────
-  if (billingRequestId) {
-    console.warn('[payment-complete] GoCardless billing_request_id present but GoCardless is disabled');
-    showState('error');
-    return;
-  }
-
   // ── No recognised payment method ───────────────────────────────────────────
   console.error('[payment-complete] Unknown payment method:', paymentMethod, ' - showing error');
   showState('error');

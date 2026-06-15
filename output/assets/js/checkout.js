@@ -7,7 +7,6 @@
   var EU_SHIPPING_FLAT  = 9.99;
   var EU_FREE_THRESHOLD = 100;
   var EU_FX_RATE        = 1.18; // fixed GBP → EUR conversion rate
-  // var GC_EU_COUNTRIES = ['France', 'Germany', 'Ireland']; // GoCardless — disabled
 
   // ── Core helpers ──────────────────────────────────────────────────────────
   function getCart() {
@@ -546,111 +545,6 @@
       })();
     }
 
-    // ── GoCardless Instant Bank Pay — DISABLED (kept for re-enable) ─────────
-    /* RE-ENABLE: uncomment the block below and restore gc-pay-btn in payment HTML
-    var gcPayBtn = document.getElementById('gc-pay-btn');
-    if (gcPayBtn) {
-      gcPayBtn.addEventListener('click', function () {
-        var errEl = document.getElementById('co-err');
-        var terms = paymentForm.querySelector('input[name="terms"]');
-        if (!terms || !terms.checked) {
-          if (errEl) errEl.textContent = 'Please accept the Terms & Conditions and Research Use Policy.';
-          return;
-        }
-        if (errEl) errEl.textContent = '';
-
-        gcPayBtn.disabled = true;
-        gcPayBtn.textContent = 'Preparing payment…';
-
-        var ref     = 'VP-' + todayStr() + '-' + randChars(4);
-        var t       = cartTotals(cart, payRegion);
-        var savingGBP = (appliedDiscount && appliedDiscount.saving) ? appliedDiscount.saving : 0;
-        var saving  = savingInCurrency(savingGBP, payRegion);
-        var discountedSubtotal = Math.max(0, t.subtotal - saving);
-        var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
-        var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
-        var finalShipping = discountedSubtotal >= freeThresh ? 0 : flatRate;
-        var finalTotal    = Math.round((discountedSubtotal + finalShipping) * 100) / 100;
-        var amountSmallest = Math.round(finalTotal * 100); // pence (GBP) or cents (EUR)
-        var currency       = payRegion === 'EU' ? 'EUR' : 'GBP';
-        var currSym        = payRegion === 'EU' ? '€' : '£';
-        var shippingMethod = payRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
-
-        var gcChk = {};
-        try { gcChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
-        gcChk.orderRef        = ref;
-        gcChk.subtotal        = t.subtotal;
-        gcChk.shipping        = finalShipping;
-        gcChk.discount_code          = appliedDiscount ? appliedDiscount.code : '';
-        gcChk.discount_saving        = saving; // stored in customer's currency
-        gcChk.total                  = finalTotal;
-        gcChk.cart_snapshot          = JSON.stringify(cart);
-        gcChk.payment_method         = 'instant';
-        gcChk.currency               = currency;
-        gcChk.region                 = payRegion;
-        gcChk.affiliate_id           = affiliateApplied ? affiliateApplied.id   : null;
-        gcChk.affiliate_code_used    = affiliateApplied ? affiliateApplied.code : null;
-        try { sessionStorage.setItem('vp_checkout', JSON.stringify(gcChk)); } catch (ex) {}
-        try { sessionStorage.removeItem('vp_order_fired'); } catch (ex) {}
-
-        // Product list in customer's currency
-        var gcProductsList = cart.map(function (item) {
-          var priceInCurrency = payRegion === 'EU'
-            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-            : item.price * (item.qty || 1);
-          return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-                 ' — ' + currSym + priceInCurrency.toFixed(2);
-        }).join('\n');
-
-        fetch('/api/create-payment', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount_pence:    amountSmallest,
-            currency:        currency,
-            customer_name:   ((gcChk.fname || '') + ' ' + (gcChk.lname || '')).trim(),
-            email:           gcChk.email    || '',
-            description:     'Velox Peptides research compounds',
-            order_ref:       ref,
-            phone:           gcChk.phone    || '',
-            addr1:           gcChk.addr1    || '',
-            addr2:           gcChk.addr2    || '',
-            city:            gcChk.city     || '',
-            postcode:        gcChk.postcode || '',
-            country:         gcChk.country  || 'United Kingdom',
-            order_items:     gcProductsList,
-            subtotal:        t.subtotal.toFixed(2),
-            shipping:        finalShipping.toFixed(2),
-            discount_code:   appliedDiscount ? appliedDiscount.code : '',
-            discount_saving: saving.toFixed(2),
-            total:           finalTotal.toFixed(2),
-            region:          payRegion,
-            shipping_method: shippingMethod,
-          })
-        })
-        .then(function (resp) { return resp.json(); })
-        .then(function (data) {
-          if (data.authorisation_url) {
-            try {
-              var latestChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
-              latestChk.billing_request_id = data.billing_request_id;
-              sessionStorage.setItem('vp_checkout', JSON.stringify(latestChk));
-            } catch (ex) {}
-            window.location.href = data.authorisation_url;
-          } else {
-            throw new Error(data.error || 'Failed to create payment');
-          }
-        })
-        .catch(function (err) {
-          console.error('[checkout] create-payment error:', err && err.message ? err.message : err);
-          var msg = (err && err.message) ? err.message : 'Payment initialisation failed. Please try again or use bank transfer below.';
-          if (errEl) errEl.textContent = msg;
-          gcPayBtn.disabled = false;
-          gcPayBtn.textContent = 'Pay Now →';
-        });
-      });
-    }
-    */ // END GoCardless disabled block
 
     // ── Bank transfer form submit (UK + EU) ───────────────────────────────
     paymentForm.addEventListener('submit', function (e) {

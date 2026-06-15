@@ -57,7 +57,7 @@ function firstName(from) {
 }
 
 // Automated / no-reply / known-provider senders we never act on, as a backstop.
-const SYSTEM_SENDER = /((^|[._-])(no-?reply|noreply|do-?not-?reply|notifications?|mailer-daemon|postmaster|bounce|automated|alerts?)@)|(@(.*\.)?(vercel|supabase|resend|stripe|google|googlemail|github|fena|royalmail|paypal|gocardless|cloudflare|namecheap)\.)/i;
+const SYSTEM_SENDER = /((^|[._-])(no-?reply|noreply|do-?not-?reply|notifications?|mailer-daemon|postmaster|bounce|automated|alerts?)@)|(@(.*\.)?(vercel|supabase|resend|stripe|google|googlemail|github|fena|royalmail|paypal|cloudflare|namecheap)\.)/i;
 function isSystemSender(email) { return SYSTEM_SENDER.test(String(email || '')); }
 
 async function findOrder(email) {
