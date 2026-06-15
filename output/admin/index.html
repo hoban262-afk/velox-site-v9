@@ -822,13 +822,16 @@
     <!-- Pricing -->
     <div class="admin-panel" id="panel-pricing">
       <div class="adm-section">
-        <div class="adm-sec-hdr"><div class="adm-sec-title">Product pricing</div></div>
-        <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 16px;line-height:1.5">
-          One source of truth for every price on the site. <strong style="color:#fff">Base</strong> = the normal selling price.
-          <strong style="color:#fff">Sale</strong> = an active deal (leave blank for none). <strong style="color:#fff">RRP</strong> = an optional higher "was" for a strikethrough.
-          Untick <strong style="color:#fff">Disc.</strong> to exclude an item from all deal/volume/code discounts (e.g. the pen).
-          Changes go live across the site on the next page load.
-        </p>
+        <div class="adm-sec-hdr"><div class="adm-sec-title">Product pricing &amp; stock</div></div>
+        <p style="font-size:12.5px;color:var(--t3,#6b7280);margin:0 0 12px">Single source of truth for every price. Changes go live on the next page load.</p>
+        <input id="pv-search" class="status-select" placeholder="Search product or size" style="width:100%;max-width:340px;margin-bottom:10px" oninput="applyPricingFilter()">
+        <div class="vxo-pills" id="pv-pills" style="margin-bottom:14px">
+          <button type="button" class="vxo-pill active" data-f="" onclick="vxpFilter(this)">All</button>
+          <button type="button" class="vxo-pill" data-f="in" onclick="vxpFilter(this)">In stock</button>
+          <button type="button" class="vxo-pill" data-f="out" onclick="vxpFilter(this)">Out of stock</button>
+          <button type="button" class="vxo-pill" data-f="low" onclick="vxpFilter(this)">Low</button>
+          <button type="button" class="vxo-pill" data-f="deal" onclick="vxpFilter(this)">On deal</button>
+        </div>
         <div id="pricing-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>
       <div class="adm-section">

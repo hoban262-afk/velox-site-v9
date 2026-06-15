@@ -327,6 +327,14 @@
     if (f) { f.value = btn.getAttribute('data-st'); f.dispatchEvent(new Event('change')); }
   };
 
+  // Pricing & stock filter pills drive admin.js applyPricingFilter().
+  window.vxpFilter = function (btn) {
+    var pills = document.querySelectorAll('#pv-pills .vxo-pill');
+    for (var i = 0; i < pills.length; i++) pills[i].classList.remove('active');
+    btn.classList.add('active');
+    if (window.applyPricingFilter) window.applyPricingFilter();
+  };
+
   function createFab(){
     if (document.getElementById('vxm-fab')) return;
     var b = document.createElement('button');

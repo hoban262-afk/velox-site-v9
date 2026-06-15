@@ -2137,14 +2137,29 @@
   };
 
   // ── PRICING (product_variants — single source of truth for every price) ─────
+  var pricingCache = [];
   function loadPricing() {
     if (!window._sb) return;
     window._sb.from('product_variants')
       .select('*')
       .order('slug', { ascending: true })
       .order('sort_order', { ascending: true })
-      .then(function (r) { renderPricing(r.data || [], r.error); });
+      .then(function (r) { pricingCache = r.data || []; renderPricing(pricingCache, r.error); });
   }
+  window.applyPricingFilter = function () {
+    var q = ((document.getElementById('pv-search') || {}).value || '').trim().toLowerCase();
+    var pill = document.querySelector('#pv-pills .vxo-pill.active');
+    var f = pill ? pill.getAttribute('data-f') : '';
+    var rows = (pricingCache || []).filter(function (v) {
+      if (f === 'in'  && v.in_stock !== true)  return false;
+      if (f === 'out' && v.in_stock !== false) return false;
+      if (f === 'low' && v.low_stock !== true) return false;
+      if (f === 'deal' && !v.deal_flag)        return false;
+      if (q) return (v.name || '').toLowerCase().indexOf(q) > -1 || (v.size || '').toLowerCase().indexOf(q) > -1;
+      return true;
+    });
+    renderPricing(rows, null);
+  };
 
   function pvNumInput(id, field, val) {
     return '<input id="pv-' + id + '-' + field + '" class="status-select" type="number" step="0.01" min="0" value="' +
@@ -2158,14 +2173,10 @@
     var el = document.getElementById('pricing-table-wrap');
     if (!el) return;
     if (error) { el.innerHTML = '<p class="adm-empty">Could not load prices: ' + esc(error.message) + '</p>'; return; }
-    if (!rows.length) { el.innerHTML = '<p class="adm-empty">No products yet — run the product_variants seed.</p>'; return; }
-    var html = '<table class="adm-table"><thead><tr>' +
-      '<th>Product</th><th>Size</th><th>Base £</th><th>Sale £</th><th>RRP £</th>' +
-      '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Qty</th><th>Sells at</th><th></th>' +
-      '</tr></thead><tbody>';
-    rows.forEach(function (v) {
+    if (!rows.length) { el.innerHTML = '<p class="adm-empty">No products match.</p>'; return; }
+    function pvRow(v) {
       var sells = (v.sale_price != null ? v.sale_price : v.base_price);
-      html += '<tr>' +
+      return '<tr>' +
         '<td style="color:#fff">' + esc(v.name) + '</td>' +
         '<td style="color:var(--t2,#9ca3af)">' + esc(v.size) + '</td>' +
         '<td>' + pvNumInput(v.id, 'base', v.base_price) + '</td>' +
@@ -2180,8 +2191,17 @@
         '<td style="white-space:nowrap"><button class="btn-p" style="width:auto;padding:5px 12px" onclick="savePricing(\'' + v.id + '\')">Save</button> ' +
         '<span id="pv-' + v.id + '-msg" style="font-size:12px"></span></td>' +
         '</tr>';
-    });
-    html += '</tbody></table>';
+    }
+    var attn = rows.filter(function (v) { return v.in_stock === false || v.low_stock === true; });
+    var ok   = rows.filter(function (v) { return !(v.in_stock === false || v.low_stock === true); });
+    function pvGrp(label, color) { return '<tr><td colspan="12" style="padding:16px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    var body = '';
+    if (attn.length) body += pvGrp('Needs attention \u00b7 ' + attn.length, '#f59e0b') + attn.map(pvRow).join('');
+    if (ok.length)   body += pvGrp('In stock \u00b7 ' + ok.length, '#01D3A0') + ok.map(pvRow).join('');
+    var html = '<table class="adm-table"><thead><tr>' +
+      '<th>Product</th><th>Size</th><th>Base £</th><th>Sale £</th><th>RRP £</th>' +
+      '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Qty</th><th>Sells at</th><th></th>' +
+      '</tr></thead><tbody>' + body + '</tbody></table>';
     el.innerHTML = html;
   }
 
