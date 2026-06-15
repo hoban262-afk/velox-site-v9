@@ -2009,10 +2009,13 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
+  window.applySubscriberFilter = function () { renderSubscribers(lastSubs || []); };
   function renderSubscribers(subs) {
     var el = document.getElementById('subscribers-table-wrap');
     if (!el) return;
-    if (!subs.length) { el.innerHTML = '<p class="adm-empty">No subscribers yet.</p>'; return; }
+    var sq = ((document.getElementById('subs-search') || {}).value || '').trim().toLowerCase();
+    if (sq) subs = subs.filter(function (s) { return (s.email || '').toLowerCase().indexOf(sq) > -1 || (s.source || '').toLowerCase().indexOf(sq) > -1; });
+    if (!subs.length) { el.innerHTML = '<p class="adm-empty">No subscribers match.</p>'; return; }
     el.innerHTML = '<table class="adm-table">' +
       '<thead><tr><th>Date</th><th>Email</th><th>Source</th></tr></thead>' +
       '<tbody>' + subs.map(function (s) {
