@@ -1082,6 +1082,15 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
       .vxm-modal-card{max-width:none;max-height:100dvh;height:100dvh;border:none;border-radius:0;}
       .vxm-st input[type=number]{width:66px;}
     }
+    /* Global clean + responsive pass — applies to every panel */
+    .admin-panel{max-width:1120px;}
+    .adm-section > p{font-size:12px !important;color:#6b7280 !important;line-height:1.5;}
+    #pricing-table-wrap,#bundle-table-wrap,#orders-table-wrap,#customers-wrap,#subscribers-table-wrap,#reviews-table-wrap,#affiliates-table-wrap,#affiliate-payouts-wrap,#interest-products-wrap,#interest-recent-wrap,#margins-order-wrap,#margins-sku-wrap,#overheads-wrap,#actions-list,#recent-orders-list{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    @media(max-width:600px){
+      .adm-section{padding:14px 13px;}
+      .adm-table th,.adm-table td{padding:9px 10px;}
+      .vxo-pills{gap:6px;} .vxo-pill{padding:8px 13px;}
+    }
   </style>
   <script src="/assets/js/admin-map.js" defer></script>
 </body>
