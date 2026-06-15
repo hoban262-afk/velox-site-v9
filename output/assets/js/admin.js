@@ -2092,7 +2092,7 @@
     var el = document.getElementById('affiliates-table-wrap');
     if (!el) return;
     if (!affs.length) { el.innerHTML = '<p class="adm-empty">No affiliate applications yet.</p>'; return; }
-    el.innerHTML = affs.map(function (a) {
+    function affCard(a) {
       var rid = 'aff-' + a.id;
       var commission = (a.commission_type === 'flat')
         ? ('£' + Number(a.commission_rate || 0).toFixed(2) + ' flat')
@@ -2126,7 +2126,14 @@
       }
       controls += '<span id="' + rid + '-msg" style="font-size:12px;color:#f87171"></span></div>';
       return '<div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:16px 18px;margin-bottom:12px">' + head + controls + '</div>';
-    }).join('');
+    }
+    function affGrp(label, color) { return '<div style="color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:14px 2px 8px">' + label + '</div>'; }
+    var affPend = affs.filter(function (a) { return a.status === 'pending_approval'; });
+    var affRest = affs.filter(function (a) { return a.status !== 'pending_approval'; });
+    var affOut = '';
+    if (affPend.length) affOut += affGrp('Pending approval \u00b7 ' + affPend.length, '#f59e0b') + affPend.map(affCard).join('');
+    if (affRest.length) affOut += affGrp('Active & other \u00b7 ' + affRest.length, '#6b7280') + affRest.map(affCard).join('');
+    el.innerHTML = affOut;
   }
 
   // Approve / re-activate / save: assigns code + commission and sets status active.
