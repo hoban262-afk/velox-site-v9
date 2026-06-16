@@ -170,9 +170,8 @@
     var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
     var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
     var flatRate   = r === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
-    // Free shipping is earned on the pre-discount product subtotal (the '£80' promise);
-    // the volume/code discount then applies on top. Keeps the delivery card + summary in sync.
-    var shipping = t.subtotal >= freeThresh ? 0 : flatRate;
+    // Shipping comes straight from cartTotals (method-aware: 48/24/EU, free at £100+ or for Pro).
+    var shipping = t.shipping;
     var total = Math.round((discountedSubtotal + shipping) * 100) / 100;
 
     var subEl  = document.getElementById('co-subtotal');
@@ -605,7 +604,7 @@
       var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
       var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
       var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
-      var finalShipping = t.subtotal >= freeThresh ? 0 : flatRate;
+      var finalShipping = t.shipping;
       var finalTotal    = Math.round((discountedSubtotal + finalShipping) * 100) / 100;
 
       try {
