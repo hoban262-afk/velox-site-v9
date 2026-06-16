@@ -92,6 +92,19 @@ export default async function handler(req) {
 
   const meta = metadata || {};
 
+  // ── Require a contactable email BEFORE creating the order ────────────────────
+  // The pending order row is the source of truth the recovery cron chases when a
+  // Pay-by-Bank attempt is abandoned. Without an email that row is unreachable, so
+  // a lost sale can NEVER be recovered (this is what produced the blank-email
+  // cancelled orders). Require a syntactically valid address here — the checkout
+  // form already collects it — rather than writing an un-chaseable order.
+  const custEmail = String(meta.customer_email || body.customerEmail || '').trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(custEmail)) {
+    return new Response(JSON.stringify({ error: 'A valid email address is required to complete checkout.' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
+  }
+  meta.customer_email = custEmail; // normalise so the order row + Fena call use the trimmed value
+
   // ── Verify Velox Peps Pro membership → entitled discount (server-trusted) ─────
   // The cart sends member-discounted prices; without recomputing the entitlement
   // here the price guard below would wrongly reject legitimate member orders.

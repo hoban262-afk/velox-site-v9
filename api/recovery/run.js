@@ -265,7 +265,9 @@ module.exports = async function handler(req, res) {
     const lo = new Date(Date.now() - 72 * 3.6e6).toISOString();        // not older than 72h
     const hi = new Date(Date.now() - STAGES[1] * 3.6e6).toISOString(); // at least 30 min old
     const cancelled = await sbGet(
-      'orders?status=eq.cancelled&payment_method=eq.fena&recovery_stage=eq.0' +
+      // Include all bank-redirect methods, not just 'fena': a cancelled Pay-by-Bank
+      // attempt can land under 'open_banking' or 'bank' and was previously never chased.
+      'orders?status=eq.cancelled&payment_method=in.(fena,open_banking,bank)&recovery_stage=eq.0' +
       `&total=gt.0&created_at=gt.${encodeURIComponent(lo)}&created_at=lt.${encodeURIComponent(hi)}` +
       '&select=id,created_at,customer_name,customer_email,items,total,recovery_stage,fena_payment_id' +
       '&order=created_at.asc&limit=50'
