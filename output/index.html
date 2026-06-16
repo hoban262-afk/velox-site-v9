@@ -560,24 +560,27 @@ html{scroll-behavior:smooth}
   .dotd { padding: 34px 20px; border-top: 1px solid rgba(255,255,255,.07); border-bottom: 1px solid rgba(255,255,255,.07); }
   .dotd-card { display:flex; flex-direction:row; align-items:center; text-align:left;
     gap:30px; max-width:880px; margin:0 auto;
-    background:linear-gradient(135deg,#06140f,#0a0d12); border:1px solid rgba(1,211,160,.42);
-    border-radius:18px; padding:28px 36px; text-decoration:none; box-shadow:0 0 40px rgba(1,211,160,.09);
-    transition:transform .15s ease, box-shadow .2s ease; }
-  .dotd-card:hover { transform:translateY(-2px); box-shadow:0 0 54px rgba(1,211,160,.18); }
+    background:linear-gradient(165deg,#1ef0bd 0%,#01D3A0 55%,#00b489 100%); border:0;
+    border-radius:18px; padding:28px 36px; text-decoration:none; color:#053a2c;
+    box-shadow:0 0 60px rgba(1,211,160,.28);
+    transition:transform .15s ease, box-shadow .2s ease; animation:dotdGlow 3s ease-in-out infinite; }
+  .dotd-card:hover { transform:translateY(-3px); box-shadow:0 0 84px rgba(1,211,160,.45); }
+  @keyframes dotdGlow { 0%,100%{ box-shadow:0 0 50px rgba(1,211,160,.22); } 50%{ box-shadow:0 0 80px rgba(1,211,160,.42); } }
   .dotd-imgwrap { flex:0 0 200px; width:200px; height:200px; border-radius:16px; background:#0d0d0d;
     display:flex; align-items:center; justify-content:center; overflow:hidden;
     box-shadow:0 10px 40px rgba(0,0,0,.4); }
   .dotd-imgwrap img { width:100%; height:100%; object-fit:contain; }
   .dotd-body { flex:1; min-width:0; }
-  .dotd-eyebrow { font-family:'DM Mono',monospace; font-size:.72rem; font-weight:700; letter-spacing:.12em;
-    text-transform:uppercase; color:#01D3A0; margin-bottom:8px; }
-  .dotd-name { font-size:1.7rem; font-weight:800; color:#fff; line-height:1.15; }
-  .dotd-headline { font-size:.92rem; color:#9CA3AF; margin-top:6px; }
+  .dotd-eyebrow { display:inline-block; font-family:'DM Mono',monospace; font-size:.72rem; font-weight:800; letter-spacing:.12em;
+    text-transform:uppercase; color:#01D3A0; background:#03150f; padding:5px 14px; border-radius:999px;
+    box-shadow:0 4px 14px -4px rgba(0,0,0,.45); margin-bottom:12px; }
+  .dotd-name { font-size:1.7rem; font-weight:800; color:#03150f; line-height:1.15; }
+  .dotd-headline { font-size:.92rem; color:#0a4636; margin-top:6px; }
   .dotd-price { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:16px 0 4px; }
-  .dotd-was { color:#6B7280; text-decoration:line-through; font-size:1.05rem; }
-  .dotd-now { color:#01D3A0; font-weight:900; font-size:2.1rem; }
-  .dotd-badge { background:#01D3A0; color:#021; font-weight:800; font-size:.72rem; padding:3px 10px; border-radius:20px; }
-  .dotd-count { font-family:'DM Mono',monospace; font-size:.82rem; color:#D1A400; margin-top:8px; }
+  .dotd-was { color:#0a6450; text-decoration:line-through; font-size:1.05rem; }
+  .dotd-now { color:#03150f; font-weight:900; font-size:2.1rem; }
+  .dotd-badge { background:#03150f; color:#01D3A0; font-weight:800; font-size:.72rem; padding:4px 11px; border-radius:20px; box-shadow:0 4px 14px -4px rgba(0,0,0,.45); }
+  .dotd-count { font-family:'DM Mono',monospace; font-weight:700; font-size:.82rem; color:#053a2c; margin-top:8px; }
   @media (max-width:600px){
     .dotd{ padding:24px 14px; }
     .dotd-card{ flex-direction:column; text-align:center; gap:16px; padding:24px 20px; border-radius:16px; }
