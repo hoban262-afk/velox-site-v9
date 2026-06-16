@@ -107,7 +107,7 @@
     var packSaving = Math.round(packBase * packRate * 100) / 100;
     var discSub = Math.max(0, subtotal - volSaving - packSaving);
     var isMember = (window.VELOX_MEMBER_PCT || 0) > 0;   // Velox Peps Pro = free shipping
-    var shipping = (isMember || discSub >= FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
+    var shipping = (isMember || subtotal >= FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
     var total = discSub + shipping;
 
     if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
@@ -124,8 +124,8 @@
       countEl.textContent = String(totalQty);
     }
 
-    // Free-shipping progress nudge — based on the discounted subtotal (matches checkout).
-    renderFreeShipNudge(discSub);
+    // Free-shipping progress nudge — based on the pre-discount subtotal (matches checkout & the '£80' promise).
+    renderFreeShipNudge(subtotal);
   }
 
   function renderPackVolumeRow(saving, rate) {
