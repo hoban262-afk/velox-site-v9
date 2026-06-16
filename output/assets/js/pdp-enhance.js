@@ -24,10 +24,14 @@
   css.textContent = [
     '.vp-ship-nudge{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12.5px;color:#9CA3AF;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.22);border-radius:8px;padding:9px 12px;line-height:1.4}',
     '.vp-ship-nudge b{color:#01D3A0;font-weight:600}',
-    '.vp-vol-nudge{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12.5px;color:#9CA3AF;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.22);border-radius:8px;padding:9px 12px;line-height:1.4}',
+    '.vp-vol-nudge{display:block;margin:0 0 14px;font-size:12.5px;color:#9CA3AF;background:rgba(1,211,160,.06);border:1px solid rgba(1,211,160,.22);border-radius:8px;padding:10px 14px;line-height:1.4}',
     '.vp-vol-nudge b{color:#01D3A0;font-weight:600}',
-    '.vp-vol-nudge .vpn-bar{flex:0 0 60px;height:5px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}',
-    '.vp-vol-nudge .vpn-fill{display:block;height:100%;background:#01D3A0;width:0;transition:width .35s ease}',
+    '.vp-vol-track{position:relative;height:6px;margin:15px 18px 26px;background:rgba(255,255,255,.1);border-radius:99px}',
+    '.vp-vol-trackfill{position:absolute;left:0;top:0;height:100%;background:#01D3A0;border-radius:99px;width:0;transition:width .35s ease}',
+    '.vp-vol-cp{position:absolute;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:#0d0d0d;border:2px solid rgba(255,255,255,.28);z-index:1;transition:background .25s,border-color .25s}',
+    '.vp-vol-cp.hit{background:#01D3A0;border-color:#01D3A0;box-shadow:0 0 9px rgba(1,211,160,.65)}',
+    '.vp-vol-cplbl{position:absolute;top:15px;left:50%;transform:translateX(-50%);font-family:var(--mono,monospace);font-size:10px;color:#6B7280;white-space:nowrap}',
+    '.vp-vol-cp.hit .vp-vol-cplbl{color:#01D3A0;font-weight:600}',
     '.vp-ship-nudge .vpn-bar{flex:0 0 60px;height:5px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}',
     '.vp-ship-nudge .vpn-fill{display:block;height:100%;background:#01D3A0;width:0;transition:width .35s ease}',
     '.vp-sticky-buy{display:none}',
@@ -77,7 +81,9 @@
   else form.appendChild(nudge);
 
   function updateNudge() {
-    var projected = cartSubtotal() + selectedPrice();
+    // Basket-based: reflects only what's actually in the cart, so the bar starts
+    // at £0 on an empty basket and only fills as items are added.
+    var projected = cartSubtotal();
     var remaining = FREE_THRESHOLD - projected;
     var pct = Math.max(0, Math.min(100, (projected / FREE_THRESHOLD) * 100));
     if (remaining > 0) {
@@ -97,16 +103,42 @@
   else form.appendChild(volNudge);
 
   function updateVolNudge() {
-    // Projected discountable vial spend = vials already in cart + the selected vial (if any).
-    var projected = vialSubtotal() + (selectedIsVial() ? selectedPrice() : 0);
-    var next = null;
-    for (var k = 0; k < VOL_TIERS.length; k++) { if (projected < VOL_TIERS[k].min) { next = VOL_TIERS[k]; break; } }
-    if (projected <= 0 || !next) { volNudge.style.display = 'none'; return; }
-    volNudge.style.display = 'flex';
-    var remaining = Math.round((next.min - projected) * 100) / 100;
-    var pct = Math.max(0, Math.min(100, (projected / next.min) * 100));
-    volNudge.innerHTML = '<span class="vpn-bar"><span class="vpn-fill" style="width:' + pct + '%"></span></span>' +
-      '<span>Add <b>' + fmt(remaining) + '</b> more to unlock <b>' + next.pct + '% off</b></span>';
+    // Basket-based discountable vial spend (pens, BAC water and 10-packs excluded),
+    // so the track starts at £0 and only moves as vials are added to the basket.
+    var spend = vialSubtotal();
+    if (spend <= 0) { volNudge.style.display = 'none'; return; }
+    volNudge.style.display = 'block';
+
+    var MAX = VOL_TIERS[VOL_TIERS.length - 1].min; // £250 = full track
+    var fillPct = Math.max(0, Math.min(100, (spend / MAX) * 100));
+
+    // Current unlocked rate + the next checkpoint still to reach.
+    var currentPct = 0, next = null;
+    for (var k = 0; k < VOL_TIERS.length; k++) {
+      if (spend >= VOL_TIERS[k].min) currentPct = VOL_TIERS[k].pct;
+      else if (!next) next = VOL_TIERS[k];
+    }
+
+    var msg;
+    if (next) {
+      var remaining = Math.round((next.min - spend) * 100) / 100;
+      msg = (currentPct > 0 ? 'You’ve unlocked <b>' + currentPct + '% off</b> — add ' : 'Add ') +
+        '<b>' + fmt(remaining) + '</b> more to reach <b>' + next.pct + '% off</b>';
+    } else {
+      msg = '<b>✓ You’ve unlocked the full ' + currentPct + '% volume discount</b>';
+    }
+
+    // Checkpoint markers at each tier position along a single £0–£250 track.
+    var cps = '';
+    for (var t = 0; t < VOL_TIERS.length; t++) {
+      var pos = (VOL_TIERS[t].min / MAX) * 100;
+      var hit = spend >= VOL_TIERS[t].min;
+      cps += '<span class="vp-vol-cp' + (hit ? ' hit' : '') + '" style="left:' + pos + '%">' +
+        '<span class="vp-vol-cplbl">' + VOL_TIERS[t].pct + '%</span></span>';
+    }
+
+    volNudge.innerHTML = '<div>' + msg + '</div>' +
+      '<div class="vp-vol-track"><span class="vp-vol-trackfill" style="width:' + fillPct + '%"></span>' + cps + '</div>';
   }
 
   // ── (3) Mobile sticky add-to-order bar ─────────────────────────────────────
@@ -134,7 +166,7 @@
     }
     if (typeof form.requestSubmit === 'function') form.requestSubmit();
     else form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-    setTimeout(updateNudge, 90);
+    setTimeout(refresh, 90);
   });
 
   // ── Wire updates ────────────────────────────────────────────────────────────
@@ -142,7 +174,7 @@
   form.querySelectorAll('input[name="size"]').forEach(function (i) {
     i.addEventListener('change', refresh);
   });
-  if (btn) btn.addEventListener('click', function () { setTimeout(updateNudge, 60); });
+  if (btn) btn.addEventListener('click', function () { setTimeout(refresh, 60); });
 
   // pricing.js hydrates data-price from product_variants AFTER this script's
   // initial render — without this the sticky bar keeps showing the stale
