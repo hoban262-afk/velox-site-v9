@@ -2,7 +2,7 @@
   'use strict';
 
   var SHIPPING_FLAT = 3.80;
-  var FREE_THRESHOLD = 80;
+  var FREE_THRESHOLD = 100;
 
   function getCart() {
     try {

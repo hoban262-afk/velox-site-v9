@@ -2,8 +2,9 @@
   'use strict';
 
   // ── Constants ─────────────────────────────────────────────────────────────
-  var SHIPPING_FLAT     = 3.80;
-  var FREE_THRESHOLD    = 80;
+  var SHIPPING_FLAT     = 3.80;   // Royal Mail Tracked 48 (UK standard)
+  var EXPRESS_FLAT      = 5.99;   // Royal Mail Tracked 24 (UK express)
+  var FREE_THRESHOLD    = 100;    // UK: both options free at £100+
   var EU_SHIPPING_FLAT  = 9.99;
   var EU_FREE_THRESHOLD = 100;
   var EU_FX_RATE        = 1.18; // fixed GBP → EUR conversion rate
@@ -31,6 +32,16 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  // Selected UK shipping method ('48' default | '24' express). Falls back to the
+  // value stored at the shipping step so it carries through to the payment page.
+  function shipMethod() {
+    var r = document.querySelector('input[name="shipping"]:checked');
+    if (r && r.value && r.value !== 'intl') return r.value;
+    try { var st = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); if (st.ship_method) return st.ship_method; } catch (e) {}
+    return '48';
+  }
+  function memberFreeShip() { return (window.VELOX_MEMBER_PCT || 0) > 0; }
+
   function cartTotals(cart, region) {
     var r = (region !== undefined) ? region : currentRegion();
     var subtotalGBP = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
@@ -39,8 +50,11 @@
       var sh  = sub >= EU_FREE_THRESHOLD ? 0 : EU_SHIPPING_FLAT;
       return { subtotal: sub, shipping: sh, total: Math.round((sub + sh) * 100) / 100, currency: 'EUR', subtotalGBP: subtotalGBP };
     }
-    var sh = subtotalGBP >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
-    return { subtotal: subtotalGBP, shipping: sh, total: subtotalGBP + sh, currency: 'GBP', subtotalGBP: subtotalGBP };
+    // UK: Pro members ship free (their 24h perk), and both options are free at £100+.
+    var m = shipMethod();
+    var base = (m === '24') ? EXPRESS_FLAT : SHIPPING_FLAT;
+    var sh = (memberFreeShip() || subtotalGBP >= FREE_THRESHOLD) ? 0 : base;
+    return { subtotal: subtotalGBP, shipping: sh, total: Math.round((subtotalGBP + sh) * 100) / 100, currency: 'GBP', subtotalGBP: subtotalGBP, method: m };
   }
 
   // ── Discount helpers ──────────────────────────────────────────────────────
@@ -171,7 +185,7 @@
     if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
     if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
     if (totEl)  totEl.textContent  = fmt(total, r);
-    if (shpLbl) shpLbl.textContent = r === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+    if (shpLbl) shpLbl.textContent = r === 'EU' ? 'Royal Mail International Tracked' : (shipMethod() === '24' ? 'Royal Mail Tracked 24' : 'Royal Mail Tracked 48');
     if (saving > 0) {
       if (discLine) discLine.style.display = '';
       if (discLbl)  discLbl.textContent = promo.label;
@@ -236,15 +250,36 @@
       if (euCountryWrap)    euCountryWrap.style.display    = r === 'EU' ? '' : 'none';
       if (euComplianceWrap) euComplianceWrap.style.display = r === 'EU' ? '' : 'none';
       if (euRegionNote)     euRegionNote.style.display     = r === 'EU' ? '' : 'none';
-      if (shipOptName) shipOptName.textContent = r === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
-      if (shipOptSub)  shipOptSub.textContent  = r === 'EU' ? '3–5 working days, tracked. EU & Europe.' : '1–2 working days, tracked. UK only.';
-      var t = cartTotals(cart, r);
-      if (shipPrice) shipPrice.textContent = t.shipping === 0 ? 'FREE' : fmt(t.shipping, r);
+      updateShipping(r);
       renderCartSummary(cart, r);
     }
 
     if (regionUkBtn) regionUkBtn.addEventListener('click', function () { applyRegion('UK'); });
     if (regionEuBtn) regionEuBtn.addEventListener('click', function () { applyRegion('EU'); });
+
+    function updateShipping(r) {
+      var ukG = document.getElementById('ship-uk'), euG = document.getElementById('ship-eu');
+      if (ukG) ukG.style.display = (r === 'EU') ? 'none' : '';
+      if (euG) euG.style.display = (r === 'EU') ? '' : 'none';
+      var chk = document.querySelector('input[name="shipping"]:checked');
+      if (r === 'EU') { var intl = document.querySelector('input[name="shipping"][value="intl"]'); if (intl) intl.checked = true; }
+      else if (!chk || chk.value === 'intl') { var d = document.querySelector('input[name="shipping"][value="48"]'); if (d) d.checked = true; }
+      var subGBP = cart.reduce(function (s2, i) { return s2 + i.price * (i.qty || 1); }, 0);
+      if (r === 'EU') {
+        var te = cartTotals(cart, 'EU');
+        var pe = document.getElementById('ship-price-eu'); if (pe) pe.textContent = te.shipping === 0 ? 'FREE' : fmt(te.shipping, 'EU');
+      } else {
+        var freeUK = memberFreeShip() || subGBP >= FREE_THRESHOLD;
+        var p48 = document.getElementById('ship-price-48'); if (p48) p48.textContent = freeUK ? 'FREE' : fmt(SHIPPING_FLAT, 'UK');
+        var p24 = document.getElementById('ship-price-24'); if (p24) p24.textContent = freeUK ? 'FREE' : fmt(EXPRESS_FLAT, 'UK');
+      }
+    }
+    document.querySelectorAll('input[name="shipping"]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        try { var st = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); st.ship_method = radio.value; sessionStorage.setItem('vp_checkout', JSON.stringify(st)); } catch (e) {}
+        var rr = currentRegion(); updateShipping(rr); renderCartSummary(cart, rr);
+      });
+    });
 
     // Set initial state
     applyRegion(activeRegion);
@@ -578,6 +613,7 @@
         existing.orderRef        = ref;
         existing.subtotal        = t.subtotal;
         existing.shipping        = finalShipping;
+        existing.ship_method     = t.method || shipMethod();
         existing.discount_code   = promo.code;
         existing.discount_saving = saving;
         existing.points_redeemed      = appliedPoints;

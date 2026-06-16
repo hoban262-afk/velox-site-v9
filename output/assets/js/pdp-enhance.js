@@ -16,7 +16,7 @@
   if (window.__vpPdpEnhance) return;
   window.__vpPdpEnhance = true;
 
-  var FREE_THRESHOLD = 80; // matches cart.js
+  var FREE_THRESHOLD = 100; // matches cart.js
   function fmt(n) { var v = Math.round(n * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
 
   // ── Scoped styles ───────────────────────────────────────────────────────────

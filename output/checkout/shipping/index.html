@@ -233,14 +233,32 @@
           </div>
 
           <h2 class="sec-t">Delivery method</h2>
-          <div class="ship-opts">
+          <div class="ship-opts" id="ship-uk">
             <label class="ship-opt">
-              <input type="radio" name="shipping" value="tracked" checked>
+              <input type="radio" name="shipping" value="48" checked>
               <div class="ship-opt-main">
-                <div class="ship-opt-name" id="ship-opt-name">Royal Mail Tracked 24</div>
-                <div class="ship-opt-sub" id="ship-opt-sub">1–2 working days, tracked. UK only.</div>
+                <div class="ship-opt-name">Royal Mail Tracked 48</div>
+                <div class="ship-opt-sub">2–3 working days, tracked. UK only.</div>
               </div>
-              <div class="ship-opt-price" id="ship-price">£3.80</div>
+              <div class="ship-opt-price" id="ship-price-48">£3.80</div>
+            </label>
+            <label class="ship-opt">
+              <input type="radio" name="shipping" value="24">
+              <div class="ship-opt-main">
+                <div class="ship-opt-name">Royal Mail Tracked 24</div>
+                <div class="ship-opt-sub">1–2 working days, tracked. UK only. Free over £100.</div>
+              </div>
+              <div class="ship-opt-price" id="ship-price-24">£5.99</div>
+            </label>
+          </div>
+          <div class="ship-opts" id="ship-eu" style="display:none">
+            <label class="ship-opt">
+              <input type="radio" name="shipping" value="intl">
+              <div class="ship-opt-main">
+                <div class="ship-opt-name">Royal Mail International Tracked</div>
+                <div class="ship-opt-sub">3–5 working days, tracked. EU &amp; Europe.</div>
+              </div>
+              <div class="ship-opt-price" id="ship-price-eu">€9.99</div>
             </label>
           </div>
 
