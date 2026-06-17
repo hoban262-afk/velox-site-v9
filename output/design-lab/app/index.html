@@ -1321,9 +1321,7 @@ init();
       '<p><b>Your request:</b> '+esc(b.target_mechanism||'')+'</p>'+
       cards+
       '<p class="dis">All sequences are computational predictions for in vitro research use only. Not validated compounds; not for human or veterinary use. CRP Labs Ltd (Velox Peptides).</p>'+
-      '<script src="/assets/js/core.js"></script>
-<script src="/assets/js/search.js" defer></script>
-</body></html>';
+      '</body></html>';
     var blob=new Blob([docHtml],{type:'text/html'});
     var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
     a.download='velox-design-summary-'+new Date().toISOString().slice(0,10)+'.html';
@@ -1337,5 +1335,7 @@ init();
   }
 })();
 </script>
+<script src="/assets/js/core.js"></script>
+<script src="/assets/js/search.js" defer></script>
 </body>
 </html>
