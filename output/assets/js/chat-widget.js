@@ -24,7 +24,7 @@
   var SID = (function(){ try{ var k=sessionStorage.getItem('vcw_sid'); if(k) return k; var v='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); sessionStorage.setItem('vcw_sid',v); return v; }catch(e){ return 'c'+Date.now().toString(36); } })();
 
   var GREETING =
-    "Hey, I'm Anna from Velox. What are you after? " +
+    "Hey, I'm Matt from Velox. What are you after? " +
     "I can help you find the right compound, talk purity and CoAs, or sort shipping.";
 
   // ── styles ────────────────────────────────────────────────────────────────
@@ -109,7 +109,7 @@
   function build() {
     btn = document.createElement('button');
     btn.className = 'vcw-btn';
-    btn.setAttribute('aria-label', 'Chat with Anna from Velox');
+    btn.setAttribute('aria-label', 'Chat with Matt from Velox');
     btn.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.4A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>' +
       '<span>Chat</span>';
@@ -118,10 +118,10 @@
     panel = document.createElement('div');
     panel.className = 'vcw-panel';
     panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-label', 'Chat with Anna from Velox');
+    panel.setAttribute('aria-label', 'Chat with Matt from Velox');
     panel.innerHTML =
       '<div class="vcw-head"><span class="vcw-dot"></span>' +
-        '<div><div class="vcw-title">Anna</div><div class="vcw-sub">Velox Peptides</div></div>' +
+        '<div><div class="vcw-title">Matt</div><div class="vcw-sub">Velox Peptides</div></div>' +
         '<button class="vcw-x" aria-label="Close chat">&times;</button></div>' +
       '<div class="vcw-msgs"></div>' +
       '<div class="vcw-foot"><div class="vcw-inwrap">' +
@@ -212,7 +212,7 @@
   }
 
   // Split a longer reply into up to two natural messages on a sentence boundary,
-  // so Anna "texts" like a person instead of dumping one block.
+  // so Matt "texts" like a person instead of dumping one block.
   function splitReply(text) {
     text = String(text || '').trim();
     if (text.length < 110) return [text];
