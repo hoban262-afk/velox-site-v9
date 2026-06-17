@@ -67,6 +67,9 @@
   '.vcw-send:disabled{opacity:.5;cursor:default}' +
   '.vcw-legal{font-size:10px;color:#4b5563;text-align:center;margin-top:7px;line-height:1.4}' +
   // ── mobile: full-width bottom sheet, dvh so the address bar can't clip it ──
+  '.vcw-chips{display:flex;flex-wrap:wrap;gap:7px;padding:2px 16px 8px}' +
+  '.vcw-chip{background:#141b22;border:1px solid #2a323a;color:#cbd5e1;border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}' +
+  '.vcw-chip:hover{border-color:' + ACCENT + ';color:#fff}' +
   '@media (max-width:600px){' +
     '.vcw-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:85vh;height:85dvh;max-height:85dvh;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0}' +
     '.vcw-btn{right:14px;bottom:14px;padding:11px 14px;font-size:13px}' +
@@ -166,6 +169,10 @@
     row.appendChild(b);
     msgsEl.appendChild(row);
     msgsEl.scrollTop = msgsEl.scrollHeight;
+    if (role === 'bot') {
+      var cm = String(text).match(/VELOX-[A-Z0-9]{6}/);
+      if (cm) { try { localStorage.setItem('vp_ref', JSON.stringify({ code: cm[0], ts: Date.now() })); } catch (e) {} }
+    }
     return b;
   }
 
@@ -190,7 +197,7 @@
       '<span style="color:#9aa3ad;font-size:12.5px">Connecting to agent\u2026</span></div>';
     msgsEl.appendChild(row);
     msgsEl.scrollTop = msgsEl.scrollHeight;
-    setTimeout(function () { row.remove(); addBubble('bot', message); }, 1600 + Math.random() * 900);
+    setTimeout(function () { row.remove(); addBubble('bot', message); showChips(); }, 1600 + Math.random() * 900);
   }
 
   // Fire-and-forget handbook signup when the user shares an email.
@@ -211,6 +218,18 @@
     return email;
   }
 
+  // Starter quick-replies under the greeting to lower the blank-box barrier.
+  function showChips() {
+    var items = ['Help me choose', 'Is it tested?', "Where's my order?", 'Shipping and delivery'];
+    var wrap = document.createElement('div'); wrap.className = 'vcw-chips';
+    items.forEach(function (c) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'vcw-chip'; b.textContent = c;
+      b.addEventListener('click', function () { wrap.remove(); inputEl.value = c; onSend(); });
+      wrap.appendChild(b);
+    });
+    msgsEl.appendChild(wrap); msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
   // Split a longer reply into up to two natural messages on a sentence boundary,
   // so Matt "texts" like a person instead of dumping one block.
   function splitReply(text) {
@@ -229,6 +248,7 @@
 
   function onSend() {
     if (busy) return;
+    var existingChips = msgsEl.querySelector('.vcw-chips'); if (existingChips) existingChips.remove();
     var text = (inputEl.value || '').trim();
     if (!text) return;
     inputEl.value = '';

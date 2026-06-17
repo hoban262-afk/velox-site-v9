@@ -68,6 +68,59 @@ async function logEvent(sid, event, page, meta) {
   } catch (e) { /* ignore */ }
 }
 
+// Live stock + prices, injected per request so Matt never pushes an out-of-stock item.
+async function liveStockBlock() {
+  if (!SUPABASE_URL || !SERVICE) return '';
+  let rows;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/product_variants?select=slug,name,size,base_price,sale_price,in_stock,stock_qty`, { headers: sbHeaders });
+    rows = r.ok ? await r.json() : null;
+  } catch (e) { return ''; }
+  if (!Array.isArray(rows) || !rows.length) return '';
+  const bySlug = {};
+  rows.forEach((v) => {
+    if (!v.slug) return;
+    const price = v.sale_price != null ? Number(v.sale_price) : Number(v.base_price);
+    const avail = v.in_stock !== false && (v.stock_qty == null || Number(v.stock_qty) > 0);
+    const cur = bySlug[v.slug] || { name: v.name, min: Infinity, any: false };
+    if (Number.isFinite(price)) cur.min = Math.min(cur.min, price);
+    cur.any = cur.any || avail;
+    if (!cur.name) cur.name = v.name;
+    bySlug[v.slug] = cur;
+  });
+  const inStock = [], out = [];
+  Object.keys(bySlug).forEach((slug) => {
+    const c = bySlug[slug];
+    if (c.any) inStock.push(`${c.name} (from £${Number.isFinite(c.min) ? c.min.toFixed(2) : '?'}) [/compounds/${slug}/]`);
+    else out.push(c.name);
+  });
+  let block = `\n\n# LIVE STOCK and PRICES (right now, this OVERRIDES the static list. Never recommend anything not in stock)\nIn stock: ${inStock.join('; ')}.`;
+  if (out.length) block += `\nOut of stock right now (do not push these, offer an in-stock alternative): ${out.join(', ')}.`;
+  return block;
+}
+
+// Returning-customer + order context (order status is the only thing pulled, same as support).
+async function customerContextBlock(email) {
+  if (!SUPABASE_URL || !SERVICE || !email) return '';
+  let rows;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?customer_email=ilike.${encodeURIComponent(email)}&select=notes,status,tracking_number,items,created_at&order=created_at.desc&limit=1`, { headers: sbHeaders });
+    rows = r.ok ? await r.json() : null;
+  } catch (e) { return ''; }
+  const o = Array.isArray(rows) ? rows[0] : null;
+  if (!o) return '';
+  const ref = o.notes || 'their order';
+  const items = Array.isArray(o.items) ? o.items.map((i) => i && i.name).filter(Boolean).join(', ') : '';
+  let line = `\n\n# CUSTOMER CONTEXT (use naturally, never read it out verbatim)\nReturning customer (${email}). Most recent order ${ref}: status "${o.status}"`;
+  if (items) line += `, items: ${items}`;
+  line += '.';
+  if (o.status === 'dispatched' && o.tracking_number) {
+    line += ` Tracking ${o.tracking_number} (https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(String(o.tracking_number).replace(/\s+/g, ''))}).`;
+  }
+  line += ' If they ask about their order, answer from this. You can greet them as a returning customer and, where it fits, suggest restocking what they bought.';
+  return line;
+}
+
 // Resolve the model's [[OFFER]] / [[HUMAN]] tags into real, server-controlled actions.
 async function finaliseReply(reply, body, messages) {
   let out = reply.replace(/\s*[\u2014\u2013]\s*/g, ', ').replace(/ ,/g, ',').replace(/,\s*,/g, ',');
@@ -215,6 +268,9 @@ module.exports = async function handler(req, res) {
   if (typeof body.page === 'string' && body.page.trim()) {
     system += `\n\n# CONTEXT\nThe visitor is currently on: ${body.page.trim().slice(0, 120)}. Tailor your help to it.`;
   }
+  // Live data: real stock/prices, and (if we know who they are) their order context.
+  try { const ls = await liveStockBlock(); if (ls) system += ls; } catch (e) { /* ignore */ }
+  try { const em = emailFrom(body, messages); if (em) { const cc = await customerContextBlock(em); if (cc) system += cc; } } catch (e) { /* ignore */ }
   // Best-effort per-IP rate limit (fails open).
   try {
     if (SUPABASE_URL && SERVICE) {
