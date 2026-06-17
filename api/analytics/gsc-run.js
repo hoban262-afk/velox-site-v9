@@ -92,7 +92,7 @@ module.exports = async (req, res) => {
     const w28     = { startDate: d(27), endDate: ymd(end) };
     const w35     = { startDate: d(34), endDate: ymd(end) };
 
-    const [cur, prev, series, topQ, topP, guides] = await Promise.all([
+    const [cur, prev, series, topQ, topP, guides, ctry, ctryPrev] = await Promise.all([
       query(token, { ...w7, rowLimit: 1 }),
       query(token, { ...wPrev7, rowLimit: 1 }),
       query(token, { ...w35, dimensions: ['date'], rowLimit: 40 }),
@@ -102,6 +102,10 @@ module.exports = async (req, res) => {
         ...w28, dimensions: ['page'], rowLimit: 30,
         dimensionFilterGroups: [{ filters: [{ dimension: 'page', operator: 'contains', expression: '/guides/' }] }],
       }),
+      // Country split (this 7d vs prior 7d) — lets us read UK-only trend and
+      // see how much of the impression surge is non-UK (e.g. US discovery).
+      query(token, { ...w7, dimensions: ['country'], rowLimit: 25 }),
+      query(token, { ...wPrev7, dimensions: ['country'], rowLimit: 25 }),
     ]);
 
     const row = {
@@ -112,6 +116,8 @@ module.exports = async (req, res) => {
       top_queries_7d: slim(topQ, 'query'),
       top_pages_7d:   slim(topP, 'page'),
       guides_28d:     slim(guides, 'page'),
+      by_country_7d:     slim(ctry, 'country'),
+      by_country_prev7d: slim(ctryPrev, 'country'),
       fetched_at: new Date().toISOString(),
     };
 
