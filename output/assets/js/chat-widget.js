@@ -19,6 +19,7 @@
   var emailCaptured = false;
   var busy = false;
   var opened = false;
+  var greeted = false;
   var userEmail = null;
   var SID = (function(){ try{ var k=sessionStorage.getItem('vcw_sid'); if(k) return k; var v='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); sessionStorage.setItem('vcw_sid',v); return v; }catch(e){ return 'c'+Date.now().toString(36); } })();
 
@@ -64,7 +65,15 @@
   '.vcw-in:focus{border-color:' + ACCENT + '}' +
   '.vcw-send{background:' + ACCENT + ';color:#021;border:0;border-radius:11px;padding:0 14px;height:42px;font:800 14px Inter,Arial;cursor:pointer}' +
   '.vcw-send:disabled{opacity:.5;cursor:default}' +
-  '.vcw-legal{font-size:10px;color:#4b5563;text-align:center;margin-top:7px;line-height:1.4}';
+  '.vcw-legal{font-size:10px;color:#4b5563;text-align:center;margin-top:7px;line-height:1.4}' +
+  // ── mobile: full-width bottom sheet, dvh so the address bar can't clip it ──
+  '@media (max-width:600px){' +
+    '.vcw-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:85vh;height:85dvh;max-height:85dvh;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0}' +
+    '.vcw-btn{right:14px;bottom:14px;padding:11px 14px;font-size:13px}' +
+    '.vcw-btn svg{width:16px;height:16px}' +
+    '.vcw-head{padding:13px 14px}' +
+    '.vcw-bubble{max-width:88%}' +
+  '}';
 
   function injectCss() {
     var s = document.createElement('style');
@@ -103,7 +112,7 @@
     btn.setAttribute('aria-label', 'Chat with Anna from Velox');
     btn.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.4A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>' +
-      '<span>Chat to Anna</span>';
+      '<span>Chat</span>';
     btn.addEventListener('click', toggle);
 
     panel = document.createElement('div');
@@ -143,7 +152,7 @@
     panel.classList.toggle('vcw-open', opened);
     btn.style.display = opened ? 'none' : 'inline-flex';
     if (opened) {
-      if (!messages.length && !msgsEl.children.length) addBubble('bot', GREETING);
+      if (!messages.length && !greeted) connectThenGreet(GREETING);
       setTimeout(function () { inputEl.focus(); }, 50);
     }
   }
@@ -167,6 +176,21 @@
     msgsEl.appendChild(row);
     msgsEl.scrollTop = msgsEl.scrollHeight;
     return row;
+  }
+
+  // Show a brief "Connecting to agent" status, then drop in the first message —
+  // so opening the chat feels like reaching a real person, not an instant bot.
+  function connectThenGreet(message) {
+    if (greeted) return;
+    greeted = true;
+    var row = document.createElement('div');
+    row.className = 'vcw-row bot';
+    row.innerHTML = '<div class="vcw-bubble" style="display:flex;align-items:center;gap:8px">' +
+      '<span class="vcw-typing"><span></span><span></span><span></span></span>' +
+      '<span style="color:#9aa3ad;font-size:12.5px">Connecting to agent\u2026</span></div>';
+    msgsEl.appendChild(row);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    setTimeout(function () { row.remove(); addBubble('bot', message); }, 1600 + Math.random() * 900);
   }
 
   // Fire-and-forget handbook signup when the user shares an email.
@@ -259,7 +283,7 @@
         if (opened || messages.length) return;
         sessionStorage.setItem('vcw_nudged', '1');
         panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
-        addBubble('bot', "Anything I can help with on this one? I can talk you through purity and CoAs, or find you the right thing. There's a discount on first orders too if you're close.");
+        connectThenGreet("Anything I can help with on this one? I can talk you through purity and CoAs, or find you the right thing. There's a discount on first orders too if you're close.");
       }, 30000);
     } catch (e) { /* ignore */ }
   }
