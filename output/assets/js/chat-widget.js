@@ -187,6 +187,22 @@
     return email;
   }
 
+  // Split a longer reply into up to two natural messages on a sentence boundary,
+  // so Anna "texts" like a person instead of dumping one block.
+  function splitReply(text) {
+    text = String(text || '').trim();
+    if (text.length < 110) return [text];
+    var sentences = text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g);
+    if (!sentences || sentences.length < 2) return [text];
+    var mid = Math.ceil(sentences.length / 2);
+    var a = sentences.slice(0, mid).join('').trim();
+    var b = sentences.slice(mid).join('').trim();
+    return b ? [a, b] : [a];
+  }
+
+  // Believable "typing" time for a chunk (much slower than before, scales with length).
+  function typeDelay(t) { return Math.min(4500, Math.max(1400, 1000 + t.length * 35)); }
+
   function onSend() {
     if (busy) return;
     var text = (inputEl.value || '').trim();
@@ -213,14 +229,19 @@
       .then(function (d) {
         var reply = (d && d.reply) ||
           "Sorry, something went wrong there. Try again, or email support@veloxpeps.com and a real person will sort it.";
-        // small human delay so it feels like she's typing, not an instant bot
-        var delay = Math.min(1800, 500 + reply.length * 12);
-        setTimeout(function () {
-          typing.remove();
-          addBubble('bot', reply);
-          messages.push({ role: 'assistant', content: reply });
-          busy = false; sendEl.disabled = false; inputEl.focus();
-        }, delay);
+        messages.push({ role: 'assistant', content: reply });
+        var parts = splitReply(reply);
+        var firstTyping = typing;            // reuse the indicator already on screen
+        (function deliver(i) {
+          if (i >= parts.length) { busy = false; sendEl.disabled = false; inputEl.focus(); return; }
+          var t = parts[i];
+          var indicator = (i === 0) ? firstTyping : showTyping();
+          setTimeout(function () {
+            indicator.remove();
+            addBubble('bot', t);
+            deliver(i + 1);
+          }, typeDelay(t));
+        })(0);
       })
       .catch(function () {
         typing.remove();
