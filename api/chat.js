@@ -18,6 +18,90 @@ const PEPTIDES = require('../lib/peptide-data.json');
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const MODEL = process.env.CHAT_MODEL || process.env.MARKETING_MODEL || 'claude-haiku-4-5-20251001';
 
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const CHAT_DISCOUNT_PCT = 15;
+const CODE_TTL_HOURS = 72;
+const { genCode } = require('../lib/restock');
+const { proposeAction } = require('../lib/agent-actions');
+const sbHeaders = { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json' };
+
+// Mint a single-use, email-bound first-order code (reuses recovery_codes →
+// validates at checkout via /api/newsletter/validate). Server controls the % and
+// expiry, so the model can never inflate the discount.
+async function mintChatCode(email) {
+  if (!SUPABASE_URL || !SERVICE || !email) return null;
+  const expires = new Date(Date.now() + CODE_TTL_HOURS * 3600 * 1000).toISOString();
+  for (let i = 0; i < 2; i++) {
+    const code = genCode();
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/recovery_codes`, {
+      method: 'POST', headers: { ...sbHeaders, Prefer: 'return=minimal' },
+      body: JSON.stringify({ email: String(email).toLowerCase(), code, discount_pct: CHAT_DISCOUNT_PCT, expires_at: expires }),
+    }).catch(() => null);
+    if (r && r.ok) return code;
+    if (r && r.status === 409) continue;   // rare collision — retry
+    return null;
+  }
+  return null;
+}
+
+const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
+function emailFrom(body, messages) {
+  if (body && typeof body.email === 'string' && EMAIL_RE.test(body.email)) return body.email.trim();
+  for (let i = messages.length - 1; i >= 0 && i >= messages.length - 4; i--) {
+    if (messages[i].role === 'user') { const m = (messages[i].content || '').match(EMAIL_RE); if (m) return m[0]; }
+  }
+  return null;
+}
+// One discount per conversation: if any earlier assistant turn already carries a code, don't mint another.
+function offerAlreadyIssued(messages) {
+  return messages.some((m) => m.role === 'assistant' && /VELOX-[A-Z0-9]{6}/.test(m.content || ''));
+}
+
+async function logEvent(sid, event, page, meta) {
+  if (!SUPABASE_URL || !SERVICE) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/events`, {
+      method: 'POST', headers: { ...sbHeaders, Prefer: 'return=minimal' },
+      body: JSON.stringify({ sid: ((sid || '').slice(0, 64)) || null, event, path: (page || '').slice(0, 200), meta: meta || null }),
+    });
+  } catch (e) { /* ignore */ }
+}
+
+// Resolve the model's [[OFFER]] / [[HUMAN]] tags into real, server-controlled actions.
+async function finaliseReply(reply, body, messages) {
+  let out = reply;
+  const sid = body && body.sid, page = body && body.page;
+  if (out.includes('[[OFFER]]')) {
+    out = out.replace(/\[\[OFFER\]\]/g, '').trim();
+    if (!offerAlreadyIssued(messages)) {
+      const email = emailFrom(body, messages);
+      if (email) {
+        const code = await mintChatCode(email);
+        if (code) {
+          out += `\n\nYour code: **${code}** — ${CHAT_DISCOUNT_PCT}% off your first order, valid ${CODE_TTL_HOURS} hours, one use. Paste it at checkout.`;
+          logEvent(sid, 'chat_offer_issued', page, { email, pct: CHAT_DISCOUNT_PCT });
+        }
+      } else {
+        out += `\n\nShare your email and I'll lock in ${CHAT_DISCOUNT_PCT}% off your first order (valid ${CODE_TTL_HOURS}h).`;
+      }
+    }
+  }
+  if (out.includes('[[HUMAN]]')) {
+    out = out.replace(/\[\[HUMAN\]\]/g, '').trim();
+    try {
+      await proposeAction({
+        agent: 'chat-assistant', type: 'briefing',
+        title: 'Live-chat visitor needs a human',
+        summary: ((messages[messages.length - 1] && messages[messages.length - 1].content) || '').slice(0, 200),
+        payload: { page, sid, email: emailFrom(body, messages), last: messages.slice(-4) },
+        dedupeKey: `chat:${sid || Date.now()}`, notify: true,
+      });
+    } catch (e) { /* ignore */ }
+  }
+  return out;
+}
+
 // Product slugs that have a real /compounds/<slug>/ page. Only these may be
 // linked, so the bot can never invent a dead URL.
 const VALID_PRODUCT_SLUGS = new Set([
@@ -79,7 +163,14 @@ Only link to URLs that appear in this prompt (the product list below, the catego
 # CATALOGUE (only these product pages exist — link only these)
 ${catalogueText()}
 
-Stay in character as the Velox Assistant. Be genuinely helpful first, sell softly second, and never break the compliance rules above.`;
+# CONVERTING — assertive but honest (this section OVERRIDES any 'soft'/'never pushy' guidance above)
+- You are a confident closer. Answer the question brilliantly, then drive toward the order with momentum: recommend the specific compound, link its page, and ask for the close ("want me to get that ready for you?"). Carry the conversation forward — don't just answer and stop.
+- Handle objections head-on with the facts above. Don't fold at the first "I'll think about it" — surface the real hesitation (price? trust? unsure which compound?) and resolve it.
+- ABSOLUTE HONESTY (UK law): NEVER invent urgency, scarcity, stock counts, deadlines, star-ratings, reviews or testimonials. State only facts present in this prompt. Real, system-issued offers below are the only "limited" thing you may push.
+- THE CLOSE OFFER: when a researcher shows clear buying intent OR hesitates on price, you may offer a one-time 15% first-order discount in exchange for their email. To trigger it, put the tag [[OFFER]] on its own line at the very end of your message — the system swaps it for a real single-use code. Use it only ONCE per conversation and only when it will genuinely tip them over. If you don't have their email yet, ask for it in the message ("drop your email and I'll lock in 15% off").
+- HUMAN HANDOFF: if they ask for a person, raise a complaint, or you truly can't help, put [[HUMAN]] on its own line at the end and tell them a real person will follow up from support@veloxpeps.com.
+
+Stay in character as the Velox Assistant. Helpful and expert first, then close with confidence — and never break the compliance rules above.`;
 
 function sanitiseMessages(raw) {
   if (!Array.isArray(raw)) return [];
@@ -113,6 +204,21 @@ module.exports = async function handler(req, res) {
   if (typeof body.note === 'string' && body.note.trim()) {
     system += `\n\n# RUNTIME NOTE\n${body.note.trim().slice(0, 400)}`;
   }
+  if (typeof body.page === 'string' && body.page.trim()) {
+    system += `\n\n# CONTEXT\nThe visitor is currently on: ${body.page.trim().slice(0, 120)}. Tailor your help to it.`;
+  }
+  // Best-effort per-IP rate limit (fails open).
+  try {
+    if (SUPABASE_URL && SERVICE) {
+      const ip = ((req.headers['x-forwarded-for'] || '').split(',')[0] || '').trim() || 'unknown';
+      const rl = await fetch(`${SUPABASE_URL}/rest/v1/rpc/check_rate_limit`, {
+        method: 'POST', headers: sbHeaders, body: JSON.stringify({ p_key: `chat:${ip}`, p_limit: 30, p_window_seconds: 60 }),
+      });
+      if (rl.ok && (await rl.json().catch(() => true)) === false) {
+        return res.status(200).json({ reply: "One sec — you're sending messages quickly. Give me a moment and try again." });
+      }
+    }
+  } catch (e) { /* fail open */ }
 
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
@@ -130,7 +236,8 @@ module.exports = async function handler(req, res) {
       console.error('[chat] empty reply', d && d.error ? d.error : '');
       return res.status(502).json({ error: 'No reply' });
     }
-    return res.status(200).json({ reply });
+    const finalReply = await finaliseReply(reply, body, messages);
+    return res.status(200).json({ reply: finalReply });
   } catch (e) {
     console.error('[chat] error', e.message);
     return res.status(500).json({ error: 'Assistant error' });

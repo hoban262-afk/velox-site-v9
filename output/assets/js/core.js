@@ -479,3 +479,15 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   } catch (e) { if (window.console) console.error('[vpus]', e && e.message); }
 })();
+
+/* ── Velox on-site assistant — load the chat bubble on every page except admin ── */
+(function () {
+  try {
+    if (/^\/admin\b/.test(location.pathname)) return;   // owner UI: no sales bot
+    if (window.__veloxChatLoaded) return;               // already present (e.g. /chat-test/)
+    var s = document.createElement('script');
+    s.src = '/assets/js/chat-widget.js';
+    s.defer = true;
+    (document.body || document.head || document.documentElement).appendChild(s);
+  } catch (e) { /* ignore */ }
+})();

@@ -19,6 +19,8 @@
   var emailCaptured = false;
   var busy = false;
   var opened = false;
+  var userEmail = null;
+  var SID = (function(){ try{ var k=sessionStorage.getItem('vcw_sid'); if(k) return k; var v='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); sessionStorage.setItem('vcw_sid',v); return v; }catch(e){ return 'c'+Date.now().toString(36); } })();
 
   var GREETING =
     "Hi, I'm the Velox Assistant. Ask me anything about our research compounds, " +
@@ -174,6 +176,7 @@
     if (!m) return null;
     var email = m[0];
     emailCaptured = true;
+    userEmail = email;
     try {
       fetch('/api/newsletter/signup', {
         method: 'POST',
@@ -204,7 +207,7 @@
     fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: messages, note: note }),
+      body: JSON.stringify({ messages: messages, note: note, page: location.pathname, sid: SID, email: userEmail }),
     })
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (d) {
@@ -221,9 +224,24 @@
       .finally(function () { busy = false; sendEl.disabled = false; inputEl.focus(); });
   }
 
+  function maybeProactive() {
+    try {
+      if (window.innerWidth < 768) return;                       // never hijack a phone screen
+      if (!/(\/compounds\/|\/cart\/|\/checkout\/)/.test(location.pathname)) return;
+      if (sessionStorage.getItem('vcw_nudged')) return;
+      setTimeout(function () {
+        if (opened || messages.length) return;
+        sessionStorage.setItem('vcw_nudged', '1');
+        panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
+        addBubble('bot', "Quick question about what you're looking at? I can help you pick the right compound, check purity and CoAs, or sort shipping \u2014 and there's a first-order discount if you're close to deciding.");
+      }, 30000);
+    } catch (e) { /* ignore */ }
+  }
+
   function init() {
     injectCss();
     build();
+    maybeProactive();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
