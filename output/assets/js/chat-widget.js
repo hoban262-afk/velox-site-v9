@@ -23,8 +23,8 @@
   var SID = (function(){ try{ var k=sessionStorage.getItem('vcw_sid'); if(k) return k; var v='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); sessionStorage.setItem('vcw_sid',v); return v; }catch(e){ return 'c'+Date.now().toString(36); } })();
 
   var GREETING =
-    "Hi, I'm the Velox Assistant. Ask me anything about our research compounds, " +
-    "purity and documentation, shipping, or finding the right product. How can I help?";
+    "Hey, I'm Anna from Velox. What are you after? " +
+    "I can help you find the right compound, talk purity and CoAs, or sort shipping.";
 
   // ── styles ────────────────────────────────────────────────────────────────
   var css = '' +
@@ -100,19 +100,19 @@
   function build() {
     btn = document.createElement('button');
     btn.className = 'vcw-btn';
-    btn.setAttribute('aria-label', 'Chat with the Velox Assistant');
+    btn.setAttribute('aria-label', 'Chat with Anna from Velox');
     btn.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.4A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>' +
-      '<span>Ask Velox</span>';
+      '<span>Chat to Anna</span>';
     btn.addEventListener('click', toggle);
 
     panel = document.createElement('div');
     panel.className = 'vcw-panel';
     panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-label', 'Velox Assistant');
+    panel.setAttribute('aria-label', 'Chat with Anna from Velox');
     panel.innerHTML =
       '<div class="vcw-head"><span class="vcw-dot"></span>' +
-        '<div><div class="vcw-title">Velox Assistant</div><div class="vcw-sub">For research use only</div></div>' +
+        '<div><div class="vcw-title">Anna</div><div class="vcw-sub">Velox Peptides</div></div>' +
         '<button class="vcw-x" aria-label="Close chat">&times;</button></div>' +
       '<div class="vcw-msgs"></div>' +
       '<div class="vcw-foot"><div class="vcw-inwrap">' +
@@ -211,17 +211,22 @@
     })
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (d) {
-        typing.remove();
         var reply = (d && d.reply) ||
-          "Sorry, I had trouble answering just then. You can try again, or email support@veloxpeps.com and a real person will help.";
-        addBubble('bot', reply);
-        messages.push({ role: 'assistant', content: reply });
+          "Sorry, something went wrong there. Try again, or email support@veloxpeps.com and a real person will sort it.";
+        // small human delay so it feels like she's typing, not an instant bot
+        var delay = Math.min(1800, 500 + reply.length * 12);
+        setTimeout(function () {
+          typing.remove();
+          addBubble('bot', reply);
+          messages.push({ role: 'assistant', content: reply });
+          busy = false; sendEl.disabled = false; inputEl.focus();
+        }, delay);
       })
       .catch(function () {
         typing.remove();
-        addBubble('bot', "Sorry, I couldn't reach the server. Please try again in a moment.");
-      })
-      .finally(function () { busy = false; sendEl.disabled = false; inputEl.focus(); });
+        addBubble('bot', "Sorry, I couldn't reach the server. Give it another go in a sec.");
+        busy = false; sendEl.disabled = false; inputEl.focus();
+      });
   }
 
   function maybeProactive() {
@@ -233,7 +238,7 @@
         if (opened || messages.length) return;
         sessionStorage.setItem('vcw_nudged', '1');
         panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
-        addBubble('bot', "Quick question about what you're looking at? I can help you pick the right compound, check purity and CoAs, or sort shipping \u2014 and there's a first-order discount if you're close to deciding.");
+        addBubble('bot', "Anything I can help with on this one? I can talk you through purity and CoAs, or find you the right thing. There's a discount on first orders too if you're close.");
       }, 30000);
     } catch (e) { /* ignore */ }
   }
