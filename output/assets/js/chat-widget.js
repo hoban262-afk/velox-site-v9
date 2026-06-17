@@ -93,15 +93,24 @@
   // Escape, then linkify https URLs and site paths, then **bold** and newlines.
   function render(text) {
     var html = esc(text);
-    html = html.replace(/(https?:\/\/[^\s<)]+)/g, function (u) {
-      return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>';
+    var stash = [];
+    function keep(h) { stash.push(h); return '\u0000' + (stash.length - 1) + '\u0000'; }
+    // 1) named markdown links [text](url-or-path) -> clickable with the name as the label
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g, function (m, txt, url) {
+      var ext = /^https?:/.test(url);
+      return keep('<a href="' + url + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + txt + '</a>');
     });
-    // bare site paths like /compounds/bpc-157/
+    // 2) bare full URLs
+    html = html.replace(/(https?:\/\/[^\s<)]+)/g, function (u) {
+      return keep('<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>');
+    });
+    // 3) bare site paths (fallback if Matt forgets the markdown form)
     html = html.replace(/(^|[\s(])(\/[a-z0-9][a-z0-9\-\/]*\/)/g, function (m, pre, path) {
-      return pre + '<a href="' + path + '">' + path + '</a>';
+      return pre + keep('<a href="' + path + '">' + path + '</a>');
     });
     html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/\n/g, '<br>');
+    html = html.replace(/\u0000(\d+)\u0000/g, function (m, i) { return stash[i]; });
     return html;
   }
   var EMAIL_RE = /[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}/i;

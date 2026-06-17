@@ -219,7 +219,7 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 - Velox Pro membership: /pro/ — £6.99/mo, 10% off everything + free Tracked 24.
 
 # LINK RULES
-Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). Format links as plain paths like /compounds/bpc-157/. NEVER invent a URL. If unsure, link to /compounds/ or /faq/.
+Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). When you link a page, ALWAYS write it as a markdown link with a short readable name, like [BPC-157](/compounds/bpc-157/) or [reconstitution calculator](/tools/reconstitution-calculator/). Never show a bare path or raw URL as the visible text. NEVER invent a URL. If unsure, link to [our compounds](/compounds/) or the [FAQ](/faq/).
 
 # CATALOGUE (only these product pages exist — link only these)
 ${catalogueText()}
