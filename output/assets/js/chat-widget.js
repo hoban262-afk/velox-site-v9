@@ -72,7 +72,7 @@
   '.vcw-chip:hover{border-color:' + ACCENT + ';color:#fff}' +
   '@media (max-width:600px){' +
     '.vcw-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:85vh;height:85dvh;max-height:85dvh;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0}' +
-    '.vcw-btn{right:14px;bottom:14px;padding:11px 14px;font-size:13px}' +
+    '.vcw-btn{right:14px;bottom:78px;padding:11px 14px;font-size:13px}' +
     '.vcw-btn svg{width:16px;height:16px}' +
     '.vcw-head{padding:13px 14px}' +
     '.vcw-bubble{max-width:88%}' +
@@ -99,6 +99,12 @@
     html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g, function (m, txt, url) {
       var ext = /^https?:/.test(url);
       return keep('<a href="' + url + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + txt + '</a>');
+    });
+    // 1b) bracketed bare path [/compounds/x/] -> link with a readable name
+    html = html.replace(/\[(\/[a-z0-9][a-z0-9\-\/]*\/)\]/gi, function (m, path) {
+      var seg = path.replace(/\/+$/, '').split('/').pop().replace(/-/g, ' ');
+      var name = seg ? seg.charAt(0).toUpperCase() + seg.slice(1) : 'this page';
+      return keep('<a href="' + path + '">' + name + '</a>');
     });
     // 2) bare full URLs
     html = html.replace(/(https?:\/\/[^\s<)]+)/g, function (u) {
@@ -243,12 +249,17 @@
   // so Matt "texts" like a person instead of dumping one block.
   function splitReply(text) {
     text = String(text || '').trim();
-    if (text.length < 110) return [text];
-    var sentences = text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g);
-    if (!sentences || sentences.length < 2) return [text];
-    var mid = Math.ceil(sentences.length / 2);
-    var a = sentences.slice(0, mid).join('').trim();
-    var b = sentences.slice(mid).join('').trim();
+    if (text.length < 120) return [text];
+    // never chop an email, a code, or a link across bubbles
+    if (/VELOX-[A-Z0-9]{6}/.test(text)) return [text];
+    if (/[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}/i.test(text)) return [text];
+    if (/\]\(|https?:\/\//.test(text)) return [text];
+    // split only on sentence punctuation FOLLOWED BY a space (so "me.com" stays intact)
+    var parts = text.replace(/([.!?])\s+/g, '$1\u0001').split('\u0001').filter(function (x) { return x.trim(); });
+    if (parts.length < 2) return [text];
+    var mid = Math.ceil(parts.length / 2);
+    var a = parts.slice(0, mid).join(' ').trim();
+    var b = parts.slice(mid).join(' ').trim();
     return b ? [a, b] : [a];
   }
 
@@ -267,7 +278,7 @@
 
     var capturedEmail = maybeCaptureEmail(text);
     var note = capturedEmail
-      ? 'The user just shared their email (' + capturedEmail + ') and the Researcher\'s Handbook plus a one-time 10% code has just been emailed to them. Confirm warmly in one line and carry on helping.'
+      ? 'The user just shared their email (' + capturedEmail + '). Confirm warmly in one line and keep helping. A 15% first-order code is being attached automatically, so do NOT invent a code or tell them to check their inbox.'
       : '';
 
     busy = true; sendEl.disabled = true;

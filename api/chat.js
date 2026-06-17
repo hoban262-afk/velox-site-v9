@@ -125,20 +125,24 @@ async function customerContextBlock(email) {
 async function finaliseReply(reply, body, messages) {
   let out = reply.replace(/\s*[\u2014\u2013]\s*/g, ', ').replace(/ ,/g, ',').replace(/,\s*,/g, ',');
   const sid = body && body.sid, page = body && body.page;
-  if (out.includes('[[OFFER]]')) {
-    out = out.replace(/\[\[OFFER\]\]/g, '').trim();
-    if (!offerAlreadyIssued(messages)) {
-      const email = emailFrom(body, messages);
-      if (email) {
-        const code = await mintChatCode(email);
-        if (code) {
-          out += `\n\nYour code: **${code}** — ${CHAT_DISCOUNT_PCT}% off your first order, valid ${CODE_TTL_HOURS} hours, one use. Paste it at checkout.`;
-          logEvent(sid, 'chat_offer_issued', page, { email, pct: CHAT_DISCOUNT_PCT });
-        }
-      } else {
-        out += `\n\nShare your email and I'll lock in ${CHAT_DISCOUNT_PCT}% off your first order (valid ${CODE_TTL_HOURS}h).`;
-      }
+  // ── Discount offer (reliable) ───────────────────────────────────────────
+  // Attach the code whenever we have an email AND an offer is in play — either
+  // the model tagged [[OFFER]] this turn, or the discount was already raised and
+  // the customer has now shared their email. No longer depends on the model
+  // re-emitting the tag, so "here's my email" always yields a visible code.
+  const offerTagged = out.includes('[[OFFER]]');
+  out = out.replace(/\[\[OFFER\]\]/g, '').trim();
+  const offerEmail = emailFrom(body, messages);
+  const alreadyIssued = offerAlreadyIssued(messages) || /VELOX-[A-Z0-9]{6}/.test(out);
+  const offerInPlay = messages.some((m) => m.role === 'assistant' && /(15%|discount|lock in|off your first|first[- ]order)/i.test(m.content || ''));
+  if (!alreadyIssued && offerEmail && (offerTagged || offerInPlay)) {
+    const code = await mintChatCode(offerEmail);
+    if (code) {
+      out += `\n\nHere's your code: ${code} (${CHAT_DISCOUNT_PCT}% off your first order, valid ${CODE_TTL_HOURS}h, one use). It auto-applies at checkout.`;
+      logEvent(sid, 'chat_offer_issued', page, { email: offerEmail, pct: CHAT_DISCOUNT_PCT });
     }
+  } else if (!alreadyIssued && !offerEmail && offerTagged && !/email/i.test(out)) {
+    out += `\n\nShare your email and I'll lock in ${CHAT_DISCOUNT_PCT}% off (valid ${CODE_TTL_HOURS}h).`;
   }
   if (out.includes('[[HUMAN]]')) {
     out = out.replace(/\[\[HUMAN\]\]/g, '').trim();
@@ -219,7 +223,7 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 - Velox Pro membership: /pro/ — £6.99/mo, 10% off everything + free Tracked 24.
 
 # LINK RULES
-Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). When you link a page, ALWAYS write it as a markdown link with a short readable name, like [BPC-157](/compounds/bpc-157/) or [reconstitution calculator](/tools/reconstitution-calculator/). Never show a bare path or raw URL as the visible text. NEVER invent a URL. If unsure, link to [our compounds](/compounds/) or the [FAQ](/faq/).
+Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). When you link a page, ALWAYS write it as a markdown link with a short readable name, like [BPC-157](/compounds/bpc-157/) or [reconstitution calculator](/tools/reconstitution-calculator/). Never show a bare path or raw URL as the visible text. Never write a link as [/compounds/glutathione/] or a bare /path/ on its own. It MUST be [Readable Name](/path/). NEVER invent a URL. If unsure, link to [our compounds](/compounds/) or the [FAQ](/faq/).
 
 # CATALOGUE (only these product pages exist — link only these)
 ${catalogueText()}
