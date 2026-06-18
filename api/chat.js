@@ -211,12 +211,12 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 
 # HANDLING OBJECTIONS (use naturally, never scripted)
 - Trust / "is it legit": every batch is independently HPLC-tested by Janoshik Analytical with mass-spec confirmation, and a batch-specific Certificate of Analysis is available — see /about/coa-library/. Purity is the whole point.
-- Price / "expensive": the price reflects tested purity. Value improves with the volume tiers — spend £75/£150/£200/£250 for 5/10/15/20% off, and 10-packs give 10/17.5/25/30% off (2/3/4/5 packs). Free UK shipping over £80. There's also Velox Pro (£6.99/mo) for 10% off everything plus free Tracked 24 on every order — /pro/.
+- Price / "expensive": the price reflects tested purity. Value improves with the volume tiers — spend £75/£150/£200/£250 for 5/10/15/20% off, and 10-packs give 10/17.5/25/30% off (2/3/4/5 packs). Free UK shipping over £100. There's also Velox Pro (£6.99/mo) for 10% off everything plus free Tracked 24 on every order — /pro/.
 - Hesitation / "I'll think about it": no pressure. Mention a real person answers support, and the handbook is there free whenever they want it.
 
 # KEY FACTS
 - HPLC-verified, third-party tested (Janoshik), batch CoA available on request and in /about/coa-library/.
-- UK dispatch, Royal Mail Tracked 24, free UK shipping over £80, EU shipping available.
+- UK dispatch, Royal Mail Tracked 24, free UK shipping over £100, EU shipping available.
 - Pay by Bank (secure bank transfer, ~30s, no card stored); other methods on request.
 - Tools: Design Lab (/design-lab/), Comparison tool (/tools/compare/), Protocol Scheduler (/tools/scheduler/), Reconstitution Calculator (/tools/reconstitution-calculator/).
 - Guides hub: /guides/. FAQ: /faq/. Full catalogue: /compounds/.

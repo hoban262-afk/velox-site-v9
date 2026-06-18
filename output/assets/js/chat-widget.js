@@ -29,7 +29,7 @@
 
   // ── styles ────────────────────────────────────────────────────────────────
   var css = '' +
-  '.vcw-btn{position:fixed;right:20px;bottom:20px;z-index:99998;display:inline-flex;align-items:center;gap:9px;' +
+  '.vcw-btn{position:fixed;right:20px;bottom:calc(var(--vpdock-h, 0px) + 20px);z-index:99998;display:inline-flex;align-items:center;gap:9px;' +
     'background:' + ACCENT + ';color:#021;border:0;border-radius:999px;padding:13px 18px;font:800 14px Inter,Arial,sans-serif;' +
     'cursor:pointer;box-shadow:0 10px 34px -8px rgba(1,211,160,.6);transition:transform .15s ease,box-shadow .2s ease}' +
   '.vcw-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px -8px rgba(1,211,160,.7)}' +
@@ -72,7 +72,7 @@
   '.vcw-chip:hover{border-color:' + ACCENT + ';color:#fff}' +
   '@media (max-width:600px){' +
     '.vcw-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:85vh;height:85dvh;max-height:85dvh;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0}' +
-    '.vcw-btn{right:14px;bottom:78px;padding:11px 14px;font-size:13px}' +
+    '.vcw-btn{right:14px;bottom:calc(var(--vpdock-h, 112px) + 14px);padding:11px 14px;font-size:13px}' +
     '.vcw-btn svg{width:16px;height:16px}' +
     '.vcw-head{padding:13px 14px}' +
     '.vcw-bubble{max-width:88%}' +
