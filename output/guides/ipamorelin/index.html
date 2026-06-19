@@ -728,57 +728,13 @@
 
       <!-- ═══ SIDEBAR ═══ -->
       <aside class="rl-sidebar" aria-label="Order and related compounds">
-        <div class="rl-sb-card vp-interest" data-slug="ipamorelin">
-          <div class="rl-sb-hdr" style="color:#01D3A0">Coming soon</div>
+        <div class="rl-sb-card">
+          <div class="rl-sb-hdr">Order for research</div>
           <div class="rl-sb-compound-name">Ipamorelin</div>
-          <div class="rl-sb-purity" style="color:#9CA3AF">Not yet in stock for research</div>
-          <p style="font-size:0.82rem;color:#9CA3AF;line-height:1.6;margin:10px 0 12px">Register your interest and we&rsquo;ll email you the moment Ipamorelin is available. No spam - one notification.</p>
-          <form class="vp-interest-form" novalidate>
-            <input type="email" class="vp-interest-email" required placeholder="you@lab.com" autocomplete="email"
-                   style="width:100%;box-sizing:border-box;background:#030407;border:1px solid #1a1d24;color:#F9FAFB;border-radius:6px;padding:10px 12px;font-size:0.875rem;margin-bottom:8px">
-            <button type="submit" class="rl-sb-btn vp-interest-btn" style="width:100%">Register interest &rarr;</button>
-            <div class="vp-interest-msg" role="status" aria-live="polite" style="font-size:0.78rem;color:#9CA3AF;margin-top:8px;min-height:14px"></div>
-          </form>
-          <a class="rl-sb-btn-o" href="/compounds/growth/" style="margin-top:8px">View somatotropic compounds</a>
+          <div class="rl-sb-purity">&ge;99% HPLC &middot; HPLC verified</div>
+          <a class="rl-sb-btn" href="/compounds/ipamorelin/">Order Ipamorelin &rarr;</a>
+          <a class="rl-sb-btn-o" href="/compounds/growth/">View somatotropic compounds</a>
         </div>
-        <script>
-        (function () {
-          var card = document.currentScript.previousElementSibling;
-          if (!card || !card.classList.contains('vp-interest')) {
-            var cards = document.querySelectorAll('.vp-interest'); card = cards[cards.length - 1];
-          }
-          var form = card.querySelector('.vp-interest-form');
-          var emailEl = card.querySelector('.vp-interest-email');
-          var btn = card.querySelector('.vp-interest-btn');
-          var msg = card.querySelector('.vp-interest-msg');
-          var slug = card.getAttribute('data-slug');
-          var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            var email = (emailEl.value || '').trim();
-            if (!EMAIL_RE.test(email)) { msg.style.color = '#f87171'; msg.textContent = 'Please enter a valid email address.'; return; }
-            btn.disabled = true; var orig = btn.innerHTML; btn.textContent = 'Registering…';
-            msg.style.color = '#9CA3AF'; msg.textContent = '';
-            fetch('/api/interest', {
-              method: 'POST', headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ product_slug: slug, email: email, source: 'guide:' + slug })
-            })
-            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-            .then(function (o) {
-              if (o.ok) {
-                form.innerHTML = '<div style="font-size:0.85rem;color:#01D3A0;line-height:1.6">&#10003; You&rsquo;re on the list. We&rsquo;ll email you when ' + slug.replace(/-/g,' ') + ' is available.</div>';
-              } else {
-                btn.disabled = false; btn.innerHTML = orig;
-                msg.style.color = '#f87171'; msg.textContent = (o.d && o.d.error) || 'Something went wrong, please try again.';
-              }
-            })
-            .catch(function () {
-              btn.disabled = false; btn.innerHTML = orig;
-              msg.style.color = '#f87171'; msg.textContent = 'Network error, please try again.';
-            });
-          });
-        })();
-        </script>
         <div class="rl-sb-card">
           <div class="rl-sb-hdr">Also researched with</div>
           <a class="rl-sb-related-item" href="/compounds/cjc-1295/"><div><div class="rl-sb-related-name">CJC-1295 (no DAC)</div><div class="rl-sb-related-cat">GROWTH</div></div><span class="rl-sb-related-arr">&rarr;</span></a>
