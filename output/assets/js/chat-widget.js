@@ -23,9 +23,14 @@
   var userEmail = null;
   var SID = (function(){ try{ var k=sessionStorage.getItem('vcw_sid'); if(k) return k; var v='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); sessionStorage.setItem('vcw_sid',v); return v; }catch(e){ return 'c'+Date.now().toString(36); } })();
 
-  var GREETING =
-    "Hey, I'm Matt from Velox. What are you after? " +
-    "I can help you find the right compound, talk purity and CoAs, or sort shipping.";
+  // A few natural openers, picked at random so it never feels canned.
+  var GREETINGS = [
+    "Hey, Matt here from Velox. What are you working on? Happy to help you find the right compound or talk through testing and shipping.",
+    "Hi, I'm Matt from the Velox team. What can I help with? Whether it's picking a compound, our testing, or where your order is, ask away.",
+    "Hey, Matt from Velox. What are you after today? I can help you choose, talk you through how everything's tested, or sort out shipping.",
+    "Hi there, Matt here. What's on your mind? I can point you to the right compound or answer anything on testing and delivery."
+  ];
+  function pickGreeting() { return GREETINGS[Math.floor(Math.random() * GREETINGS.length)]; }
 
   // ── styles ────────────────────────────────────────────────────────────────
   var css = '' +
@@ -121,8 +126,34 @@
   }
   var EMAIL_RE = /[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}/i;
 
+  // ── conversation persistence (survives reloads within the session) ────────
+  var STATE_KEY = 'vcw_state';
+  function saveState() {
+    try {
+      sessionStorage.setItem(STATE_KEY, JSON.stringify({
+        messages: messages.slice(-24), emailCaptured: emailCaptured,
+        userEmail: userEmail, greeted: greeted,
+      }));
+    } catch (e) { /* ignore */ }
+  }
+  function loadState() {
+    try {
+      var raw = sessionStorage.getItem(STATE_KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      return (s && Array.isArray(s.messages)) ? s : null;
+    } catch (e) { return null; }
+  }
+
   // ── DOM ─────────────────────────────────────────────────────────────────
-  var btn, panel, msgsEl, inputEl, sendEl;
+  var btn, panel, msgsEl, inputEl, sendEl, subEl;
+
+  // Header status line. "typing…" while Matt composes, otherwise "Online now".
+  function setStatus(typing) {
+    if (!subEl) return;
+    subEl.textContent = typing ? 'typing…' : 'Online now';
+    subEl.style.color = typing ? ACCENT : '';
+  }
 
   function build() {
     btn = document.createElement('button');
@@ -139,7 +170,7 @@
     panel.setAttribute('aria-label', 'Chat with Matt from Velox');
     panel.innerHTML =
       '<div class="vcw-head"><span class="vcw-dot"></span>' +
-        '<div><div class="vcw-title">Matt</div><div class="vcw-sub">Velox Peptides</div></div>' +
+        '<div><div class="vcw-title">Matt</div><div class="vcw-sub">Online now</div></div>' +
         '<button class="vcw-x" aria-label="Close chat">&times;</button></div>' +
       '<div class="vcw-msgs"></div>' +
       '<div class="vcw-foot"><div class="vcw-inwrap">' +
@@ -153,6 +184,7 @@
     msgsEl = panel.querySelector('.vcw-msgs');
     inputEl = panel.querySelector('.vcw-in');
     sendEl = panel.querySelector('.vcw-send');
+    subEl = panel.querySelector('.vcw-sub');
 
     panel.querySelector('.vcw-x').addEventListener('click', toggle);
     sendEl.addEventListener('click', onSend);
@@ -170,9 +202,27 @@
     panel.classList.toggle('vcw-open', opened);
     btn.style.display = opened ? 'none' : 'inline-flex';
     if (opened) {
-      if (!messages.length && !greeted) connectThenGreet(GREETING);
+      if (!restored) restorePriorChat();
+      if (!messages.length && !greeted) connectThenGreet(pickGreeting());
       setTimeout(function () { inputEl.focus(); }, 50);
     }
+  }
+
+  // Re-paint a conversation from earlier this session (no "connecting" delay,
+  // it was already a live chat). Returns true if anything was restored.
+  var restored = false;
+  function restorePriorChat() {
+    restored = true;
+    var s = loadState();
+    if (!s || !s.messages.length) return false;
+    messages = s.messages;
+    emailCaptured = !!s.emailCaptured;
+    userEmail = s.userEmail || null;
+    greeted = true;
+    messages.forEach(function (m) {
+      addBubble(m.role === 'user' ? 'user' : 'bot', m.content);
+    });
+    return true;
   }
 
   function addBubble(role, text) {
@@ -184,6 +234,7 @@
     row.appendChild(b);
     msgsEl.appendChild(row);
     msgsEl.scrollTop = msgsEl.scrollHeight;
+    setStatus(false);
     if (role === 'bot') {
       var cm = String(text).match(/VELOX-[A-Z0-9]{6}/);
       if (cm) { try { localStorage.setItem('vp_ref', JSON.stringify({ code: cm[0], ts: Date.now() })); } catch (e) {} }
@@ -192,6 +243,7 @@
   }
 
   function showTyping() {
+    setStatus(true);
     var row = document.createElement('div');
     row.className = 'vcw-row bot';
     row.innerHTML = '<div class="vcw-bubble"><span class="vcw-typing"><span></span><span></span><span></span></span></div>';
@@ -205,6 +257,7 @@
   function connectThenGreet(message) {
     if (greeted) return;
     greeted = true;
+    setStatus(true);
     var row = document.createElement('div');
     row.className = 'vcw-row bot';
     row.innerHTML = '<div class="vcw-bubble" style="display:flex;align-items:center;gap:8px">' +
@@ -212,7 +265,11 @@
       '<span style="color:#9aa3ad;font-size:12.5px">Connecting to agent\u2026</span></div>';
     msgsEl.appendChild(row);
     msgsEl.scrollTop = msgsEl.scrollHeight;
-    setTimeout(function () { row.remove(); addBubble('bot', message); showChips(); }, 1600 + Math.random() * 900);
+    setTimeout(function () {
+      row.remove(); addBubble('bot', message);
+      messages.push({ role: 'assistant', content: message }); saveState();
+      showChips();
+    }, 1600 + Math.random() * 900);
   }
 
   // Fire-and-forget handbook signup when the user shares an email.
@@ -275,6 +332,7 @@
     inputEl.style.height = 'auto';
     addBubble('user', text);
     messages.push({ role: 'user', content: text });
+    saveState();
 
     var capturedEmail = maybeCaptureEmail(text);
     var note = capturedEmail
@@ -284,16 +342,22 @@
     busy = true; sendEl.disabled = true;
     var typing = showTyping();
 
+    // The greeting is stored in `messages` for display/persistence, but the API
+    // history must start with a user turn — drop any leading assistant turns.
+    var apiMessages = messages.slice();
+    while (apiMessages.length && apiMessages[0].role !== 'user') apiMessages.shift();
+
     fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: messages, note: note, page: location.pathname, sid: SID, email: userEmail }),
+      body: JSON.stringify({ messages: apiMessages, note: note, page: location.pathname, sid: SID, email: userEmail }),
     })
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (d) {
         var reply = (d && d.reply) ||
           "Sorry, something went wrong there. Try again, or email support@veloxpeps.com and a real person will sort it.";
         messages.push({ role: 'assistant', content: reply });
+        saveState();
         var parts = splitReply(reply);
         var firstTyping = typing;            // reuse the indicator already on screen
         (function deliver(i) {
@@ -319,11 +383,13 @@
       if (window.innerWidth < 768) return;                       // never hijack a phone screen
       if (!/(\/compounds\/|\/cart\/|\/checkout\/)/.test(location.pathname)) return;
       if (sessionStorage.getItem('vcw_nudged')) return;
+      var prior = loadState();                                    // already chatting this session? don't barge in
+      if (prior && prior.messages && prior.messages.length) return;
       setTimeout(function () {
         if (opened || messages.length) return;
         sessionStorage.setItem('vcw_nudged', '1');
         panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
-        connectThenGreet("Anything I can help with on this one? I can talk you through purity and CoAs, or find you the right thing. There's a discount on first orders too if you're close.");
+        connectThenGreet("Anything I can help with on this one? Happy to talk you through how it's tested, or help you find the right thing. There's a discount on first orders too if you're close.");
       }, 30000);
     } catch (e) { /* ignore */ }
   }

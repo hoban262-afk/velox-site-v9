@@ -68,7 +68,10 @@ async function logEvent(sid, event, page, meta) {
   } catch (e) { /* ignore */ }
 }
 
-// Live stock + prices, injected per request so Matt never pushes an out-of-stock item.
+// Live stock + per-variant prices, injected per request. Exposes the EXACT
+// single AND 10-pack price for every in-stock variant so Matt never has to do
+// price maths. (The old version only exposed the cheapest "from £X", which is
+// the single vial — so when asked a 10-pack price he quoted the single price.)
 async function liveStockBlock() {
   if (!SUPABASE_URL || !SERVICE) return '';
   let rows;
@@ -77,26 +80,40 @@ async function liveStockBlock() {
     rows = r.ok ? await r.json() : null;
   } catch (e) { return ''; }
   if (!Array.isArray(rows) || !rows.length) return '';
-  const bySlug = {};
-  rows.forEach((v) => {
-    if (!v.slug) return;
-    const price = v.sale_price != null ? Number(v.sale_price) : Number(v.base_price);
-    const avail = v.in_stock !== false && (v.stock_qty == null || Number(v.stock_qty) > 0);
-    const cur = bySlug[v.slug] || { name: v.name, min: Infinity, any: false };
-    if (Number.isFinite(price)) cur.min = Math.min(cur.min, price);
-    cur.any = cur.any || avail;
-    if (!cur.name) cur.name = v.name;
-    bySlug[v.slug] = cur;
+
+  const isPack = (v) => /10-?pack/i.test(`${v.size || ''} ${v.name || ''}`);
+  const inStock = (v) => v.in_stock !== false && (v.stock_qty == null || Number(v.stock_qty) > 0);
+  const money = (n) => `£${Number(n).toFixed(2)}`;
+  const priceOf = (v) => (v.sale_price != null ? Number(v.sale_price) : Number(v.base_price));
+
+  const groups = {};
+  rows.forEach((v) => { if (v.slug) (groups[v.slug] || (groups[v.slug] = [])).push(v); });
+
+  const lines = [];
+  Object.keys(groups).sort().forEach((slug) => {
+    const vs = groups[slug];
+    const base = vs.find((v) => !isPack(v)) || vs[0];
+    const name = String(base.name || slug).replace(/\s*[—–-]\s*10-?pack.*$/i, '').trim();
+    const singles = [], packs = [], oos = [];
+    vs.forEach((v) => {
+      const p = priceOf(v);
+      if (!Number.isFinite(p)) return;
+      const onSale = v.sale_price != null && Number(v.sale_price) < Number(v.base_price);
+      if (!inStock(v)) { oos.push(isPack(v) ? '10-pack' : (v.size || 'single')); return; }
+      if (isPack(v)) packs.push(`10-pack (10 vials) ${money(p)}${onSale ? ` (was ${money(v.base_price)})` : ''}`);
+      else singles.push(`${v.size || 'vial'} ${money(p)}${onSale ? ` (was ${money(v.base_price)})` : ''}`);
+    });
+    if (!singles.length && !packs.length) return;   // whole product out of stock
+    const link = VALID_PRODUCT_SLUGS.has(slug) ? ` [/compounds/${slug}/]` : '';
+    let line = `- ${name}${link}: ${singles.concat(packs).join('; ')}`;
+    if (oos.length) line += ` (out of stock: ${oos.join(', ')})`;
+    lines.push(line);
   });
-  const inStock = [], out = [];
-  Object.keys(bySlug).forEach((slug) => {
-    const c = bySlug[slug];
-    if (c.any) inStock.push(`${c.name} (from £${Number.isFinite(c.min) ? c.min.toFixed(2) : '?'}) [/compounds/${slug}/]`);
-    else out.push(c.name);
-  });
-  let block = `\n\n# LIVE STOCK and PRICES (right now, this OVERRIDES the static list. Never recommend anything not in stock)\nIn stock: ${inStock.join('; ')}.`;
-  if (out.length) block += `\nOut of stock right now (do not push these, offer an in-stock alternative): ${out.join(', ')}.`;
-  return block;
+  if (!lines.length) return '';
+
+  return '\n\n# LIVE STOCK & PRICES — AUTHORITATIVE (quote ONLY these exact figures; never calculate, multiply or estimate a price)\n'
+    + 'Real prices right now. A 10-pack has its OWN listed price, it is NOT the single-vial price or any multiple of it. When asked a price, read the exact figure from this list. Never recommend anything not in stock. If something is not listed, do not guess, point them to the product page.\n'
+    + lines.join('\n');
 }
 
 // Returning-customer + order context (order status is the only thing pulled, same as support).
@@ -168,13 +185,16 @@ const VALID_PRODUCT_SLUGS = new Set([
 ]);
 
 // Build a compact, linkable catalogue line per compound that has a live page.
+// NOTE: no price here on purpose — the LIVE STOCK & PRICES block is the single
+// source of pricing truth. The static peptide-data price drifts from the real
+// variant prices (e.g. Selank was showing £34.99 here vs £32 live), which made
+// the bot quote stale numbers. Names + blurbs + links only.
 function catalogueText() {
   const lines = [];
   for (const p of PEPTIDES) {
     if (!p || !p.buy || !VALID_PRODUCT_SLUGS.has(p.buy)) continue;
-    const price = typeof p.price === 'number' ? ` £${p.price.toFixed(2)}` : '';
     const blurb = (p.blurb || '').replace(/\s+/g, ' ').trim();
-    lines.push(`- ${p.name}${p.aka ? ` (${p.aka})` : ''}${price} — ${blurb} [/compounds/${p.buy}/]`);
+    lines.push(`- ${p.name}${p.aka ? ` (${p.aka})` : ''}: ${blurb} [/compounds/${p.buy}/]`);
   }
   return lines.join('\n');
 }
@@ -210,12 +230,18 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 - Never invent facts. If you don't know, say so and offer to connect them with the team (they can reply to support@veloxpeps.com or use the contact page).
 
 # HANDLING OBJECTIONS (use naturally, never scripted)
-- Trust / "is it legit": every batch is independently HPLC-tested by Janoshik Analytical with mass-spec confirmation, and a batch-specific Certificate of Analysis is available — see /about/coa-library/. Purity is the whole point.
-- Price / "expensive": the price reflects tested purity. Value improves with the volume tiers — spend £75/£150/£200/£250 for 5/10/15/20% off, and 10-packs give 10/17.5/25/30% off (2/3/4/5 packs). Free UK shipping over £100. There's also Velox Pro (£6.99/mo) for 10% off everything plus free Tracked 24 on every order — /pro/.
+- Trust / "is it legit": everything is independently tested by Janoshik Analytical, HPLC for purity with mass-spec to confirm identity. That is the whole point of what we do. You can browse the test results in our CoA Library at /about/coa-library/.
+- Price / "expensive": the price reflects the testing and purity. Value improves with the volume tiers, spend £75/£150/£200/£250 for 5/10/15/20% off, and 10-packs give 10/17.5/25/30% off (2/3/4/5 packs). Free UK shipping over £100. There's also Velox Pro (£6.99/mo) for 10% off everything plus free Tracked 24 on every order, /pro/.
 - Hesitation / "I'll think about it": no pressure. Mention a real person answers support, and the handbook is there free whenever they want it.
 
+# TESTING & CoA RULE (say this right, it matters)
+- The ONE true line on testing: everything is Janoshik tested. Janoshik Analytical run HPLC for purity and mass-spec to confirm identity. Lead with this whenever trust, quality, purity or testing comes up.
+- The CoA Library at /about/coa-library/ is a resource people can VIEW. Point them there to see results.
+- NEVER say or imply a CoA is sent, posted, emailed, printed, included or shipped WITH an order or batch. We do not send CoAs out with orders. If asked "do you send a CoA with my order", say no, but everything is Janoshik tested and the results are viewable in the CoA Library.
+- Never promise a "batch-specific" certificate to a customer. Just: it's Janoshik tested, results are in the CoA Library.
+
 # KEY FACTS
-- HPLC-verified, third-party tested (Janoshik), batch CoA available on request and in /about/coa-library/.
+- Everything is Janoshik tested (HPLC purity + mass-spec identity). Results viewable in the CoA Library at /about/coa-library/. (Do NOT claim CoAs are sent with orders.)
 - UK dispatch, Royal Mail Tracked 24, free UK shipping over £100, EU shipping available.
 - Pay by Bank (secure bank transfer, ~30s, no card stored); other methods on request.
 - Tools: Design Lab (/design-lab/), Comparison tool (/tools/compare/), Protocol Scheduler (/tools/scheduler/), Reconstitution Calculator (/tools/reconstitution-calculator/).
@@ -225,7 +251,13 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 # LINK RULES
 Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). When you link a page, ALWAYS write it as a markdown link with a short readable name, like [BPC-157](/compounds/bpc-157/) or [reconstitution calculator](/tools/reconstitution-calculator/). Never show a bare path or raw URL as the visible text. Never write a link as [/compounds/glutathione/] or a bare /path/ on its own. It MUST be [Readable Name](/path/). NEVER invent a URL. If unsure, link to [our compounds](/compounds/) or the [FAQ](/faq/).
 
-# CATALOGUE (only these product pages exist — link only these)
+# PRICING (strict — get this exactly right, wrong prices lose trust)
+- Quote prices ONLY from the LIVE STOCK & PRICES block below (it's appended at the end of this prompt). Never quote a price from anywhere else, never quote from memory.
+- NEVER calculate, multiply, estimate, round or "work out" a price. A 10-pack has its OWN listed price. It is NOT ten times the single, NOT the single price, NOT a guess. Read the exact figure off the list.
+- If someone asks the price of a pack size that isn't listed, don't invent it, point them to the product page.
+- If the live block isn't there for some reason, don't quote any number, send them to the product page or /compounds/.
+
+# CATALOGUE (only these product pages exist — link only these; prices are in the LIVE STOCK block, NOT here)
 ${catalogueText()}
 
 # CONVERTING — assertive but honest (this section OVERRIDES any 'soft'/'never pushy' guidance above)
