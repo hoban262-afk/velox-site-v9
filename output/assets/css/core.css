@@ -1440,7 +1440,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .cb-i a:hover{text-decoration:underline;}
 
 /* Entry gate */
-.entry-gate{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(3,4,7,.97);z-index:100000;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.entry-gate{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(3,4,7,.97);z-index:100001;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
 .eg-i{background:var(--bg3);border:1px solid var(--brd2);border-radius:var(--rl);padding:40px;max-width:540px;width:100%;position:relative;overflow:hidden;}
 .eg-i::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#01D3A0,#4A9FE0);}
 .eg-top{text-align:center;margin-bottom:20px;}
