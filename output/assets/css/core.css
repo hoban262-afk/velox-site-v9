@@ -100,7 +100,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#080808;color:#fff;line
 .b-bundle{font-family:var(--mono);font-size:8px;background:var(--gld);color:#000;padding:3px 7px;border-radius:3px;letter-spacing:.05em;}
 .b-new{font-family:var(--mono);font-size:8px;background:var(--bl);color:#fff;padding:3px 7px;border-radius:3px;letter-spacing:.05em;}
 .pc-cat{font-family:var(--mono);font-size:9px;letter-spacing:.1em;}
-.cc-h{color:var(--g);}.cc-g{color:var(--bl);}.cc-c{color:#A78BFA;}.cc-m{color:var(--gld);}.cc-a{color:#F472B6;}.cc-s{color:var(--t3);}.cc-st{color:#FF8C42;}
+.cc-h{color:var(--g);}.cc-g{color:var(--bl);}.cc-c{color:#A78BFA;}.cc-m{color:var(--gld);}.cc-a{color:#F472B6;}.cc-s{color:var(--t3);}.cc-st{color:#01D3A0;}
 .pc-body{padding:0 18px 18px;flex:1;display:flex;flex-direction:column;}
 .pc-name{font-family:var(--disp);font-size:26px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;margin-bottom:3px;}
 .pc-full{font-size:11px;color:var(--t3);margin-bottom:8px;line-height:1.35;}
@@ -4396,7 +4396,7 @@ html { overflow-x: hidden !important; }
 /* ── 3. Homepage stacks section ─────────────────────────────────────────── */
 
 .hp-stacks-block {
-  border-top-color: rgba(255,107,0,.75) !important;
+  border-top-color: rgba(1,211,160,.75) !important;
 }
 
 .hp-stacks-inner {
@@ -5092,25 +5092,25 @@ body.page-cat-oxidative .stack-comp-link,
 body.page-cat-oxidative .cpom-ic { color: #FF6B9D !important; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   STACKS ORANGE CTA COLOUR SYSTEM  #FF6B00
+   STACKS ORANGE CTA COLOUR SYSTEM  #01D3A0
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Stacks category tile (in cat-grid on homepage + catalogue) ── */
-a.cat-tile[href="/stacks/"]               { border: 1px solid rgba(255,107,0,.20) !important; }
-a.cat-tile[href="/stacks/"]:hover             { border-color: rgba(255,107,0,.40) !important; }
-a.cat-tile[href="/stacks/"] .cat-tile-name   { color: #fff !important; border-bottom: 1px solid rgba(255,107,0,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href="/stacks/"]               { border: 1px solid rgba(1,211,160,.20) !important; }
+a.cat-tile[href="/stacks/"]:hover             { border-color: rgba(1,211,160,.40) !important; }
+a.cat-tile[href="/stacks/"] .cat-tile-name   { color: #fff !important; border-bottom: 1px solid rgba(1,211,160,.65); display: inline-block; padding-bottom: 2px; }
 
 /* ── Homepage stacks section — eyebrow label + primary CTA button + outline CTA ── */
-.hp-sec-stacks .hp-block-eyebrow { color: #FF6B00 !important; }
-.hp-stacks-cta.btn-p { background: #FF6B00 !important; border-color: #FF6B00 !important; color: #000 !important; }
-.hp-stacks-cta.btn-p:hover { background: #e05f00 !important; border-color: #e05f00 !important; }
-.hp-block-ft a.btn-o[href*="/stacks/"] { color: #FF6B00 !important; border-color: #FF6B00 !important; }
-.hp-block-ft a.btn-o[href*="/stacks/"]:hover { background: rgba(255,107,0,.08) !important; color: #FF6B00 !important; }
+.hp-sec-stacks .hp-block-eyebrow { color: #01D3A0 !important; }
+.hp-stacks-cta.btn-p { background: #01D3A0 !important; border-color: #01D3A0 !important; color: #000 !important; }
+.hp-stacks-cta.btn-p:hover { background: #00bf8f !important; border-color: #00bf8f !important; }
+.hp-block-ft a.btn-o[href*="/stacks/"] { color: #01D3A0 !important; border-color: #01D3A0 !important; }
+.hp-block-ft a.btn-o[href*="/stacks/"]:hover { background: rgba(1,211,160,.08) !important; color: #01D3A0 !important; }
 
 /* ── Stacks hub page — breadcrumb accent + "View stack →" links + hover glow ──
    These must appear after the per-category rules above to win via source order   */
-body.page-stacks-root .bc-current { color: #FF6B00 !important; }
-body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !important; }
+body.page-stacks-root .bc-current { color: #01D3A0 !important; }
+body.page-stacks-root article.stack-card .stack-card-action { color: #01D3A0 !important; }
 /* stack-card hover handled by unified rule above */
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -5925,3 +5925,29 @@ a.nl[href="/guides/"]::before {
 
 /* Whole product card clickable (JS navigates; inner links/buttons still work) */
 .cc{cursor:pointer;}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Neuropeptide & Sleep stack card — animated edge shimmer (reuses the
+   retatrutide flagship --proang / vpProSpin), replacing the plain glow.
+   ═══════════════════════════════════════════════════════════════════════════ */
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]) {
+  position: relative;
+  border-color: transparent;
+  box-shadow: 0 0 24px -6px rgba(1,211,160,.45);
+}
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"])::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.6px; pointer-events: none; z-index: 4;
+  background: conic-gradient(from var(--proang),
+    rgba(1,211,160,.18) 0deg, rgba(1,211,160,.18) 80deg,
+    #01D3A0 120deg, #d8fff4 148deg, #ffffff 152deg, #d8fff4 156deg, #01D3A0 184deg,
+    rgba(1,211,160,.18) 232deg, rgba(1,211,160,.18) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: vpProSpin 3.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"])::after { animation: none; }
+}
+
+/* Bundle/stack headline price — always brand green, never white (consistency guarantee) */
+.sc-price { color: #01D3A0 !important; }
