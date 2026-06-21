@@ -377,11 +377,11 @@
       ],
       'tesamorelin': [
         { slug:'cjc-1295',    name:'CJC-1295',      img:'/assets/images/cjc1295wodac.png',price:'£34.99' },
-        { slug:'retatrutide', name:'Retatrutide',   img:'/assets/images/retatrutide.png', price:'£59.99' },
+        { slug:'retatrutide', name:'Retatrutide',   img:'/assets/images/retatrutide.webp', price:'£59.99' },
       ],
       'mots-c': [
         { slug:'nad-plus',    name:'NAD+',          img:'/assets/images/nadplus.png',     price:'£54.99' },
-        { slug:'retatrutide', name:'Retatrutide',   img:'/assets/images/retatrutide.png', price:'£59.99' },
+        { slug:'retatrutide', name:'Retatrutide',   img:'/assets/images/retatrutide.webp', price:'£59.99' },
       ],
       'nad-plus': [
         { slug:'glutathione', name:'Glutathione',   img:'/assets/images/glutathione.png', price:'£24.99' },
@@ -401,7 +401,7 @@
       ],
       'cjc-1295': [
         { slug:'tesamorelin', name:'Tesamorelin',   img:'/assets/images/tesamorelin.png', price:'£34.99' },
-        { slug:'retatrutide', name:'Retatrutide',   img:'/assets/images/retatrutide.png', price:'£59.99' },
+        { slug:'retatrutide', name:'Retatrutide',   img:'/assets/images/retatrutide.webp', price:'£59.99' },
       ],
       'kpv': [
         { slug:'bpc-157',     name:'BPC-157',       img:'/assets/images/bpc157.png',      price:'£29.99' },
