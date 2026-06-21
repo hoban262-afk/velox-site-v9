@@ -1,5 +1,6 @@
 {
   "buildCommand": "node scripts/sync-prices.mjs && node scripts/sync-stock.mjs",
+  "trailingSlash": true,
   "functions": {
     "api/design-lab/[action].js": { "maxDuration": 60 },
     "api/send-order.js": { "maxDuration": 30 }
