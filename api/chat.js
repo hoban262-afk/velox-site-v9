@@ -345,18 +345,26 @@ async function finaliseReply(reply, body, messages) {
   }
   if (out.includes('[[HUMAN]]')) {
     out = out.replace(/\[\[HUMAN\]\]/g, '').trim();
-    const lastQ = ((messages[messages.length - 1] && messages[messages.length - 1].content) || '').slice(0, 200);
+    const lastQ = ((messages[messages.length - 1] && messages[messages.length - 1].content) || '').slice(0, 300);
+    const who = emailFrom(body, messages);
+    const transcript = messages.slice(-10).map((m) => `${m.role === 'user' ? 'Customer' : 'Matt'}: ${String(m.content || '').slice(0, 400)}`).join('\n');
     try {
       await proposeAction({
         agent: 'chat-assistant', type: 'briefing',
-        title: 'Live-chat visitor needs a human',
-        summary: lastQ,
-        payload: { page, sid, email: emailFrom(body, messages), last: messages.slice(-4) },
+        title: `Live chat needs you${who ? ` — ${who}` : ''}`,
+        summary: `${who ? who + ' — ' : ''}${lastQ}`,
+        payload: {
+          page, sid, email: who || null,
+          question: lastQ,
+          reply_to: who ? `mailto:${who}?subject=${encodeURIComponent('Your Velox Peptides enquiry')}` : null,
+          transcript,
+          last: messages.slice(-6),
+        },
         dedupeKey: `chat:${sid || Date.now()}`, notify: true,
       });
     } catch (e) { /* ignore */ }
     // Learn-from-chats: log a gap so we can see what Matt couldn't resolve.
-    logEvent(sid, 'chat_gap', page, { reason: 'human_handoff', q: lastQ });
+    logEvent(sid, 'chat_gap', page, { reason: 'human_handoff', email: who || null, q: lastQ });
   }
 
   // ── Add-to-cart actions ([[ADD:slug]] or [[ADD:slug:size]]) ───────────────
@@ -506,7 +514,7 @@ ${catalogueText()}
 - ABSOLUTE HONESTY (UK law): NEVER invent urgency, scarcity, stock counts, deadlines, star-ratings, reviews or testimonials. State only facts present in this prompt. Real, system-issued offers below are the only "limited" thing you may push.
 - THE CLOSE OFFER: when a researcher shows clear buying intent OR hesitates on price, you may offer a one-time 15% first-order discount in exchange for their email. To trigger it, put the tag [[OFFER]] on its own line at the very end of your message — the system swaps it for a real single-use code. Use it only ONCE per conversation and only when it will genuinely tip them over. If you don't have their email yet, ask for it in the message ("drop your email and I'll lock in 15% off").
 - ADD TO BASKET (you CAN do this, use it): you ARE able to add items straight to the visitor's basket. When they want to add, buy, or reorder something, do it: put [[ADD:slug]] on its own line at the very end (or [[ADD:slug:size]] for a specific size, e.g. [[ADD:retatrutide:10mg]]). The system turns the tag into a one-tap Add button with the correct live price. NEVER say you can't access their basket, and NEVER tell them to go add it themselves, you add it for them. Never quote or set a price inside the tag itself. Use catalogue slugs only, only when they actually want it, at most two per message. Still ask for the close in words too.
-- HUMAN HANDOFF: if they ask for a person, raise a complaint, or you truly can't help, put [[HUMAN]] on its own line at the end and tell them a real person will follow up from support@veloxpeps.com.
+- HUMAN HANDOFF: if they ask for a person, raise a complaint, or you truly can't help, hand off to the team. First make sure you have their email so the team can reply, if you don't have it, ask for it in the same message. Then put [[HUMAN]] on its own line at the end, and tell them the team will email them back (at their email if you have it, otherwise via support@veloxpeps.com).
 
 Stay in character as Matt. Short, human and honest, the way Declan would talk. Move them toward the order without sounding like a salesperson, and never break the compliance rules above.`;
 
