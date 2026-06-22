@@ -177,10 +177,13 @@ async function customerContextBlock(email) {
     return `\n\n# CUSTOMER CONTEXT\nNo order is on file under ${email}. If they are asking about an order, gently ask them to confirm the exact email used at checkout (and their order reference if they have it). Never guess or invent a status. If it still cannot be found, point them to support@veloxpeps.com with their order reference.`;
   }
   const ref = o.notes || 'their order';
-  const items = Array.isArray(o.items) ? o.items.map((i) => i && i.name).filter(Boolean).join(', ') : '';
+  const itemList = Array.isArray(o.items) ? o.items.filter((i) => i && (i.name || i.slug)) : [];
+  const items = itemList.map((i) => i.name || i.slug).join(', ');
+  const reorderable = itemList.filter((i) => i.slug).map((i) => `${i.name || i.slug} (${i.slug})`).join(', ');
   const stage = ORDER_STAGE[o.status] || `Status: ${o.status}.`;
   let line = `\n\n# CUSTOMER CONTEXT, their order (use naturally, never read it out verbatim, never invent a status)\nReturning customer (${email}). Most recent order ${ref}. STAGE: ${stage}`;
   if (items) line += ` Items: ${items}.`;
+  if (reorderable) line += ` If they want to reorder, offer it warmly and add items with the [[ADD:slug]] tag using these slugs: ${reorderable}.`;
   if (o.status === 'dispatched') {
     if (o.tracking_number) {
       const tn = String(o.tracking_number).replace(/\s+/g, '');
@@ -281,7 +284,27 @@ async function runTool(name, input) {
   return { error: 'unknown_tool' };
 }
 
-// Resolve the model's [[OFFER]] / [[HUMAN]] tags into real, server-controlled actions.
+// Resolve an [[ADD:slug]] / [[ADD:slug:size]] tag into a real add-to-cart action
+// with a SERVER-VERIFIED price (so the model can never set the price).
+async function resolveAddAction(slug, sizeWanted) {
+  if (!VALID_PRODUCT_SLUGS.has(slug) || !SUPABASE_URL || !SERVICE) return null;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/product_variants?slug=eq.${encodeURIComponent(slug)}&select=name,size,base_price,sale_price,in_stock,stock_qty`, { headers: sbHeaders });
+    const rows = r.ok ? await r.json() : [];
+    const inStock = (Array.isArray(rows) ? rows : []).filter((v) => v.in_stock !== false && (v.stock_qty == null || Number(v.stock_qty) > 0));
+    if (!inStock.length) return null;
+    const isPack = (v) => /10-?pack/i.test(`${v.size || ''} ${v.name || ''}`);
+    const norm = (s) => String(s || '').toLowerCase().replace(/\s+/g, '');
+    let pick = sizeWanted ? inStock.find((v) => norm(v.size) === norm(sizeWanted)) : null;
+    if (!pick) pick = inStock.find((v) => !isPack(v)) || inStock[0];   // default to a single vial
+    const price = pick.sale_price != null ? Number(pick.sale_price) : Number(pick.base_price);
+    if (!Number.isFinite(price)) return null;
+    const name = String(pick.name || slug).replace(/\s*[—–-]\s*10-?pack.*$/i, '').trim();
+    return { type: 'add_to_cart', slug, name, url: `/compounds/${slug}/`, size: pick.size || 'default', price };
+  } catch (e) { return null; }
+}
+
+// Resolve the model's [[OFFER]] / [[HUMAN]] / [[ADD]] tags into real, server-controlled actions.
 async function finaliseReply(reply, body, messages) {
   let out = reply.replace(/\s*[\u2014\u2013]\s*/g, ', ').replace(/ ,/g, ',').replace(/,\s*,/g, ',');
   const sid = body && body.sid, page = body && body.page;
@@ -306,17 +329,35 @@ async function finaliseReply(reply, body, messages) {
   }
   if (out.includes('[[HUMAN]]')) {
     out = out.replace(/\[\[HUMAN\]\]/g, '').trim();
+    const lastQ = ((messages[messages.length - 1] && messages[messages.length - 1].content) || '').slice(0, 200);
     try {
       await proposeAction({
         agent: 'chat-assistant', type: 'briefing',
         title: 'Live-chat visitor needs a human',
-        summary: ((messages[messages.length - 1] && messages[messages.length - 1].content) || '').slice(0, 200),
+        summary: lastQ,
         payload: { page, sid, email: emailFrom(body, messages), last: messages.slice(-4) },
         dedupeKey: `chat:${sid || Date.now()}`, notify: true,
       });
     } catch (e) { /* ignore */ }
+    // Learn-from-chats: log a gap so we can see what Matt couldn't resolve.
+    logEvent(sid, 'chat_gap', page, { reason: 'human_handoff', q: lastQ });
   }
-  return out;
+
+  // ── Add-to-cart actions ([[ADD:slug]] or [[ADD:slug:size]]) ───────────────
+  const actions = [];
+  const addRe = /\[\[ADD:([a-z0-9-]+)(?::([^\]]+))?\]\]/gi;
+  const seen = new Set();
+  let am;
+  while ((am = addRe.exec(out)) && actions.length < 3) {
+    const key = am[1].toLowerCase() + '|' + (am[2] || '').trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const a = await resolveAddAction(am[1].toLowerCase(), (am[2] || '').trim());
+    if (a) { actions.push(a); logEvent(sid, 'chat_add_to_cart', page, { slug: a.slug, size: a.size }); }
+  }
+  out = out.replace(/\[\[ADD:[^\]]*\]\]/gi, '').trim();
+
+  return { reply: out, actions };
 }
 
 // Product slugs that have a real /compounds/<slug>/ page. Only these may be
@@ -441,6 +482,7 @@ ${catalogueText()}
 - Handle objections head-on with the facts above. Don't fold at the first "I'll think about it" — surface the real hesitation (price? trust? unsure which compound?) and resolve it.
 - ABSOLUTE HONESTY (UK law): NEVER invent urgency, scarcity, stock counts, deadlines, star-ratings, reviews or testimonials. State only facts present in this prompt. Real, system-issued offers below are the only "limited" thing you may push.
 - THE CLOSE OFFER: when a researcher shows clear buying intent OR hesitates on price, you may offer a one-time 15% first-order discount in exchange for their email. To trigger it, put the tag [[OFFER]] on its own line at the very end of your message — the system swaps it for a real single-use code. Use it only ONCE per conversation and only when it will genuinely tip them over. If you don't have their email yet, ask for it in the message ("drop your email and I'll lock in 15% off").
+- ADD TO BASKET: when the customer clearly wants something added, or you're helping a returning customer reorder, put [[ADD:slug]] on its own line at the end (or [[ADD:slug:size]] for a specific size, e.g. [[ADD:retatrutide:10mg]]). The system turns it into a real Add-to-basket button with the correct live price, so never quote or set a price inside the tag. Use catalogue slugs only, only when they actually want it, at most two per message. Still ask for the close in words too.
 - HUMAN HANDOFF: if they ask for a person, raise a complaint, or you truly can't help, put [[HUMAN]] on its own line at the end and tell them a real person will follow up from support@veloxpeps.com.
 
 Stay in character as Matt. Short, human and honest, the way Declan would talk. Move them toward the order without sounding like a salesperson, and never break the compliance rules above.`;
@@ -533,9 +575,9 @@ module.exports = async function handler(req, res) {
       reply = textOf(d2 && d2.content);
     }
     if (!reply) { console.error('[chat] empty reply'); return res.status(502).json({ error: 'No reply' }); }
-    const finalReply = await finaliseReply(reply, body, messages);
-    await saveTranscript(body, messages, finalReply);
-    return res.status(200).json({ reply: finalReply });
+    const fin = await finaliseReply(reply, body, messages);
+    await saveTranscript(body, messages, fin.reply);
+    return res.status(200).json({ reply: fin.reply, actions: fin.actions });
   } catch (e) {
     console.error('[chat] error', e.message);
     return res.status(500).json({ error: 'Assistant error' });

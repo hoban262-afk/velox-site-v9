@@ -345,6 +345,41 @@
     msgsEl.appendChild(wrap); msgsEl.scrollTop = msgsEl.scrollHeight;
   }
 
+  // Add an item to the basket directly from chat (price is server-verified).
+  function widgetAddToCart(a) {
+    try {
+      var cart = JSON.parse(localStorage.getItem('vp_cart') || '[]'); if (!Array.isArray(cart)) cart = [];
+      var found = null;
+      for (var i = 0; i < cart.length; i++) { if (cart[i].slug === a.slug && cart[i].size === a.size) { found = cart[i]; break; } }
+      if (found) found.qty = (found.qty || 1) + 1;
+      else cart.push({ slug: a.slug, name: a.name, url: a.url, size: a.size, price: a.price, qty: 1 });
+      localStorage.setItem('vp_cart', JSON.stringify(cart));
+      var el = document.getElementById('nav-cart-count');
+      if (el) { var t = cart.reduce(function (s, it) { return s + (it.qty || 1); }, 0); el.textContent = String(t); }
+      try { if (window.vpTrack) window.vpTrack('add_to_cart'); } catch (e) {}
+      try { if (window.toast) window.toast('Added to order — ' + a.name); } catch (e) {}
+      return true;
+    } catch (e) { return false; }
+  }
+
+  // Render server-provided actions (e.g. add-to-cart) as tap buttons under the reply.
+  function renderActions(actions) {
+    if (!actions || !actions.length) return;
+    var wrap = document.createElement('div'); wrap.className = 'vcw-chips';
+    actions.slice(0, 3).forEach(function (a) {
+      if (!a || a.type !== 'add_to_cart') return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'vcw-chip';
+      b.style.borderColor = ACCENT; b.style.color = '#fff';
+      var sz = (a.size && a.size !== 'default') ? ' ' + a.size : '';
+      b.textContent = '+ Add ' + a.name + sz + ' · £' + Number(a.price).toFixed(2);
+      b.addEventListener('click', function () {
+        if (widgetAddToCart(a)) { b.disabled = true; b.textContent = 'Added ✓'; addBubble('bot', "Done, that's in your basket. Head to [your cart](/cart/) when you're ready."); }
+      });
+      wrap.appendChild(b);
+    });
+    if (wrap.children.length) { msgsEl.appendChild(wrap); msgsEl.scrollTop = msgsEl.scrollHeight; }
+  }
+
   // Split a longer reply into up to two natural messages on a sentence boundary,
   // so Matt "texts" like a person instead of dumping one block.
   function splitReply(text) {
@@ -399,12 +434,13 @@
       .then(function (d) {
         var reply = (d && d.reply) ||
           "Sorry, something went wrong there. Try again, or email support@veloxpeps.com and a real person will sort it.";
+        var actions = d && d.actions;
         messages.push({ role: 'assistant', content: reply });
         saveState();
         var parts = splitReply(reply);
         var firstTyping = typing;            // reuse the indicator already on screen
         (function deliver(i) {
-          if (i >= parts.length) { busy = false; sendEl.disabled = false; inputEl.focus(); return; }
+          if (i >= parts.length) { busy = false; sendEl.disabled = false; inputEl.focus(); renderActions(actions); return; }
           var t = parts[i];
           var indicator = (i === 0) ? firstTyping : showTyping();
           setTimeout(function () {
