@@ -275,6 +275,10 @@
 
   // ── UI ─────────────────────────────────────────────────────────────────────
 
+  var GLOBE_SVG = '<svg class="vx-cur-globe" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>';
+  var CHEV_SVG = '<svg class="vx-cur-chev" width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function btnHTML(code) { return GLOBE_SVG + '<span class="vx-cur-code">' + code + '</span>' + CHEV_SVG; }
+
   function buildDropdown() {
     var nav = document.querySelector('.nav-actions');
     if (!nav) return;
@@ -288,8 +292,7 @@
     btn.className = 'vx-cur-btn';
     btn.setAttribute('aria-label', 'Select currency');
     btn.setAttribute('aria-expanded', 'false');
-    var cur = CURRENCIES.find(function (c) { return c.code === currentCode; }) || CURRENCIES[0];
-    btn.innerHTML = '<span class="vx-cur-flag">' + cur.flag + '</span><span class="vx-cur-code">' + cur.code + '</span><svg class="vx-cur-chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    btn.innerHTML = btnHTML(currentCode);
 
     var backdrop = document.createElement('div');
     backdrop.className = 'vx-cur-backdrop';
@@ -341,6 +344,11 @@
       panel.style.bottom = 'auto';
     }
 
+    function setChatVisible(show) {
+      var cb = document.querySelector('.vcw-btn');
+      if (cb) cb.style.display = show ? '' : 'none';
+    }
+
     function openPanel() {
       positionPanel();
       panel.classList.add('open');
@@ -348,6 +356,7 @@
       btn.setAttribute('aria-expanded', 'true');
       search.value = ''; filterList('');
       if (!isMobile()) search.focus();
+      if (isMobile()) setChatVisible(false);
     }
     window.addEventListener('resize', function () { if (panel.classList.contains('open')) positionPanel(); });
 
@@ -355,6 +364,7 @@
       panel.classList.remove('open');
       backdrop.classList.remove('open');
       btn.setAttribute('aria-expanded', 'false');
+      if (isMobile()) setChatVisible(true);
     }
 
     btn.addEventListener('click', function (e) {
@@ -391,9 +401,8 @@
     if (persist) { try { localStorage.setItem(PREF_KEY, code); } catch (e) {} }
 
     // Update button label
-    var cur = CURRENCIES.find(function (c) { return c.code === code; }) || CURRENCIES[0];
     var btn = document.querySelector('.vx-cur-btn');
-    if (btn) btn.innerHTML = '<span class="vx-cur-flag">' + cur.flag + '</span><span class="vx-cur-code">' + cur.code + '</span><svg class="vx-cur-chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    if (btn) btn.innerHTML = btnHTML(code);
 
     // Update active state in list
     document.querySelectorAll('.vx-cur-row').forEach(function (r) {
@@ -407,8 +416,9 @@
     if (backdrop) backdrop.classList.remove('open');
     if (btn) btn.setAttribute('aria-expanded', 'false');
 
-    // Convert prices
-    if (code === 'GBP') { revertAllPrices(); } else { convertAllPrices(); }
+    // Convert prices — always revert to GBP first so snapshots stay clean
+    revertAllPrices();
+    if (code !== 'GBP') convertAllPrices();
   }
 
   // ── Styles ─────────────────────────────────────────────────────────────────
@@ -418,17 +428,17 @@
   function injectStyles() {
     var s = document.createElement('style');
     s.textContent =
-      '.vx-cur-wrap{position:relative;display:flex;align-items:center}' +
-      '.vx-cur-btn{display:flex;align-items:center;gap:4px;background:none;border:1px solid var(--brd,#1a1a1a);border-radius:6px;padding:5px 8px;cursor:pointer;color:var(--t2,#8a8f9a);font-family:inherit;font-size:11px;transition:border-color .15s,color .15s;line-height:1}' +
+      '.vx-cur-wrap{position:relative;display:flex;align-items:center;flex-shrink:0}' +
+      '.vx-cur-btn{display:flex;align-items:center;gap:3px;background:none;border:1px solid var(--brd,#1a1a1a);border-radius:6px;padding:5px 6px;cursor:pointer;color:var(--t2,#8a8f9a);font-family:inherit;font-size:11px;transition:border-color .15s,color .15s;line-height:1;white-space:nowrap}' +
       '.vx-cur-btn:hover{border-color:var(--brd2,#2a323a);color:#fff}' +
-      '.vx-cur-flag{font-size:14px;line-height:1}' +
-      '.vx-cur-code{font-family:var(--mono,monospace);font-weight:600;letter-spacing:.04em}' +
+      '.vx-cur-globe{flex-shrink:0}' +
+      '.vx-cur-code{font-family:var(--mono,monospace);font-weight:600;letter-spacing:.04em;font-size:10px}' +
       '.vx-cur-chev{flex-shrink:0;opacity:.5}' +
       '.vx-cur-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;-webkit-tap-highlight-color:transparent}' +
       '.vx-cur-backdrop.open{display:block}' +
       '.vx-cur-panel{position:fixed;top:64px;right:8px;width:280px;max-height:360px;background:var(--bg3,#0d1117);border:1px solid var(--brd2,#2a323a);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;flex-direction:column;z-index:9999;overflow:hidden}' +
       '.vx-cur-panel.open{display:flex}' +
-      '.vx-cur-search{width:100%;padding:10px 12px;background:var(--bg2,#0a0e13);border:none;border-bottom:1px solid var(--brd,#1a1a1a);color:#fff;font-size:13px;font-family:inherit;outline:none}' +
+      '.vx-cur-search{width:100%;padding:10px 12px;background:var(--bg2,#0a0e13);border:none;border-bottom:1px solid var(--brd,#1a1a1a);color:#fff;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box}' +
       '.vx-cur-search::placeholder{color:var(--t3,#6b7280)}' +
       '.vx-cur-list{overflow-y:auto;flex:1;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}' +
       '.vx-cur-row{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:none;border:none;cursor:pointer;color:var(--t2,#8a8f9a);font-size:13px;font-family:inherit;text-align:left;transition:background .1s}' +
@@ -438,7 +448,7 @@
       '.vx-cur-row-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
       '.vx-cur-row-code{font-family:var(--mono,monospace);font-size:11px;opacity:.6;flex-shrink:0}' +
       '.vx-cur-handle{display:none}' +
-      '@media(max-width:768px){.vx-cur-code{display:none}.vx-cur-btn{padding:5px 6px}.vx-cur-panel{width:260px}}' +
+      '@media(max-width:768px){.vx-cur-code{display:none}.vx-cur-btn{padding:4px 5px}}' +
       '@media(max-width:600px){' +
         '.vx-cur-panel{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;max-height:60vh;border-radius:16px 16px 0 0;border-bottom:none;padding-bottom:env(safe-area-inset-bottom,0)}' +
         '.vx-cur-handle{display:block;width:36px;height:4px;background:#3a3f47;border-radius:2px;margin:10px auto 4px}' +

@@ -298,6 +298,7 @@
 
     var css = [
       '#vpdock{display:none}',
+      'body.page-account #vpdock{display:none!important}',
       '@media(max-width:767px){',
         '#vpdock{display:block;position:fixed;left:0;right:0;bottom:0;z-index:280;background:rgba(8,8,8,.97);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08)}',
         '#vpdock .vpd-disc{padding:9px 14px 5px;border-bottom:1px solid rgba(255,255,255,.06)}',

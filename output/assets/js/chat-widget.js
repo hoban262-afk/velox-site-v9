@@ -125,7 +125,8 @@
     '.vcw-head{padding:13px 14px}' +
     '.vcw-bubble{max-width:88%}' +
     'body.page-compound .vcw-btn,body.page-stack .vcw-btn{display:none!important}' +
-  '}';
+  '}' +
+  'body.page-account .vcw-btn,body.page-account .vcw-panel{display:none!important}';
 
   function injectCss() {
     var s = document.createElement('style');
