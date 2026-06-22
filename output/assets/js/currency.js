@@ -127,7 +127,7 @@
     var priceEls = document.querySelectorAll(
       '.cc-price, .cc-was, .cp-size-p, .cp-size-was, .sc-price, .sc-was, ' +
       '.sc-cp-price, .csp-price, .cart-line-price, .cart-total-val, ' +
-      '[data-gbp], .hp-aov-price, .aov-price, .dotd-now, .dotd-was'
+      '[data-gbp], .hp-aov-price, .aov-price, .dotd-now, .dotd-was, .vp-vol-note'
     );
     priceEls.forEach(function (el) {
       snapshotAndConvert(el);
@@ -186,9 +186,16 @@
     var cur = CURRENCIES.find(function (c) { return c.code === currentCode; }) || CURRENCIES[0];
     btn.innerHTML = '<span class="vx-cur-flag">' + cur.flag + '</span><span class="vx-cur-code">' + cur.code + '</span><svg class="vx-cur-chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+    var backdrop = document.createElement('div');
+    backdrop.className = 'vx-cur-backdrop';
+    document.body.appendChild(backdrop);
+
     var panel = document.createElement('div');
     panel.className = 'vx-cur-panel';
-    panel.classList.remove('open');
+
+    var handle = document.createElement('div');
+    handle.className = 'vx-cur-handle';
+    panel.appendChild(handle);
 
     var search = document.createElement('input');
     search.className = 'vx-cur-search';
@@ -213,19 +220,31 @@
     wrap.appendChild(panel);
     nav.insertBefore(wrap, ig);
 
+    function openPanel() {
+      panel.classList.add('open');
+      backdrop.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      search.value = ''; filterList('');
+      if (!isMobile()) search.focus();
+    }
+
+    function closePanel() {
+      panel.classList.remove('open');
+      backdrop.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      var wasOpen = panel.classList.contains('open');
-      panel.classList.toggle('open');
-      btn.setAttribute('aria-expanded', wasOpen ? 'false' : 'true');
-      if (!wasOpen) { search.value = ''; filterList(''); search.focus(); }
+      if (panel.classList.contains('open')) { closePanel(); } else { openPanel(); }
     });
 
     search.addEventListener('input', function () { filterList(this.value); });
     search.addEventListener('click', function (e) { e.stopPropagation(); });
 
-    document.addEventListener('click', function () {
-      if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+    backdrop.addEventListener('click', closePanel);
+    document.addEventListener('click', function (e) {
+      if (panel.classList.contains('open') && !wrap.contains(e.target)) closePanel();
     });
     panel.addEventListener('click', function (e) { e.stopPropagation(); });
 
@@ -253,9 +272,11 @@
       r.classList.toggle('active', r.getAttribute('data-code') === code);
     });
 
-    // Close panel
+    // Close panel + backdrop
     var panel = document.querySelector('.vx-cur-panel');
+    var backdrop = document.querySelector('.vx-cur-backdrop');
     if (panel) panel.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('open');
     if (btn) btn.setAttribute('aria-expanded', 'false');
 
     // Convert prices
@@ -263,6 +284,8 @@
   }
 
   // ── Styles ─────────────────────────────────────────────────────────────────
+
+  function isMobile() { return window.innerWidth <= 600; }
 
   function injectStyles() {
     var s = document.createElement('style');
@@ -273,19 +296,28 @@
       '.vx-cur-flag{font-size:14px;line-height:1}' +
       '.vx-cur-code{font-family:var(--mono,monospace);font-weight:600;letter-spacing:.04em}' +
       '.vx-cur-chev{flex-shrink:0;opacity:.5}' +
+      '.vx-cur-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;-webkit-tap-highlight-color:transparent}' +
+      '.vx-cur-backdrop.open{display:block}' +
       '.vx-cur-panel{position:absolute;top:calc(100% + 6px);right:0;width:280px;max-height:360px;background:var(--bg3,#0d1117);border:1px solid var(--brd2,#2a323a);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;flex-direction:column;z-index:9999;overflow:hidden}' +
       '.vx-cur-panel.open{display:flex}' +
       '.vx-cur-search{width:100%;padding:10px 12px;background:var(--bg2,#0a0e13);border:none;border-bottom:1px solid var(--brd,#1a1a1a);color:#fff;font-size:13px;font-family:inherit;outline:none}' +
       '.vx-cur-search::placeholder{color:var(--t3,#6b7280)}' +
-      '.vx-cur-list{overflow-y:auto;flex:1;overscroll-behavior:contain}' +
+      '.vx-cur-list{overflow-y:auto;flex:1;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}' +
       '.vx-cur-row{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:none;border:none;cursor:pointer;color:var(--t2,#8a8f9a);font-size:13px;font-family:inherit;text-align:left;transition:background .1s}' +
       '.vx-cur-row:hover{background:var(--bg4,#161b22);color:#fff}' +
       '.vx-cur-row.active{color:#01D3A0}' +
       '.vx-cur-row-flag{font-size:16px;line-height:1;flex-shrink:0}' +
       '.vx-cur-row-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
       '.vx-cur-row-code{font-family:var(--mono,monospace);font-size:11px;opacity:.6;flex-shrink:0}' +
+      '.vx-cur-handle{display:none}' +
       '@media(max-width:768px){.vx-cur-code{display:none}.vx-cur-btn{padding:5px 6px}.vx-cur-panel{right:-40px;width:260px}}' +
-      '@media(max-width:480px){.vx-cur-panel{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;max-height:55vh;border-radius:14px 14px 0 0;border-bottom:none}}';
+      '@media(max-width:600px){' +
+        '.vx-cur-panel{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;max-height:60vh;border-radius:16px 16px 0 0;border-bottom:none;padding-bottom:env(safe-area-inset-bottom,0)}' +
+        '.vx-cur-handle{display:block;width:36px;height:4px;background:#3a3f47;border-radius:2px;margin:10px auto 4px}' +
+        '.vx-cur-row{padding:13px 16px;font-size:15px}' +
+        '.vx-cur-row-flag{font-size:20px}' +
+        '.vx-cur-search{padding:12px 16px;font-size:15px}' +
+      '}';
     document.head.appendChild(s);
   }
 
@@ -301,9 +333,10 @@
     });
 
     // Re-convert after pricing.js hydrates live prices
+    var HYDRATED_SEL = '.cc-price, .cc-was, .cp-size-p, .cp-size-was, .sc-price, .sc-was, .sc-cp-price, .csp-price';
     document.addEventListener('vp:prices-updated', function () {
       if (currentCode !== 'GBP') {
-        document.querySelectorAll('[data-gbp-html]').forEach(function (el) {
+        document.querySelectorAll(HYDRATED_SEL).forEach(function (el) {
           el.removeAttribute('data-gbp-html');
         });
         convertAllPrices();
