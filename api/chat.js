@@ -153,25 +153,44 @@ async function liveStockBlock() {
     + lines.join('\n');
 }
 
-// Returning-customer + order context (order status is the only thing pulled, same as support).
+// Map the raw order status to a plain, customer-friendly stage description.
+const ORDER_STAGE = {
+  pending:    'Awaiting payment. We have the order but payment has not cleared yet.',
+  paid:       'Paid and being prepared. It dispatches within 24 hours of cleared payment, Monday to Friday (excluding UK public holidays).',
+  dispatched: 'Dispatched and on its way (Royal Mail Tracked 24 in the UK, International Tracked for the EU).',
+  cancelled:  'Cancelled.',
+  refunded:   'Refunded.',
+};
+
+// Returning-customer + order context. Pulls the most recent order by email and
+// turns the raw status into a friendly STAGE. No external tracking API: the exact
+// live status is reached via the Royal Mail link the model shares when dispatched.
 async function customerContextBlock(email) {
   if (!SUPABASE_URL || !SERVICE || !email) return '';
   let rows;
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?customer_email=ilike.${encodeURIComponent(email)}&select=notes,status,tracking_number,items,created_at&order=created_at.desc&limit=1`, { headers: sbHeaders });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?customer_email=ilike.${encodeURIComponent(email)}&select=notes,status,tracking_number,carrier,items,created_at,dispatched_at&order=created_at.desc&limit=1`, { headers: sbHeaders });
     rows = r.ok ? await r.json() : null;
   } catch (e) { return ''; }
   const o = Array.isArray(rows) ? rows[0] : null;
-  if (!o) return '';
+  if (!o) {
+    return `\n\n# CUSTOMER CONTEXT\nNo order is on file under ${email}. If they are asking about an order, gently ask them to confirm the exact email used at checkout (and their order reference if they have it). Never guess or invent a status. If it still cannot be found, point them to support@veloxpeps.com with their order reference.`;
+  }
   const ref = o.notes || 'their order';
   const items = Array.isArray(o.items) ? o.items.map((i) => i && i.name).filter(Boolean).join(', ') : '';
-  let line = `\n\n# CUSTOMER CONTEXT (use naturally, never read it out verbatim)\nReturning customer (${email}). Most recent order ${ref}: status "${o.status}"`;
-  if (items) line += `, items: ${items}`;
-  line += '.';
-  if (o.status === 'dispatched' && o.tracking_number) {
-    line += ` Tracking ${o.tracking_number} (https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(String(o.tracking_number).replace(/\s+/g, ''))}).`;
+  const stage = ORDER_STAGE[o.status] || `Status: ${o.status}.`;
+  let line = `\n\n# CUSTOMER CONTEXT, their order (use naturally, never read it out verbatim, never invent a status)\nReturning customer (${email}). Most recent order ${ref}. STAGE: ${stage}`;
+  if (items) line += ` Items: ${items}.`;
+  if (o.status === 'dispatched') {
+    if (o.tracking_number) {
+      const tn = String(o.tracking_number).replace(/\s+/g, '');
+      line += ` Tracking number ${o.tracking_number}. Share this Royal Mail link so they can see the exact live status themselves: https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(tn)}`;
+    } else {
+      line += ' No tracking number is on file yet. Tell them it is emailed at dispatch, and to contact support@veloxpeps.com if it has not arrived.';
+    }
+    line += ' If they ask where it is: Tracked 24 normally arrives 1 to 2 working days after dispatch. If it has been more than 10 working days since dispatch, ask them to email support@veloxpeps.com with the order reference and tracking number so we can investigate with Royal Mail.';
   }
-  line += ' If they ask about their order, answer from this. You can greet them as a returning customer and, where it fits, suggest restocking what they bought.';
+  line += ' Answer order questions from this only. You may greet them as a returning customer and, where it fits, suggest restocking what they bought.';
   return line;
 }
 
@@ -284,6 +303,27 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 - Tools: Design Lab (/design-lab/), Comparison tool (/tools/compare/), Protocol Scheduler (/tools/scheduler/), Reconstitution Calculator (/tools/reconstitution-calculator/).
 - Guides hub: /guides/. FAQ: /faq/. Full catalogue: /compounds/.
 - Velox Pro membership: /pro/ — £6.99/mo, 10% off everything + free Tracked 24.
+
+# ORDER STATUS, "where is my order?"
+- If a CUSTOMER CONTEXT block appears later in this prompt, answer from it. Give the plain stage in a sentence (awaiting payment, paid and being prepared, dispatched, or cancelled). If dispatched, give the tracking number and share the Royal Mail tracking link so they can see the exact live status themselves.
+- If there is NO customer context (you don't know who they are), ask for the email they ordered with, and their order reference if they have it. Then you can help. Never guess or invent a status, a tracking number, or a delivery date.
+- If no order is found, ask them to double check the email used at checkout, and offer support@veloxpeps.com with their order reference.
+- We do not have a live tracking feed inside this chat. For the exact parcel status, the customer taps the Royal Mail link. That is normal and fine.
+
+# SHIPPING & DELIVERY (facts, quote these, never invent)
+- Dispatch: within 24 hours of cleared payment, Monday to Friday, excluding UK public holidays. Weekend or holiday orders go the next working day.
+- UK: Royal Mail Tracked 24, £3.80 flat, free over £100. Normally 1 to 2 working days after dispatch. The tracking number is emailed at dispatch.
+- EU and EEA (all EU states plus Norway, Iceland, Switzerland): Royal Mail International Tracked, €9.99 flat, free over €100, usually 3 to 5 working days. EU customers are responsible for their own local import rules, Velox is not liable for customs duties or border delays.
+- Not arrived: if it has been more than 10 working days since the dispatch email, ask them to email support@veloxpeps.com with their order reference and tracking number and we will investigate with Royal Mail.
+
+# RETURNS & REFUNDS (facts)
+- Not yet dispatched: we can cancel and fully refund. They email support@veloxpeps.com with the order reference asap. Refunds go by UK bank transfer to the account that paid, within 3 working days of cancellation confirmation.
+- Once dispatched, research compounds are non returnable, for handling, storage condition and chain of custody reasons (we cannot verify storage or safely restock).
+- We refund or replace if: a vial arrived damaged or leaking (photograph the packaging and vial on arrival and email support), the wrong compound or size was sent, or the product fails its batch HPLC purity spec on reputable third party testing.
+- Refunds are by UK bank transfer to the originating account. No cash refunds, no store credit.
+
+# PAYMENT
+- Pay by Bank, open banking via Fena: they approve it in their own banking app in about 30 seconds, no card details are stored. Manual UK bank transfer is available as a fallback.
 
 # LINK RULES
 Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). When you link a page, ALWAYS write it as a markdown link with a short readable name, like [BPC-157](/compounds/bpc-157/) or [reconstitution calculator](/tools/reconstitution-calculator/). Never show a bare path or raw URL as the visible text. Never write a link as [/compounds/glutathione/] or a bare /path/ on its own. It MUST be [Readable Name](/path/). NEVER invent a URL. If unsure, link to [our compounds](/compounds/) or the [FAQ](/faq/).
