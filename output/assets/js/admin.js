@@ -806,6 +806,7 @@
         if (testBtn) testBtn.style.display = '';
       }
     } catch (e) {}
+    renderPushPrefs();
   }
 
   async function enablePush() {
@@ -828,6 +829,7 @@
       pushStatus('✓ Alerts on for this device.', '#01D3A0');
       if (btn) { btn.disabled = false; btn.textContent = 'Re-enable'; }
       var testBtn = document.getElementById('push-test'); if (testBtn) testBtn.style.display = '';
+      renderPushPrefs();
     } catch (e) {
       pushStatus('Failed: ' + esc(e.message), '#f87171');
       if (btn) { btn.disabled = false; btn.textContent = 'Enable order alerts'; }
@@ -844,6 +846,80 @@
       if (r.ok) pushStatus('Test sent to ' + (d.sent || 0) + ' device(s).', '#01D3A0');
       else pushStatus('Test failed: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171');
     } catch (e) { pushStatus('Test failed: ' + esc(e.message), '#f87171'); }
+  }
+
+  // ── PUSH NOTIFICATION PREFERENCES ───────────────────────────────────────────
+  var PUSH_CATEGORIES = [
+    { key: 'order',   label: 'New orders',      desc: 'Get notified when a customer places an order' },
+    { key: 'system',  label: 'System alerts',    desc: 'Health monitor warnings (downtime, errors, anomalies)' },
+    { key: 'agent',   label: 'Agent actions',    desc: 'Approval requests from automated agents' },
+    { key: 'stock',   label: 'Low stock',        desc: 'Alert when a product is running low' },
+    { key: 'backup',  label: 'Data backups',     desc: 'Confirmation when a scheduled backup completes' },
+  ];
+  var PREFS_KEY = 'vx_push_prefs';
+
+  function loadPushPrefs() {
+    try { var v = JSON.parse(localStorage.getItem(PREFS_KEY)); if (v && typeof v === 'object') return v; } catch (e) {}
+    var defaults = {};
+    PUSH_CATEGORIES.forEach(function (c) { defaults[c.key] = true; });
+    return defaults;
+  }
+  function savePushPrefs(prefs) {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
+    syncPrefsToSW(prefs);
+  }
+  function syncPrefsToSW(prefs) {
+    if (!('serviceWorker' in navigator)) return;
+    var msg = { type: 'push-prefs', prefs: prefs };
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage(msg);
+    }
+    navigator.serviceWorker.ready.then(function (reg) {
+      if (reg.active) reg.active.postMessage(msg);
+    }).catch(function () {});
+  }
+
+  function renderPushPrefs() {
+    var wrap = document.getElementById('push-prefs');
+    var list = document.getElementById('push-pref-list');
+    if (!wrap || !list) return;
+    var prefs = loadPushPrefs();
+    syncPrefsToSW(prefs);
+    var show = false;
+    try {
+      if (Notification.permission === 'granted') show = true;
+    } catch (e) {}
+    wrap.style.display = show ? '' : 'none';
+    if (!show) return;
+    list.innerHTML = '';
+    PUSH_CATEGORIES.forEach(function (cat) {
+      var on = prefs[cat.key] !== false;
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;border:1px solid var(--brd,#1a1a1a);border-radius:10px';
+      var info = document.createElement('div');
+      info.innerHTML = '<div style="font-size:14px;font-weight:600;color:#fff">' + esc(cat.label) + '</div>' +
+        '<div style="font-size:12px;color:var(--t3,#6b7280);margin-top:2px">' + esc(cat.desc) + '</div>';
+      var toggle = document.createElement('label');
+      toggle.style.cssText = 'position:relative;display:inline-block;width:44px;min-width:44px;height:24px;cursor:pointer';
+      toggle.innerHTML = '<input type="checkbox" data-cat="' + cat.key + '"' + (on ? ' checked' : '') +
+        ' style="opacity:0;width:0;height:0;position:absolute">' +
+        '<span style="position:absolute;inset:0;border-radius:999px;transition:background .2s;background:' + (on ? '#01D3A0' : '#2a323a') + '"></span>' +
+        '<span style="position:absolute;top:2px;left:' + (on ? '22px' : '2px') + ';width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>';
+      var inp = toggle.querySelector('input');
+      inp.addEventListener('change', function () {
+        var k = this.getAttribute('data-cat');
+        var isOn = this.checked;
+        prefs[k] = isOn;
+        savePushPrefs(prefs);
+        var bg = this.nextElementSibling;
+        var dot = bg.nextElementSibling;
+        bg.style.background = isOn ? '#01D3A0' : '#2a323a';
+        dot.style.left = isOn ? '22px' : '2px';
+      });
+      row.appendChild(info);
+      row.appendChild(toggle);
+      list.appendChild(row);
+    });
   }
 
   // ── DEAL OF THE WEEK ─────────────────────────────────────────────────────────

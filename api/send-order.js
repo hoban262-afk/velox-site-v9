@@ -438,6 +438,7 @@ async function sendEmails(d, idempotencyKey) {
       title: `New order - ${sym}${d.order_total}`,
       body: `${d.order_number} · ${isInstant ? 'PAID' : 'PENDING'} · ${d.customer_name || 'Customer'}`,
       url: '/admin/',
+      category: 'order',
     });
   } catch (e) { console.error('[send-order] push failed:', e.message); }
 
