@@ -194,6 +194,93 @@ async function customerContextBlock(email) {
   return line;
 }
 
+// Inject the visitor's current basket so Matt can help them close the sale.
+function cartBlock(cart) {
+  if (!Array.isArray(cart) || !cart.length) return '';
+  const lines = cart.slice(0, 12).map((it) => {
+    const name = String((it && it.name) || (it && it.slug) || 'item').slice(0, 60);
+    const size = it && it.size ? ` ${String(it.size).slice(0, 24)}` : '';
+    const qty = Number(it && it.qty) > 0 ? Number(it.qty) : 1;
+    return `- ${qty} x ${name}${size}`;
+  });
+  return '\n\n# CURRENT BASKET (the visitor has these in their cart right now)\n'
+    + lines.join('\n')
+    + '\nIf it fits the conversation, help them finish: answer any last question, then nudge them to checkout with a link to [your cart](/cart/). Never invent items or prices not shown here or in the LIVE STOCK block. Do not pressure.';
+}
+
+// Pull the plain text out of an Anthropic content array.
+function textOf(content) {
+  if (!Array.isArray(content)) return '';
+  return content.filter((b) => b && b.type === 'text').map((b) => b.text).join('').trim();
+}
+
+// ── Tools the model can call for reliable, live answers ────────────────────
+const TOOLS = [
+  {
+    name: 'lookup_order',
+    description: "Look up a customer's order to tell them its current stage and tracking. Use whenever they ask about an order, delivery, dispatch or 'where's my order'. You MUST have their email first, so ask for it if you don't have it. Pass their order reference too if they gave one (it pins a specific order). Never invent a status or tracking number, always use this tool.",
+    input_schema: { type: 'object', properties: {
+      email: { type: 'string', description: 'the email used at checkout' },
+      reference: { type: 'string', description: 'optional order reference if they provided one' },
+    }, required: ['email'] },
+  },
+  {
+    name: 'notify_when_back_in_stock',
+    description: "Register the customer for a back-in-stock email alert for a product that is currently out of stock. Use only when they ask to be told when something is back. Needs their email and the product slug from the catalogue (for example 'bpc-157').",
+    input_schema: { type: 'object', properties: {
+      email: { type: 'string' },
+      product_slug: { type: 'string', description: "catalogue slug, e.g. 'retatrutide'" },
+    }, required: ['email', 'product_slug'] },
+  },
+];
+
+async function toolLookupOrder(input) {
+  const email = String((input && input.email) || '').trim();
+  if (!email || !EMAIL_RE.test(email)) return { error: 'need_email', message: 'Ask the customer for the exact email they ordered with.' };
+  const reference = String((input && input.reference) || '').trim();
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?customer_email=ilike.${encodeURIComponent(email)}&select=notes,status,tracking_number,items,created_at&order=created_at.desc&limit=8`, { headers: sbHeaders });
+    const rows = r.ok ? await r.json() : [];
+    if (!Array.isArray(rows) || !rows.length) return { found: false, message: 'No order found under that email. Ask them to double check the email used at checkout, or contact support@veloxpeps.com with their order reference.' };
+    let o = rows[0];
+    if (reference) {
+      const ref = reference.toLowerCase();
+      const match = rows.find((x) => String(x.notes || '').toLowerCase().includes(ref));
+      if (match) o = match;
+    }
+    const items = Array.isArray(o.items) ? o.items.map((i) => i && i.name).filter(Boolean).join(', ') : '';
+    const out = { found: true, reference: o.notes || null, status: o.status, stage: ORDER_STAGE[o.status] || `Status: ${o.status}`, items };
+    if (o.status === 'dispatched' && o.tracking_number) {
+      const tn = String(o.tracking_number).replace(/\s+/g, '');
+      out.tracking_number = o.tracking_number;
+      out.tracking_url = `https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(tn)}`;
+    }
+    return out;
+  } catch (e) { return { error: 'lookup_failed', message: 'Could not reach the order system. Ask them to try again shortly or email support@veloxpeps.com.' }; }
+}
+
+async function toolRestock(input) {
+  const email = String((input && input.email) || '').trim().toLowerCase();
+  const slug = String((input && input.product_slug) || '').trim().toLowerCase();
+  if (!EMAIL_RE.test(email)) return { error: 'need_email' };
+  if (!/^[a-z0-9-]+$/.test(slug)) return { error: 'bad_slug' };
+  try {
+    const ins = await fetch(`${SUPABASE_URL}/rest/v1/interest_registrations?on_conflict=product_slug,email`, {
+      method: 'POST',
+      headers: { ...sbHeaders, Prefer: 'resolution=ignore-duplicates,return=minimal' },
+      body: JSON.stringify({ product_slug: slug, email, source: 'chat' }),
+    });
+    if (ins.ok || ins.status === 409) return { ok: true, message: `Registered ${email} for a back-in-stock alert on ${slug}.` };
+    return { error: 'save_failed' };
+  } catch (e) { return { error: 'save_failed' }; }
+}
+
+async function runTool(name, input) {
+  if (name === 'lookup_order') return toolLookupOrder(input || {});
+  if (name === 'notify_when_back_in_stock') return toolRestock(input || {});
+  return { error: 'unknown_tool' };
+}
+
 // Resolve the model's [[OFFER]] / [[HUMAN]] tags into real, server-controlled actions.
 async function finaliseReply(reply, body, messages) {
   let out = reply.replace(/\s*[\u2014\u2013]\s*/g, ', ').replace(/ ,/g, ',').replace(/,\s*,/g, ',');
@@ -325,6 +412,18 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 # PAYMENT
 - Pay by Bank, open banking via Fena: they approve it in their own banking app in about 30 seconds, no card details are stored. Manual UK bank transfer is available as a fallback.
 
+# TOOLS YOU CAN USE (call them, never guess)
+- lookup_order: for any "where's my order / order status / tracking" question. You must have their email first (ask for it if you don't). Pass their order reference too if they gave one. Tell them the stage in plain words, and if it is dispatched, share the Royal Mail tracking link the tool returns so they see the exact live status. Never invent a status, tracking number or date.
+- notify_when_back_in_stock: when a customer wants to be told when an out-of-stock product is back, take their email and call this with the product slug, then warmly confirm they are on the list.
+
+# WIDER KNOWLEDGE (facts)
+- Velox Pro (/pro/): £6.99/month or £59.99/year. Gives 10% off every order, free UK Royal Mail Tracked 24 on every order, double loyalty points, and unlimited use of the AI Design Lab. Worth it for anyone ordering regularly.
+- Volume discounts, automatic at checkout: spend £75/£150/£200/£250 for 5/10/15/20% off. 10-packs give 10/17.5/25/30% off (the 2/3/4/5 pack tiers).
+- Loyalty: customers earn points on orders, viewable in their account at /account/. Pro members earn double.
+- Design Lab (/design-lab/): a free AI tool that helps researchers design a research stack. Point unsure researchers here.
+- Subscribe and save: handled via Velox Pro (/pro/) for the recurring discount. Point them there.
+- FAQ (/faq/) and Guides (/guides/) cover most general questions, link them when relevant.
+
 # LINK RULES
 Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). When you link a page, ALWAYS write it as a markdown link with a short readable name, like [BPC-157](/compounds/bpc-157/) or [reconstitution calculator](/tools/reconstitution-calculator/). Never show a bare path or raw URL as the visible text. Never write a link as [/compounds/glutathione/] or a bare /path/ on its own. It MUST be [Readable Name](/path/). NEVER invent a URL. If unsure, link to [our compounds](/compounds/) or the [FAQ](/faq/).
 
@@ -381,8 +480,9 @@ module.exports = async function handler(req, res) {
   if (typeof body.page === 'string' && body.page.trim()) {
     system += `\n\n# CONTEXT\nThe visitor is currently on: ${body.page.trim().slice(0, 120)}. Tailor your help to it.`;
   }
-  // Live data: real stock/prices, and (if we know who they are) their order context.
+  // Live data: stock/prices, the visitor's basket, and (if known) their order context.
   try { const ls = await liveStockBlock(); if (ls) system += ls; } catch (e) { /* ignore */ }
+  try { const cb = cartBlock(body.cart); if (cb) system += cb; } catch (e) { /* ignore */ }
   try { const em = emailFrom(body, messages); if (em) { const cc = await customerContextBlock(em); if (cc) system += cc; } } catch (e) { /* ignore */ }
   // Best-effort per-IP rate limit (fails open).
   try {
@@ -397,22 +497,42 @@ module.exports = async function handler(req, res) {
     }
   } catch (e) { /* fail open */ }
 
+  const callAnthropic = (convo, withTools) => fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify(Object.assign({ model: MODEL, max_tokens: 400, system, messages: convo }, withTools ? { tools: TOOLS } : {})),
+  }).then((r) => r.json()).catch(() => null);
+
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ model: MODEL, max_tokens: 220, system, messages }),
-    });
-    const d = await r.json().catch(() => null);
-    const reply = d && d.content && d.content[0] && d.content[0].text;
-    if (!reply) {
-      console.error('[chat] empty reply', d && d.error ? d.error : '');
-      return res.status(502).json({ error: 'No reply' });
+    const convo = messages.slice();   // [{role, content:string}] — user-first
+    let reply = '';
+    // Bounded tool-use loop: the model may call lookup_order / restock, we run
+    // it, hand back the result, and let it compose the final reply.
+    for (let round = 0; round < 4; round++) {
+      const d = await callAnthropic(convo, true);
+      if (!d || !Array.isArray(d.content)) { console.error('[chat] bad response', d && d.error ? d.error : ''); break; }
+      if (d.stop_reason === 'tool_use') {
+        convo.push({ role: 'assistant', content: d.content });
+        const results = [];
+        for (const block of d.content) {
+          if (block && block.type === 'tool_use') {
+            let result; try { result = await runTool(block.name, block.input || {}); } catch (e) { result = { error: 'tool_failed' }; }
+            results.push({ type: 'tool_result', tool_use_id: block.id, content: JSON.stringify(result).slice(0, 2000) });
+          }
+        }
+        if (!results.length) { reply = textOf(d.content); break; }
+        convo.push({ role: 'user', content: results });
+        continue;
+      }
+      reply = textOf(d.content);
+      break;
     }
+    // Fallback: a plain no-tool attempt so a tool hiccup never kills the reply.
+    if (!reply) {
+      const d2 = await callAnthropic(messages, false);
+      reply = textOf(d2 && d2.content);
+    }
+    if (!reply) { console.error('[chat] empty reply'); return res.status(502).json({ error: 'No reply' }); }
     const finalReply = await finaliseReply(reply, body, messages);
     await saveTranscript(body, messages, finalReply);
     return res.status(200).json({ reply: finalReply });

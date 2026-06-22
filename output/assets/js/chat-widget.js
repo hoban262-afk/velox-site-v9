@@ -32,6 +32,48 @@
   ];
   function pickGreeting() { return GREETINGS[Math.floor(Math.random() * GREETINGS.length)]; }
 
+  // Read the current basket so the bot can help close the sale.
+  function readCart() {
+    try { var c = JSON.parse(localStorage.getItem('vp_cart') || '[]'); return Array.isArray(c) ? c.slice(0, 12) : []; }
+    catch (e) { return []; }
+  }
+
+  // Work out what kind of page we're on, for a contextual opener + chips.
+  var CATEGORIES = ['cognitive', 'metabolic', 'recovery', 'growth', 'antioxidant'];
+  function pageContext() {
+    var p = location.pathname || '/';
+    var m = p.match(/^\/compounds\/([a-z0-9-]+)\/?$/);
+    if (m && CATEGORIES.indexOf(m[1]) === -1) {
+      var h1 = document.querySelector('.cp-h1');
+      var name = h1 && h1.firstChild ? String(h1.firstChild.textContent || '').trim() : '';
+      if (!name) name = m[1].replace(/-/g, ' ');
+      return { type: 'product', slug: m[1], name: name };
+    }
+    if (m && CATEGORIES.indexOf(m[1]) > -1) return { type: 'shop' };
+    if (/^\/compounds\/?$/.test(p)) return { type: 'shop' };
+    if (/^\/(cart|checkout)\b/.test(p)) return { type: 'cart' };
+    if (/^\/pro\b/.test(p)) return { type: 'pro' };
+    if (/^\/guides\//.test(p)) return { type: 'guide' };
+    return { type: 'general' };
+  }
+  function pageGreeting() {
+    var c = pageContext();
+    if (c.type === 'product') return "Hey, Matt here. Questions about " + c.name + "? Happy to talk testing, pricing or how it ships.";
+    if (c.type === 'cart')    return "Hey, Matt from Velox. Want a hand finishing your order, or any last questions before you check out?";
+    if (c.type === 'shop')    return "Hey, Matt here. Want help picking the right compound? I can talk you through testing, pricing and delivery.";
+    if (c.type === 'pro')     return "Hey, Matt here. Want me to run through what Velox Pro gets you?";
+    if (c.type === 'guide')   return "Hey, Matt from Velox. Anything I can help with, whether it's this topic, choosing a compound, or an order?";
+    return pickGreeting();
+  }
+  function pageChips() {
+    var c = pageContext();
+    if (c.type === 'product') return ['Is it tested?', 'Price?', 'In stock?', 'Shipping'];
+    if (c.type === 'cart')    return ['Any discount?', 'Shipping cost?', 'How do I pay?', 'Where do you ship?'];
+    if (c.type === 'shop')    return ['Help me choose', 'Is it tested?', 'Shipping and delivery', "Where's my order?"];
+    if (c.type === 'pro')     return ['What do I get?', 'How much?', 'Is it worth it?'];
+    return ['Help me choose', 'Is it tested?', "Where's my order?", 'Shipping and delivery'];
+  }
+
   // ── styles ────────────────────────────────────────────────────────────────
   var css = '' +
   '.vcw-btn{position:fixed;right:20px;bottom:calc(var(--vpdock-h, 0px) + 20px);z-index:99998;display:inline-flex;align-items:center;gap:9px;' +
@@ -204,7 +246,7 @@
     btn.style.display = opened ? 'none' : 'inline-flex';
     if (opened) {
       if (!restored) restorePriorChat();
-      if (!messages.length && !greeted) connectThenGreet(pickGreeting());
+      if (!messages.length && !greeted) connectThenGreet(pageGreeting());
       setTimeout(function () { inputEl.focus(); }, 50);
     }
   }
@@ -293,7 +335,7 @@
 
   // Starter quick-replies under the greeting to lower the blank-box barrier.
   function showChips() {
-    var items = ['Help me choose', 'Is it tested?', "Where's my order?", 'Shipping and delivery'];
+    var items = pageChips();
     var wrap = document.createElement('div'); wrap.className = 'vcw-chips';
     items.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'vcw-chip'; b.textContent = c;
@@ -351,7 +393,7 @@
     fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: apiMessages, note: note, page: location.pathname, sid: SID, email: userEmail }),
+      body: JSON.stringify({ messages: apiMessages, note: note, page: location.pathname, sid: SID, email: userEmail, cart: readCart() }),
     })
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (d) {
@@ -390,7 +432,7 @@
         if (opened || messages.length) return;
         sessionStorage.setItem('vcw_nudged', '1');
         panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
-        connectThenGreet("Anything I can help with on this one? Happy to talk you through how it's tested, or help you find the right thing. There's a discount on first orders too if you're close.");
+        connectThenGreet(pageGreeting());
       }, 30000);
     } catch (e) { /* ignore */ }
   }
