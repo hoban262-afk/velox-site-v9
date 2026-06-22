@@ -127,7 +127,7 @@
     var priceEls = document.querySelectorAll(
       '.cc-price, .cc-was, .cp-size-p, .cp-size-was, .sc-price, .sc-was, ' +
       '.sc-cp-price, .csp-price, .cart-line-price, .cart-total-val, ' +
-      '[data-gbp], .hp-aov-price, .aov-price'
+      '[data-gbp], .hp-aov-price, .aov-price, .dotd-now, .dotd-was'
     );
     priceEls.forEach(function (el) {
       snapshotAndConvert(el);
@@ -303,13 +303,24 @@
     // Re-convert after pricing.js hydrates live prices
     document.addEventListener('vp:prices-updated', function () {
       if (currentCode !== 'GBP') {
-        // Clear snapshots so fresh hydrated prices get re-snapshotted
         document.querySelectorAll('[data-gbp-html]').forEach(function (el) {
           el.removeAttribute('data-gbp-html');
         });
         convertAllPrices();
       }
     });
+
+    // Watch for late-loading sections (deal of the week, etc.) that inject £ prices after init
+    var observer = new MutationObserver(function () {
+      if (currentCode === 'GBP' || !rates) return;
+      document.querySelectorAll('.dotd-now, .dotd-was').forEach(function (el) {
+        if (el.textContent.indexOf('£') < 0) return;
+        el.removeAttribute('data-gbp-html');
+        snapshotAndConvert(el);
+      });
+    });
+    var dotdSec = document.getElementById('dotd-sec');
+    if (dotdSec) observer.observe(dotdSec, { childList: true, subtree: true, characterData: true });
   }
 
   if (document.readyState === 'loading') {
