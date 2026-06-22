@@ -413,6 +413,7 @@
     loadDesignLab();
     registerSW();
     wirePush();
+    renderPushPrefs();
     setupAutoRefresh();
   }
 
@@ -883,14 +884,9 @@
     var wrap = document.getElementById('push-prefs');
     var list = document.getElementById('push-pref-list');
     if (!wrap || !list) return;
+    if (list.children.length) return;
     var prefs = loadPushPrefs();
     syncPrefsToSW(prefs);
-    var show = false;
-    try {
-      if (Notification.permission === 'granted') show = true;
-    } catch (e) {}
-    wrap.style.display = show ? '' : 'none';
-    if (!show) return;
     list.innerHTML = '';
     PUSH_CATEGORIES.forEach(function (cat) {
       var on = prefs[cat.key] !== false;
