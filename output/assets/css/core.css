@@ -4887,13 +4887,23 @@ body {
     width: 100px !important;
   }
 }
-/* ── 5b. Nav: ensure SVG icons don't collapse in flex on mobile ── */
+/* ── 5b. Nav: mobile icon sizing + even spacing ── */
 @media (max-width: 767px) {
   .nav-ig svg,
   .nav-cart svg {
     flex-shrink: 0 !important;
-    width: 20px !important;
-    height: 20px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+  .nav-ig {
+    padding: 8px !important;
+  }
+  .nav-cart {
+    padding: 8px !important;
+    gap: 4px !important;
+  }
+  .nav-actions {
+    gap: 2px !important;
   }
 }
 
