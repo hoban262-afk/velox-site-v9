@@ -211,6 +211,22 @@ function cartBlock(cart) {
     + '\nIf it fits the conversation, help them finish: answer any last question, then nudge them to checkout with a link to [your cart](/cart/). Never invent items or prices not shown here or in the LIVE STOCK block. Do not pressure.';
 }
 
+// Inject the live Deal of the Day so Matt can flag it (the discounted price is
+// already reflected in the LIVE STOCK block via sale_price).
+async function dealBlock() {
+  if (!SUPABASE_URL || !SERVICE) return '';
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/deal_of_day?active=eq.true&select=slug,size,discount_pct,headline,ends_at&order=updated_at.desc&limit=1`, { headers: sbHeaders });
+    const rows = r.ok ? await r.json() : [];
+    const d = Array.isArray(rows) ? rows[0] : null;
+    if (!d) return '';
+    if (d.ends_at && new Date(d.ends_at) < new Date()) return '';
+    const pct = Math.round(Number(d.discount_pct) || 0);
+    const ends = d.ends_at ? new Date(d.ends_at).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) : null;
+    return `\n\n# ACTIVE DEAL (mention naturally only if it fits, the discounted price is already in the LIVE STOCK block)\n${d.headline || 'Deal'}: ${d.slug} ${d.size}, ${pct}% off${ends ? `, ends ${ends}` : ''}. Flag it if relevant, do not oversell.`;
+  } catch (e) { return ''; }
+}
+
 // Pull the plain text out of an Anthropic content array.
 function textOf(content) {
   if (!Array.isArray(content)) return '';
@@ -465,6 +481,13 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 - Subscribe and save: handled via Velox Pro (/pro/) for the recurring discount. Point them there.
 - FAQ (/faq/) and Guides (/guides/) cover most general questions, link them when relevant.
 
+# SUPPORT PLAYS (pick the right one, stay brief and human)
+- Order problems: if a parcel hasn't arrived or arrived damaged, get their order reference and email, and for damage ask them to photograph the packaging and the vial. Then use [[HUMAN]] so the team can sort it, and say they'll hear back from support@veloxpeps.com.
+- Upset or complaint: if someone is clearly frustrated or complaining, don't get defensive or keep selling. Acknowledge it plainly and escalate quickly with [[HUMAN]].
+- Choosing a compound: if they're unsure what they need, ask ONE clarifying question about their research area first, then recommend and link the best fit (the [comparison tool](/tools/compare/) or [Design Lab](/design-lab/) can help).
+- Save them money (only when it genuinely helps): if their basket or planned spend is near a discount tier, or they say they order regularly, point out the real saving, the volume tier, a 10-pack, or [Velox Pro](/pro/). Real figures only.
+- Wholesale or bulk: if they want a large quantity, custom synthesis, or a trade account, capture what they need (compound, quantity, timeframe) and use [[HUMAN]] so the team can quote them.
+
 # LINK RULES
 Only link to URLs that appear in this prompt (the product list below, the category/tool/info pages named above). When you link a page, ALWAYS write it as a markdown link with a short readable name, like [BPC-157](/compounds/bpc-157/) or [reconstitution calculator](/tools/reconstitution-calculator/). Never show a bare path or raw URL as the visible text. Never write a link as [/compounds/glutathione/] or a bare /path/ on its own. It MUST be [Readable Name](/path/). NEVER invent a URL. If unsure, link to [our compounds](/compounds/) or the [FAQ](/faq/).
 
@@ -508,6 +531,12 @@ module.exports = async function handler(req, res) {
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
   body = body || {};
 
+  // Lightweight feedback ping from the widget (👍/👎 on a reply). Logged, then done.
+  if (body.feedback === 'up' || body.feedback === 'down') {
+    logEvent(body.sid, 'chat_feedback', body.page, { value: body.feedback });
+    return res.status(200).json({ ok: true });
+  }
+
   const messages = sanitiseMessages(body.messages);
   if (!messages.length) return res.status(400).json({ error: 'No messages' });
   if (messages[messages.length - 1].role !== 'user') {
@@ -525,6 +554,7 @@ module.exports = async function handler(req, res) {
   // Live data: stock/prices, the visitor's basket, and (if known) their order context.
   try { const ls = await liveStockBlock(); if (ls) system += ls; } catch (e) { /* ignore */ }
   try { const cb = cartBlock(body.cart); if (cb) system += cb; } catch (e) { /* ignore */ }
+  try { const db = await dealBlock(); if (db) system += db; } catch (e) { /* ignore */ }
   try { const em = emailFrom(body, messages); if (em) { const cc = await customerContextBlock(em); if (cc) system += cc; } } catch (e) { /* ignore */ }
   // Best-effort per-IP rate limit (fails open).
   try {

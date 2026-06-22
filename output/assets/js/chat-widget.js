@@ -117,6 +117,7 @@
   '.vcw-chips{display:flex;flex-wrap:wrap;gap:7px;padding:2px 16px 8px}' +
   '.vcw-chip{background:#141b22;border:1px solid #2a323a;color:#cbd5e1;border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}' +
   '.vcw-chip:hover{border-color:' + ACCENT + ';color:#fff}' +
+  '.vcw-fb{display:flex;gap:10px;margin-top:6px}.vcw-fb button{background:none;border:0;cursor:pointer;font-size:13px;padding:0;line-height:1;opacity:.5}.vcw-fb button:hover{opacity:1}.vcw-fb .done{color:#6B7280;font-size:11px}' +
   '@media (max-width:600px){' +
     '.vcw-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:85vh;height:85dvh;max-height:85dvh;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0}' +
     '.vcw-btn{right:14px;bottom:calc(var(--vpdock-h, 112px) + 14px);padding:11px 14px;font-size:13px}' +
@@ -281,6 +282,7 @@
     if (role === 'bot') {
       var cm = String(text).match(/VELOX-[A-Z0-9]{6}/);
       if (cm) { try { localStorage.setItem('vp_ref', JSON.stringify({ code: cm[0], ts: Date.now() })); } catch (e) {} }
+      if (String(text).length > 60) addFeedback(b);
     }
     return b;
   }
@@ -380,6 +382,23 @@
     if (wrap.children.length) { msgsEl.appendChild(wrap); msgsEl.scrollTop = msgsEl.scrollHeight; }
   }
 
+  // Send a 👍/👎 on a bot reply so we can see what's landing.
+  function sendFeedback(value) {
+    try {
+      fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedback: value, sid: SID, page: location.pathname }) }).catch(function () {});
+    } catch (e) {}
+  }
+  function addFeedback(bubble) {
+    var fb = document.createElement('div'); fb.className = 'vcw-fb';
+    [['up', '👍'], ['down', '👎']].forEach(function (pair) {
+      var x = document.createElement('button'); x.type = 'button'; x.title = pair[0] === 'up' ? 'Helpful' : 'Not helpful'; x.textContent = pair[1];
+      x.addEventListener('click', function () { sendFeedback(pair[0]); fb.innerHTML = '<span class="done">Thanks for the feedback</span>'; });
+      fb.appendChild(x);
+    });
+    bubble.appendChild(fb);
+  }
+
   // Split a longer reply into up to two natural messages on a sentence boundary,
   // so Matt "texts" like a person instead of dumping one block.
   function splitReply(text) {
@@ -473,10 +492,26 @@
     } catch (e) { /* ignore */ }
   }
 
+  // Desktop exit-intent: if they move to leave without engaging, open with a soft save.
+  function maybeExitIntent() {
+    try {
+      if (window.innerWidth < 768) return;
+      document.addEventListener('mouseout', function (e) {
+        if (e.clientY > 0 || e.relatedTarget) return;          // only a real top-edge exit
+        if (opened || messages.length) return;
+        if (sessionStorage.getItem('vcw_nudged')) return;
+        sessionStorage.setItem('vcw_nudged', '1');
+        panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
+        connectThenGreet("Before you head off, anything I can help with? Happy to answer anything on testing or shipping, and there's a discount on first orders if you're close.");
+      });
+    } catch (e) {}
+  }
+
   function init() {
     injectCss();
     build();
     maybeProactive();
+    maybeExitIntent();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
