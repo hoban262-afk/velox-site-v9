@@ -412,7 +412,7 @@ async function sendEmails(d, idempotencyKey) {
   console.log(`[send-order] Sending admin email for ${d.order_number}${idempotencyKey ? ` (idempotencyKey: ${idempotencyKey}-admin)` : ''}`);
   // Admin notification - always fires. Goes to the monitored order-alert inbox(es).
   // Override via ORDER_ALERT_EMAILS (comma-separated) in the project env.
-  const ORDER_ALERTS = (process.env.ORDER_ALERT_EMAILS || 'support@veloxpeps.com')
+  const ORDER_ALERTS = (process.env.ORDER_ALERT_EMAILS || 'veloxpeps@gmail.com')
     .split(',').map((s) => s.trim()).filter(Boolean);
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
