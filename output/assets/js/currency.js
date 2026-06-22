@@ -188,7 +188,7 @@
 
     var panel = document.createElement('div');
     panel.className = 'vx-cur-panel';
-    panel.hidden = true;
+    panel.classList.remove('open');
 
     var search = document.createElement('input');
     search.className = 'vx-cur-search';
@@ -215,17 +215,17 @@
 
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      var open = !panel.hidden;
-      panel.hidden = open;
-      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
-      if (!open) { search.value = ''; filterList(''); search.focus(); }
+      var wasOpen = panel.classList.contains('open');
+      panel.classList.toggle('open');
+      btn.setAttribute('aria-expanded', wasOpen ? 'false' : 'true');
+      if (!wasOpen) { search.value = ''; filterList(''); search.focus(); }
     });
 
     search.addEventListener('input', function () { filterList(this.value); });
     search.addEventListener('click', function (e) { e.stopPropagation(); });
 
     document.addEventListener('click', function () {
-      if (!panel.hidden) { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+      if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
     });
     panel.addEventListener('click', function (e) { e.stopPropagation(); });
 
@@ -255,7 +255,7 @@
 
     // Close panel
     var panel = document.querySelector('.vx-cur-panel');
-    if (panel) panel.hidden = true;
+    if (panel) panel.classList.remove('open');
     if (btn) btn.setAttribute('aria-expanded', 'false');
 
     // Convert prices
@@ -273,7 +273,8 @@
       '.vx-cur-flag{font-size:14px;line-height:1}' +
       '.vx-cur-code{font-family:var(--mono,monospace);font-weight:600;letter-spacing:.04em}' +
       '.vx-cur-chev{flex-shrink:0;opacity:.5}' +
-      '.vx-cur-panel{position:absolute;top:calc(100% + 6px);right:0;width:280px;max-height:360px;background:var(--bg3,#0d1117);border:1px solid var(--brd2,#2a323a);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:9999;overflow:hidden}' +
+      '.vx-cur-panel{position:absolute;top:calc(100% + 6px);right:0;width:280px;max-height:360px;background:var(--bg3,#0d1117);border:1px solid var(--brd2,#2a323a);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;flex-direction:column;z-index:9999;overflow:hidden}' +
+      '.vx-cur-panel.open{display:flex}' +
       '.vx-cur-search{width:100%;padding:10px 12px;background:var(--bg2,#0a0e13);border:none;border-bottom:1px solid var(--brd,#1a1a1a);color:#fff;font-size:13px;font-family:inherit;outline:none}' +
       '.vx-cur-search::placeholder{color:var(--t3,#6b7280)}' +
       '.vx-cur-list{overflow-y:auto;flex:1;overscroll-behavior:contain}' +
