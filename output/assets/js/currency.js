@@ -217,16 +217,34 @@
     });
     panel.appendChild(list);
     wrap.appendChild(btn);
-    wrap.appendChild(panel);
+    // The panel lives on <body>, NOT inside the header. The header is a sticky,
+    // backdrop-filtered element so it forms its own stacking context capped at
+    // z-index:300 — a panel nested inside it can never rise above the backdrop
+    // (z-index:9998, on <body>). Mounting the panel on <body> lets its
+    // z-index:9999 actually sit above the backdrop so its rows are clickable.
+    document.body.appendChild(panel);
     nav.insertBefore(wrap, ig);
 
+    // Desktop: pin the panel just under the button. Mobile (<=600) uses the CSS
+    // bottom-sheet, so clear any inline coords and let the stylesheet take over.
+    function positionPanel() {
+      if (isMobile()) { panel.style.top = ''; panel.style.left = ''; panel.style.right = ''; panel.style.bottom = ''; return; }
+      var r = btn.getBoundingClientRect();
+      panel.style.top = (r.bottom + 6) + 'px';
+      panel.style.right = Math.max(8, window.innerWidth - r.right) + 'px';
+      panel.style.left = 'auto';
+      panel.style.bottom = 'auto';
+    }
+
     function openPanel() {
+      positionPanel();
       panel.classList.add('open');
       backdrop.classList.add('open');
       btn.setAttribute('aria-expanded', 'true');
       search.value = ''; filterList('');
       if (!isMobile()) search.focus();
     }
+    window.addEventListener('resize', function () { if (panel.classList.contains('open')) positionPanel(); });
 
     function closePanel() {
       panel.classList.remove('open');
@@ -298,7 +316,7 @@
       '.vx-cur-chev{flex-shrink:0;opacity:.5}' +
       '.vx-cur-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;-webkit-tap-highlight-color:transparent}' +
       '.vx-cur-backdrop.open{display:block}' +
-      '.vx-cur-panel{position:absolute;top:calc(100% + 6px);right:0;width:280px;max-height:360px;background:var(--bg3,#0d1117);border:1px solid var(--brd2,#2a323a);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;flex-direction:column;z-index:9999;overflow:hidden}' +
+      '.vx-cur-panel{position:fixed;top:64px;right:8px;width:280px;max-height:360px;background:var(--bg3,#0d1117);border:1px solid var(--brd2,#2a323a);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.5);display:none;flex-direction:column;z-index:9999;overflow:hidden}' +
       '.vx-cur-panel.open{display:flex}' +
       '.vx-cur-search{width:100%;padding:10px 12px;background:var(--bg2,#0a0e13);border:none;border-bottom:1px solid var(--brd,#1a1a1a);color:#fff;font-size:13px;font-family:inherit;outline:none}' +
       '.vx-cur-search::placeholder{color:var(--t3,#6b7280)}' +
@@ -310,7 +328,7 @@
       '.vx-cur-row-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
       '.vx-cur-row-code{font-family:var(--mono,monospace);font-size:11px;opacity:.6;flex-shrink:0}' +
       '.vx-cur-handle{display:none}' +
-      '@media(max-width:768px){.vx-cur-code{display:none}.vx-cur-btn{padding:5px 6px}.vx-cur-panel{right:-40px;width:260px}}' +
+      '@media(max-width:768px){.vx-cur-code{display:none}.vx-cur-btn{padding:5px 6px}.vx-cur-panel{width:260px}}' +
       '@media(max-width:600px){' +
         '.vx-cur-panel{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;max-height:60vh;border-radius:16px 16px 0 0;border-bottom:none;padding-bottom:env(safe-area-inset-bottom,0)}' +
         '.vx-cur-handle{display:block;width:36px;height:4px;background:#3a3f47;border-radius:2px;margin:10px auto 4px}' +
@@ -330,6 +348,22 @@
     buildDropdown();
     loadRates().then(function () {
       if (currentCode !== 'GBP') convertAllPrices();
+    });
+
+    // Re-apply the chosen currency after cart.js re-renders (qty change, member
+    // status, reprice). cart.js always writes GBP, so we clear the cached GBP
+    // snapshots ONLY inside the cart region it just rewrote — these currently
+    // hold fresh GBP text, so re-snapshotting + converting them is safe and
+    // can't double-convert. Elements outside the cart keep their snapshots.
+    document.addEventListener('vp:cart-rendered', function () {
+      if (currentCode === 'GBP' || !rates) return;
+      ['#cart-items', '#cart-summary', '#vp-freeship'].forEach(function (sel) {
+        var root = document.querySelector(sel);
+        if (!root) return;
+        if (root.hasAttribute('data-gbp-html')) root.removeAttribute('data-gbp-html');
+        root.querySelectorAll('[data-gbp-html]').forEach(function (el) { el.removeAttribute('data-gbp-html'); });
+      });
+      convertAllPrices();
     });
 
     // Re-convert after pricing.js hydrates live prices
