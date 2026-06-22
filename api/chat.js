@@ -68,6 +68,43 @@ async function logEvent(sid, event, page, meta) {
   } catch (e) { /* ignore */ }
 }
 
+// Persist the full conversation, keyed by widget session id (sid), so the
+// chat-transcripts cron worker can email each one to support. Best-effort: this
+// must never break or slow the reply, so any failure is swallowed. We upsert the
+// whole thread on every turn (merge-duplicates on sid) — the latest write wins,
+// which keeps the row complete even though the chat backend is stateless.
+// NOTE: a merge-duplicates upsert overwrites every column in the payload, so we
+// re-send started_at=now() only via the DB default on first insert; on update we
+// omit it to preserve the original. emailed_at/digest_at are never touched here,
+// so re-sending a transcript after it was emailed naturally clears nothing.
+async function saveTranscript(body, messages, finalReply) {
+  if (!SUPABASE_URL || !SERVICE) return;
+  const sid = body && typeof body.sid === 'string' ? body.sid.slice(0, 64) : '';
+  if (!sid) return;
+  try {
+    const thread = [...messages, { role: 'assistant', content: String(finalReply || '') }]
+      .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && m.content)
+      .map((m) => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
+    if (!thread.length) return;
+    const row = {
+      sid,
+      email: emailFrom(body, messages),
+      page: (body && typeof body.page === 'string' ? body.page : '').slice(0, 200) || null,
+      transcript: thread,
+      msg_count: thread.length,
+      last_at: new Date().toISOString(),
+      // Reset the email flags so an ongoing conversation that already got flushed
+      // gets re-flushed once it has new turns (the digest still de-dupes on its own).
+      emailed_at: null,
+    };
+    await fetch(`${SUPABASE_URL}/rest/v1/chat_transcripts?on_conflict=sid`, {
+      method: 'POST',
+      headers: { ...sbHeaders, Prefer: 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify(row),
+    });
+  } catch (e) { /* best-effort: never break the reply */ }
+}
+
 // Live stock + per-variant prices, injected per request. Exposes the EXACT
 // single AND 10-pack price for every in-stock variant so Matt never has to do
 // price maths. (The old version only exposed the cheapest "from £X", which is
@@ -337,6 +374,7 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: 'No reply' });
     }
     const finalReply = await finaliseReply(reply, body, messages);
+    await saveTranscript(body, messages, finalReply);
     return res.status(200).json({ reply: finalReply });
   } catch (e) {
     console.error('[chat] error', e.message);

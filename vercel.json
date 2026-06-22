@@ -101,6 +101,14 @@
     {
       "path": "/api/deal-rotate",
       "schedule": "20 * * * *"
+    },
+    {
+      "path": "/api/agents/chat-transcripts?mode=flush",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/agents/chat-transcripts?mode=digest",
+      "schedule": "30 7 * * *"
     }
   ],
   "headers": [
