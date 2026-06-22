@@ -62,11 +62,116 @@
   ];
 
   var CACHE_KEY = 'vx_fx_rates';
-  var PREF_KEY  = 'vx_currency';
-  var TTL       = 86400000; // 24 hours
+  var PREF_KEY  = 'vx_currency';   // set ONLY when the visitor explicitly picks
+  var GEO_KEY   = 'vx_geo_cur';    // cached auto-detected currency (per device)
+  var TTL       = 86400000;        // 24 hours (FX rates)
+  var GEO_TTL   = 604800000;       // 7 days (geo currency)
 
   var rates = null;
   var currentCode = 'GBP';
+
+  // ── Auto-detect the visitor's local currency ────────────────────────────────
+  // Country (ISO-3166 alpha-2) → one of our supported currencies. Eurozone
+  // members all map to EUR. Anything not here falls back to GBP.
+  var COUNTRY_TO_CURRENCY = {
+    GB: 'GBP', US: 'USD', CA: 'CAD', AU: 'AUD', NZ: 'NZD', CH: 'CHF',
+    SE: 'SEK', NO: 'NOK', DK: 'DKK', PL: 'PLN', CZ: 'CZK', HU: 'HUF',
+    RO: 'RON', BG: 'BGN', IS: 'ISK', TR: 'TRY', RU: 'RUB', UA: 'UAH',
+    JP: 'JPY', CN: 'CNY', HK: 'HKD', TW: 'TWD', KR: 'KRW', SG: 'SGD',
+    MY: 'MYR', TH: 'THB', PH: 'PHP', ID: 'IDR', IN: 'INR', PK: 'PKR',
+    BD: 'BDT', AE: 'AED', SA: 'SAR', QA: 'QAR', KW: 'KWD', BH: 'BHD',
+    IL: 'ILS', EG: 'EGP', ZA: 'ZAR', NG: 'NGN', KE: 'KES', BR: 'BRL',
+    MX: 'MXN', AR: 'ARS', CL: 'CLP', CO: 'COP', PE: 'PEN',
+    // Eurozone
+    AT: 'EUR', BE: 'EUR', HR: 'EUR', CY: 'EUR', EE: 'EUR', FI: 'EUR',
+    FR: 'EUR', DE: 'EUR', GR: 'EUR', IE: 'EUR', IT: 'EUR', LV: 'EUR',
+    LT: 'EUR', LU: 'EUR', MT: 'EUR', NL: 'EUR', PT: 'EUR', SK: 'EUR',
+    SI: 'EUR', ES: 'EUR', AD: 'EUR', MC: 'EUR', SM: 'EUR', VA: 'EUR', ME: 'EUR', XK: 'EUR'
+  };
+
+  // Common IANA timezones → country, for an instant (offline) first guess.
+  var TZ_TO_COUNTRY = {
+    'Europe/London': 'GB',
+    'America/New_York': 'US', 'America/Detroit': 'US', 'America/Chicago': 'US',
+    'America/Denver': 'US', 'America/Phoenix': 'US', 'America/Los_Angeles': 'US',
+    'America/Anchorage': 'US', 'America/Boise': 'US', 'America/Indiana/Indianapolis': 'US',
+    'Pacific/Honolulu': 'US',
+    'America/Toronto': 'CA', 'America/Vancouver': 'CA', 'America/Edmonton': 'CA',
+    'America/Winnipeg': 'CA', 'America/Halifax': 'CA', 'America/St_Johns': 'CA',
+    'Australia/Sydney': 'AU', 'Australia/Melbourne': 'AU', 'Australia/Brisbane': 'AU',
+    'Australia/Perth': 'AU', 'Australia/Adelaide': 'AU', 'Australia/Hobart': 'AU',
+    'Pacific/Auckland': 'NZ',
+    'Europe/Zurich': 'CH', 'Europe/Stockholm': 'SE', 'Europe/Oslo': 'NO',
+    'Europe/Copenhagen': 'DK', 'Europe/Warsaw': 'PL', 'Europe/Prague': 'CZ',
+    'Europe/Budapest': 'HU', 'Europe/Bucharest': 'RO', 'Europe/Sofia': 'BG',
+    'Atlantic/Reykjavik': 'IS', 'Europe/Istanbul': 'TR', 'Europe/Moscow': 'RU',
+    'Europe/Kiev': 'UA', 'Europe/Kyiv': 'UA',
+    'Europe/Paris': 'FR', 'Europe/Berlin': 'DE', 'Europe/Madrid': 'ES',
+    'Europe/Rome': 'IT', 'Europe/Amsterdam': 'NL', 'Europe/Brussels': 'BE',
+    'Europe/Vienna': 'AT', 'Europe/Dublin': 'IE', 'Europe/Lisbon': 'PT',
+    'Europe/Helsinki': 'FI', 'Europe/Athens': 'GR',
+    'Asia/Tokyo': 'JP', 'Asia/Shanghai': 'CN', 'Asia/Hong_Kong': 'HK',
+    'Asia/Taipei': 'TW', 'Asia/Seoul': 'KR', 'Asia/Singapore': 'SG',
+    'Asia/Kuala_Lumpur': 'MY', 'Asia/Bangkok': 'TH', 'Asia/Manila': 'PH',
+    'Asia/Jakarta': 'ID', 'Asia/Kolkata': 'IN', 'Asia/Calcutta': 'IN',
+    'Asia/Karachi': 'PK', 'Asia/Dhaka': 'BD', 'Asia/Dubai': 'AE',
+    'Asia/Riyadh': 'SA', 'Asia/Qatar': 'QA', 'Asia/Kuwait': 'KW',
+    'Asia/Bahrain': 'BH', 'Asia/Jerusalem': 'IL',
+    'Africa/Cairo': 'EG', 'Africa/Johannesburg': 'ZA', 'Africa/Lagos': 'NG',
+    'Africa/Nairobi': 'KE',
+    'America/Sao_Paulo': 'BR', 'America/Mexico_City': 'MX',
+    'America/Argentina/Buenos_Aires': 'AR', 'America/Santiago': 'CL',
+    'America/Bogota': 'CO', 'America/Lima': 'PE'
+  };
+
+  function isSupported(code) { return !!CURRENCIES.find(function (c) { return c.code === code; }); }
+
+  function currencyForCountry(cc) {
+    if (!cc) return null;
+    var cur = COUNTRY_TO_CURRENCY[String(cc).toUpperCase()];
+    return (cur && isSupported(cur)) ? cur : null;
+  }
+
+  // Instant, offline best-guess from the browser: timezone first (most reliable
+  // for actual location), then the locale region (e.g. en-US → US).
+  function detectFromBrowser() {
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var cur = currencyForCountry(TZ_TO_COUNTRY[tz]);
+      if (cur) return cur;
+    } catch (e) {}
+    try {
+      var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+      for (var i = 0; i < langs.length; i++) {
+        var m = String(langs[i] || '').match(/[-_]([A-Za-z]{2})$/);
+        if (m) { var c = currencyForCountry(m[1]); if (c) return c; }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function readGeoCache() {
+    try {
+      var g = JSON.parse(localStorage.getItem(GEO_KEY));
+      if (g && g.t && (Date.now() - g.t) < GEO_TTL && g.code && isSupported(g.code)) return g.code;
+    } catch (e) {}
+    return null;
+  }
+
+  // Accurate location lookup by IP (only runs once per device per GEO_TTL, and
+  // never when the visitor has made an explicit choice). Fails silently.
+  function geoDetectByIP() {
+    return fetch('https://ipwho.is/?fields=success,country_code,currency')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || d.success === false) return null;
+        var cur = currencyForCountry(d.country_code) ||
+                  (d.currency && isSupported(d.currency.code) ? d.currency.code : null);
+        if (cur) { try { localStorage.setItem(GEO_KEY, JSON.stringify({ t: Date.now(), code: cur })); } catch (e) {} }
+        return cur;
+      })
+      .catch(function () { return null; });
+  }
 
   // ── Rate fetching ──────────────────────────────────────────────────────────
 
@@ -276,9 +381,14 @@
     }
   }
 
-  function selectCurrency(code) {
+  // Explicit user pick — persists, so we stop auto-detecting for this device.
+  function selectCurrency(code) { applyCurrency(code, true); }
+
+  // Apply a currency to the UI + prices. persist=true records it as the user's
+  // choice; persist=false is used by auto-detection (stays "auto").
+  function applyCurrency(code, persist) {
     currentCode = code;
-    try { localStorage.setItem(PREF_KEY, code); } catch (e) {}
+    if (persist) { try { localStorage.setItem(PREF_KEY, code); } catch (e) {} }
 
     // Update button label
     var cur = CURRENCIES.find(function (c) { return c.code === code; }) || CURRENCIES[0];
@@ -342,12 +452,27 @@
   // ── Init ────────────────────────────────────────────────────────────────────
 
   function init() {
-    try { currentCode = localStorage.getItem(PREF_KEY) || 'GBP'; } catch (e) {}
-    if (!CURRENCIES.find(function (c) { return c.code === currentCode; })) currentCode = 'GBP';
+    // Priority: explicit user choice → cached geo currency → instant browser
+    // guess → GBP. Auto-detection never overrides an explicit pick.
+    var explicit = null;
+    try { explicit = localStorage.getItem(PREF_KEY); } catch (e) {}
+    if (explicit && isSupported(explicit)) {
+      currentCode = explicit;
+    } else {
+      currentCode = readGeoCache() || detectFromBrowser() || 'GBP';
+    }
+
     injectStyles();
     buildDropdown();
     loadRates().then(function () {
       if (currentCode !== 'GBP') convertAllPrices();
+      // First visit (no explicit choice, no cached geo): confirm by IP and
+      // upgrade the guess if it differs. Runs at most once per GEO_TTL.
+      if (!explicit && !readGeoCache()) {
+        geoDetectByIP().then(function (code) {
+          if (code && code !== currentCode) applyCurrency(code, false);
+        });
+      }
     });
 
     // Re-apply the chosen currency after cart.js re-renders (qty change, member
