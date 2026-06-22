@@ -1434,7 +1434,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ft-disc{font-family:var(--mono);font-size:9px;color:var(--t4);line-height:1.55;}
 
 /* Compliance block */
-.compliance-block{background:rgba(245,200,66,.05);border-top:1px solid rgba(245,200,66,.15);border-bottom:1px solid rgba(245,200,66,.15);padding:14px 32px;}
+.compliance-block{background:rgba(245,200,66,.05);border-top:1px solid rgba(245,200,66,.15);border-bottom:1px solid rgba(245,200,66,.15);padding:14px 32px;margin-top:48px;}
 .cb-i{max-width:1280px;margin:0 auto;font-family:var(--mono);font-size:9px;color:rgba(245,200,66,.6);line-height:1.65;letter-spacing:.03em;}
 .cb-i a{color:rgba(245,200,66,.7);text-decoration:none;}
 .cb-i a:hover{text-decoration:underline;}
