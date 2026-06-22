@@ -2926,7 +2926,8 @@ a.eg-btn-p {
 }
 .cc-img {
   width: 100% !important;
-  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
   display: block !important;
 }
 .cc:hover .cc-img-wrap {
@@ -4884,6 +4885,15 @@ body {
   }
   .nav-logo-img {
     width: 100px !important;
+  }
+}
+/* ── 5b. Nav: ensure SVG icons don't collapse in flex on mobile ── */
+@media (max-width: 767px) {
+  .nav-ig svg,
+  .nav-cart svg {
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
   }
 }
 

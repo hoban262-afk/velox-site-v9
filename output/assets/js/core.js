@@ -53,6 +53,8 @@
     hamburger.classList.remove('open');
     mobMenu.setAttribute('aria-hidden', 'true');
     mobMenu.style.display = 'none';
+    var cb = document.querySelector('.vcw-btn');
+    if (cb) cb.style.display = '';
   }
 
   if (hamburger && mobMenu) {
@@ -62,6 +64,8 @@
       hamburger.classList.toggle('open');
       mobMenu.setAttribute('aria-hidden', String(expanded));
       mobMenu.style.display = expanded ? 'none' : 'flex';
+      var cb = document.querySelector('.vcw-btn');
+      if (cb) cb.style.display = expanded ? '' : 'none';
     });
 
     // Close menu when tapping outside
