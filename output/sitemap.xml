@@ -138,4 +138,8 @@
 
   <url><loc>https://veloxpeps.com/tools/</loc><lastmod>2026-06-09</lastmod></url>
   <url><loc>https://veloxpeps.com/tools/scheduler/</loc><lastmod>2026-06-09</lastmod></url>
+
+  <!-- Membership & affiliate (public, indexable marketing pages) -->
+  <url><loc>https://veloxpeps.com/pro/</loc><lastmod>2026-06-23</lastmod></url>
+  <url><loc>https://veloxpeps.com/affiliate-program/</loc><lastmod>2026-06-23</lastmod></url>
 </urlset>

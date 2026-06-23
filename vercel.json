@@ -251,6 +251,16 @@
       "source": "/compounds/tirzepatide",
       "destination": "/compounds/",
       "permanent": true
+    },
+    {
+      "source": "/compounds/dihexa/",
+      "destination": "/compounds/cognitive/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/dihexa",
+      "destination": "/compounds/cognitive/",
+      "permanent": true
     }
   ]
 }
