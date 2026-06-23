@@ -1009,6 +1009,15 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
           </div>
         </div>
         <p style="font-size:12px;color:var(--t3,#6b7280);margin:14px 0 0;line-height:1.5">When an order is marked <strong>paid</strong>, it's automatically sent to Click &amp; Drop ready to label - no manual upload. Connect by adding your Click &amp; Drop API key to the site's environment settings.</p>
+
+        <div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:16px">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:3px">Google Analytics (GA4)</div>
+            <div style="font-size:13px;color:var(--t3,#6b7280)" id="ga4-status">Checking connection…</div>
+          </div>
+          <button class="btn-s" id="ga4-sync-btn" style="width:auto;padding:10px 22px">Sync GA4 now</button>
+        </div>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:14px 0 0;line-height:1.5">Pulls daily sessions, users, pageviews and conversions from GA4 into your dashboard each day. Connect by adding <code>GA4_PROPERTY_ID</code>, <code>GA_CLIENT_EMAIL</code> and <code>GA_PRIVATE_KEY</code> (from a Google service account with Viewer access to the property) to the site's environment settings.</p>
       </div>
     </div>
 

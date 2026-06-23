@@ -407,6 +407,7 @@
     loadXeroStatus();
     loadGmailStatus();
     loadClickDropStatus();
+    loadGa4Status();
     loadAnalytics();
     loadHealth();
     loadDeal();
@@ -1181,6 +1182,58 @@
         setMsg('Error: ' + e.message, false);
       }
       btn.disabled = false;
+    });
+  }());
+
+  // ── GA4 analytics sync (Settings → Integrations) ────────────────────────────
+  async function loadGa4Status() {
+    var el = document.getElementById('ga4-status');
+    if (!el || !window._sb) return;
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { el.textContent = 'Sign in to view.'; return; }
+      var r = await fetch('/api/admin/health', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      var it = (d.integrations || []).filter(function (x) { return x.key === 'ga4'; })[0];
+      var ga = (d.workers || []).filter(function (x) { return x.key === 'ga'; })[0];
+      if (it && it.ok) {
+        var when = ga && ga.last ? (' · last sync ' + healthAgo(ga.last.ran_at) + (ga.last.ok ? '' : ' (failed)')) : ' · not synced yet';
+        el.textContent = 'Connected' + when;
+        el.style.color = '#01D3A0';
+      } else {
+        el.textContent = 'Not connected — add the GA4 environment variables below.';
+        el.style.color = 'var(--t3,#6b7280)';
+      }
+    } catch (e) { el.textContent = 'Could not load status.'; }
+  }
+
+  (function wireGa4Sync() {
+    var btn = document.getElementById('ga4-sync-btn');
+    if (!btn || btn._wired) return;
+    btn._wired = true;
+    btn.addEventListener('click', async function () {
+      var el = document.getElementById('ga4-status');
+      function setMsg(t, ok) { if (el) { el.textContent = t; el.style.color = ok === false ? '#f87171' : ok ? '#01D3A0' : 'var(--t3,#6b7280)'; } }
+      btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Syncing…'; setMsg('Pulling the latest GA4 data…');
+      try {
+        var s = await window._sb.auth.getSession();
+        var token = s && s.data && s.data.session && s.data.session.access_token;
+        if (!token) { setMsg('Session expired — sign in again.', false); return; }
+        var r = await fetch('/api/analytics/ga-run', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
+        var d = await r.json().catch(function () { return {}; });
+        if (d && d.ok) {
+          setMsg('Synced ' + (d.rows != null ? d.rows + ' day(s)' : '') + ' ✓', true);
+        } else if (d && d.configured === false) {
+          setMsg('Not connected — ' + esc((d.missing || []).join(', ') || 'missing env vars'), false);
+        } else {
+          setMsg('Failed: ' + esc((d && (d.error || d.note)) || ('HTTP ' + r.status)), false);
+        }
+      } catch (e) {
+        setMsg('Failed: ' + esc(e.message), false);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
     });
   }());
 
