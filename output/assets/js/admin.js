@@ -1451,7 +1451,7 @@
         body: JSON.stringify({ action: 'campaign', subject: subject, body: message, segment: segment }),
       });
       var d = await r.json();
-      if (r.ok) { setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' recipients.', true); if (typeof loadMarketing === 'function') loadMarketing(); }
+      if (r.ok) { setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' recipients.' + (d.skipped ? ' (' + d.skipped + ' already had it — skipped.)' : ''), true); if (typeof loadMarketing === 'function') loadMarketing(); }
       else setMsg(d.error || 'Send failed.', false);
     } catch (e) { setMsg('Send failed — please try again.', false); }
     btn.disabled = false; btn.textContent = orig;

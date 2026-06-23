@@ -221,8 +221,22 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-      const emails = await recipientsFor(segment);
+      let emails = await recipientsFor(segment);
       if (!emails.length) return res.status(200).json({ sent: 0, total: 0, message: 'No recipients in that segment.' });
+
+      // Idempotency guard: if this exact subject was already delivered to some
+      // recipients in the last 2 days (e.g. a previous send that partially failed
+      // on rate limits), skip those so they aren't emailed twice. A "delivered"
+      // send is one Resend accepted — i.e. it has a provider_id.
+      const since = new Date(Date.now() - 2 * 864e5).toISOString();
+      const alreadySent = await sbGet(
+        `email_messages?select=email&flow=eq.campaign&provider_id=not.is.null` +
+        `&subject=eq.${encodeURIComponent(subject)}&sent_at=gte.${encodeURIComponent(since)}&limit=100000`,
+      );
+      const sentSet = new Set((alreadySent || []).map((x) => (x.email || '').toLowerCase().trim()));
+      const skipped = emails.filter((e) => sentSet.has(e)).length;
+      if (skipped) emails = emails.filter((e) => !sentSet.has(e));
+      if (!emails.length) return res.status(200).json({ sent: 0, total: 0, skipped, message: 'Everyone in this segment already received this campaign.' });
 
       // Record the campaign first so each send can be tagged with its id.
       const ins = await fetch(`${SUPABASE_URL}/rest/v1/email_campaigns`, {
@@ -234,9 +248,12 @@ module.exports = async function handler(req, res) {
 
       const bodyHtml = bodyToHtml(message);
       let sent = 0;
-      // Send in small concurrent chunks to stay within the function time budget.
-      for (let i = 0; i < emails.length; i += 20) {
-        const chunk = emails.slice(i, i + 20);
+      // Resend's default rate limit is ~2 req/s. Send 2 at a time and pace each
+      // pair ~1s apart so we stay under the limit instead of flooding it (which
+      // previously 429'd most of a campaign and silently dropped them).
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      for (let i = 0; i < emails.length; i += 2) {
+        const chunk = emails.slice(i, i + 2);
         const results = await Promise.all(chunk.map((email) => {
           const unsub = `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubToken(email))}`;
           return sendMail({
@@ -247,6 +264,7 @@ module.exports = async function handler(req, res) {
           }).then((r) => r.ok).catch(() => false);
         }));
         sent += results.filter(Boolean).length;
+        if (i + 2 < emails.length) await sleep(1100);
       }
 
       if (campaignId) {
@@ -254,7 +272,7 @@ module.exports = async function handler(req, res) {
           method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' }, body: JSON.stringify({ sent_count: sent }),
         }).catch(() => {});
       }
-      return res.status(200).json({ sent, total: emails.length, campaignId });
+      return res.status(200).json({ sent, total: emails.length, skipped, campaignId });
     } catch (e) {
       console.error('[admin/marketing POST]', e.message);
       return res.status(500).json({ error: 'Campaign send failed' });

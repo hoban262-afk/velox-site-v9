@@ -3,7 +3,8 @@
   "trailingSlash": true,
   "functions": {
     "api/design-lab/[action].js": { "maxDuration": 60 },
-    "api/send-order.js": { "maxDuration": 30 }
+    "api/send-order.js": { "maxDuration": 30 },
+    "api/admin/marketing.js": { "maxDuration": 60 }
   },
   "crons": [
     {
