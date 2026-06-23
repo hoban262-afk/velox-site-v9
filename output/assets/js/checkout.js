@@ -4,7 +4,7 @@
   // ── Constants ─────────────────────────────────────────────────────────────
   var SHIPPING_FLAT     = 3.80;   // Royal Mail Tracked 48 (UK standard)
   var EXPRESS_FLAT      = 5.99;   // Royal Mail Tracked 24 (UK express)
-  var FREE_THRESHOLD    = 100;    // UK: both options free at £100+
+  var FREE_THRESHOLD    = 0;      // SALE WEEK: free UK shipping site-wide. RESTORE TO 100 after.
   var EU_SHIPPING_FLAT  = 9.99;
   var EU_FREE_THRESHOLD = 100;
   var EU_FX_RATE        = 1.18; // fixed GBP → EUR conversion rate

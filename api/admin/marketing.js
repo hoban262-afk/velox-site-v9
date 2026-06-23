@@ -155,6 +155,20 @@ async function recipientsFor(segment) {
     const blocked = new Set((unsub || []).map((x) => (x.email || '').toLowerCase()));
     return Array.from(new Set((rows || []).map((x) => (x.customer_email || '').toLowerCase().trim()).filter(Boolean))).filter((e) => !blocked.has(e));
   }
+  if (segment === 'everyone') {
+    // Union of active subscribers + paying customers, deduped, minus anyone
+    // who has unsubscribed. One clean broadcast — no double delivery.
+    const [subs, orders, unsub] = await Promise.all([
+      sbGet('subscribers?unsubscribed_at=is.null&select=email&limit=100000'),
+      sbGet('orders?status=in.(paid,dispatched)&select=customer_email&limit=100000'),
+      sbGet('subscribers?unsubscribed_at=not.is.null&select=email&limit=100000'),
+    ]);
+    const blocked = new Set((unsub || []).map((x) => (x.email || '').toLowerCase().trim()));
+    const all = new Set();
+    for (const x of (subs || [])) { const e = (x.email || '').toLowerCase().trim(); if (e && !blocked.has(e)) all.add(e); }
+    for (const x of (orders || [])) { const e = (x.customer_email || '').toLowerCase().trim(); if (e && !blocked.has(e)) all.add(e); }
+    return Array.from(all);
+  }
   const rows = await sbGet('subscribers?unsubscribed_at=is.null&select=email&limit=100000');
   return Array.from(new Set((rows || []).map((x) => (x.email || '').toLowerCase().trim()).filter(Boolean)));
 }
@@ -183,7 +197,9 @@ module.exports = async function handler(req, res) {
     if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: 'Email service not configured' });
     const subject = String(b.subject || '').trim();
     const message = String(b.body || '').trim();
-    const segment = b.segment === 'customers' ? 'customers' : 'all';
+    const segment = b.segment === 'customers' ? 'customers'
+      : b.segment === 'everyone' ? 'everyone'
+      : 'all';
     if (!subject || !message) return res.status(400).json({ error: 'Subject and message are required' });
 
     // Test send: render the real campaign email but deliver only to the admin.
