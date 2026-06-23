@@ -5969,3 +5969,34 @@ article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"])::after {
 
 /* Bundle/stack headline price — always brand green, never white (consistency guarantee) */
 .sc-price { color: #01D3A0 !important; }
+
+/* =======================================================================
+   NAV COLLAPSE + MOB-MENU FIX
+   Problem 1: 768–1024 px — nav-links + currency picker + icons all fight
+   for space, clipping the cart into the ann-bar area.
+   Fix: collapse nav-links to hamburger at ≤1024 px (same breakpoint the
+   search bar already hides at).
+
+   Problem 2: mob-menu was position:fixed;top:60px — ignores the ~30 px
+   ann-bar when the page is at the top, making the menu pop up INSIDE the
+   nav and overlap the account / cart icons.
+   Fix: position:absolute;top:100% so the menu always drops from the
+   bottom of .site-header. The sticky parent anchors it correctly at every
+   scroll position — no JS needed.
+======================================================================= */
+
+/* ── 1. Hamburger visible at ≤1024 px; collapse nav-links ───────────── */
+@media (max-width: 1024px) {
+  .site-header .hamburger { display: flex !important; }
+  .site-header .nav-links { display: none  !important; }
+  .mob-search              { display: block !important; margin: 0 0 10px; }
+}
+
+/* ── 2. Mob-menu drops from header bottom, not fixed 60 px from top ─── */
+.mob-menu {
+  position: absolute !important;  /* was: fixed */
+  top:      100%     !important;  /* = bottom of .site-header */
+}
+@media (max-width: 767px) {
+  .mob-menu { top: 100% !important; }  /* replaces hard-coded top:54px */
+}
