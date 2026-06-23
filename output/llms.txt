@@ -19,6 +19,7 @@ Key facts: every batch is HPLC-verified with certificates of analysis available 
 
 - [Retatrutide research overview](https://veloxpeps.com/guides/retatrutide/): mechanism, receptor pharmacology, and published TRIUMPH-1 Phase 3 (2026) trial data
 - [Retatrutide side effects &amp; tolerability](https://veloxpeps.com/guides/retatrutide-side-effects/): summary of adverse-event and tolerability data reported across the retatrutide Phase 2/3 trial programme
+- [Retatrutide FDA &amp; MHRA Approval Timeline](https://veloxpeps.com/guides/retatrutide-fda-approval-timeline/): regulatory pathway reference — Phase 3 milestones (TRIUMPH-4, TRIUMPH-1, TRANSCEND-T2D-1), NDA filing expected Q4 2026, FDA approval estimated late 2027, MHRA UK ~2028; pending trials (TRIUMPH-2, TRIUMPH-3 CVD) and research-use context (published 23 June 2026)
 - [Tirzepatide guide](https://veloxpeps.com/guides/tirzepatide/): dual-agonist incretin research summary
 - [Ipamorelin guide](https://veloxpeps.com/guides/ipamorelin/): ghrelin-receptor research summary
 - [Retatrutide in Type 2 Diabetes: TRANSCEND-T2D-1](https://veloxpeps.com/guides/retatrutide-type-2-diabetes/): Phase 3 trial data (The Lancet, June 2026) — A1C reduction and weight loss in early-onset T2D
