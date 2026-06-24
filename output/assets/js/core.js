@@ -442,8 +442,10 @@
           '<span class="vpww-sub">60+ countries &middot; tracked delivery &middot; GBP</span>' +
           '<span class="vpww-cta">Shop now &rarr;</span>' +
         '</span>';
-      // Insert as the very first element in the body so it sits above the marquee.
-      if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
+      // Insert directly below the site header (falls back to top of body).
+      var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
+      if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+      else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
       else document.body.appendChild(bar);
 
       var close = document.createElement('button');
