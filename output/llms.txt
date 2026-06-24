@@ -28,6 +28,7 @@ Key facts: every batch is HPLC-verified with certificates of analysis available 
 - [Survodutide (BI 456906)](https://veloxpeps.com/guides/survodutide/): research summary of the GLP-1/glucagon dual receptor agonist studied in obesity and MASH
 - [Retatrutide &amp; Obstructive Sleep Apnea: TRIUMPH-1 Phase 3 Subgroup Data (ADA 2026)](https://veloxpeps.com/guides/retatrutide-sleep-apnea/): pre-specified subgroup from TRIUMPH-1 (ADA, 6 June 2026) — retatrutide 12mg reduced AHI by 60.6% (36.1 events/h) in moderate-to-severe OSA at 80 weeks; includes comparison with tirzepatide SURMOUNT-OSA data
 - [FDA Peptide Reclassification 2026](https://veloxpeps.com/guides/fda-peptide-reclassification-2026/): 12 peptides including BPC-157, TB-500, MOTS-c, Semax, DSIP, GHK-Cu and KPV removed from FDA 503A Category 2 (April 2026); PCAC review July 2026
+- [PCAC July 2026: BPC-157, TB-500 & Semax FDA Hearing](https://veloxpeps.com/guides/pcac-july-2026-peptide-hearing/): FDA Pharmacy Compounding Advisory Committee meets 23–24 Jul 2026 to vote on 503A compounding eligibility for BPC-157, TB-500, KPV, MOTS-c, DSIP, Semax and Epitalon; day-by-day agenda, process explainer, and UK research-use context (June 2026)
 - [All guides](https://veloxpeps.com/guides/): glossary, testing methodology, compound comparisons (e.g. retatrutide vs tirzepatide vs semaglutide)
 
 ## Free research tools
