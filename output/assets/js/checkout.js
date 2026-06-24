@@ -53,21 +53,17 @@
     // ── Australia & NZ ──
     { name: 'Australia', zone: 'oceania' }, { name: 'New Zealand', zone: 'oceania' },
     // ── Rest of World ──
-    { name: 'Argentina', zone: 'rest' }, { name: 'Bangladesh', zone: 'rest' },
-    { name: 'Brazil', zone: 'rest' }, { name: 'Chile', zone: 'rest' },
-    { name: 'Colombia', zone: 'rest' }, { name: 'Costa Rica', zone: 'rest' },
-    { name: 'Ecuador', zone: 'rest' }, { name: 'Egypt', zone: 'rest' },
-    { name: 'Ghana', zone: 'rest' }, { name: 'India', zone: 'rest' },
-    { name: 'Indonesia', zone: 'rest' }, { name: 'Israel', zone: 'rest' },
-    { name: 'Jordan', zone: 'rest' }, { name: 'Kenya', zone: 'rest' },
-    { name: 'Lebanon', zone: 'rest' }, { name: 'Malaysia', zone: 'rest' },
-    { name: 'Morocco', zone: 'rest' }, { name: 'Nigeria', zone: 'rest' },
-    { name: 'Pakistan', zone: 'rest' }, { name: 'Peru', zone: 'rest' },
-    { name: 'Philippines', zone: 'rest' }, { name: 'South Africa', zone: 'rest' },
-    { name: 'Sri Lanka', zone: 'rest' }, { name: 'Taiwan', zone: 'rest' },
-    { name: 'Thailand', zone: 'rest' }, { name: 'Tunisia', zone: 'rest' },
-    { name: 'Turkey', zone: 'rest' }, { name: 'Uruguay', zone: 'rest' },
-    { name: 'Vietnam', zone: 'rest' },
+    // NOTE: SE Asia (Indonesia/Malaysia/Thailand/Vietnam/Philippines), MENA
+    // (Egypt/Jordan/Lebanon/Morocco/Tunisia/Turkey), South Asia (India/Pakistan/
+    // Bangladesh/Sri Lanka) and Taiwan are deliberately excluded — strict customs
+    // enforcement on research chemicals means a high parcel-seizure risk.
+    { name: 'Argentina', zone: 'rest' }, { name: 'Brazil', zone: 'rest' },
+    { name: 'Chile', zone: 'rest' }, { name: 'Colombia', zone: 'rest' },
+    { name: 'Costa Rica', zone: 'rest' }, { name: 'Ecuador', zone: 'rest' },
+    { name: 'Ghana', zone: 'rest' }, { name: 'Israel', zone: 'rest' },
+    { name: 'Kenya', zone: 'rest' }, { name: 'Nigeria', zone: 'rest' },
+    { name: 'Peru', zone: 'rest' }, { name: 'South Africa', zone: 'rest' },
+    { name: 'Uruguay', zone: 'rest' },
   ];
   function zoneForCountry(name) {
     var k = String(name || '').trim().toLowerCase();
