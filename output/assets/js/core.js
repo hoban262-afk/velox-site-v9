@@ -415,74 +415,51 @@
   } catch (e) { if (window.console) console.error('[vpdock]', e && e.message); }
 })();
 
-// ── US shipping waitlist ──────────────────────────────────────────────────────
-// We don't ship to the US yet, but US discovery is rising in search. Rather than
-// turn away that demand, capture it: show a dismissible waitlist card to visitors
-// whose timezone/locale looks North-American. Posts to /api/interest with the
-// 'us-shipping' slug (no backend change). Add ?uswait=1 to force it for testing.
+// ── Worldwide shipping announcement banner ────────────────────────────────────
+// We now ship to 60+ countries (UK + international, GBP, tracked). Show a bold
+// full-width banner at the very top of every page, above the marquee. Dismissible
+// and remembered per browser. Skipped on admin and on the checkout flow (where a
+// shipping nudge would just distract). Add ?wwbanner=1 to force it back for testing.
 (function () {
   try {
-    if (window.__vpUSWait) return; window.__vpUSWait = true;
-    var KEY = 'vp_us_wait';
-    if (localStorage.getItem(KEY)) return; // already joined or dismissed
-    var force = /[?&]uswait=1/.test(location.search);
-    var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
-    var lang = (navigator.language || '').toLowerCase();
-    var isAmericas = /^America\//.test(tz) || lang === 'en-us' || lang === 'en-ca';
-    if (!isAmericas && !force) return;
+    if (window.__vpWWBanner) return; window.__vpWWBanner = true;
+    var path = location.pathname || '';
+    if (/^\/admin\b/.test(path) || /^\/checkout\b/.test(path)) return; // owner UI + checkout
+    var KEY = 'vp_ww_banner';
+    var force = /[?&]wwbanner=1/.test(location.search);
+    if (localStorage.getItem(KEY) && !force) return; // already dismissed
 
     function boot() {
-      var css = document.createElement('style');
-      css.textContent = [
-        '#vpus{position:fixed;left:16px;bottom:20px;z-index:279;width:330px;max-width:calc(100vw - 32px);',
-          'background:#0d1017;border:1px solid #1f262d;border-radius:14px;padding:16px 16px 14px;',
-          'box-shadow:0 18px 50px -18px rgba(0,0,0,.8);font-family:Inter,Arial,sans-serif;color:#cdd3d9}',
-        '@media(max-width:767px){#vpus{left:12px;right:12px;width:auto;bottom:calc(var(--vpdock-h,0px) + 12px)}}',
-        '#vpus .vpus-x{position:absolute;top:9px;right:11px;background:none;border:0;color:#6B7280;font-size:20px;line-height:1;cursor:pointer}',
-        '#vpus .vpus-x:hover{color:#fff}',
-        '#vpus h4{margin:0 0 6px;font-size:14px;color:#fff;font-weight:800}',
-        '#vpus p{margin:0 0 11px;font-size:12.5px;color:#9aa3ad;line-height:1.45}',
-        '#vpus .vpus-row{display:flex;gap:7px}',
-        '#vpus input{flex:1;min-width:0;background:#0e141b;border:1px solid #2a323a;color:#fff;border-radius:9px;padding:10px 11px;font:inherit;font-size:13px;outline:none}',
-        '#vpus input:focus{border-color:#01D3A0}',
-        '#vpus button.vpus-go{background:#01D3A0;color:#021;border:0;border-radius:9px;padding:0 14px;font:800 13px Inter,Arial;cursor:pointer}',
-        '#vpus .vpus-msg{margin:9px 0 0;font-size:12px;min-height:1px}'
-      ].join('');
-      document.head.appendChild(css);
+      if (document.getElementById('vpww')) return;
+      var bar = document.createElement('a');
+      bar.id = 'vpww';
+      bar.href = '/compounds/';
+      bar.setAttribute('aria-label', 'Now shipping worldwide — shop the catalogue');
+      bar.innerHTML =
+        '<span class="vpww-in">' +
+          '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
+          '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
+          '<span class="vpww-sub">60+ countries &middot; tracked delivery &middot; GBP</span>' +
+          '<span class="vpww-cta">Shop now &rarr;</span>' +
+        '</span>';
+      // Insert as the very first element in the body so it sits above the marquee.
+      if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
+      else document.body.appendChild(bar);
 
-      var box = document.createElement('div');
-      box.id = 'vpus';
-      box.setAttribute('role', 'dialog');
-      box.setAttribute('aria-label', 'US shipping waitlist');
-      box.innerHTML =
-        '<button class="vpus-x" aria-label="Dismiss">&times;</button>' +
-        '<h4>Shipping to the US soon</h4>' +
-        '<p>We currently dispatch within the UK &amp; EU. Join the waitlist and we’ll email you the moment US shipping opens.</p>' +
-        '<div class="vpus-row"><input type="email" id="vpus-email" placeholder="you@email.com" aria-label="Email"><button class="vpus-go" id="vpus-go">Notify me</button></div>' +
-        '<p class="vpus-msg" id="vpus-msg"></p>';
-      document.body.appendChild(box);
-
-      function done(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
-      box.querySelector('.vpus-x').addEventListener('click', function () { done('dismiss'); box.remove(); });
-      var go = box.querySelector('#vpus-go'), inp = box.querySelector('#vpus-email'), msg = box.querySelector('#vpus-msg');
-      function submit() {
-        var email = (inp.value || '').trim();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.style.color = '#F59E0B'; msg.textContent = 'Please enter a valid email.'; return; }
-        go.disabled = true; msg.style.color = '#9aa3ad'; msg.textContent = 'Adding you…';
-        fetch('/api/interest', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ product_slug: 'us-shipping', email: email, source: 'us-waitlist-banner' })
-        }).then(function (r) { return r.json().catch(function () { return {}; }); })
-          .then(function (d) {
-            if (d && d.ok) { done('done'); box.innerHTML = '<button class="vpus-x" aria-label="Close">&times;</button><h4>You’re on the list ✓</h4><p>We’ll email you the moment US shipping opens. Thanks for the interest.</p>'; box.querySelector('.vpus-x').addEventListener('click', function () { box.remove(); }); }
-            else { msg.style.color = '#F59E0B'; msg.textContent = (d && d.error) || 'Something went wrong, please try again.'; go.disabled = false; }
-          }).catch(function () { msg.style.color = '#F59E0B'; msg.textContent = 'Network error, please try again.'; go.disabled = false; });
-      }
-      go.addEventListener('click', submit);
-      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+      var close = document.createElement('button');
+      close.className = 'vpww-x';
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Dismiss announcement');
+      close.innerHTML = '&times;';
+      close.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        try { localStorage.setItem(KEY, '1'); } catch (err) {}
+        bar.remove();
+      });
+      bar.appendChild(close);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
-  } catch (e) { if (window.console) console.error('[vpus]', e && e.message); }
+  } catch (e) { if (window.console) console.error('[vpww]', e && e.message); }
 })();
 
 /* ── Velox on-site assistant — load the chat bubble on every page except admin ── */
