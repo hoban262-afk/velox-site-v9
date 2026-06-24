@@ -50,13 +50,15 @@
     // ── North America ──
     { name: 'Canada', zone: 'northam' }, { name: 'Mexico', zone: 'northam' },
     { name: 'United States', zone: 'northam' },
-    // ── Australia & NZ ──
-    { name: 'Australia', zone: 'oceania' }, { name: 'New Zealand', zone: 'oceania' },
+    // ── Oceania ──
+    // NOTE: Australia is deliberately excluded — TGA/Border Force enforcement on
+    // research chemicals means a high parcel-seizure risk.
+    { name: 'New Zealand', zone: 'oceania' },
     // ── Rest of World ──
     // NOTE: SE Asia (Indonesia/Malaysia/Thailand/Vietnam/Philippines), MENA
     // (Egypt/Jordan/Lebanon/Morocco/Tunisia/Turkey), South Asia (India/Pakistan/
-    // Bangladesh/Sri Lanka) and Taiwan are deliberately excluded — strict customs
-    // enforcement on research chemicals means a high parcel-seizure risk.
+    // Bangladesh/Sri Lanka), Taiwan and Australia are deliberately excluded — strict
+    // customs enforcement on research chemicals means a high parcel-seizure risk.
     { name: 'Argentina', zone: 'rest' }, { name: 'Brazil', zone: 'rest' },
     { name: 'Chile', zone: 'rest' }, { name: 'Colombia', zone: 'rest' },
     { name: 'Costa Rica', zone: 'rest' }, { name: 'Ecuador', zone: 'rest' },
