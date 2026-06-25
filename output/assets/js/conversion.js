@@ -78,8 +78,8 @@
       'display:flex;align-items:center;justify-content:center;',
       'font-weight:900;font-size:10px;color:#030407;letter-spacing:-.5px;font-family:sans-serif;}',
       '.vp-tk-body{flex:1;min-width:0;}',
-      '.vp-tk-name{font-size:12px;font-weight:600;color:#E5E7EB;line-height:1.3;white-space:nowrap;',
-      'overflow:hidden;text-overflow:ellipsis;}',
+      '.vp-tk-name{font-size:12px;font-weight:600;color:#E5E7EB;line-height:1.35;white-space:normal;',
+      'word-break:break-word;}',
       '.vp-tk-time{font-size:11px;color:#6B7280;margin-top:2px;}',
     ].join('');
 

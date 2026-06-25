@@ -657,7 +657,8 @@
           <div class="co-err" id="co-err"></div>
 
           <!-- ── MANUAL BANK TRANSFER FALLBACK ─────────────────────── -->
-          <details class="bank-fallback">
+          <p style="font-size:13px;color:#6b7280;margin:16px 0 8px;text-align:center;">No banking app? Can't use open banking? <a href="#bank-transfer" onclick="document.getElementById('bank-transfer-details').open=true;document.getElementById('bank-transfer-details').scrollIntoView({behavior:'smooth'});return false;" style="color:#01D3A0;text-decoration:underline;">Pay by manual bank transfer instead ↓</a></p>
+          <details class="bank-fallback" id="bank-transfer-details">
             <summary>Prefer to pay by manual bank transfer?</summary>
             <div class="bank-fallback-body">
               <p class="eu-pay-intro"><strong style="color:#01D3A0">How to pay — international orders.</strong> We accept payment by bank transfer in GBP. Follow the three steps below — it only takes a minute.</p>
@@ -690,7 +691,7 @@
                 <div><dt>Account name</dt><dd>CRP Labs Ltd</dd></div>
                 <div class="bank-row-intl"><dt>IBAN</dt><dd class="mono-teal">GB76 APSF 0871 9914 6170 29</dd></div>
                 <div class="bank-row-intl"><dt>BIC / SWIFT</dt><dd class="mono-teal">APSFGB2LXXX</dd></div>
-                <div><dt>Bank</dt><dd>Zempler Bank</dd></div>
+                <div><dt>Bank</dt><dd>Zempler Bank <small style="color:#9CA3AF;font-size:11px;display:block;margin-top:2px;">FCA-authorised UK bank (formerly Cashplus) — same regulatory body as Barclays &amp; HSBC. <a href="https://register.fca.org.uk/s/firm?id=001b000000MfnWNAAZ" rel="noopener" target="_blank" style="color:#01D3A0;">FCA register ↗</a></small></dd></div>
                 <div class="bank-row-domestic"><dt>Sort code</dt><dd class="mono-teal">08-71-99</dd></div>
                 <div class="bank-row-domestic"><dt>Account number</dt><dd class="mono-teal">14617029</dd></div>
                 <div><dt>Reference</dt><dd>Your order ID - shown after you confirm</dd></div>

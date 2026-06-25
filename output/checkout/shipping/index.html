@@ -180,7 +180,7 @@
             <div class="f-row"><label class="f-lbl" for="sh-fname">First name *</label><input class="f-inp" id="sh-fname" name="fname" required></div>
             <div class="f-row"><label class="f-lbl" for="sh-lname">Last name *</label><input class="f-inp" id="sh-lname" name="lname" required></div>
             <div class="f-row f-full"><label class="f-lbl" for="sh-email">Email address *</label><input class="f-inp" id="sh-email" name="email" type="email" required></div>
-            <div class="f-row f-full"><label class="f-lbl" for="sh-phone">Mobile number *</label><input class="f-inp" id="sh-phone" name="phone" type="tel" required placeholder="+44 7..."></div>
+            <div class="f-row f-full"><label class="f-lbl" for="sh-phone">Mobile number <span style="font-weight:400;color:#6b7280;font-size:12px;">(optional)</span></label><input class="f-inp" id="sh-phone" name="phone" type="tel" placeholder="+44 7..."></div>
           </div>
 
           <h2 class="sec-t">Delivery address</h2>
@@ -201,20 +201,20 @@
           <h2 class="sec-t">Delivery method</h2>
           <div class="ship-opts" id="ship-uk">
             <label class="ship-opt">
-              <input type="radio" name="shipping" value="48" checked>
-              <div class="ship-opt-main">
-                <div class="ship-opt-name">Royal Mail Tracked 48</div>
-                <div class="ship-opt-sub">2–3 working days, tracked. UK only.</div>
-              </div>
-              <div class="ship-opt-price" id="ship-price-48">£3.80</div>
-            </label>
-            <label class="ship-opt">
-              <input type="radio" name="shipping" value="24">
+              <input type="radio" name="shipping" value="24" checked>
               <div class="ship-opt-main">
                 <div class="ship-opt-name">Royal Mail Tracked 24</div>
                 <div class="ship-opt-sub">1–2 working days, tracked. UK only. Free over £100.</div>
               </div>
               <div class="ship-opt-price" id="ship-price-24">£5.99</div>
+            </label>
+            <label class="ship-opt">
+              <input type="radio" name="shipping" value="48">
+              <div class="ship-opt-main">
+                <div class="ship-opt-name">Royal Mail Tracked 48</div>
+                <div class="ship-opt-sub">2–3 working days, tracked. UK only.</div>
+              </div>
+              <div class="ship-opt-price" id="ship-price-48">£3.80</div>
             </label>
           </div>
           <div class="ship-opts" id="ship-intl" style="display:none">
@@ -252,7 +252,7 @@
         <div id="co-cart-items"></div>
         <div class="co-sum-rows">
           <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">£0.00</span></div>
-          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">£3.80</span></div>
+          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">£5.99</span></div>
           <div class="co-sum-row co-discount-line" id="co-discount-line" style="display:none"><span>Discount (<span id="co-discount-label"></span>)</span><span id="co-discount-amount" class="co-discount-saving">−£0.00</span></div>
           <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">£3.80</span></div>
         </div>

@@ -87,7 +87,7 @@
       '</div>' +
       '<input class="f-inp" id="rv-name" placeholder="Your name (or initials)" maxlength="60">' +
       '<input class="f-inp" id="rv-title" placeholder="Review title (optional)" maxlength="120">' +
-      '<textarea id="rv-body" placeholder="Share your experience with this compound (research context)…" maxlength="1200"></textarea>' +
+      '<textarea id="rv-body" placeholder="Share your experience with this compound in a laboratory research context. Note: reviews must not describe personal use, dosing, or health outcomes — these cannot be published." maxlength="1200"></textarea>' +
       '<button class="btn-p" id="rv-submit" type="button">Submit review</button>' +
       '<div class="rv-msg" id="rv-msg"></div>' +
     '</div>';
