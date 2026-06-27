@@ -71,8 +71,20 @@ module.exports = async function handler(req, res) {
   if (order.status === 'paid' || order.status === 'dispatched') {
     return res.status(200).send(page('Already complete', 'Good news — this order has already been paid and is being processed. There\'s nothing more to do.'));
   }
+  // Cancelled cart being recovered: the customer explicitly clicked "complete my
+  // order", so revive it to 'pending' and let them re-pay the SAME order instead
+  // of dead-ending. (Fena marks abandoned Pay-by-Bank attempts cancelled fast.)
   if (order.status === 'cancelled') {
-    return res.status(200).send(page('Order closed', 'This order has been closed. You\'re welcome to place a fresh order any time.', 'https://veloxpeps.com'));
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}`, {
+        method: 'PATCH',
+        headers: { ...sbHeaders, Prefer: 'return=minimal' },
+        body: JSON.stringify({ status: 'pending' }),
+      });
+      order.status = 'pending';
+    } catch (e) {
+      console.error('[recovery/resume] revive failed:', e.message);
+    }
   }
 
   // Build a fresh Fena payment for the SAME order

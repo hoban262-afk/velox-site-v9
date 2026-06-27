@@ -2,7 +2,7 @@
   'use strict';
 
   var SHIPPING_FLAT = 3.80;
-  var FREE_THRESHOLD = 80;
+  var FREE_THRESHOLD = 0;   // SALE WEEK: free UK shipping site-wide. RESTORE TO 100 after.
 
   function getCart() {
     try {
@@ -107,7 +107,7 @@
     var packSaving = Math.round(packBase * packRate * 100) / 100;
     var discSub = Math.max(0, subtotal - volSaving - packSaving);
     var isMember = (window.VELOX_MEMBER_PCT || 0) > 0;   // Velox Peps Pro = free shipping
-    var shipping = (isMember || discSub >= FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
+    var shipping = (isMember || subtotal >= FREE_THRESHOLD) ? 0 : SHIPPING_FLAT;
     var total = discSub + shipping;
 
     if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
@@ -124,8 +124,13 @@
       countEl.textContent = String(totalQty);
     }
 
-    // Free-shipping progress nudge — based on the discounted subtotal (matches checkout).
-    renderFreeShipNudge(discSub);
+    // Free-shipping progress nudge — based on the pre-discount subtotal (matches checkout & the '£80' promise).
+    renderFreeShipNudge(subtotal);
+
+    // Tell currency.js the cart was just re-rendered (in GBP) so it can re-apply
+    // the selected currency. Without this, qty changes / member / reprice events
+    // leave the totals + discount lines in GBP while the selector says e.g. AUD.
+    try { document.dispatchEvent(new CustomEvent('vp:cart-rendered')); } catch (e) {}
   }
 
   function renderPackVolumeRow(saving, rate) {

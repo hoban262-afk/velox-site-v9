@@ -1,8 +1,10 @@
 {
   "buildCommand": "node scripts/sync-prices.mjs && node scripts/sync-stock.mjs",
+  "trailingSlash": true,
   "functions": {
     "api/design-lab/[action].js": { "maxDuration": 60 },
-    "api/send-order.js": { "maxDuration": 30 }
+    "api/send-order.js": { "maxDuration": 30 },
+    "api/admin/marketing.js": { "maxDuration": 60 }
   },
   "crons": [
     {
@@ -100,9 +102,24 @@
     {
       "path": "/api/deal-rotate",
       "schedule": "20 * * * *"
+    },
+    {
+      "path": "/api/agents/chat-transcripts?mode=flush",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/agents/chat-transcripts?mode=digest",
+      "schedule": "30 7 * * *"
     }
   ],
   "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+      { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+      { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" }
+    ] },
     { "source": "/assets/(.*)\\.(woff2|woff|ttf|otf)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
     { "source": "/(.*)\\.(png|jpg|jpeg|webp|svg|gif|ico|avif)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
     { "source": "/assets/(.*)\\.(css|js)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=60, must-revalidate" }] },
@@ -110,6 +127,16 @@
     { "source": "/admin/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store, must-revalidate" }] }
   ],
   "rewrites": [
+    { "source": "/api/gmail/:action",        "destination": "/api/gmail/[action]" },
+    { "source": "/api/gmail/:action/",       "destination": "/api/gmail/[action]" },
+    { "source": "/api/clickdrop/:action",    "destination": "/api/clickdrop/[action]" },
+    { "source": "/api/clickdrop/:action/",   "destination": "/api/clickdrop/[action]" },
+    { "source": "/api/xero/:action",         "destination": "/api/xero/[action]" },
+    { "source": "/api/xero/:action/",        "destination": "/api/xero/[action]" },
+    { "source": "/api/design-lab/:action",   "destination": "/api/design-lab/[action]" },
+    { "source": "/api/design-lab/:action/",  "destination": "/api/design-lab/[action]" },
+    { "source": "/api/pack/:action(auth|dispatch|label|queue|receive|variants)",  "destination": "/api/pack/[action]" },
+    { "source": "/api/pack/:action(auth|dispatch|label|queue|receive|variants)/", "destination": "/api/pack/[action]" },
     { "source": "/api/send-dispatch", "destination": "/api/design-lab/send-dispatch" },
     { "source": "/design-lab/r/:token", "destination": "/api/design-lab/share?t=:token" },
     { "source": "/design-lab/leaderboard", "destination": "/api/design-lab/leaderboard" },
@@ -224,6 +251,16 @@
     {
       "source": "/compounds/tirzepatide",
       "destination": "/compounds/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/dihexa/",
+      "destination": "/compounds/cognitive/",
+      "permanent": true
+    },
+    {
+      "source": "/compounds/dihexa",
+      "destination": "/compounds/cognitive/",
       "permanent": true
     }
   ]

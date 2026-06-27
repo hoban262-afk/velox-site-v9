@@ -53,6 +53,8 @@
     hamburger.classList.remove('open');
     mobMenu.setAttribute('aria-hidden', 'true');
     mobMenu.style.display = 'none';
+    var cb = document.querySelector('.vcw-btn');
+    if (cb) cb.style.display = '';
   }
 
   if (hamburger && mobMenu) {
@@ -62,6 +64,8 @@
       hamburger.classList.toggle('open');
       mobMenu.setAttribute('aria-hidden', String(expanded));
       mobMenu.style.display = expanded ? 'none' : 'flex';
+      var cb = document.querySelector('.vcw-btn');
+      if (cb) cb.style.display = expanded ? '' : 'none';
     });
 
     // Close menu when tapping outside
@@ -273,4 +277,201 @@
     var href = link && link.getAttribute('href');
     if (href) window.location.href = href;
   });
+})();
+
+// ── Velox mobile dock: bottom nav (Home / Shop / Order) + discount checkpoint ──
+// One global bottom bar on phones so navigation is always one tap away (fixes the
+// "how do I get home after adding to basket" problem), with the volume-discount
+// checkpoint track sitting directly above it. Basket-based; shows on all pages
+// except the cart/checkout flow (where the discount is already itemised).
+(function () {
+  try {
+    if (window.__vpDock) return; window.__vpDock = true;
+
+    var TIERS = [{ min: 75, pct: 5 }, { min: 150, pct: 10 }, { min: 200, pct: 15 }, { min: 250, pct: 20 }];
+    var MAXT = 250;
+    var path = (location.pathname || '/').replace(/\/+$/, '') || '/';
+    var onCheckout = path.indexOf('/cart') === 0 || path.indexOf('/checkout') === 0;
+
+    function readCart() { try { return JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { return []; } }
+    function cartCount() { return readCart().reduce(function (s, i) { return s + (i.qty || 1); }, 0); }
+    function excluded(i) { return /pen/i.test(i.size || '') || /10-?pack/i.test(i.size || '') || i.slug === 'bacteriostatic-water'; }
+    function vialSpend() { return readCart().reduce(function (s, i) { return s + (excluded(i) ? 0 : (parseFloat(i.price) || 0) * (i.qty || 1)); }, 0); }
+    function money(n) { var v = Math.round(n * 100) / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
+    function startsWith(p) { return path === p || path.indexOf(p + '/') === 0; }
+
+    var css = [
+      '#vpdock{display:none}',
+      'body.page-account #vpdock{display:none!important}',
+      '@media(max-width:767px){',
+        '#vpdock{display:block;position:fixed;left:0;right:0;bottom:0;z-index:280;background:rgba(8,8,8,.97);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08)}',
+        '#vpdock .vpd-disc{padding:9px 14px 5px;border-bottom:1px solid rgba(255,255,255,.06)}',
+        '#vpdock .vpd-disc.hide{display:none}',
+        '#vpdock .vpd-msg{font-size:11px;color:#9CA3AF;margin:0 2px 8px;line-height:1.3;text-align:center}',
+        '#vpdock .vpd-msg b{color:#01D3A0;font-weight:700}',
+        '#vpdock .vpd-track{position:relative;height:5px;margin:0 22px 13px;background:rgba(255,255,255,.1);border-radius:99px}',
+        '#vpdock .vpd-fill{position:absolute;left:0;top:0;height:100%;background:#01D3A0;border-radius:99px;width:0;transition:width .35s ease}',
+        '#vpdock .vpd-cp{position:absolute;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:#0d0d0d;border:2px solid rgba(255,255,255,.3)}',
+        '#vpdock .vpd-cp.hit{background:#01D3A0;border-color:#01D3A0;box-shadow:0 0 7px rgba(1,211,160,.6)}',
+        '#vpdock .vpd-cplbl{position:absolute;top:11px;left:50%;transform:translateX(-50%);font-family:var(--mono,monospace);font-size:9px;color:#6B7280;white-space:nowrap}',
+        '#vpdock .vpd-cp.hit .vpd-cplbl{color:#01D3A0;font-weight:600}',
+        '#vpdock .vpd-nav{display:flex;padding-bottom:env(safe-area-inset-bottom)}',
+        '#vpdock .vpd-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px 8px;text-decoration:none;color:#9aa3ad;font-family:var(--mono,monospace);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;position:relative}',
+        '#vpdock .vpd-tab.active{color:#01D3A0}',
+        '#vpdock .vpd-tab svg{width:22px;height:22px}',
+        '#vpdock .vpd-badge{position:absolute;top:2px;left:calc(50% + 7px);min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:#01D3A0;color:#021;font:800 9px/16px Inter,Arial,sans-serif;text-align:center}',
+        '.vp-sticky-buy{bottom:var(--vpdock-h,0)!important}',
+        '.vp-vol-nudge{display:none!important}',
+      '}'
+    ].join('');
+    var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+    function boot() {
+      // remove the legacy homepage-only shop bar (superseded by the dock)
+      var legacy = document.querySelector('.vp-sticky-shop');
+      if (legacy && legacy.parentNode) legacy.parentNode.removeChild(legacy);
+
+      var ICON = {
+        home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>',
+        shop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>',
+        order: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>'
+      };
+      var aHome = path === '/';
+      var aShop = startsWith('/compounds') || startsWith('/stacks') || startsWith('/supplies');
+      var aOrder = onCheckout;
+
+      var dock = document.createElement('div');
+      dock.id = 'vpdock';
+      dock.setAttribute('aria-label', 'Quick navigation');
+      dock.innerHTML =
+        '<div class="vpd-disc' + (onCheckout ? ' hide' : '') + '" id="vpd-disc"></div>' +
+        '<nav class="vpd-nav" aria-label="Primary mobile navigation">' +
+          '<a class="vpd-tab' + (aHome ? ' active' : '') + '" href="/">' + ICON.home + '<span>Home</span></a>' +
+          '<a class="vpd-tab' + (aShop ? ' active' : '') + '" href="/compounds/">' + ICON.shop + '<span>Shop</span></a>' +
+          '<a class="vpd-tab' + (aOrder ? ' active' : '') + '" href="/cart/"><span style="position:relative;display:inline-block">' + ICON.order + '<span class="vpd-badge" id="vpd-badge" style="display:none">0</span></span><span>Order</span></a>' +
+        '</nav>';
+      document.body.appendChild(dock);
+
+      var discEl = dock.querySelector('#vpd-disc');
+      var badgeEl = dock.querySelector('#vpd-badge');
+
+      function renderDisc() {
+        if (onCheckout) return;
+        var spend = vialSpend();
+        var fill = Math.max(0, Math.min(100, (spend / MAXT) * 100));
+        var cur = 0, next = null;
+        for (var k = 0; k < TIERS.length; k++) {
+          if (spend >= TIERS[k].min) cur = TIERS[k].pct; else if (!next) next = TIERS[k];
+        }
+        var msg;
+        if (spend <= 0) {
+          msg = 'Spend <b>£75</b> on vials to unlock <b>5% off</b>';
+        } else if (next) {
+          msg = (cur > 0 ? 'You’ve unlocked <b>' + cur + '% off</b> · add ' : 'Add ') +
+            '<b>' + money(next.min - spend) + '</b> for <b>' + next.pct + '% off</b>';
+        } else {
+          msg = '<b>✓ Full ' + cur + '% volume discount unlocked</b>';
+        }
+        var cps = '';
+        for (var t = 0; t < TIERS.length; t++) {
+          var pos = (TIERS[t].min / MAXT) * 100;
+          var hit = spend >= TIERS[t].min;
+          cps += '<span class="vpd-cp' + (hit ? ' hit' : '') + '" style="left:' + pos + '%"><span class="vpd-cplbl">' + TIERS[t].pct + '%</span></span>';
+        }
+        discEl.innerHTML = '<div class="vpd-msg">' + msg + '</div>' +
+          '<div class="vpd-track"><span class="vpd-fill" style="width:' + fill + '%"></span>' + cps + '</div>';
+      }
+      function renderBadge() {
+        var c = cartCount();
+        badgeEl.textContent = String(c);
+        badgeEl.style.display = c > 0 ? '' : 'none';
+      }
+      function layout() {
+        var mobile = window.matchMedia('(max-width:767px)').matches;
+        if (!mobile) { document.documentElement.style.setProperty('--vpdock-h', '0px'); document.body.style.paddingBottom = ''; return; }
+        var h = dock.offsetHeight || 0;
+        document.documentElement.style.setProperty('--vpdock-h', h + 'px');
+        var sticky = document.querySelector('.vp-sticky-buy');
+        var extra = (sticky && getComputedStyle(sticky).display !== 'none') ? sticky.offsetHeight : 0;
+        document.body.style.paddingBottom = (h + extra + 12) + 'px';
+      }
+      function refresh() { renderDisc(); renderBadge(); layout(); }
+      refresh();
+
+      var sig = JSON.stringify(readCart());
+      setInterval(function () {
+        var s = JSON.stringify(readCart());
+        if (s !== sig) { sig = s; refresh(); }
+      }, 700);
+      window.addEventListener('storage', function (e) { if (e.key === 'vp_cart') refresh(); });
+      window.addEventListener('resize', layout);
+      window.addEventListener('orientationchange', function () { setTimeout(layout, 200); });
+      window.addEventListener('load', function () { setTimeout(layout, 200); });
+      setTimeout(layout, 400); setTimeout(layout, 1600); // catch late .vp-sticky-buy injected by pdp-enhance
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+  } catch (e) { if (window.console) console.error('[vpdock]', e && e.message); }
+})();
+
+// ── Worldwide shipping announcement banner ────────────────────────────────────
+// We now ship to 60+ countries (UK + international, GBP, tracked). Show a bold
+// full-width banner at the very top of every page, above the marquee. Dismissible
+// and remembered per browser. Skipped on admin and on the checkout flow (where a
+// shipping nudge would just distract). Add ?wwbanner=1 to force it back for testing.
+(function () {
+  try {
+    if (window.__vpWWBanner) return; window.__vpWWBanner = true;
+    var path = location.pathname || '';
+    if (/^\/admin\b/.test(path) || /^\/checkout\b/.test(path)) return; // owner UI + checkout
+    var KEY = 'vp_ww_banner';
+    var force = /[?&]wwbanner=1/.test(location.search);
+    if (localStorage.getItem(KEY) && !force) return; // already dismissed
+
+    function boot() {
+      if (document.getElementById('vpww')) return;
+      var bar = document.createElement('a');
+      bar.id = 'vpww';
+      bar.href = '/compounds/';
+      bar.setAttribute('aria-label', 'Now shipping worldwide — shop the catalogue');
+      bar.innerHTML =
+        '<span class="vpww-in">' +
+          '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
+          '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
+          '<span class="vpww-sub">60+ countries &middot; tracked delivery &middot; GBP</span>' +
+          '<span class="vpww-cta">Shop now &rarr;</span>' +
+        '</span>';
+      // Insert directly below the site header (falls back to top of body).
+      var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
+      if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+      else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
+      else document.body.appendChild(bar);
+
+      var close = document.createElement('button');
+      close.className = 'vpww-x';
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Dismiss announcement');
+      close.innerHTML = '&times;';
+      close.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        try { localStorage.setItem(KEY, '1'); } catch (err) {}
+        bar.remove();
+      });
+      bar.appendChild(close);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  } catch (e) { if (window.console) console.error('[vpww]', e && e.message); }
+})();
+
+/* ── Velox on-site assistant — load the chat bubble on every page except admin ── */
+(function () {
+  try {
+    if (/^\/admin\b/.test(location.pathname)) return;   // owner UI: no sales bot
+    if (window.__veloxChatLoaded) return;               // already present (e.g. /chat-test/)
+    var s = document.createElement('script');
+    s.src = '/assets/js/chat-widget.js';
+    s.defer = true;
+    (document.body || document.head || document.documentElement).appendChild(s);
+  } catch (e) { /* ignore */ }
 })();

@@ -63,7 +63,7 @@ async function saveState(status, detail) {
 }
 
 async function alert(title, body, url) {
-  try { if (sendPush) await sendPush({ title, body, url: url || `${SITE}/admin/` }); } catch (e) {}
+  try { if (sendPush) await sendPush({ title, body, url: url || `${SITE}/admin/`, category: 'system' }); } catch (e) {}
   try { if (sendWhatsApp) await sendWhatsApp(`${title}\n${body}`); } catch (e) {}
   try { if (proposeAction) await proposeAction({ agent: 'health-monitor', type: 'anomaly', title, summary: body, payload: { body }, notify: false, notifyTitle: 'Velox system alert' }); } catch (e) {}
 }

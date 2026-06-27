@@ -26,6 +26,9 @@
     });
   }
 
+  // First-party funnel beacon: product page viewed (once per page load).
+  if (window.vpTrack) window.vpTrack('product_view');
+
   var sizeInputs = form.querySelectorAll('input[name="size"]');
   sizeInputs.forEach(function (input) {
     input.addEventListener('change', function () {
@@ -92,6 +95,9 @@
         items: [{ item_id: slug, item_name: name, item_variant: size, price: price, quantity: 1 }]
       });
     }
+
+    // First-party funnel beacon: item added to cart.
+    if (window.vpTrack) window.vpTrack('add_to_cart');
 
     if (window.toast) window.toast('Added to order');
   });

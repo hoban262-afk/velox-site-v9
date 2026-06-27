@@ -89,14 +89,13 @@ function emailFooter() {
   return `</table></td></tr></table></body></html>`;
 }
 
-/* ── 1. Customer email - instant payment (Fena or GoCardless) ─────────────── */
+/* ── 1. Customer email - instant payment (Fena Pay by Bank) ─────────────── */
 function buildCustomerInstantHtml(d, itemsHtml) {
   const sym          = currencySymbol(d);
   const isEU         = d.region === 'EU';
-  const isFena       = d.payment_method === 'fena';
   const shippingName = d.shipping_method || (isEU ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24');
   const deliveryTime = isEU ? '3&ndash;5 working days' : '1&ndash;2 working days';
-  const providerName = isFena ? 'Fena Pay by Bank' : 'GoCardless Instant Bank Pay';
+  const providerName = 'Fena Pay by Bank';
 
   return emailHeader('Order Confirmed') + `
 <tr><td align="center" style="padding:0 40px 8px">
@@ -382,7 +381,7 @@ ${mhraFooter()}
 /* ── Shared sendEmails() ────────────────────────────────────────────────────── */
 /**
  * Fires the admin notification and the appropriate customer email.
- * Called by both the HTTP handler and the GoCardless webhook.
+ * Called by the HTTP handler and the Fena payment-confirm / webhook paths.
  *
  * @param {object} d          - Order data payload
  * @param {string} [idempotencyKey] - Optional order reference used as Resend idempotency
@@ -405,7 +404,7 @@ async function sendEmails(d, idempotencyKey) {
     .join('');
 
   // Build Resend send-options - idempotency key prevents duplicate emails when both
-  // the redirect handler (verify-payment) and the GoCardless webhook fire for the same order.
+  // the payment-complete confirm and the Fena webhook fire for the same order.
   // Resend deduplicates within a 24-hour window using these keys.
   const adminOpts    = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-admin`    } : {};
   const customerOpts = idempotencyKey ? { idempotencyKey: `${idempotencyKey}-customer` } : {};
@@ -413,7 +412,7 @@ async function sendEmails(d, idempotencyKey) {
   console.log(`[send-order] Sending admin email for ${d.order_number}${idempotencyKey ? ` (idempotencyKey: ${idempotencyKey}-admin)` : ''}`);
   // Admin notification - always fires. Goes to the monitored order-alert inbox(es).
   // Override via ORDER_ALERT_EMAILS (comma-separated) in the project env.
-  const ORDER_ALERTS = (process.env.ORDER_ALERT_EMAILS || 'support@veloxpeps.com')
+  const ORDER_ALERTS = (process.env.ORDER_ALERT_EMAILS || 'veloxpeps@gmail.com')
     .split(',').map((s) => s.trim()).filter(Boolean);
   await resend.emails.send({
     from: 'Velox Peptides <orders@veloxpeps.com>',
@@ -439,6 +438,7 @@ async function sendEmails(d, idempotencyKey) {
       title: `New order - ${sym}${d.order_total}`,
       body: `${d.order_number} · ${isInstant ? 'PAID' : 'PENDING'} · ${d.customer_name || 'Customer'}`,
       url: '/admin/',
+      category: 'order',
     });
   } catch (e) { console.error('[send-order] push failed:', e.message); }
 
@@ -559,6 +559,29 @@ async function handler(req, res) {
     // Internal callers can pass just { order_id }; build the full payload from DB.
     // idempotencyKey (= order ref) dedupes emails if the browser-return path also fires.
     if (payload.order_id && !payload.order_items) {
+      // ── DB-level idempotency: skip if emails already sent ──────────────────
+      // The confirm-fena-payment and fena-webhook paths set email_sent_at when
+      // they win the race. If it's already set, another path already sent — bail.
+      // Fails open if the column doesn't exist yet (select returns null for unknown cols).
+      const SB_URL = process.env.SUPABASE_URL, SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (SB_URL && SB_SERVICE) {
+        try {
+          const chk = await fetch(`${SB_URL}/rest/v1/orders?id=eq.${encodeURIComponent(payload.order_id)}&select=email_sent_at&limit=1`, {
+            headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
+          });
+          if (chk.ok) {
+            const rows = await chk.json().catch(() => []);
+            const row = Array.isArray(rows) ? rows[0] : null;
+            if (row && row.email_sent_at) {
+              console.log(`[send-order] Order ${payload.order_id} email_sent_at already set — skipping to avoid duplicate`);
+              return res.status(200).json({ ok: true, skipped: 'already_sent' });
+            }
+          }
+          // Column doesn't exist yet → chk returns 400, falls through to send normally
+        } catch (e) {
+          console.error('[send-order] email_sent_at check failed (non-fatal):', e.message);
+        }
+      }
       payload = await buildPayloadFromOrderId(payload.order_id);
       if (!payload) return res.status(404).json({ error: 'Order not found' });
       idemKey = payload.order_number;

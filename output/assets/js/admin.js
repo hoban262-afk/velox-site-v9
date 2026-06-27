@@ -407,12 +407,14 @@
     loadXeroStatus();
     loadGmailStatus();
     loadClickDropStatus();
+    loadGa4Status();
     loadAnalytics();
     loadHealth();
     loadDeal();
     loadDesignLab();
     registerSW();
     wirePush();
+    renderPushPrefs();
     setupAutoRefresh();
   }
 
@@ -806,6 +808,7 @@
         if (testBtn) testBtn.style.display = '';
       }
     } catch (e) {}
+    renderPushPrefs();
   }
 
   async function enablePush() {
@@ -828,6 +831,7 @@
       pushStatus('✓ Alerts on for this device.', '#01D3A0');
       if (btn) { btn.disabled = false; btn.textContent = 'Re-enable'; }
       var testBtn = document.getElementById('push-test'); if (testBtn) testBtn.style.display = '';
+      renderPushPrefs();
     } catch (e) {
       pushStatus('Failed: ' + esc(e.message), '#f87171');
       if (btn) { btn.disabled = false; btn.textContent = 'Enable order alerts'; }
@@ -844,6 +848,75 @@
       if (r.ok) pushStatus('Test sent to ' + (d.sent || 0) + ' device(s).', '#01D3A0');
       else pushStatus('Test failed: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171');
     } catch (e) { pushStatus('Test failed: ' + esc(e.message), '#f87171'); }
+  }
+
+  // ── PUSH NOTIFICATION PREFERENCES ───────────────────────────────────────────
+  var PUSH_CATEGORIES = [
+    { key: 'order',   label: 'New orders',      desc: 'Get notified when a customer places an order' },
+    { key: 'system',  label: 'System alerts',    desc: 'Health monitor warnings (downtime, errors, anomalies)' },
+    { key: 'agent',   label: 'Agent actions',    desc: 'Approval requests from automated agents' },
+    { key: 'stock',   label: 'Low stock',        desc: 'Alert when a product is running low' },
+    { key: 'backup',  label: 'Data backups',     desc: 'Confirmation when a scheduled backup completes' },
+  ];
+  var PREFS_KEY = 'vx_push_prefs';
+
+  function loadPushPrefs() {
+    try { var v = JSON.parse(localStorage.getItem(PREFS_KEY)); if (v && typeof v === 'object') return v; } catch (e) {}
+    var defaults = {};
+    PUSH_CATEGORIES.forEach(function (c) { defaults[c.key] = true; });
+    return defaults;
+  }
+  function savePushPrefs(prefs) {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
+    syncPrefsToSW(prefs);
+  }
+  function syncPrefsToSW(prefs) {
+    if (!('serviceWorker' in navigator)) return;
+    var msg = { type: 'push-prefs', prefs: prefs };
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage(msg);
+    }
+    navigator.serviceWorker.ready.then(function (reg) {
+      if (reg.active) reg.active.postMessage(msg);
+    }).catch(function () {});
+  }
+
+  function renderPushPrefs() {
+    var wrap = document.getElementById('push-prefs');
+    var list = document.getElementById('push-pref-list');
+    if (!wrap || !list) return;
+    if (list.children.length) return;
+    var prefs = loadPushPrefs();
+    syncPrefsToSW(prefs);
+    list.innerHTML = '';
+    PUSH_CATEGORIES.forEach(function (cat) {
+      var on = prefs[cat.key] !== false;
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;border:1px solid var(--brd,#1a1a1a);border-radius:10px';
+      var info = document.createElement('div');
+      info.innerHTML = '<div style="font-size:14px;font-weight:600;color:#fff">' + esc(cat.label) + '</div>' +
+        '<div style="font-size:12px;color:var(--t3,#6b7280);margin-top:2px">' + esc(cat.desc) + '</div>';
+      var toggle = document.createElement('label');
+      toggle.style.cssText = 'position:relative;display:inline-block;width:44px;min-width:44px;height:24px;cursor:pointer';
+      toggle.innerHTML = '<input type="checkbox" data-cat="' + cat.key + '"' + (on ? ' checked' : '') +
+        ' style="opacity:0;width:0;height:0;position:absolute">' +
+        '<span style="position:absolute;inset:0;border-radius:999px;transition:background .2s;background:' + (on ? '#01D3A0' : '#2a323a') + '"></span>' +
+        '<span style="position:absolute;top:2px;left:' + (on ? '22px' : '2px') + ';width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>';
+      var inp = toggle.querySelector('input');
+      inp.addEventListener('change', function () {
+        var k = this.getAttribute('data-cat');
+        var isOn = this.checked;
+        prefs[k] = isOn;
+        savePushPrefs(prefs);
+        var bg = this.nextElementSibling;
+        var dot = bg.nextElementSibling;
+        bg.style.background = isOn ? '#01D3A0' : '#2a323a';
+        dot.style.left = isOn ? '22px' : '2px';
+      });
+      row.appendChild(info);
+      row.appendChild(toggle);
+      list.appendChild(row);
+    });
   }
 
   // ── DEAL OF THE WEEK ─────────────────────────────────────────────────────────
@@ -1112,6 +1185,58 @@
     });
   }());
 
+  // ── GA4 analytics sync (Settings → Integrations) ────────────────────────────
+  async function loadGa4Status() {
+    var el = document.getElementById('ga4-status');
+    if (!el || !window._sb) return;
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { el.textContent = 'Sign in to view.'; return; }
+      var r = await fetch('/api/admin/health', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      var it = (d.integrations || []).filter(function (x) { return x.key === 'ga4'; })[0];
+      var ga = (d.workers || []).filter(function (x) { return x.key === 'ga'; })[0];
+      if (it && it.ok) {
+        var when = ga && ga.last ? (' · last sync ' + healthAgo(ga.last.ran_at) + (ga.last.ok ? '' : ' (failed)')) : ' · not synced yet';
+        el.textContent = 'Connected' + when;
+        el.style.color = '#01D3A0';
+      } else {
+        el.textContent = 'Not connected — add the GA4 environment variables below.';
+        el.style.color = 'var(--t3,#6b7280)';
+      }
+    } catch (e) { el.textContent = 'Could not load status.'; }
+  }
+
+  (function wireGa4Sync() {
+    var btn = document.getElementById('ga4-sync-btn');
+    if (!btn || btn._wired) return;
+    btn._wired = true;
+    btn.addEventListener('click', async function () {
+      var el = document.getElementById('ga4-status');
+      function setMsg(t, ok) { if (el) { el.textContent = t; el.style.color = ok === false ? '#f87171' : ok ? '#01D3A0' : 'var(--t3,#6b7280)'; } }
+      btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Syncing…'; setMsg('Pulling the latest GA4 data…');
+      try {
+        var s = await window._sb.auth.getSession();
+        var token = s && s.data && s.data.session && s.data.session.access_token;
+        if (!token) { setMsg('Session expired — sign in again.', false); return; }
+        var r = await fetch('/api/analytics/ga-run', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
+        var d = await r.json().catch(function () { return {}; });
+        if (d && d.ok) {
+          setMsg('Synced ' + (d.rows != null ? d.rows + ' day(s)' : '') + ' ✓', true);
+        } else if (d && d.configured === false) {
+          setMsg('Not connected — ' + esc((d.missing || []).join(', ') || 'missing env vars'), false);
+        } else {
+          setMsg('Failed: ' + esc((d && (d.error || d.note)) || ('HTTP ' + r.status)), false);
+        }
+      } catch (e) {
+        setMsg('Failed: ' + esc(e.message), false);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    });
+  }());
+
   async function connectXero() {
     var btn = document.getElementById('xero-connect-btn');
     if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
@@ -1326,7 +1451,7 @@
         body: JSON.stringify({ action: 'campaign', subject: subject, body: message, segment: segment }),
       });
       var d = await r.json();
-      if (r.ok) { setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' recipients.', true); if (typeof loadMarketing === 'function') loadMarketing(); }
+      if (r.ok) { setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' recipients.' + (d.skipped ? ' (' + d.skipped + ' already had it — skipped.)' : ''), true); if (typeof loadMarketing === 'function') loadMarketing(); }
       else setMsg(d.error || 'Send failed.', false);
     } catch (e) { setMsg('Send failed — please try again.', false); }
     btn.disabled = false; btn.textContent = orig;
@@ -1352,27 +1477,34 @@
     var el = document.getElementById('reviews-table-wrap');
     if (!el) return;
     if (!reviews.length) { el.innerHTML = '<p class="adm-empty">No reviews submitted yet.</p>'; return; }
+    function rvRow(rv) {
+      return '<tr>' +
+        '<td style="color:var(--t2)">' + fmtDate(rv.created_at) + '</td>' +
+        '<td style="color:#fff">' + esc(rv.product_name || rv.product_slug) + '</td>' +
+        '<td style="color:#f5b301;white-space:nowrap">' + reviewStars(rv.rating) + '</td>' +
+        '<td style="color:var(--t2)">' + esc(rv.author_name) + '</td>' +
+        '<td style="color:var(--t2);max-width:280px">' +
+          (rv.title ? '<strong style="color:#fff">' + esc(rv.title) + '</strong><br>' : '') +
+          esc(rv.body || '') + '</td>' +
+        '<td>' + statusBadge(rv.status) + '</td>' +
+        '<td>' +
+          '<select class="status-select" onchange="updateReviewStatus(\'' + rv.id + '\', this.value)">' +
+            ['pending','approved','rejected'].map(function (s) {
+              return '<option value="' + s + '"' + (rv.status === s ? ' selected' : '') + '>' + s + '</option>';
+            }).join('') +
+          '</select>' +
+        '</td>' +
+      '</tr>';
+    }
+    function rvGrp(label, color) { return '<tr><td colspan="7" style="padding:16px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    var rvPend = reviews.filter(function (rv) { return rv.status === 'pending'; });
+    var rvDone = reviews.filter(function (rv) { return rv.status !== 'pending'; });
+    var rvBody = '';
+    if (rvPend.length) rvBody += rvGrp('Pending moderation \u00b7 ' + rvPend.length, '#f59e0b') + rvPend.map(rvRow).join('');
+    if (rvDone.length) rvBody += rvGrp('Reviewed \u00b7 ' + rvDone.length, '#6b7280') + rvDone.map(rvRow).join('');
     el.innerHTML = '<table class="adm-table">' +
       '<thead><tr><th>Date</th><th>Product</th><th>Rating</th><th>Reviewer</th><th>Review</th><th>Status</th><th>Action</th></tr></thead>' +
-      '<tbody>' + reviews.map(function (rv) {
-        return '<tr>' +
-          '<td style="color:var(--t2)">' + fmtDate(rv.created_at) + '</td>' +
-          '<td style="color:#fff">' + esc(rv.product_name || rv.product_slug) + '</td>' +
-          '<td style="color:#f5b301;white-space:nowrap">' + reviewStars(rv.rating) + '</td>' +
-          '<td style="color:var(--t2)">' + esc(rv.author_name) + '</td>' +
-          '<td style="color:var(--t2);max-width:280px">' +
-            (rv.title ? '<strong style="color:#fff">' + esc(rv.title) + '</strong><br>' : '') +
-            esc(rv.body || '') + '</td>' +
-          '<td>' + statusBadge(rv.status) + '</td>' +
-          '<td>' +
-            '<select class="status-select" onchange="updateReviewStatus(\'' + rv.id + '\', this.value)">' +
-              ['pending','approved','rejected'].map(function (s) {
-                return '<option value="' + s + '"' + (rv.status === s ? ' selected' : '') + '>' + s + '</option>';
-              }).join('') +
-            '</select>' +
-          '</td>' +
-        '</tr>';
-      }).join('') + '</tbody></table>';
+      '<tbody>' + rvBody + '</tbody></table>';
   }
 
   window.updateReviewStatus = function (id, newStatus) {
@@ -1494,12 +1626,11 @@
       el.innerHTML = '<p class="adm-empty">No orders yet.</p>';
       return;
     }
-    el.innerHTML = '<table class="adm-table">' +
-      '<thead><tr>' +
-        '<th></th><th>Date</th><th>Reference</th><th>Customer</th><th>Items</th>' +
-        '<th>Total</th><th>Status</th><th>Action</th>' +
-      '</tr></thead>' +
-      '<tbody>' + orders.map(function (o) {
+    var VX_ACT = { pending: 1, paid: 1 };
+    var vxTop = orders.filter(function (o) { return VX_ACT[o.status]; });
+    var vxRest = orders.filter(function (o) { return !VX_ACT[o.status]; });
+    function vxGrp(label, color) { return '<tr><td colspan="8" style="padding:16px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    function vxRow(o) {
         var ref = o.notes || o.id.slice(0, 8).toUpperCase();
         return '<tr style="cursor:pointer" onclick="toggleOrderDetails(\'' + o.id + '\')">' +
           '<td style="color:var(--g,#01D3A0);width:14px">▸</td>' +
@@ -1519,7 +1650,15 @@
           '</td>' +
         '</tr>' +
         '<tr id="ord-det-' + o.id + '" style="display:none"><td colspan="8" style="padding:0 12px 14px">' + orderDetailsHtml(o) + '</td></tr>';
-      }).join('') + '</tbody></table>';
+    }
+    var vxBody = '';
+    if (vxTop.length) vxBody += vxGrp('Needs action \u00b7 ' + vxTop.length, '#01D3A0') + vxTop.map(vxRow).join('');
+    if (vxRest.length) vxBody += vxGrp('Completed & other \u00b7 ' + vxRest.length, '#6b7280') + vxRest.map(vxRow).join('');
+    el.innerHTML = '<table class="adm-table">' +
+      '<thead><tr>' +
+        '<th></th><th>Date</th><th>Reference</th><th>Customer</th><th>Items</th>' +
+        '<th>Total</th><th>Status</th><th>Action</th>' +
+      '</tr></thead><tbody>' + vxBody + '</tbody></table>';
   }
 
   function exportOrdersCSV() {
@@ -1927,14 +2066,24 @@
 
     var q = ((document.getElementById('cust-search') || {}).value || '').trim().toLowerCase();
     if (q) list = list.filter(function (c) { return (c.name || '').toLowerCase().indexOf(q) > -1 || (c.email || '').toLowerCase().indexOf(q) > -1; });
-    if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers yet.</div>'; return; }
-    wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' +
-      list.map(function (c) {
-        return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
-          '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
-          '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
-          '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
-      }).join('') + '</tbody></table>';
+    var cpill = document.querySelector('#cust-pills .vxo-pill.active');
+    var cf = cpill ? cpill.getAttribute('data-f') : '';
+    if (cf === 'repeat') list = list.filter(function (c) { return c.orders > 1; });
+    else if (cf === 'oneoff') list = list.filter(function (c) { return c.orders <= 1; });
+    if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers match.</div>'; return; }
+    function custRow(c) {
+      return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
+        '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
+        '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
+        '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
+    }
+    function custGrp(label, color) { return '<tr><td colspan="4" style="padding:14px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    var rep = list.filter(function (c) { return c.orders > 1; });
+    var one = list.filter(function (c) { return c.orders <= 1; });
+    var body = '';
+    if (rep.length) body += custGrp('Repeat buyers \u00b7 ' + rep.length, '#01D3A0') + rep.map(custRow).join('');
+    if (one.length) body += custGrp('One-off \u00b7 ' + one.length, '#6b7280') + one.map(custRow).join('');
+    wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' + body + '</tbody></table>';
   }
 
   // ── SUBSCRIBERS ───────────────────────────────────────────────────────────
@@ -1985,10 +2134,13 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
+  window.applySubscriberFilter = function () { renderSubscribers(lastSubs || []); };
   function renderSubscribers(subs) {
     var el = document.getElementById('subscribers-table-wrap');
     if (!el) return;
-    if (!subs.length) { el.innerHTML = '<p class="adm-empty">No subscribers yet.</p>'; return; }
+    var sq = ((document.getElementById('subs-search') || {}).value || '').trim().toLowerCase();
+    if (sq) subs = subs.filter(function (s) { return (s.email || '').toLowerCase().indexOf(sq) > -1 || (s.source || '').toLowerCase().indexOf(sq) > -1; });
+    if (!subs.length) { el.innerHTML = '<p class="adm-empty">No subscribers match.</p>'; return; }
     el.innerHTML = '<table class="adm-table">' +
       '<thead><tr><th>Date</th><th>Email</th><th>Source</th></tr></thead>' +
       '<tbody>' + subs.map(function (s) {
@@ -2068,7 +2220,7 @@
     var el = document.getElementById('affiliates-table-wrap');
     if (!el) return;
     if (!affs.length) { el.innerHTML = '<p class="adm-empty">No affiliate applications yet.</p>'; return; }
-    el.innerHTML = affs.map(function (a) {
+    function affCard(a) {
       var rid = 'aff-' + a.id;
       var commission = (a.commission_type === 'flat')
         ? ('£' + Number(a.commission_rate || 0).toFixed(2) + ' flat')
@@ -2102,7 +2254,14 @@
       }
       controls += '<span id="' + rid + '-msg" style="font-size:12px;color:#f87171"></span></div>';
       return '<div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:16px 18px;margin-bottom:12px">' + head + controls + '</div>';
-    }).join('');
+    }
+    function affGrp(label, color) { return '<div style="color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:14px 2px 8px">' + label + '</div>'; }
+    var affPend = affs.filter(function (a) { return a.status === 'pending_approval'; });
+    var affRest = affs.filter(function (a) { return a.status !== 'pending_approval'; });
+    var affOut = '';
+    if (affPend.length) affOut += affGrp('Pending approval \u00b7 ' + affPend.length, '#f59e0b') + affPend.map(affCard).join('');
+    if (affRest.length) affOut += affGrp('Active & other \u00b7 ' + affRest.length, '#6b7280') + affRest.map(affCard).join('');
+    el.innerHTML = affOut;
   }
 
   // Approve / re-activate / save: assigns code + commission and sets status active.
@@ -2130,14 +2289,29 @@
   };
 
   // ── PRICING (product_variants — single source of truth for every price) ─────
+  var pricingCache = [];
   function loadPricing() {
     if (!window._sb) return;
     window._sb.from('product_variants')
       .select('*')
       .order('slug', { ascending: true })
       .order('sort_order', { ascending: true })
-      .then(function (r) { renderPricing(r.data || [], r.error); });
+      .then(function (r) { pricingCache = r.data || []; renderPricing(pricingCache, r.error); });
   }
+  window.applyPricingFilter = function () {
+    var q = ((document.getElementById('pv-search') || {}).value || '').trim().toLowerCase();
+    var pill = document.querySelector('#pv-pills .vxo-pill.active');
+    var f = pill ? pill.getAttribute('data-f') : '';
+    var rows = (pricingCache || []).filter(function (v) {
+      if (f === 'in'  && v.in_stock !== true)  return false;
+      if (f === 'out' && v.in_stock !== false) return false;
+      if (f === 'low' && v.low_stock !== true) return false;
+      if (f === 'deal' && !v.deal_flag)        return false;
+      if (q) return (v.name || '').toLowerCase().indexOf(q) > -1 || (v.size || '').toLowerCase().indexOf(q) > -1;
+      return true;
+    });
+    renderPricing(rows, null);
+  };
 
   function pvNumInput(id, field, val) {
     return '<input id="pv-' + id + '-' + field + '" class="status-select" type="number" step="0.01" min="0" value="' +
@@ -2151,14 +2325,10 @@
     var el = document.getElementById('pricing-table-wrap');
     if (!el) return;
     if (error) { el.innerHTML = '<p class="adm-empty">Could not load prices: ' + esc(error.message) + '</p>'; return; }
-    if (!rows.length) { el.innerHTML = '<p class="adm-empty">No products yet — run the product_variants seed.</p>'; return; }
-    var html = '<table class="adm-table"><thead><tr>' +
-      '<th>Product</th><th>Size</th><th>Base £</th><th>Sale £</th><th>RRP £</th>' +
-      '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Qty</th><th>Sells at</th><th></th>' +
-      '</tr></thead><tbody>';
-    rows.forEach(function (v) {
+    if (!rows.length) { el.innerHTML = '<p class="adm-empty">No products match.</p>'; return; }
+    function pvRow(v) {
       var sells = (v.sale_price != null ? v.sale_price : v.base_price);
-      html += '<tr>' +
+      return '<tr>' +
         '<td style="color:#fff">' + esc(v.name) + '</td>' +
         '<td style="color:var(--t2,#9ca3af)">' + esc(v.size) + '</td>' +
         '<td>' + pvNumInput(v.id, 'base', v.base_price) + '</td>' +
@@ -2173,8 +2343,17 @@
         '<td style="white-space:nowrap"><button class="btn-p" style="width:auto;padding:5px 12px" onclick="savePricing(\'' + v.id + '\')">Save</button> ' +
         '<span id="pv-' + v.id + '-msg" style="font-size:12px"></span></td>' +
         '</tr>';
-    });
-    html += '</tbody></table>';
+    }
+    var attn = rows.filter(function (v) { return v.in_stock === false || v.low_stock === true; });
+    var ok   = rows.filter(function (v) { return !(v.in_stock === false || v.low_stock === true); });
+    function pvGrp(label, color) { return '<tr><td colspan="12" style="padding:16px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
+    var body = '';
+    if (attn.length) body += pvGrp('Needs attention \u00b7 ' + attn.length, '#f59e0b') + attn.map(pvRow).join('');
+    if (ok.length)   body += pvGrp('In stock \u00b7 ' + ok.length, '#01D3A0') + ok.map(pvRow).join('');
+    var html = '<table class="adm-table"><thead><tr>' +
+      '<th>Product</th><th>Size</th><th>Base £</th><th>Sale £</th><th>RRP £</th>' +
+      '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Qty</th><th>Sells at</th><th></th>' +
+      '</tr></thead><tbody>' + body + '</tbody></table>';
     el.innerHTML = html;
   }
 
