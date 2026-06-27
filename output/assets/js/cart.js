@@ -2,7 +2,7 @@
   'use strict';
 
   var SHIPPING_FLAT = 3.80;
-  var FREE_THRESHOLD = 100;
+  var FREE_THRESHOLD = 0;   // SALE WEEK: free UK shipping site-wide. RESTORE TO 100 after.
 
   function getCart() {
     try {

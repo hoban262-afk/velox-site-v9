@@ -153,21 +153,44 @@ module.exports = async function handler(req, res) {
     console.log(`[confirm-fena-payment] Fena confirmed PAID for ${orderRef} (id=${verifyId})`);
   }
 
-  // ── Mark paid (idempotent) ──────────────────────────────────────────────────
-  // Reached only when Fena confirmed 'paid' (or the order was already paid).
+  // ── Mark paid (atomic, race-safe) ───────────────────────────────────────────
+  // Use a conditional PATCH (status=eq.pending) so only ONE of the two paths
+  // (browser redirect vs Fena webhook) wins the transition. The loser's PATCH
+  // matches zero rows and we skip emails/notifications for that path.
+  let thisPathPaid = false;
   if (order.status !== 'paid' && order.status !== 'dispatched') {
     try {
       const patch = { status: 'paid' };
       if (fenaOrderId) patch.fena_payment_id = String(fenaOrderId);
-      await sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, patch);
-      order.status = 'paid';
-      console.log(`[confirm-fena-payment] Order ${orderRef} → paid`);
+      // Conditional PATCH: only matches rows still in 'pending'. If the webhook
+      // already flipped it to 'paid', this returns an empty array → we lost the race.
+      const pr = await fetch(`${SB_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}&status=eq.pending`, {
+        method: 'PATCH',
+        headers: {
+          apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`,
+          'Content-Type': 'application/json', Prefer: 'return=representation',
+        },
+        body: JSON.stringify(patch),
+      });
+      if (pr.ok) {
+        const rows = await pr.json().catch(() => []);
+        thisPathPaid = Array.isArray(rows) && rows.length > 0;
+        if (thisPathPaid) {
+          order.status = 'paid';
+          // Set email_sent_at flag (best-effort, column may not exist yet)
+          sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { email_sent_at: new Date().toISOString() }).catch(() => {});
+        }
+      }
+      console.log(`[confirm-fena-payment] Order ${orderRef} → paid (thisPathPaid=${thisPathPaid})`);
     } catch (e) {
       console.error('[confirm-fena-payment] mark-paid failed:', e.message);
     }
+  } else {
+    console.log(`[confirm-fena-payment] Order ${orderRef} already ${order.status} — skipping emails`);
   }
 
   // ── Fire-and-forget: Click & Drop label + Xero invoice ──────────────────────
+  // These are idempotent, safe to fire from both paths.
   const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
   if (INTERNAL_SECRET) {
     const trigger = (path) => fetch(`https://veloxpeps.com${path}`, {
@@ -178,12 +201,16 @@ module.exports = async function handler(req, res) {
     await Promise.allSettled([trigger('/api/clickdrop/push'), trigger('/api/xero/create-invoice')]);
   }
 
-  // ── Best-effort emails (NEVER fail the response on email error) ─────────────
-  try {
-    await sendEmails(emailPayloadFromOrder(order), orderRef);
-    console.log(`[confirm-fena-payment] Emails sent for ${orderRef}`);
-  } catch (e) {
-    console.error(`[confirm-fena-payment] Email send failed (non-fatal) for ${orderRef}:`, e.message);
+  // ── Best-effort emails — only if THIS path won the race ────────────────────
+  if (thisPathPaid) {
+    try {
+      await sendEmails(emailPayloadFromOrder(order), orderRef);
+      console.log(`[confirm-fena-payment] Emails sent for ${orderRef}`);
+    } catch (e) {
+      console.error(`[confirm-fena-payment] Email send failed (non-fatal) for ${orderRef}:`, e.message);
+    }
+  } else {
+    console.log(`[confirm-fena-payment] Skipping emails for ${orderRef} — other path already sent`);
   }
 
   // ── Best-effort Google Sheets log ───────────────────────────────────────────

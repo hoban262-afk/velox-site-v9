@@ -559,6 +559,29 @@ async function handler(req, res) {
     // Internal callers can pass just { order_id }; build the full payload from DB.
     // idempotencyKey (= order ref) dedupes emails if the browser-return path also fires.
     if (payload.order_id && !payload.order_items) {
+      // ── DB-level idempotency: skip if emails already sent ──────────────────
+      // The confirm-fena-payment and fena-webhook paths set email_sent_at when
+      // they win the race. If it's already set, another path already sent — bail.
+      // Fails open if the column doesn't exist yet (select returns null for unknown cols).
+      const SB_URL = process.env.SUPABASE_URL, SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (SB_URL && SB_SERVICE) {
+        try {
+          const chk = await fetch(`${SB_URL}/rest/v1/orders?id=eq.${encodeURIComponent(payload.order_id)}&select=email_sent_at&limit=1`, {
+            headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
+          });
+          if (chk.ok) {
+            const rows = await chk.json().catch(() => []);
+            const row = Array.isArray(rows) ? rows[0] : null;
+            if (row && row.email_sent_at) {
+              console.log(`[send-order] Order ${payload.order_id} email_sent_at already set — skipping to avoid duplicate`);
+              return res.status(200).json({ ok: true, skipped: 'already_sent' });
+            }
+          }
+          // Column doesn't exist yet → chk returns 400, falls through to send normally
+        } catch (e) {
+          console.error('[send-order] email_sent_at check failed (non-fatal):', e.message);
+        }
+      }
       payload = await buildPayloadFromOrderId(payload.order_id);
       if (!payload) return res.status(404).json({ error: 'Order not found' });
       idemKey = payload.order_number;

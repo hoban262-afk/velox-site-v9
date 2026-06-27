@@ -908,16 +908,25 @@
         <select id="camp-segment" class="status-select" style="margin-bottom:14px;cursor:pointer">
           <option value="all">All subscribers (not unsubscribed)</option>
           <option value="customers">Past customers only</option>
+          <option value="everyone">Everyone (subscribers + past customers, deduped)</option>
         </select>
         <p style="font-size:13px;color:var(--t3,#6b7280);margin:0 0 16px;line-height:1.5">Sends a branded email to every subscriber who hasn't unsubscribed. Each email includes an unsubscribe link automatically. Plain text - leave a blank line between paragraphs.</p>
         <label style="display:block;font-size:12px;color:var(--t2,#9ca3af);margin-bottom:5px">Subject</label>
-        <input class="f-inp" id="camp-subject" style="width:100%;box-sizing:border-box;margin-bottom:14px" value="New in the research library: BPC-157">
+        <input class="f-inp" id="camp-subject" style="width:100%;box-sizing:border-box;margin-bottom:14px" value="New retatrutide batch is live — this week's sale + your 10% subscriber code">
         <label style="display:block;font-size:12px;color:var(--t2,#9ca3af);margin-bottom:5px">Message</label>
-        <textarea id="camp-message" style="width:100%;box-sizing:border-box;min-height:220px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:12px;border-radius:7px;font:inherit;font-size:14px;line-height:1.6;resize:vertical">We've just published a new entry in the Velox research library - a plain-language summary of the current preclinical research on BPC-157 (Body Protection Compound-157).
+        <textarea id="camp-message" style="width:100%;box-sizing:border-box;min-height:220px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:12px;border-radius:7px;font:inherit;font-size:14px;line-height:1.6;resize:vertical">Fresh stock alert: a new batch of retatrutide 15mg has just cleared HPLC verification and is back in stock — ≥99% purity, Janoshik third-party tested, dispatched fast across the UK.
 
-It covers what the peptide is, the tissue-repair and angiogenesis pathways researchers have studied it in, how it's handled in the lab (reconstitution and storage), and the third-party HPLC verification behind every batch we supply.
+It's this week's Deal of the Week: retatrutide 15mg for just £55.30 while the sale runs.
 
-Read the full summary in the research library below. As always, batch documentation is available on request for every compound we stock.
+Two things just for being on the list:
+
+INSIDER10 — an extra 10% off your whole order at checkout, on top of the sale price.
+
+Free UK shipping on everything this week. No minimum, no threshold — free for the duration of the sale.
+
+Volume pricing stacks too: 5% off at £75, 10% at £150, 20% at £250 — and INSIDER10 applies on top.
+
+The new batch, the sale price and free UK shipping all run for one week only. Tap below to grab it.
 
 For in vitro research use only. Not for human or veterinary consumption.</textarea>
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
@@ -1000,6 +1009,15 @@ For in vitro research use only. Not for human or veterinary consumption.</textar
           </div>
         </div>
         <p style="font-size:12px;color:var(--t3,#6b7280);margin:14px 0 0;line-height:1.5">When an order is marked <strong>paid</strong>, it's automatically sent to Click &amp; Drop ready to label - no manual upload. Connect by adding your Click &amp; Drop API key to the site's environment settings.</p>
+
+        <div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:16px">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:3px">Google Analytics (GA4)</div>
+            <div style="font-size:13px;color:var(--t3,#6b7280)" id="ga4-status">Checking connection…</div>
+          </div>
+          <button class="btn-s" id="ga4-sync-btn" style="width:auto;padding:10px 22px">Sync GA4 now</button>
+        </div>
+        <p style="font-size:12px;color:var(--t3,#6b7280);margin:14px 0 0;line-height:1.5">Pulls daily sessions, users, pageviews and conversions from GA4 into your dashboard each day. Connect by adding <code>GA4_PROPERTY_ID</code>, <code>GA_CLIENT_EMAIL</code> and <code>GA_PRIVATE_KEY</code> (from a Google service account with Viewer access to the property) to the site's environment settings.</p>
       </div>
     </div>
 
