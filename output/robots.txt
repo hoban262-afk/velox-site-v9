@@ -3,4 +3,70 @@ Disallow: /cart/
 Disallow: /checkout/
 Disallow: /coa/
 Disallow: /admin/
+
+# AI / LLM crawlers — explicitly welcomed for GEO and answer-engine citation.
+# See https://veloxpeps.com/llms.txt for a curated content map.
+User-agent: GPTBot
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /coa/
+Disallow: /admin/
+
 Sitemap: https://veloxpeps.com/sitemap.xml

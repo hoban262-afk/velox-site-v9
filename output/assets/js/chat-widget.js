@@ -23,9 +23,56 @@
   var userEmail = null;
   var SID = (function(){ try{ var k=sessionStorage.getItem('vcw_sid'); if(k) return k; var v='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); sessionStorage.setItem('vcw_sid',v); return v; }catch(e){ return 'c'+Date.now().toString(36); } })();
 
-  var GREETING =
-    "Hey, I'm Matt from Velox. What are you after? " +
-    "I can help you find the right compound, talk purity and CoAs, or sort shipping.";
+  // A few natural openers, picked at random so it never feels canned.
+  var GREETINGS = [
+    "Hey, Matt here from Velox. What are you working on? Happy to help you find the right compound or talk through testing and shipping.",
+    "Hi, I'm Matt from the Velox team. What can I help with? Whether it's picking a compound, our testing, or where your order is, ask away.",
+    "Hey, Matt from Velox. What are you after today? I can help you choose, talk you through how everything's tested, or sort out shipping.",
+    "Hi there, Matt here. What's on your mind? I can point you to the right compound or answer anything on testing and delivery."
+  ];
+  function pickGreeting() { return GREETINGS[Math.floor(Math.random() * GREETINGS.length)]; }
+
+  // Read the current basket so the bot can help close the sale.
+  function readCart() {
+    try { var c = JSON.parse(localStorage.getItem('vp_cart') || '[]'); return Array.isArray(c) ? c.slice(0, 12) : []; }
+    catch (e) { return []; }
+  }
+
+  // Work out what kind of page we're on, for a contextual opener + chips.
+  var CATEGORIES = ['cognitive', 'metabolic', 'recovery', 'growth', 'antioxidant'];
+  function pageContext() {
+    var p = location.pathname || '/';
+    var m = p.match(/^\/compounds\/([a-z0-9-]+)\/?$/);
+    if (m && CATEGORIES.indexOf(m[1]) === -1) {
+      var h1 = document.querySelector('.cp-h1');
+      var name = h1 && h1.firstChild ? String(h1.firstChild.textContent || '').trim() : '';
+      if (!name) name = m[1].replace(/-/g, ' ');
+      return { type: 'product', slug: m[1], name: name };
+    }
+    if (m && CATEGORIES.indexOf(m[1]) > -1) return { type: 'shop' };
+    if (/^\/compounds\/?$/.test(p)) return { type: 'shop' };
+    if (/^\/(cart|checkout)\b/.test(p)) return { type: 'cart' };
+    if (/^\/pro\b/.test(p)) return { type: 'pro' };
+    if (/^\/guides\//.test(p)) return { type: 'guide' };
+    return { type: 'general' };
+  }
+  function pageGreeting() {
+    var c = pageContext();
+    if (c.type === 'product') return "Hey, Matt here. Questions about " + c.name + "? Happy to talk testing, pricing or how it ships.";
+    if (c.type === 'cart')    return "Hey, Matt from Velox. Want a hand finishing your order, or any last questions before you check out?";
+    if (c.type === 'shop')    return "Hey, Matt here. Want help picking the right compound? I can talk you through testing, pricing and delivery.";
+    if (c.type === 'pro')     return "Hey, Matt here. Want me to run through what Velox Pro gets you?";
+    if (c.type === 'guide')   return "Hey, Matt from Velox. Anything I can help with, whether it's this topic, choosing a compound, or an order?";
+    return pickGreeting();
+  }
+  function pageChips() {
+    var c = pageContext();
+    if (c.type === 'product') return ['Is it tested?', 'Price?', 'In stock?', 'Shipping'];
+    if (c.type === 'cart')    return ['Any discount?', 'Shipping cost?', 'How do I pay?', 'Where do you ship?'];
+    if (c.type === 'shop')    return ['Help me choose', 'Is it tested?', 'Shipping and delivery', "Where's my order?"];
+    if (c.type === 'pro')     return ['What do I get?', 'How much?', 'Is it worth it?'];
+    return ['Help me choose', 'Is it tested?', "Where's my order?", 'Shipping and delivery'];
+  }
 
   // ── styles ────────────────────────────────────────────────────────────────
   var css = '' +
@@ -70,13 +117,16 @@
   '.vcw-chips{display:flex;flex-wrap:wrap;gap:7px;padding:2px 16px 8px}' +
   '.vcw-chip{background:#141b22;border:1px solid #2a323a;color:#cbd5e1;border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}' +
   '.vcw-chip:hover{border-color:' + ACCENT + ';color:#fff}' +
+  '.vcw-fb{display:flex;gap:10px;margin-top:6px}.vcw-fb button{background:none;border:0;cursor:pointer;font-size:13px;padding:0;line-height:1;opacity:.5}.vcw-fb button:hover{opacity:1}.vcw-fb .done{color:#6B7280;font-size:11px}' +
   '@media (max-width:600px){' +
     '.vcw-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:85vh;height:85dvh;max-height:85dvh;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0}' +
     '.vcw-btn{right:14px;bottom:calc(var(--vpdock-h, 112px) + 14px);padding:11px 14px;font-size:13px}' +
     '.vcw-btn svg{width:16px;height:16px}' +
     '.vcw-head{padding:13px 14px}' +
     '.vcw-bubble{max-width:88%}' +
-  '}';
+    'body.page-compound .vcw-btn,body.page-stack .vcw-btn{display:none!important}' +
+  '}' +
+  'body.page-account .vcw-btn,body.page-account .vcw-panel{display:none!important}';
 
   function injectCss() {
     var s = document.createElement('style');
@@ -121,8 +171,34 @@
   }
   var EMAIL_RE = /[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}/i;
 
+  // ── conversation persistence (survives reloads within the session) ────────
+  var STATE_KEY = 'vcw_state';
+  function saveState() {
+    try {
+      sessionStorage.setItem(STATE_KEY, JSON.stringify({
+        messages: messages.slice(-24), emailCaptured: emailCaptured,
+        userEmail: userEmail, greeted: greeted,
+      }));
+    } catch (e) { /* ignore */ }
+  }
+  function loadState() {
+    try {
+      var raw = sessionStorage.getItem(STATE_KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      return (s && Array.isArray(s.messages)) ? s : null;
+    } catch (e) { return null; }
+  }
+
   // ── DOM ─────────────────────────────────────────────────────────────────
-  var btn, panel, msgsEl, inputEl, sendEl;
+  var btn, panel, msgsEl, inputEl, sendEl, subEl;
+
+  // Header status line. "typing…" while Matt composes, otherwise "Online now".
+  function setStatus(typing) {
+    if (!subEl) return;
+    subEl.textContent = typing ? 'typing…' : 'Online now';
+    subEl.style.color = typing ? ACCENT : '';
+  }
 
   function build() {
     btn = document.createElement('button');
@@ -139,7 +215,7 @@
     panel.setAttribute('aria-label', 'Chat with Matt from Velox');
     panel.innerHTML =
       '<div class="vcw-head"><span class="vcw-dot"></span>' +
-        '<div><div class="vcw-title">Matt</div><div class="vcw-sub">Velox Peptides</div></div>' +
+        '<div><div class="vcw-title">Matt</div><div class="vcw-sub">Online now</div></div>' +
         '<button class="vcw-x" aria-label="Close chat">&times;</button></div>' +
       '<div class="vcw-msgs"></div>' +
       '<div class="vcw-foot"><div class="vcw-inwrap">' +
@@ -153,6 +229,7 @@
     msgsEl = panel.querySelector('.vcw-msgs');
     inputEl = panel.querySelector('.vcw-in');
     sendEl = panel.querySelector('.vcw-send');
+    subEl = panel.querySelector('.vcw-sub');
 
     panel.querySelector('.vcw-x').addEventListener('click', toggle);
     sendEl.addEventListener('click', onSend);
@@ -170,9 +247,27 @@
     panel.classList.toggle('vcw-open', opened);
     btn.style.display = opened ? 'none' : 'inline-flex';
     if (opened) {
-      if (!messages.length && !greeted) connectThenGreet(GREETING);
+      if (!restored) restorePriorChat();
+      if (!messages.length && !greeted) connectThenGreet(pageGreeting());
       setTimeout(function () { inputEl.focus(); }, 50);
     }
+  }
+
+  // Re-paint a conversation from earlier this session (no "connecting" delay,
+  // it was already a live chat). Returns true if anything was restored.
+  var restored = false;
+  function restorePriorChat() {
+    restored = true;
+    var s = loadState();
+    if (!s || !s.messages.length) return false;
+    messages = s.messages;
+    emailCaptured = !!s.emailCaptured;
+    userEmail = s.userEmail || null;
+    greeted = true;
+    messages.forEach(function (m) {
+      addBubble(m.role === 'user' ? 'user' : 'bot', m.content);
+    });
+    return true;
   }
 
   function addBubble(role, text) {
@@ -184,14 +279,17 @@
     row.appendChild(b);
     msgsEl.appendChild(row);
     msgsEl.scrollTop = msgsEl.scrollHeight;
+    setStatus(false);
     if (role === 'bot') {
       var cm = String(text).match(/VELOX-[A-Z0-9]{6}/);
       if (cm) { try { localStorage.setItem('vp_ref', JSON.stringify({ code: cm[0], ts: Date.now() })); } catch (e) {} }
+      if (String(text).length > 60) addFeedback(b);
     }
     return b;
   }
 
   function showTyping() {
+    setStatus(true);
     var row = document.createElement('div');
     row.className = 'vcw-row bot';
     row.innerHTML = '<div class="vcw-bubble"><span class="vcw-typing"><span></span><span></span><span></span></span></div>';
@@ -205,6 +303,7 @@
   function connectThenGreet(message) {
     if (greeted) return;
     greeted = true;
+    setStatus(true);
     var row = document.createElement('div');
     row.className = 'vcw-row bot';
     row.innerHTML = '<div class="vcw-bubble" style="display:flex;align-items:center;gap:8px">' +
@@ -212,7 +311,11 @@
       '<span style="color:#9aa3ad;font-size:12.5px">Connecting to agent\u2026</span></div>';
     msgsEl.appendChild(row);
     msgsEl.scrollTop = msgsEl.scrollHeight;
-    setTimeout(function () { row.remove(); addBubble('bot', message); showChips(); }, 1600 + Math.random() * 900);
+    setTimeout(function () {
+      row.remove(); addBubble('bot', message);
+      messages.push({ role: 'assistant', content: message }); saveState();
+      showChips();
+    }, 1600 + Math.random() * 900);
   }
 
   // Fire-and-forget handbook signup when the user shares an email.
@@ -235,7 +338,7 @@
 
   // Starter quick-replies under the greeting to lower the blank-box barrier.
   function showChips() {
-    var items = ['Help me choose', 'Is it tested?', "Where's my order?", 'Shipping and delivery'];
+    var items = pageChips();
     var wrap = document.createElement('div'); wrap.className = 'vcw-chips';
     items.forEach(function (c) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'vcw-chip'; b.textContent = c;
@@ -243,6 +346,58 @@
       wrap.appendChild(b);
     });
     msgsEl.appendChild(wrap); msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  // Add an item to the basket directly from chat (price is server-verified).
+  function widgetAddToCart(a) {
+    try {
+      var cart = JSON.parse(localStorage.getItem('vp_cart') || '[]'); if (!Array.isArray(cart)) cart = [];
+      var found = null;
+      for (var i = 0; i < cart.length; i++) { if (cart[i].slug === a.slug && cart[i].size === a.size) { found = cart[i]; break; } }
+      if (found) found.qty = (found.qty || 1) + 1;
+      else cart.push({ slug: a.slug, name: a.name, url: a.url, size: a.size, price: a.price, qty: 1 });
+      localStorage.setItem('vp_cart', JSON.stringify(cart));
+      var el = document.getElementById('nav-cart-count');
+      if (el) { var t = cart.reduce(function (s, it) { return s + (it.qty || 1); }, 0); el.textContent = String(t); }
+      try { if (window.vpTrack) window.vpTrack('add_to_cart'); } catch (e) {}
+      try { if (window.toast) window.toast('Added to order — ' + a.name); } catch (e) {}
+      return true;
+    } catch (e) { return false; }
+  }
+
+  // Render server-provided actions (e.g. add-to-cart) as tap buttons under the reply.
+  function renderActions(actions) {
+    if (!actions || !actions.length) return;
+    var wrap = document.createElement('div'); wrap.className = 'vcw-chips';
+    actions.slice(0, 3).forEach(function (a) {
+      if (!a || a.type !== 'add_to_cart') return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'vcw-chip';
+      b.style.borderColor = ACCENT; b.style.color = '#fff';
+      var sz = (a.size && a.size !== 'default') ? ' ' + a.size : '';
+      b.textContent = '+ Add ' + a.name + sz + ' · £' + Number(a.price).toFixed(2);
+      b.addEventListener('click', function () {
+        if (widgetAddToCart(a)) { b.disabled = true; b.textContent = 'Added ✓'; addBubble('bot', "Done, that's in your basket. Head to [your cart](/cart/) when you're ready."); }
+      });
+      wrap.appendChild(b);
+    });
+    if (wrap.children.length) { msgsEl.appendChild(wrap); msgsEl.scrollTop = msgsEl.scrollHeight; }
+  }
+
+  // Send a 👍/👎 on a bot reply so we can see what's landing.
+  function sendFeedback(value) {
+    try {
+      fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedback: value, sid: SID, page: location.pathname }) }).catch(function () {});
+    } catch (e) {}
+  }
+  function addFeedback(bubble) {
+    var fb = document.createElement('div'); fb.className = 'vcw-fb';
+    [['up', '👍'], ['down', '👎']].forEach(function (pair) {
+      var x = document.createElement('button'); x.type = 'button'; x.title = pair[0] === 'up' ? 'Helpful' : 'Not helpful'; x.textContent = pair[1];
+      x.addEventListener('click', function () { sendFeedback(pair[0]); fb.innerHTML = '<span class="done">Thanks for the feedback</span>'; });
+      fb.appendChild(x);
+    });
+    bubble.appendChild(fb);
   }
 
   // Split a longer reply into up to two natural messages on a sentence boundary,
@@ -275,6 +430,7 @@
     inputEl.style.height = 'auto';
     addBubble('user', text);
     messages.push({ role: 'user', content: text });
+    saveState();
 
     var capturedEmail = maybeCaptureEmail(text);
     var note = capturedEmail
@@ -284,20 +440,27 @@
     busy = true; sendEl.disabled = true;
     var typing = showTyping();
 
+    // The greeting is stored in `messages` for display/persistence, but the API
+    // history must start with a user turn — drop any leading assistant turns.
+    var apiMessages = messages.slice();
+    while (apiMessages.length && apiMessages[0].role !== 'user') apiMessages.shift();
+
     fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: messages, note: note, page: location.pathname, sid: SID, email: userEmail }),
+      body: JSON.stringify({ messages: apiMessages, note: note, page: location.pathname, sid: SID, email: userEmail, cart: readCart() }),
     })
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (d) {
         var reply = (d && d.reply) ||
           "Sorry, something went wrong there. Try again, or email support@veloxpeps.com and a real person will sort it.";
+        var actions = d && d.actions;
         messages.push({ role: 'assistant', content: reply });
+        saveState();
         var parts = splitReply(reply);
         var firstTyping = typing;            // reuse the indicator already on screen
         (function deliver(i) {
-          if (i >= parts.length) { busy = false; sendEl.disabled = false; inputEl.focus(); return; }
+          if (i >= parts.length) { busy = false; sendEl.disabled = false; inputEl.focus(); renderActions(actions); return; }
           var t = parts[i];
           var indicator = (i === 0) ? firstTyping : showTyping();
           setTimeout(function () {
@@ -319,19 +482,37 @@
       if (window.innerWidth < 768) return;                       // never hijack a phone screen
       if (!/(\/compounds\/|\/cart\/|\/checkout\/)/.test(location.pathname)) return;
       if (sessionStorage.getItem('vcw_nudged')) return;
+      var prior = loadState();                                    // already chatting this session? don't barge in
+      if (prior && prior.messages && prior.messages.length) return;
       setTimeout(function () {
         if (opened || messages.length) return;
         sessionStorage.setItem('vcw_nudged', '1');
         panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
-        connectThenGreet("Anything I can help with on this one? I can talk you through purity and CoAs, or find you the right thing. There's a discount on first orders too if you're close.");
+        connectThenGreet(pageGreeting());
       }, 30000);
     } catch (e) { /* ignore */ }
+  }
+
+  // Desktop exit-intent: if they move to leave without engaging, open with a soft save.
+  function maybeExitIntent() {
+    try {
+      if (window.innerWidth < 768) return;
+      document.addEventListener('mouseout', function (e) {
+        if (e.clientY > 0 || e.relatedTarget) return;          // only a real top-edge exit
+        if (opened || messages.length) return;
+        if (sessionStorage.getItem('vcw_nudged')) return;
+        sessionStorage.setItem('vcw_nudged', '1');
+        panel.classList.add('vcw-open'); opened = true; btn.style.display = 'none';
+        connectThenGreet("Before you head off, anything I can help with? Happy to answer anything on testing or shipping, and there's a discount on first orders if you're close.");
+      });
+    } catch (e) {}
   }
 
   function init() {
     injectCss();
     build();
     maybeProactive();
+    maybeExitIntent();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

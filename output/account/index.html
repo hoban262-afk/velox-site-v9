@@ -72,7 +72,7 @@
     a.acc-back{color:var(--t3,#6b7280);font-size:13px;text-decoration:none}
   </style>
 </head>
-<body style="background:#030407;margin:0">
+<body class="page-account" style="background:#030407;margin:0">
 <div class="acc-wrap">
   <a class="acc-back" href="/">&larr; Back to shop</a>
 
@@ -276,6 +276,7 @@
 
 <div class="toast" id="toast"></div>
 <script src="/assets/js/core.js"></script>
+<script src="/assets/js/currency.js" defer></script>
 <script src="/assets/js/account.js"></script>
   <script src="/assets/js/search.js" defer></script>
   <script>
@@ -503,7 +504,8 @@
       var rows=items.map(function(it){ var qty=Number(it.qty||it.quantity||1)||1; var price=Number(it.price||it.line_total||0); return '<tr><td>'+esc(it.name||it.slug||'Item')+(it.size?(' - '+esc(it.size)):'')+'</td><td style="text-align:center">'+qty+'</td><td style="text-align:right">£'+price.toFixed(2)+'</td><td style="text-align:right">£'+(price*qty).toFixed(2)+'</td></tr>'; }).join('');
       var ref=esc(o.notes||('#'+String(o.id).slice(0,8)));
       return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice '+ref+'</title><style>body{font-family:Arial,sans-serif;color:#111;max-width:720px;margin:24px auto;padding:0 20px}h1{font-size:22px;margin:0}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{padding:8px;border-bottom:1px solid #eee;font-size:13px}th{text-align:left;color:#666;font-size:11px;text-transform:uppercase}.tot td{border:none;padding:4px 8px}.muted{color:#666;font-size:12px}@media print{button{display:none}}</style></head><body>'+
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><h1>Velox Peptides</h1><div class="muted">CRP Labs Ltd · Company no. NI738125<br>Holywood, Northern Ireland, United Kingdom<br>support@veloxpeps.com</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:700">INVOICE</div><div class="muted">'+ref+'<br>'+new Date(o.created_at).toLocaleDateString('en-GB')+'</div></div></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><h1>Velox Peptides</h1><div class="muted">CRP Labs Ltd · Company no. NI738125<br>14 Seapark Avenue, Holywood, Northern Ireland, BT18 0LL, United Kingdom<br>
+          <a href="tel:+447731804000">07731 804000</a><br>support@veloxpeps.com</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:700">INVOICE</div><div class="muted">'+ref+'<br>'+new Date(o.created_at).toLocaleDateString('en-GB')+'</div></div></div>'+
         '<div style="margin-top:18px" class="muted"><strong>Billed to:</strong> '+esc(o.customer_name||'')+'<br>'+esc(o.customer_email||'')+(o.ship_line1?('<br>'+esc(o.ship_line1)+(o.ship_city?(', '+esc(o.ship_city)):'')+(o.ship_postcode?(' '+esc(o.ship_postcode)):'')):'')+'</div>'+
         '<table><thead><tr><th>Item</th><th style="text-align:center">Qty</th><th style="text-align:right">Unit</th><th style="text-align:right">Total</th></tr></thead><tbody>'+rows+'</tbody></table>'+
         '<table style="margin-top:8px"><tbody class="tot">'+

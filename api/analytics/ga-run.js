@@ -13,13 +13,40 @@ const crypto = require('crypto');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const ANON         = process.env.SUPABASE_ANON_KEY;
+const ADMIN_EMAILS = new Set([
+  (process.env.ADMIN_EMAIL || '').toLowerCase(),
+  'support@veloxpeps.com', 'veloxpeps@gmail.com',
+].filter(Boolean));
 
-function authorised(req) {
+// Accepts the cron secret, the internal task secret, OR a logged-in admin's
+// Supabase session token — so the sync can be triggered straight from the
+// admin Settings page (no shared secret to copy around).
+async function authorised(req) {
   const auth = req.headers['authorization'] || '';
   const internal = req.headers['x-internal-secret'] || '';
   if (process.env.CRON_SECRET && auth === `Bearer ${process.env.CRON_SECRET}`) return true;
   if (process.env.INTERNAL_TASK_SECRET && internal === process.env.INTERNAL_TASK_SECRET) return true;
+  const token = auth.replace(/^Bearer\s+/i, '');
+  if (token && SUPABASE_URL) {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { Authorization: `Bearer ${token}`, apikey: ANON || SERVICE || '' } });
+      if (r.ok) { const u = await r.json(); if (u && ADMIN_EMAILS.has((u.email || '').toLowerCase())) return true; }
+    } catch {}
+  }
   return false;
+}
+
+// Best-effort: record the run in worker_runs so it shows in admin → System health.
+async function logRun(ok, summary) {
+  if (!SUPABASE_URL || !SERVICE) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/worker_runs`, {
+      method: 'POST',
+      headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ worker: 'ga', ran_at: new Date().toISOString(), ok, summary }),
+    });
+  } catch {}
 }
 
 function b64url(obj) { return Buffer.from(JSON.stringify(obj)).toString('base64url'); }
@@ -50,10 +77,17 @@ async function getAccessToken() {
 }
 
 module.exports = async function handler(req, res) {
-  if (!authorised(req)) return res.status(401).json({ error: 'Unauthorized' });
+  if (!(await authorised(req))) return res.status(401).json({ error: 'Unauthorized' });
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Not configured' });
+
+  // Per-var diagnostics so the admin can see exactly what's missing.
+  const missing = ['GA4_PROPERTY_ID', 'GA_CLIENT_EMAIL', 'GA_PRIVATE_KEY'].filter((k) => !process.env[k]);
+  if (missing.length) {
+    const note = `Google not connected — missing env: ${missing.join(', ')}`;
+    await logRun(false, { error: note, missing });
+    return res.status(200).json({ ok: false, configured: false, missing, note });
+  }
   const propertyId = process.env.GA4_PROPERTY_ID;
-  if (!propertyId) return res.status(500).json({ error: 'GA4_PROPERTY_ID not set' });
 
   try {
     const token = await getAccessToken();
@@ -72,7 +106,11 @@ module.exports = async function handler(req, res) {
       }),
     });
     const rep = await rr.json();
-    if (!rr.ok) return res.status(502).json({ error: 'GA report failed', detail: JSON.stringify(rep).slice(0, 300) });
+    if (!rr.ok) {
+      const detail = JSON.stringify(rep).slice(0, 300);
+      await logRun(false, { error: 'GA report failed', detail });
+      return res.status(200).json({ ok: false, error: 'GA report failed', detail });
+    }
 
     const rows = (rep.rows || []).map((row) => {
       const d = row.dimensionValues[0].value; // YYYYMMDD
@@ -83,17 +121,26 @@ module.exports = async function handler(req, res) {
         updated_at: new Date().toISOString(),
       };
     });
-    if (!rows.length) return res.status(200).json({ ok: true, rows: 0, note: 'GA returned no rows' });
+    if (!rows.length) {
+      await logRun(true, { rows: 0, note: 'GA returned no rows' });
+      return res.status(200).json({ ok: true, rows: 0, note: 'GA returned no rows' });
+    }
 
     const up = await fetch(`${SUPABASE_URL}/rest/v1/analytics_daily?on_conflict=date`, {
       method: 'POST',
       headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify(rows),
     });
-    if (!up.ok) return res.status(502).json({ error: 'Upsert failed', detail: (await up.text()).slice(0, 200) });
+    if (!up.ok) {
+      const detail = (await up.text()).slice(0, 200);
+      await logRun(false, { error: 'Upsert failed', detail });
+      return res.status(200).json({ ok: false, error: 'Upsert failed', detail });
+    }
+    await logRun(true, { rows: rows.length });
     return res.status(200).json({ ok: true, rows: rows.length });
   } catch (e) {
     console.error('[ga-run]', e.message);
-    return res.status(500).json({ error: e.message });
+    await logRun(false, { error: e.message });
+    return res.status(200).json({ ok: false, error: e.message });
   }
 };

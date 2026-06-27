@@ -100,7 +100,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#080808;color:#fff;line
 .b-bundle{font-family:var(--mono);font-size:8px;background:var(--gld);color:#000;padding:3px 7px;border-radius:3px;letter-spacing:.05em;}
 .b-new{font-family:var(--mono);font-size:8px;background:var(--bl);color:#fff;padding:3px 7px;border-radius:3px;letter-spacing:.05em;}
 .pc-cat{font-family:var(--mono);font-size:9px;letter-spacing:.1em;}
-.cc-h{color:var(--g);}.cc-g{color:var(--bl);}.cc-c{color:#A78BFA;}.cc-m{color:var(--gld);}.cc-a{color:#F472B6;}.cc-s{color:var(--t3);}.cc-st{color:#FF8C42;}
+.cc-h{color:var(--g);}.cc-g{color:var(--bl);}.cc-c{color:#A78BFA;}.cc-m{color:var(--gld);}.cc-a{color:#F472B6;}.cc-s{color:var(--t3);}.cc-st{color:#01D3A0;}
 .pc-body{padding:0 18px 18px;flex:1;display:flex;flex-direction:column;}
 .pc-name{font-family:var(--disp);font-size:26px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;margin-bottom:3px;}
 .pc-full{font-size:11px;color:var(--t3);margin-bottom:8px;line-height:1.35;}
@@ -1434,13 +1434,13 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ft-disc{font-family:var(--mono);font-size:9px;color:var(--t4);line-height:1.55;}
 
 /* Compliance block */
-.compliance-block{background:rgba(245,200,66,.05);border-top:1px solid rgba(245,200,66,.15);border-bottom:1px solid rgba(245,200,66,.15);padding:14px 32px;}
+.compliance-block{background:rgba(245,200,66,.05);border-top:1px solid rgba(245,200,66,.15);border-bottom:1px solid rgba(245,200,66,.15);padding:14px 32px;margin-top:48px;}
 .cb-i{max-width:1280px;margin:0 auto;font-family:var(--mono);font-size:9px;color:rgba(245,200,66,.6);line-height:1.65;letter-spacing:.03em;}
 .cb-i a{color:rgba(245,200,66,.7);text-decoration:none;}
 .cb-i a:hover{text-decoration:underline;}
 
 /* Entry gate */
-.entry-gate{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(3,4,7,.97);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.entry-gate{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(3,4,7,.97);z-index:100001;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
 .eg-i{background:var(--bg3);border:1px solid var(--brd2);border-radius:var(--rl);padding:40px;max-width:540px;width:100%;position:relative;overflow:hidden;}
 .eg-i::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#01D3A0,#4A9FE0);}
 .eg-top{text-align:center;margin-bottom:20px;}
@@ -2141,6 +2141,28 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 /* =======================================================================
    HEADER v3 + TEAL BANNER FIX
 ======================================================================= */
+
+/* -- Worldwide shipping announcement (full-width, above the marquee) -- */
+#vpww{position:relative;display:block;width:100%;box-sizing:border-box;text-decoration:none;
+  background:linear-gradient(90deg,#021712 0%,#063b2c 45%,#01D3A0 140%);
+  border-bottom:1px solid rgba(1,211,160,.35);padding:11px 46px 11px 16px;
+  font-family:Inter,Arial,sans-serif;text-align:center;line-height:1.2;}
+#vpww .vpww-in{display:inline-flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;max-width:100%;}
+#vpww .vpww-globe{font-size:16px;line-height:1;}
+#vpww .vpww-lead{font-weight:900;letter-spacing:.06em;font-size:14px;color:#fff;text-transform:uppercase;}
+#vpww .vpww-sub{font-weight:600;font-size:12.5px;color:#bdeede;letter-spacing:.02em;}
+#vpww .vpww-cta{font-weight:800;font-size:12.5px;color:#021712;background:#01D3A0;border-radius:999px;padding:4px 12px;white-space:nowrap;}
+#vpww:hover .vpww-cta{background:#fff;}
+#vpww .vpww-x{position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:0;
+  color:rgba(255,255,255,.7);font-size:22px;line-height:1;cursor:pointer;padding:0 4px;}
+#vpww .vpww-x:hover{color:#fff;}
+@media(max-width:600px){
+  #vpww{padding:9px 40px 9px 12px;}
+  #vpww .vpww-in{gap:6px;}
+  #vpww .vpww-lead{font-size:12.5px;}
+  #vpww .vpww-sub{font-size:11px;flex-basis:100%;}
+  #vpww .vpww-cta{font-size:11.5px;padding:3px 10px;}
+}
 
 /* -- Teal announcement banner (VERY TOP of page) -- */
 .ann-bar{background:#01D3A0;border-bottom:none;padding:0;overflow:hidden;white-space:nowrap;line-height:1;}
@@ -2926,7 +2948,8 @@ a.eg-btn-p {
 }
 .cc-img {
   width: 100% !important;
-  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
   display: block !important;
 }
 .cc:hover .cc-img-wrap {
@@ -4396,7 +4419,7 @@ html { overflow-x: hidden !important; }
 /* ── 3. Homepage stacks section ─────────────────────────────────────────── */
 
 .hp-stacks-block {
-  border-top-color: rgba(255,107,0,.75) !important;
+  border-top-color: rgba(1,211,160,.75) !important;
 }
 
 .hp-stacks-inner {
@@ -4886,6 +4909,23 @@ body {
     width: 100px !important;
   }
 }
+/* ── 5b. Nav: mobile icon sizing + even spacing ── */
+@media (max-width: 767px) {
+  .nav-cart {
+    display: none !important;
+  }
+  .nav-ig svg {
+    flex-shrink: 0 !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+  .nav-ig {
+    padding: 8px 10px !important;
+  }
+  .nav-actions {
+    gap: 4px !important;
+  }
+}
 
 /* ── 6. Footer: single column at 479px and below ────────────── */
 @media (max-width: 479px) {
@@ -5092,25 +5132,25 @@ body.page-cat-oxidative .stack-comp-link,
 body.page-cat-oxidative .cpom-ic { color: #FF6B9D !important; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   STACKS ORANGE CTA COLOUR SYSTEM  #FF6B00
+   STACKS ORANGE CTA COLOUR SYSTEM  #01D3A0
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Stacks category tile (in cat-grid on homepage + catalogue) ── */
-a.cat-tile[href="/stacks/"]               { border: 1px solid rgba(255,107,0,.20) !important; }
-a.cat-tile[href="/stacks/"]:hover             { border-color: rgba(255,107,0,.40) !important; }
-a.cat-tile[href="/stacks/"] .cat-tile-name   { color: #fff !important; border-bottom: 1px solid rgba(255,107,0,.65); display: inline-block; padding-bottom: 2px; }
+a.cat-tile[href="/stacks/"]               { border: 1px solid rgba(1,211,160,.20) !important; }
+a.cat-tile[href="/stacks/"]:hover             { border-color: rgba(1,211,160,.40) !important; }
+a.cat-tile[href="/stacks/"] .cat-tile-name   { color: #fff !important; border-bottom: 1px solid rgba(1,211,160,.65); display: inline-block; padding-bottom: 2px; }
 
 /* ── Homepage stacks section — eyebrow label + primary CTA button + outline CTA ── */
-.hp-sec-stacks .hp-block-eyebrow { color: #FF6B00 !important; }
-.hp-stacks-cta.btn-p { background: #FF6B00 !important; border-color: #FF6B00 !important; color: #000 !important; }
-.hp-stacks-cta.btn-p:hover { background: #e05f00 !important; border-color: #e05f00 !important; }
-.hp-block-ft a.btn-o[href*="/stacks/"] { color: #FF6B00 !important; border-color: #FF6B00 !important; }
-.hp-block-ft a.btn-o[href*="/stacks/"]:hover { background: rgba(255,107,0,.08) !important; color: #FF6B00 !important; }
+.hp-sec-stacks .hp-block-eyebrow { color: #01D3A0 !important; }
+.hp-stacks-cta.btn-p { background: #01D3A0 !important; border-color: #01D3A0 !important; color: #000 !important; }
+.hp-stacks-cta.btn-p:hover { background: #00bf8f !important; border-color: #00bf8f !important; }
+.hp-block-ft a.btn-o[href*="/stacks/"] { color: #01D3A0 !important; border-color: #01D3A0 !important; }
+.hp-block-ft a.btn-o[href*="/stacks/"]:hover { background: rgba(1,211,160,.08) !important; color: #01D3A0 !important; }
 
 /* ── Stacks hub page — breadcrumb accent + "View stack →" links + hover glow ──
    These must appear after the per-category rules above to win via source order   */
-body.page-stacks-root .bc-current { color: #FF6B00 !important; }
-body.page-stacks-root article.stack-card .stack-card-action { color: #FF6B00 !important; }
+body.page-stacks-root .bc-current { color: #01D3A0 !important; }
+body.page-stacks-root article.stack-card .stack-card-action { color: #01D3A0 !important; }
 /* stack-card hover handled by unified rule above */
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -5925,3 +5965,60 @@ a.nl[href="/guides/"]::before {
 
 /* Whole product card clickable (JS navigates; inner links/buttons still work) */
 .cc{cursor:pointer;}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Neuropeptide & Sleep stack card — animated edge shimmer (reuses the
+   retatrutide flagship --proang / vpProSpin), replacing the plain glow.
+   ═══════════════════════════════════════════════════════════════════════════ */
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"]) {
+  position: relative;
+  border-color: transparent;
+  box-shadow: 0 0 24px -6px rgba(1,211,160,.45);
+}
+article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"])::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.6px; pointer-events: none; z-index: 4;
+  background: conic-gradient(from var(--proang),
+    rgba(1,211,160,.18) 0deg, rgba(1,211,160,.18) 80deg,
+    #01D3A0 120deg, #d8fff4 148deg, #ffffff 152deg, #d8fff4 156deg, #01D3A0 184deg,
+    rgba(1,211,160,.18) 232deg, rgba(1,211,160,.18) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: vpProSpin 3.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  article.stack-card:has(a[href*="/stacks/cognitive-and-sleep/"])::after { animation: none; }
+}
+
+/* Bundle/stack headline price — always brand green, never white (consistency guarantee) */
+.sc-price { color: #01D3A0 !important; }
+
+/* =======================================================================
+   NAV COLLAPSE + MOB-MENU FIX
+   Problem 1: 768–1024 px — nav-links + currency picker + icons all fight
+   for space, clipping the cart into the ann-bar area.
+   Fix: collapse nav-links to hamburger at ≤1024 px (same breakpoint the
+   search bar already hides at).
+
+   Problem 2: mob-menu was position:fixed;top:60px — ignores the ~30 px
+   ann-bar when the page is at the top, making the menu pop up INSIDE the
+   nav and overlap the account / cart icons.
+   Fix: position:absolute;top:100% so the menu always drops from the
+   bottom of .site-header. The sticky parent anchors it correctly at every
+   scroll position — no JS needed.
+======================================================================= */
+
+/* ── 1. Hamburger visible at ≤1024 px; collapse nav-links ───────────── */
+@media (max-width: 1024px) {
+  .site-header .hamburger { display: flex !important; }
+  .site-header .nav-links { display: none  !important; }
+  .mob-search              { display: block !important; margin: 0 0 10px; }
+}
+
+/* ── 2. Mob-menu drops from header bottom, not fixed 60 px from top ─── */
+.mob-menu {
+  position: absolute !important;  /* was: fixed */
+  top:      100%     !important;  /* = bottom of .site-header */
+}
+@media (max-width: 767px) {
+  .mob-menu { top: 100% !important; }  /* replaces hard-coded top:54px */
+}

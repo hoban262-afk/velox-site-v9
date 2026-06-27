@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
   if (!(await isAdmin(req))) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    const r = await sendPush({ title: 'Velox Admin — test alert', body: 'Push notifications are working. 🎉', url: '/admin/' });
+    const r = await sendPush({ title: 'Velox Admin — test alert', body: 'Push notifications are working. 🎉', url: '/admin/', category: 'test' });
     if (r && r.skipped) return res.status(500).json({ error: 'Push not configured (VAPID_PRIVATE_KEY missing on the server).' });
     return res.status(200).json({ ok: true, sent: (r && r.sent) || 0 });
   } catch (e) {
