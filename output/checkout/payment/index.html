@@ -376,6 +376,56 @@
       color: #d6dbe1;
       line-height: 1.55;
     }
+
+    /* ── International payment instructions ───────────────────────────────────
+       The amber "Pay by Bank above is instant" warning is UK-only (it refers to
+       the Fena card, which is hidden for international). Hide it and show clear,
+       step-by-step bank-transfer instructions instead. */
+    body.eu-checkout .bank-note-amber { display: none; }
+
+    .intl-pay-block { display: none; }
+    body.eu-checkout .intl-pay-block { display: block; }
+
+    .intl-amount {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+      background: #01D3A0; color: #04140f;
+      border-radius: 10px; padding: 14px 18px; margin: 0 0 18px;
+    }
+    .intl-amount-lbl { font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .intl-amount-val { font-size: 28px; font-weight: 900; font-family: 'DM Mono', monospace; line-height: 1; }
+
+    .intl-steps-h {
+      font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      color: #01D3A0; margin: 0 0 10px;
+    }
+    .intl-steps { list-style: none; counter-reset: ist; margin: 0 0 18px; padding: 0; }
+    .intl-steps li {
+      position: relative; counter-increment: ist;
+      padding: 0 0 0 38px; margin: 0 0 14px;
+      font-size: 13.5px; color: #d6dbe1; line-height: 1.55;
+    }
+    .intl-steps li::before {
+      content: counter(ist);
+      position: absolute; left: 0; top: -1px;
+      width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(1,211,160,.14); border: 1px solid rgba(1,211,160,.45);
+      color: #01D3A0; border-radius: 50%;
+      font-size: 13px; font-weight: 800; font-family: 'DM Mono', monospace;
+    }
+    .intl-steps li strong { color: #fff; }
+
+    .bank-details-h {
+      font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      color: #9CA3AF; margin: 4px 0 0;
+    }
+    /* Domestic sort code + account number are for UK only; international uses
+       IBAN + BIC (universal). Toggle which rows show per region. */
+    .bank-row-intl { display: none; }
+    body.eu-checkout .bank-row-intl { display: block; }
+    body.eu-checkout .bank-row-domestic { display: none; }
+    body.eu-checkout .bank-fallback-note { display: none; }
   </style>
 
   <!-- Open Graph -->
@@ -413,7 +463,7 @@
   <link rel="stylesheet" href="/assets/css/animations.css">
 
   <!-- JSON-LD -->
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "support@veloxpeps.com", "address": {"@type": "PostalAddress", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "addressCountry": "GB"}, "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeptides"]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Velox Peptides", "legalName": "CRP Labs Ltd", "url": "https://veloxpeps.com", "logo": "https://veloxpeps.com/assets/images/logo.png", "email": "support@veloxpeps.com", "address": {"@type": "PostalAddress", "streetAddress": "14 Seapark Avenue", "addressLocality": "Holywood", "addressRegion": "Northern Ireland", "postalCode": "BT18 0LL", "addressCountry": "GB"}, "telephone": "+447731804000", "identifier": {"@type": "PropertyValue", "propertyID": "UK Company Number", "value": "NI738125"}, "sameAs": ["https://www.instagram.com/veloxpeptides", "https://www.crunchbase.com/organization/velox-peptides", "https://www.trustpilot.com/review/veloxpeps.com", "https://www.pinterest.com/veloxpeps", "https://www.linkedin.com/company/veloxpeps"]}</script>
 
   <script defer src="/_vercel/insights/script.js"></script>
   <!-- Google tag (gtag.js) -->
@@ -429,14 +479,14 @@
 
 <div class="ann-bar" role="note" aria-label="Site announcements">
   <div class="ann-track-wrap" aria-hidden="true">
-    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
 
 <header class="site-header">
   <nav class="nav" aria-label="Primary">
     <a class="nav-logo" href="/" aria-label="Velox Peptides">
-      <img class="nav-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="auto">
+      <img class="nav-logo-img" src="/assets/images/veloxpeps2.png" alt="Velox Peptides" width="150" height="34">
     </a>
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
@@ -607,23 +657,46 @@
           <div class="co-err" id="co-err"></div>
 
           <!-- ── MANUAL BANK TRANSFER FALLBACK ─────────────────────── -->
-          <details class="bank-fallback">
+          <p style="font-size:13px;color:#6b7280;margin:16px 0 8px;text-align:center;">No banking app? Can't use open banking? <a href="#bank-transfer" onclick="document.getElementById('bank-transfer-details').open=true;document.getElementById('bank-transfer-details').scrollIntoView({behavior:'smooth'});return false;" style="color:#01D3A0;text-decoration:underline;">Pay by manual bank transfer instead ↓</a></p>
+          <details class="bank-fallback" id="bank-transfer-details">
             <summary>Prefer to pay by manual bank transfer?</summary>
             <div class="bank-fallback-body">
-              <p class="eu-pay-intro"><strong style="color:#01D3A0">Pay by bank transfer.</strong> For EU orders we take payment by direct bank transfer using the IBAN below. Use your order ID as the reference and we dispatch as soon as it clears (Faster Payments / SEPA usually 1&ndash;2 working days).</p>
+              <p class="eu-pay-intro"><strong style="color:#01D3A0">How to pay — international orders.</strong> We accept payment by bank transfer in GBP. Follow the three steps below — it only takes a minute.</p>
+
+              <!-- UK manual-transfer warning (hidden for international, which has no Fena option) -->
               <div class="bank-note-amber">
                 <strong>⚠ Manual transfer is slower - and your order isn't reserved until we receive it.</strong><br>
                 <strong style="color:#01D3A0">Pay by Bank above is instant, confirmed in seconds, and ships the same working day.</strong> Choose manual transfer only if you can't use it. Stock is held for <strong>24 hours</strong> - if payment hasn't arrived by then the order is released and your items may sell out. Please send the exact amount using your order ID as the reference.
               </div>
 
+              <!-- International-only: clear amount + step-by-step instructions -->
+              <div class="intl-pay-block">
+                <div class="intl-amount">
+                  <span class="intl-amount-lbl">Amount to send</span>
+                  <span class="intl-amount-val" id="intl-amount-val">&pound;0.00</span>
+                </div>
+
+                <div class="intl-steps-h">What to do</div>
+                <ol class="intl-steps">
+                  <li><strong>Confirm your order</strong> using the button below. You'll get an order ID (e.g. VP-XXXX) on the next page and by email.</li>
+                  <li><strong>Transfer the exact amount above in GBP</strong> to the account shown. Cover any sender/intermediary fees so the full total reaches us.</li>
+                  <li><strong>Use your order ID as the payment reference</strong> so we can match your payment and dispatch.</li>
+                </ol>
+                <div class="intl-steps-h" style="color:#9CA3AF">Then what?</div>
+                <p style="font-size:13px;color:#9CA3AF;line-height:1.55;margin:0 0 18px">We ship via Royal Mail International Tracked as soon as your payment clears — international transfers usually arrive within <strong style="color:#d6dbe1">1&ndash;3 working days</strong>. Stock is held for <strong style="color:#d6dbe1">72 hours</strong> while we wait for payment.</p>
+                <div class="bank-details-h">Pay to</div>
+              </div>
+
               <dl class="pay-bank-dl">
                 <div><dt>Account name</dt><dd>CRP Labs Ltd</dd></div>
-                <div><dt>Bank</dt><dd>Zempler Bank</dd></div>
-                <div><dt>Sort code</dt><dd class="mono-teal">08-71-99</dd></div>
-                <div><dt>Account number</dt><dd class="mono-teal">14617029</dd></div>
-                <div><dt>Reference</dt><dd>Your order ID - shown in your confirmation email</dd></div>
+                <div class="bank-row-intl"><dt>IBAN</dt><dd class="mono-teal">GB76 APSF 0871 9914 6170 29</dd></div>
+                <div class="bank-row-intl"><dt>BIC / SWIFT</dt><dd class="mono-teal">APSFGB2LXXX</dd></div>
+                <div><dt>Bank</dt><dd>Zempler Bank <small style="color:#9CA3AF;font-size:11px;display:block;margin-top:2px;">FCA-authorised UK bank (formerly Cashplus) — same regulatory body as Barclays &amp; HSBC. <a href="https://register.fca.org.uk/s/firm?id=001b000000MfnWNAAZ" rel="noopener" target="_blank" style="color:#01D3A0;">FCA register ↗</a></small></dd></div>
+                <div class="bank-row-domestic"><dt>Sort code</dt><dd class="mono-teal">08-71-99</dd></div>
+                <div class="bank-row-domestic"><dt>Account number</dt><dd class="mono-teal">14617029</dd></div>
+                <div><dt>Reference</dt><dd>Your order ID - shown after you confirm</dd></div>
               </dl>
-              <p class="bank-fallback-note">For EU orders: IBAN GB76APSF08719914617029 &middot; BIC APSFGB2LXXX &middot; Please transfer in GBP where possible. Faster Payments typically clear within 1&ndash;2 hours.</p>
+              <p class="bank-fallback-note">For international orders: IBAN GB76APSF08719914617029 &middot; BIC APSFGB2LXXX &middot; Please transfer in GBP. International transfers typically clear within 1&ndash;3 working days.</p>
 
               <button type="submit" id="bank-pay-btn">CONFIRM ORDER (MANUAL TRANSFER) &rarr;</button>
             </div>
@@ -685,11 +758,12 @@
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-logo-wordmark">Velox Peptides</div>
-        <p class="ft-tag">Research peptide supplier - shipping to UK &amp; EU. HPLC-verified, dispatched from Northern Ireland.</p>
+        <p class="ft-tag">Research peptide supplier - shipping worldwide. HPLC-verified, dispatched from the UK.</p>
         <address class="ft-address">
           CRP Labs Ltd<br>
           Company no. NI738125<br>
-          Holywood, Northern Ireland, United Kingdom<br>
+          14 Seapark Avenue, Holywood, Northern Ireland, BT18 0LL, United Kingdom<br>
+          <a href="tel:+447731804000">07731 804000</a><br>
           <a href="mailto:support@veloxpeps.com">support@veloxpeps.com</a>
         </address>
       </div>
@@ -789,6 +863,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="/assets/js/core.js"></script>
+<script src="/assets/js/currency.js" defer></script>
 <script src="/assets/js/discount-codes.js"></script>
 <script src="/assets/js/pricing.js" defer></script>
 <script src="/assets/js/checkout.js"></script>
@@ -1115,28 +1190,41 @@
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
   <script>
-  /* EU orders: Fena (UK open banking) can't process them, so hide Fena and make
-     bank transfer the primary method. Region is stored by the checkout step. */
+  /* International orders: Fena (UK open banking) can't process them, so hide Fena
+     and make bank transfer the primary method. Region is stored by the checkout step. */
   (function () {
     function readChk() {
       try { return JSON.parse(sessionStorage.getItem('vp_checkout') || localStorage.getItem('vp_checkout') || '{}'); }
       catch (e) { return {}; }
     }
-    function isEU() { return String((readChk().region || '')).toUpperCase() === 'EU'; }
+    function isIntl() { var r = String((readChk().region || '')).toUpperCase(); return r === 'INTL' || r === 'EU'; }
+    // Mirror the live order total into the prominent "Amount to send" badge.
+    function syncIntlAmount() {
+      var val = document.getElementById('intl-amount-val');
+      var total = document.getElementById('co-total');
+      if (val && total && total.textContent.trim()) val.textContent = total.textContent.trim();
+    }
     function apply() {
-      if (!isEU()) return;
+      if (!isIntl()) return;
       document.body.classList.add('eu-checkout');
-      // Page heading + lede are Fena-specific — rewrite for EU bank transfer.
+      // Page heading + lede are Fena-specific — rewrite for international bank transfer.
       var h1 = document.querySelector('.page-h1');
       if (h1) h1.textContent = 'Pay by bank transfer';
       var lede = document.querySelector('.page-lede');
-      if (lede) lede.textContent = 'Pay securely by direct bank transfer using the IBAN below. Add your order ID as the reference and we dispatch as soon as it clears.';
+      if (lede) lede.textContent = 'International orders are paid by bank transfer in GBP. Confirm your order, then send the exact total using your order ID as the reference.';
       var bf = document.querySelector('.bank-fallback');
       if (bf) {
         bf.open = true;                                  // always-open primary panel
         var sum = bf.querySelector('summary');
         if (sum) sum.textContent = 'Pay by bank transfer';
       }
+      var btn = document.getElementById('bank-pay-btn');
+      if (btn) btn.textContent = 'CONFIRM ORDER & GET PAYMENT DETAILS →';
+      syncIntlAmount();
+      // Totals are rendered by checkout.js after this runs; re-sync shortly + on reprice.
+      setTimeout(syncIntlAmount, 150);
+      setTimeout(syncIntlAmount, 600);
+      try { document.addEventListener('vp:cart-repriced', syncIntlAmount); } catch (e) {}
     }
     if (document.readyState !== 'loading') apply();
     else document.addEventListener('DOMContentLoaded', apply);

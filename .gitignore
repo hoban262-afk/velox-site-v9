@@ -3,3 +3,4 @@
 .env.local
 .env*.local
 scripts/.prices_cache.json
+.obsidian/

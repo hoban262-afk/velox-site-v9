@@ -2,7 +2,7 @@
   'use strict';
 
   var SHIPPING_FLAT = 3.80;
-  var FREE_THRESHOLD = 100;
+  var FREE_THRESHOLD = 0;   // SALE WEEK: free UK shipping site-wide. RESTORE TO 100 after.
 
   function getCart() {
     try {
@@ -126,6 +126,11 @@
 
     // Free-shipping progress nudge — based on the pre-discount subtotal (matches checkout & the '£80' promise).
     renderFreeShipNudge(subtotal);
+
+    // Tell currency.js the cart was just re-rendered (in GBP) so it can re-apply
+    // the selected currency. Without this, qty changes / member / reprice events
+    // leave the totals + discount lines in GBP while the selector says e.g. AUD.
+    try { document.dispatchEvent(new CustomEvent('vp:cart-rendered')); } catch (e) {}
   }
 
   function renderPackVolumeRow(saving, rate) {
