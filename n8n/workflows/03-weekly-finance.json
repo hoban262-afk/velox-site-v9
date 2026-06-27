@@ -1,0 +1,152 @@
+{
+  "name": "Velox · Weekly Finance",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Mondays 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Run now (watch it)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://veloxpeps.com/api/agents/weekly-finance",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "call-agent",
+      "name": "Call Velox agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "velox-cron-secret",
+          "name": "Velox CRON_SECRET"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "agent_actions",
+        "returnAll": false,
+        "limit": 5,
+        "filterType": "string",
+        "filterString": "order=created_at.desc"
+      },
+      "id": "read-back",
+      "name": "Read what it produced",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        760,
+        300
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "velox-supabase-service",
+          "name": "Velox Supabase service-role"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Show the freshest actions this agent just dropped into the approval inbox\nconst rows = $input.first().json;\nconst list = Array.isArray(rows) ? rows : [rows];\nreturn list.map(r => ({ json: {\n  when: r.created_at,\n  agent: r.agent || r.source || 'weekly-finance',\n  title: r.title || r.summary || '(no title)',\n  status: r.status,\n  preview: typeof r.payload === 'object' ? JSON.stringify(r.payload).slice(0, 280) : String(r.payload || '').slice(0, 280)\n}}));"
+      },
+      "id": "format",
+      "name": "Format for viewing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Mondays 09:00": {
+      "main": [
+        [
+          {
+            "node": "Call Velox agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run now (watch it)": {
+      "main": [
+        [
+          {
+            "node": "Call Velox agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Velox agent": {
+      "main": [
+        [
+          {
+            "node": "Read what it produced",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read what it produced": {
+      "main": [
+        [
+          {
+            "node": "Format for viewing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "velox"
+    }
+  ]
+}

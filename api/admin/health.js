@@ -21,6 +21,7 @@ const WORKERS = [
   { key: 'restock',   label: 'Back in stock',      schedule: 'every 15 min' },
   { key: 'reorder',   label: 'Replenishment',      schedule: 'daily' },
   { key: 'review',    label: 'Review request',     schedule: 'daily' },
+  { key: 'ga',        label: 'GA4 analytics sync',  schedule: 'daily' },
 ];
 
 async function isAdmin(req) {
@@ -63,6 +64,7 @@ module.exports = async function handler(req, res) {
     { key: 'xero',      label: 'Xero accounting',       ok: has('XERO_CLIENT_ID') && has('XERO_CLIENT_SECRET') },
     { key: 'clickdrop', label: 'Royal Mail Click & Drop', ok: has('CLICKANDDROP_API_KEY') },
     { key: 'whatsapp',  label: 'WhatsApp alerts',       ok: has('TWILIO_ACCOUNT_SID') && has('TWILIO_AUTH_TOKEN') },
+    { key: 'ga4',       label: 'Google Analytics (GA4)', ok: has('GA4_PROPERTY_ID') && has('GA_CLIENT_EMAIL') && has('GA_PRIVATE_KEY') },
   ];
 
   return res.status(200).json({ workers, integrations, generated_at: new Date().toISOString() });
