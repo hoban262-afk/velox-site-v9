@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Delivery Details - Checkout - Velox Peptides</title>
-  <meta name="description" content="Enter your delivery address. UK: Royal Mail Tracked 24. EU: Royal Mail International Tracked.">
+  <meta name="description" content="Enter your delivery address. UK: Royal Mail Tracked 24. Worldwide: Royal Mail International Tracked.">
   <style>
     .region-btns { display:flex; gap:8px; margin-bottom:20px; }
     .region-btn {
@@ -17,13 +17,8 @@
     .region-btn-active { border-color:#01D3A0 !important; color:#01D3A0 !important; }
     .f-select { width:100%; background:#0d0d0d; border:1px solid #1F2937; border-radius:6px; color:#F9FAFB; font-size:14px; padding:10px 12px; appearance:none; -webkit-appearance:none; }
     .f-select:focus { outline:none; border-color:#01D3A0; }
-    .eu-compliance-wrap { margin-top:12px; }
-    .eu-gc-notice {
-      margin-bottom:12px; padding:10px 14px;
-      background:#1a0f00; border:1px solid #FF6B00; border-radius:6px;
-      color:#FF6B00; font-size:13px; line-height:1.5;
-    }
-    #eu-region-note {
+    .intl-compliance-wrap { margin-top:12px; }
+    #intl-region-note {
       display:none; margin:-10px 0 16px;
       padding:8px 12px; background:#1a0f00; border:1px solid #FF6B00;
       border-radius:6px; color:#FF6B00; font-size:12px; line-height:1.5;
@@ -37,7 +32,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veloxpeps.com/checkout/shipping/">
   <meta property="og:title" content="Delivery Details - Checkout - Velox Peptides">
-  <meta property="og:description" content="Enter your UK delivery address. Royal Mail Tracked 24, UK only.">
+  <meta property="og:description" content="Enter your delivery address. UK: Royal Mail Tracked 24. Worldwide: Royal Mail International Tracked.">
   <meta property="og:image" content="https://veloxpeps.com/assets/images/og-default.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -46,7 +41,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Delivery Details - Checkout - Velox Peptides">
-  <meta name="twitter:description" content="Enter your UK delivery address. Royal Mail Tracked 24, UK only.">
+  <meta name="twitter:description" content="Enter your delivery address. UK: Royal Mail Tracked 24. Worldwide: Royal Mail International Tracked.">
   <meta name="twitter:image" content="https://veloxpeps.com/assets/images/og-default.png">
 
   <!-- Icons and manifest -->
@@ -87,7 +82,7 @@
 
 <div class="ann-bar" role="note" aria-label="Site announcements">
   <div class="ann-track-wrap" aria-hidden="true">
-    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
 
@@ -169,23 +164,23 @@
     <div class="co-grid">
       <div class="co-form-col">
         <h1 class="page-h1">Delivery details</h1>
-        <p class="page-lede">Choose your region below. UK orders dispatch within 24 hours via Royal Mail Tracked 24. EU orders ship via Royal Mail International Tracked.</p>
+        <p class="page-lede">Choose your region below. UK orders dispatch within 24 hours via Royal Mail Tracked 24. International orders ship worldwide via Royal Mail International Tracked.</p>
 
         <form id="shipping-form" class="co-form" novalidate>
 
           <h2 class="sec-t">Shipping region</h2>
           <div class="region-btns">
             <button type="button" class="region-btn region-btn-active" id="region-uk">🇬🇧 United Kingdom</button>
-            <button type="button" class="region-btn" id="region-eu">🌍 EU &amp; Europe</button>
+            <button type="button" class="region-btn" id="region-intl">🌍 Rest of World</button>
           </div>
-          <div id="eu-region-note">🌍 EU orders: bank transfer using IBAN/BIC details shown at the payment step.</div>
+          <div id="intl-region-note">🌍 International orders: pay by bank transfer using the GBP IBAN/BIC details shown at the payment step.</div>
 
           <h2 class="sec-t">Contact</h2>
           <div class="f-grid-2">
             <div class="f-row"><label class="f-lbl" for="sh-fname">First name *</label><input class="f-inp" id="sh-fname" name="fname" required></div>
             <div class="f-row"><label class="f-lbl" for="sh-lname">Last name *</label><input class="f-inp" id="sh-lname" name="lname" required></div>
             <div class="f-row f-full"><label class="f-lbl" for="sh-email">Email address *</label><input class="f-inp" id="sh-email" name="email" type="email" required></div>
-            <div class="f-row f-full"><label class="f-lbl" for="sh-phone">Mobile number *</label><input class="f-inp" id="sh-phone" name="phone" type="tel" required placeholder="+44 7..."></div>
+            <div class="f-row f-full"><label class="f-lbl" for="sh-phone">Mobile number <span style="font-weight:400;color:#6b7280;font-size:12px;">(optional)</span></label><input class="f-inp" id="sh-phone" name="phone" type="tel" placeholder="+44 7..."></div>
           </div>
 
           <h2 class="sec-t">Delivery address</h2>
@@ -195,39 +190,10 @@
             <div class="f-row"><label class="f-lbl" for="sh-city">City *</label><input class="f-inp" id="sh-city" name="city" required></div>
             <div class="f-row"><label class="f-lbl" for="sh-post">Postcode *</label><input class="f-inp" id="sh-post" name="postcode" required></div>
             <div id="uk-country-wrap" class="f-row f-full"><label class="f-lbl" for="sh-country">Country</label><input class="f-inp" id="sh-country" name="country" value="United Kingdom" readonly></div>
-            <div id="eu-country-wrap" class="f-row f-full" style="display:none">
-              <label class="f-lbl" for="sh-eu-country">Country *</label>
-              <select class="f-select" id="sh-eu-country" name="eu_country">
+            <div id="intl-country-wrap" class="f-row f-full" style="display:none">
+              <label class="f-lbl" for="sh-intl-country">Country *</label>
+              <select class="f-select" id="sh-intl-country" name="intl_country">
                 <option value="">Select your country…</option>
-                <optgroup label="── EU countries ──">
-                  <option>Austria</option>
-                  <option>Belgium</option>
-                  <option>Bulgaria</option>
-                  <option>Croatia</option>
-                  <option>Cyprus</option>
-                  <option>Czech Republic</option>
-                  <option>Denmark</option>
-                  <option>Estonia</option>
-                  <option>Finland</option>
-                  <option>Greece</option>
-                  <option>Hungary</option>
-                  <option>Iceland</option>
-                  <option>Italy</option>
-                  <option>Latvia</option>
-                  <option>Lithuania</option>
-                  <option>Luxembourg</option>
-                  <option>Malta</option>
-                  <option>Netherlands</option>
-                  <option>Norway</option>
-                  <option>Poland</option>
-                  <option>Portugal</option>
-                  <option>Romania</option>
-                  <option>Slovakia</option>
-                  <option>Slovenia</option>
-                  <option>Spain</option>
-                  <option>Sweden</option>
-                  <option>Switzerland</option>
-                </optgroup>
               </select>
             </div>
           </div>
@@ -235,30 +201,30 @@
           <h2 class="sec-t">Delivery method</h2>
           <div class="ship-opts" id="ship-uk">
             <label class="ship-opt">
-              <input type="radio" name="shipping" value="48" checked>
-              <div class="ship-opt-main">
-                <div class="ship-opt-name">Royal Mail Tracked 48</div>
-                <div class="ship-opt-sub">2–3 working days, tracked. UK only.</div>
-              </div>
-              <div class="ship-opt-price" id="ship-price-48">£3.80</div>
-            </label>
-            <label class="ship-opt">
-              <input type="radio" name="shipping" value="24">
+              <input type="radio" name="shipping" value="24" checked>
               <div class="ship-opt-main">
                 <div class="ship-opt-name">Royal Mail Tracked 24</div>
                 <div class="ship-opt-sub">1–2 working days, tracked. UK only. Free over £100.</div>
               </div>
               <div class="ship-opt-price" id="ship-price-24">£5.99</div>
             </label>
+            <label class="ship-opt">
+              <input type="radio" name="shipping" value="48">
+              <div class="ship-opt-main">
+                <div class="ship-opt-name">Royal Mail Tracked 48</div>
+                <div class="ship-opt-sub">2–3 working days, tracked. UK only.</div>
+              </div>
+              <div class="ship-opt-price" id="ship-price-48">£3.80</div>
+            </label>
           </div>
-          <div class="ship-opts" id="ship-eu" style="display:none">
+          <div class="ship-opts" id="ship-intl" style="display:none">
             <label class="ship-opt">
               <input type="radio" name="shipping" value="intl">
               <div class="ship-opt-main">
                 <div class="ship-opt-name">Royal Mail International Tracked</div>
-                <div class="ship-opt-sub">3–5 working days, tracked. EU &amp; Europe.</div>
+                <div class="ship-opt-sub" id="ship-intl-sub">Tracked worldwide — select your country for the exact rate.</div>
               </div>
-              <div class="ship-opt-price" id="ship-price-eu">€9.99</div>
+              <div class="ship-opt-price" id="ship-price-intl">£9.99</div>
             </label>
           </div>
 
@@ -267,9 +233,9 @@
             <span>I confirm this order is for <strong>in vitro research use only</strong> and I have read the <a href="/legal/research-use-policy/" target="_blank">Research Use Policy</a>.</span>
           </label>
 
-          <div id="eu-compliance-wrap" style="display:none" class="eu-compliance-wrap">
+          <div id="intl-compliance-wrap" style="display:none" class="intl-compliance-wrap">
             <label class="co-ack">
-              <input type="checkbox" name="eu-compliance" required>
+              <input type="checkbox" name="intl-compliance" required>
               <span>I confirm I am responsible for compliance with all local import regulations in my country. This product is for in vitro research use only and I accept full responsibility for its importation and lawful use.</span>
             </label>
           </div>
@@ -286,7 +252,7 @@
         <div id="co-cart-items"></div>
         <div class="co-sum-rows">
           <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">£0.00</span></div>
-          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">£3.80</span></div>
+          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">£5.99</span></div>
           <div class="co-sum-row co-discount-line" id="co-discount-line" style="display:none"><span>Discount (<span id="co-discount-label"></span>)</span><span id="co-discount-amount" class="co-discount-saving">−£0.00</span></div>
           <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">£3.80</span></div>
         </div>
@@ -309,7 +275,7 @@
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-logo-wordmark">Velox Peptides</div>
-        <p class="ft-tag">Research peptide supplier - shipping to UK &amp; EU. HPLC-verified, dispatched from the UK.</p>
+        <p class="ft-tag">Research peptide supplier - shipping worldwide. HPLC-verified, dispatched from the UK.</p>
         <address class="ft-address">
           CRP Labs Ltd<br>
           Company no. NI738125<br>

@@ -107,7 +107,7 @@
 
 <div class="ann-bar" role="note" aria-label="Site announcements">
   <div class="ann-track-wrap" aria-hidden="true">
-    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;EU SHIPPING AVAILABLE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
+    <span class="ann-track">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span><span class="ann-track" aria-hidden="true">FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FOR RESEARCH USE ONLY&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;FREE UK SHIPPING OVER &pound;100&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;WORLDWIDE SHIPPING NOW LIVE&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;HPLC VERIFIED&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;BATCH DOCUMENTATION ON REQUEST&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;&nbsp;</span>
   </div>
 </div>
 
@@ -296,7 +296,7 @@
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-logo-wordmark">Velox Peptides</div>
-        <p class="ft-tag">Research peptide supplier - shipping to UK &amp; EU. HPLC-verified, dispatched from the UK.</p>
+        <p class="ft-tag">Research peptide supplier - shipping worldwide to 60+ countries. HPLC-verified, dispatched from the UK.</p>
         <address class="ft-address">
           CRP Labs Ltd<br>
           Company no. NI738125<br>
@@ -406,8 +406,6 @@
 (function () {
   'use strict';
 
-  var EU_FX_RATE = 1.18;
-
   function getChk() {
     // sessionStorage is wiped when the mobile bank-app redirect returns in a
     // fresh context, so fall back to the localStorage mirror written pre-redirect.
@@ -480,10 +478,10 @@
   showState('loading');
 
   // ── Derive region/currency early ───────────────────────────────────────────
-  var pcRegion       = chk.region   === 'EU' ? 'EU' : 'UK';
-  var pcCurrency     = chk.currency === 'EUR' ? 'EUR' : 'GBP';
-  var currSym        = pcCurrency === 'EUR' ? '€' : '£';
-  var shippingMethod = pcRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+  var pcRegion       = (chk.region === 'EU' || chk.region === 'INTL') ? 'INTL' : 'UK';
+  var pcCurrency     = 'GBP';
+  var currSym        = '£';
+  var shippingMethod = pcRegion === 'INTL' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
 
   // Build cart from localStorage (live) or sessionStorage snapshot
   var confirmedCart = [];
@@ -499,11 +497,9 @@
 
   function buildProductsList() {
     return confirmedCart.map(function (item) {
-      var price = pcRegion === 'EU'
-        ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-        : item.price * (item.qty || 1);
+      var price = item.price * (item.qty || 1);
       return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-             ' - ' + fmt(price, currency);
+             ' - ' + fmt(price, pcCurrency);
     }).join('\n');
   }
 
@@ -515,7 +511,7 @@
       var key = 'vp_purchase_fired:' + ref;
       if (localStorage.getItem(key)) return;
       var items = (confirmedCart || []).map(function (it) {
-        var unit = pcRegion === 'EU' ? Math.round(it.price * EU_FX_RATE * 100) / 100 : it.price;
+        var unit = it.price;
         return { item_id: it.slug || it.name, item_name: it.name, item_variant: it.size || '', price: unit, quantity: it.qty || 1 };
       });
       if (typeof gtag === 'function') {
@@ -571,8 +567,8 @@
       discInfo.textContent  = chk.discount_code + ' (−' + fmt(chk.discount_saving || 0, pcCurrency) + ')';
     }
 
-    // EU delivery timeline
-    if (pcRegion === 'EU') {
+    // International delivery timeline
+    if (pcRegion === 'INTL') {
       var tlItems = document.querySelectorAll('.co-tl-body');
       tlItems.forEach(function (el) {
         var strong = el.querySelector('strong');
@@ -581,8 +577,8 @@
           if (span) span.textContent = 'Sent via Royal Mail International Tracked. You\'ll receive a dispatch email with your tracking number.';
         }
         if (strong && strong.textContent.indexOf('Delivered') !== -1) {
-          strong.textContent = 'Delivered in 3–5 working days';
-          if (span) span.textContent = 'Royal Mail International Tracked to your delivery address.';
+          strong.textContent = 'Delivered by international tracked post';
+          if (span) span.textContent = 'Royal Mail International Tracked to your delivery address — typically 3–14 working days depending on destination.';
         }
       });
     }
@@ -592,13 +588,11 @@
     if (sumEl && confirmedCart.length) {
       var html = '<ul class="co-cart-list">';
       confirmedCart.forEach(function (item) {
-        var price = pcRegion === 'EU'
-          ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-          : item.price * (item.qty || 1);
+        var price = item.price * (item.qty || 1);
         html += '<li class="co-cart-row">' +
           '<span class="co-cart-name">' + escHtml(item.name) +
           ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-          '<span class="co-cart-price">' + fmt(price, currency) + '</span>' +
+          '<span class="co-cart-price">' + fmt(price, pcCurrency) + '</span>' +
           '</li>';
       });
       html += '</ul>';
