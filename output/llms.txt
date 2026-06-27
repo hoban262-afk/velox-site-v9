@@ -19,6 +19,7 @@ Key facts: every batch is HPLC-verified with certificates of analysis available 
 
 - [Retatrutide research overview](https://veloxpeps.com/guides/retatrutide/): mechanism, receptor pharmacology, and published TRIUMPH-1 Phase 3 (2026) trial data
 - [Retatrutide side effects &amp; tolerability](https://veloxpeps.com/guides/retatrutide-side-effects/): summary of adverse-event and tolerability data reported across the retatrutide Phase 2/3 trial programme
+- [Retatrutide FDA Expanded Access 2026](https://veloxpeps.com/guides/retatrutide-expanded-access-2026/): June 2026 compassionate-use grant explained — what FDA expanded access (21 CFR 312.310) is, why it was granted for one patient outside Phase 3, and what it signals for the NDA/approval timeline (2027–2028 earliest)
 - [Tirzepatide guide](https://veloxpeps.com/guides/tirzepatide/): dual-agonist incretin research summary
 - [Ipamorelin guide](https://veloxpeps.com/guides/ipamorelin/): ghrelin-receptor research summary
 - [Retatrutide in Type 2 Diabetes: TRANSCEND-T2D-1](https://veloxpeps.com/guides/retatrutide-type-2-diabetes/): Phase 3 trial data (The Lancet, June 2026) — A1C reduction and weight loss in early-onset T2D
