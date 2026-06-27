@@ -2,64 +2,69 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <!-- Homepage -->
-  <url><loc>https://veloxpeps.com/</loc><lastmod>2026-05-18</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://veloxpeps.com/</loc><lastmod>2026-05-18</lastmod></url>
 
   <!-- Compounds hub -->
-  <url><loc>https://veloxpeps.com/compounds/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/</loc><lastmod>2026-05-18</lastmod></url>
 
   <!-- Category hub pages (canonical URLs — the old /*-research/ slugs 301-redirect here, so list the destinations) -->
-  <url><loc>https://veloxpeps.com/compounds/cognitive/</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/metabolic/</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/recovery/</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/growth/</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/antioxidant/</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/cognitive/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/metabolic/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/recovery/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/growth/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/antioxidant/</loc><lastmod>2026-06-08</lastmod></url>
 
   <!-- Individual compound pages -->
-  <url><loc>https://veloxpeps.com/compounds/retatrutide/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/bpc-157/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/tb-500/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/bpc157-tb500-mix/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/selank/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/semax/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/dsip/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/ghk-cu/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/glutathione/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/nad-plus/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/mots-c/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/cjc-1295/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/tesamorelin/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-<url><loc>https://veloxpeps.com/compounds/ipamorelin/</loc><lastmod>2026-06-07</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/compounds/kpv/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://veloxpeps.com/compounds/retatrutide/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/bpc-157/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/tb-500/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/bpc157-tb500-mix/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/selank/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/semax/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/dsip/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/ghk-cu/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/glutathione/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/nad-plus/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/mots-c/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/cjc-1295/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/tesamorelin/</loc><lastmod>2026-05-18</lastmod></url>
+<url><loc>https://veloxpeps.com/compounds/ipamorelin/</loc><lastmod>2026-06-07</lastmod></url>
+  <url><loc>https://veloxpeps.com/compounds/kpv/</loc><lastmod>2026-05-18</lastmod></url>
 
   <!-- Supplies -->
-  <url><loc>https://veloxpeps.com/supplies/bacteriostatic-water/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://veloxpeps.com/supplies/bacteriostatic-water/</loc><lastmod>2026-05-18</lastmod></url>
 
   <!-- Research Bundles hub -->
-  <url><loc>https://veloxpeps.com/stacks/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/stacks/</loc><lastmod>2026-05-18</lastmod></url>
 
   <!-- Individual research bundle pages -->
-  <url><loc>https://veloxpeps.com/stacks/cognitive/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/cognitive-and-sleep/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/gh-peptide/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/anti-ageing/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/metabolic/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/skin-and-aesthetic/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/ultimate-repair/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/repair-and-metabolic/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/stacks/gh-and-metabolic/</loc><lastmod>2026-05-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://veloxpeps.com/stacks/cognitive/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/cognitive-and-sleep/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/gh-peptide/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/anti-ageing/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/metabolic/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/skin-and-aesthetic/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/ultimate-repair/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/repair-and-metabolic/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/stacks/gh-and-metabolic/</loc><lastmod>2026-05-18</lastmod></url>
 
   <!-- Research library -->
-  <url><loc>https://veloxpeps.com/guides/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/retatrutide/</loc><lastmod>2026-06-06</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/tirzepatide/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/ipamorelin/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/retatrutide-type-2-diabetes/</loc><lastmod>2026-06-10</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/peptide-research-landscape-2026/</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/guides/surmount-5-tirzepatide-vs-semaglutide/</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/survodutide/</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/retatrutide-sleep-apnea/</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/retatrutide-osteoarthritis/</loc><lastmod>2026-06-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/guides/fda-peptide-reclassification-2026/</loc><lastmod>2026-06-12</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://veloxpeps.com/guides/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide/</loc><lastmod>2026-06-06</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/tirzepatide/</loc><lastmod>2026-06-07</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/ipamorelin/</loc><lastmod>2026-06-07</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-type-2-diabetes/</loc><lastmod>2026-06-10</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/peptide-research-landscape-2026/</loc><lastmod>2026-06-15</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/surmount-5-tirzepatide-vs-semaglutide/</loc><lastmod>2026-06-15</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/survodutide/</loc><lastmod>2026-06-15</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-sleep-apnea/</loc><lastmod>2026-06-14</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-osteoarthritis/</loc><lastmod>2026-06-13</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/fda-peptide-reclassification-2026/</loc><lastmod>2026-06-12</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/pcac-july-2026-peptide-hearing/</loc><lastmod>2026-06-24</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/pcac-july-2026-bpc-157-tb-500/</loc><lastmod>2026-06-25</lastmod></url>
+
+  <!-- Daily article — 2026-06-21 -->
+  <url><loc>https://veloxpeps.com/guides/retatrutide-cardiometabolic-trial-data/</loc><lastmod>2026-06-21</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- Research library — full guide set (added 2026-06-17) -->
   <url><loc>https://veloxpeps.com/guides/retatrutide-triumph-1/</loc><lastmod>2026-06-17</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -104,38 +109,86 @@
   <url><loc>https://veloxpeps.com/guides/what-are-research-peptides/</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://veloxpeps.com/guides/what-makes-a-peptide-novel/</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://veloxpeps.com/guides/glossary/</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-fda-approval-timeline/</loc><lastmod>2026-06-23</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-triumph-1/</loc><lastmod>2026-06-17</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/glp-1-physical-activity-endo-2026/</loc><lastmod>2026-06-17</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-clinical-research/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-mechanism-of-action/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-peptide-uk/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-reconstitution-and-dosing/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-side-effects/</loc><lastmod>2026-06-21</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-expanded-access-2026/</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-vs-ozempic/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-vs-tirzepatide-vs-semaglutide/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/retatrutide-vs-wegovy/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/is-retatrutide-a-glp-1/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/bpc-157/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/tb-500/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/cjc-1295/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/ghk-cu/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/glutathione/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/nad-plus/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/mots-c/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/melanotan-ii/</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/tesamorelin/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/kpv/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/selank/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/semax/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/bpc-157-vs-tb-500/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/cjc-1295-vs-tesamorelin/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/ghk-cu-vs-bpc-157/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/selank-vs-dsip/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/semax-vs-selank/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/dsip/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/epitalon/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/ai-peptide-design/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/are-research-peptides-legal-uk/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/bacteriostatic-water-explained/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/how-peptides-are-tested/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/how-to-buy-research-peptides-uk/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/most-popular-research-peptides-uk/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/peptide-reconstitution-guide/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/peptide-storage-and-handling/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/reading-a-certificate-of-analysis/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/what-are-research-peptides/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/what-makes-a-peptide-novel/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/guides/glossary/</loc><lastmod>2026-06-08</lastmod></url>
 
   <!-- Tools & AI -->
-  <url><loc>https://veloxpeps.com/design-lab/</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://veloxpeps.com/tools/reconstitution-calculator/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veloxpeps.com/design-lab/</loc><lastmod>2026-06-08</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/reconstitution-calculator/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/</loc><lastmod>2026-06-08</lastmod></url>
   <!-- Popular side-by-side comparisons (canonical ?ids= form, lexicographically sorted to match the page's self-canonical) -->
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=bpc-157,tb-500</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=retatrutide,tirzepatide</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=retatrutide,semaglutide</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=semaglutide,tirzepatide</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=selank,semax</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=cjc-1295,ipamorelin</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=bpc-157,ghk-cu</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=dsip,selank</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://veloxpeps.com/tools/compare/?ids=cjc-1295,tesamorelin</loc><lastmod>2026-06-19</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=bpc-157,tb-500</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=retatrutide,tirzepatide</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=retatrutide,semaglutide</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=semaglutide,tirzepatide</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=selank,semax</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=cjc-1295,ipamorelin</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=bpc-157,ghk-cu</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=dsip,selank</loc><lastmod>2026-06-19</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/compare/?ids=cjc-1295,tesamorelin</loc><lastmod>2026-06-19</lastmod></url>
 
   <!-- About, FAQ, Contact, Shipping -->
-  <url><loc>https://veloxpeps.com/about/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://veloxpeps.com/about/quality-and-testing/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://veloxpeps.com/about/coa-library/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://veloxpeps.com/faq/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://veloxpeps.com/contact/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://veloxpeps.com/shipping/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://veloxpeps.com/about/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/about/quality-and-testing/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/about/coa-library/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/faq/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/contact/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/shipping/</loc><lastmod>2026-05-18</lastmod></url>
 
   <!-- Legal pages -->
-  <url><loc>https://veloxpeps.com/legal/research-use-policy/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://veloxpeps.com/legal/mhra-statement/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://veloxpeps.com/legal/terms/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://veloxpeps.com/legal/privacy/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://veloxpeps.com/legal/cookies/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://veloxpeps.com/legal/refunds/</loc><lastmod>2026-05-18</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://veloxpeps.com/legal/research-use-policy/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/legal/mhra-statement/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/legal/terms/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/legal/privacy/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/legal/cookies/</loc><lastmod>2026-05-18</lastmod></url>
+  <url><loc>https://veloxpeps.com/legal/refunds/</loc><lastmod>2026-05-18</lastmod></url>
 
-  <url><loc>https://veloxpeps.com/tools/</loc><lastmod>2026-06-09</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://veloxpeps.com/tools/scheduler/</loc><lastmod>2026-06-09</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://veloxpeps.com/tools/</loc><lastmod>2026-06-09</lastmod></url>
+  <url><loc>https://veloxpeps.com/tools/scheduler/</loc><lastmod>2026-06-09</lastmod></url>
+
+  <!-- Membership & affiliate (public, indexable marketing pages) -->
+  <url><loc>https://veloxpeps.com/pro/</loc><lastmod>2026-06-23</lastmod></url>
+  <url><loc>https://veloxpeps.com/affiliate-program/</loc><lastmod>2026-06-23</lastmod></url>
 </urlset>

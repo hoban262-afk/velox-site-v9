@@ -407,12 +407,14 @@
     loadXeroStatus();
     loadGmailStatus();
     loadClickDropStatus();
+    loadGa4Status();
     loadAnalytics();
     loadHealth();
     loadDeal();
     loadDesignLab();
     registerSW();
     wirePush();
+    renderPushPrefs();
     setupAutoRefresh();
   }
 
@@ -806,6 +808,7 @@
         if (testBtn) testBtn.style.display = '';
       }
     } catch (e) {}
+    renderPushPrefs();
   }
 
   async function enablePush() {
@@ -828,6 +831,7 @@
       pushStatus('✓ Alerts on for this device.', '#01D3A0');
       if (btn) { btn.disabled = false; btn.textContent = 'Re-enable'; }
       var testBtn = document.getElementById('push-test'); if (testBtn) testBtn.style.display = '';
+      renderPushPrefs();
     } catch (e) {
       pushStatus('Failed: ' + esc(e.message), '#f87171');
       if (btn) { btn.disabled = false; btn.textContent = 'Enable order alerts'; }
@@ -844,6 +848,75 @@
       if (r.ok) pushStatus('Test sent to ' + (d.sent || 0) + ' device(s).', '#01D3A0');
       else pushStatus('Test failed: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171');
     } catch (e) { pushStatus('Test failed: ' + esc(e.message), '#f87171'); }
+  }
+
+  // ── PUSH NOTIFICATION PREFERENCES ───────────────────────────────────────────
+  var PUSH_CATEGORIES = [
+    { key: 'order',   label: 'New orders',      desc: 'Get notified when a customer places an order' },
+    { key: 'system',  label: 'System alerts',    desc: 'Health monitor warnings (downtime, errors, anomalies)' },
+    { key: 'agent',   label: 'Agent actions',    desc: 'Approval requests from automated agents' },
+    { key: 'stock',   label: 'Low stock',        desc: 'Alert when a product is running low' },
+    { key: 'backup',  label: 'Data backups',     desc: 'Confirmation when a scheduled backup completes' },
+  ];
+  var PREFS_KEY = 'vx_push_prefs';
+
+  function loadPushPrefs() {
+    try { var v = JSON.parse(localStorage.getItem(PREFS_KEY)); if (v && typeof v === 'object') return v; } catch (e) {}
+    var defaults = {};
+    PUSH_CATEGORIES.forEach(function (c) { defaults[c.key] = true; });
+    return defaults;
+  }
+  function savePushPrefs(prefs) {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
+    syncPrefsToSW(prefs);
+  }
+  function syncPrefsToSW(prefs) {
+    if (!('serviceWorker' in navigator)) return;
+    var msg = { type: 'push-prefs', prefs: prefs };
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage(msg);
+    }
+    navigator.serviceWorker.ready.then(function (reg) {
+      if (reg.active) reg.active.postMessage(msg);
+    }).catch(function () {});
+  }
+
+  function renderPushPrefs() {
+    var wrap = document.getElementById('push-prefs');
+    var list = document.getElementById('push-pref-list');
+    if (!wrap || !list) return;
+    if (list.children.length) return;
+    var prefs = loadPushPrefs();
+    syncPrefsToSW(prefs);
+    list.innerHTML = '';
+    PUSH_CATEGORIES.forEach(function (cat) {
+      var on = prefs[cat.key] !== false;
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;border:1px solid var(--brd,#1a1a1a);border-radius:10px';
+      var info = document.createElement('div');
+      info.innerHTML = '<div style="font-size:14px;font-weight:600;color:#fff">' + esc(cat.label) + '</div>' +
+        '<div style="font-size:12px;color:var(--t3,#6b7280);margin-top:2px">' + esc(cat.desc) + '</div>';
+      var toggle = document.createElement('label');
+      toggle.style.cssText = 'position:relative;display:inline-block;width:44px;min-width:44px;height:24px;cursor:pointer';
+      toggle.innerHTML = '<input type="checkbox" data-cat="' + cat.key + '"' + (on ? ' checked' : '') +
+        ' style="opacity:0;width:0;height:0;position:absolute">' +
+        '<span style="position:absolute;inset:0;border-radius:999px;transition:background .2s;background:' + (on ? '#01D3A0' : '#2a323a') + '"></span>' +
+        '<span style="position:absolute;top:2px;left:' + (on ? '22px' : '2px') + ';width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>';
+      var inp = toggle.querySelector('input');
+      inp.addEventListener('change', function () {
+        var k = this.getAttribute('data-cat');
+        var isOn = this.checked;
+        prefs[k] = isOn;
+        savePushPrefs(prefs);
+        var bg = this.nextElementSibling;
+        var dot = bg.nextElementSibling;
+        bg.style.background = isOn ? '#01D3A0' : '#2a323a';
+        dot.style.left = isOn ? '22px' : '2px';
+      });
+      row.appendChild(info);
+      row.appendChild(toggle);
+      list.appendChild(row);
+    });
   }
 
   // ── DEAL OF THE WEEK ─────────────────────────────────────────────────────────
@@ -1112,6 +1185,58 @@
     });
   }());
 
+  // ── GA4 analytics sync (Settings → Integrations) ────────────────────────────
+  async function loadGa4Status() {
+    var el = document.getElementById('ga4-status');
+    if (!el || !window._sb) return;
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { el.textContent = 'Sign in to view.'; return; }
+      var r = await fetch('/api/admin/health', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      var it = (d.integrations || []).filter(function (x) { return x.key === 'ga4'; })[0];
+      var ga = (d.workers || []).filter(function (x) { return x.key === 'ga'; })[0];
+      if (it && it.ok) {
+        var when = ga && ga.last ? (' · last sync ' + healthAgo(ga.last.ran_at) + (ga.last.ok ? '' : ' (failed)')) : ' · not synced yet';
+        el.textContent = 'Connected' + when;
+        el.style.color = '#01D3A0';
+      } else {
+        el.textContent = 'Not connected — add the GA4 environment variables below.';
+        el.style.color = 'var(--t3,#6b7280)';
+      }
+    } catch (e) { el.textContent = 'Could not load status.'; }
+  }
+
+  (function wireGa4Sync() {
+    var btn = document.getElementById('ga4-sync-btn');
+    if (!btn || btn._wired) return;
+    btn._wired = true;
+    btn.addEventListener('click', async function () {
+      var el = document.getElementById('ga4-status');
+      function setMsg(t, ok) { if (el) { el.textContent = t; el.style.color = ok === false ? '#f87171' : ok ? '#01D3A0' : 'var(--t3,#6b7280)'; } }
+      btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Syncing…'; setMsg('Pulling the latest GA4 data…');
+      try {
+        var s = await window._sb.auth.getSession();
+        var token = s && s.data && s.data.session && s.data.session.access_token;
+        if (!token) { setMsg('Session expired — sign in again.', false); return; }
+        var r = await fetch('/api/analytics/ga-run', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
+        var d = await r.json().catch(function () { return {}; });
+        if (d && d.ok) {
+          setMsg('Synced ' + (d.rows != null ? d.rows + ' day(s)' : '') + ' ✓', true);
+        } else if (d && d.configured === false) {
+          setMsg('Not connected — ' + esc((d.missing || []).join(', ') || 'missing env vars'), false);
+        } else {
+          setMsg('Failed: ' + esc((d && (d.error || d.note)) || ('HTTP ' + r.status)), false);
+        }
+      } catch (e) {
+        setMsg('Failed: ' + esc(e.message), false);
+      } finally {
+        btn.disabled = false; btn.textContent = orig;
+      }
+    });
+  }());
+
   async function connectXero() {
     var btn = document.getElementById('xero-connect-btn');
     if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
@@ -1326,7 +1451,7 @@
         body: JSON.stringify({ action: 'campaign', subject: subject, body: message, segment: segment }),
       });
       var d = await r.json();
-      if (r.ok) { setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' recipients.', true); if (typeof loadMarketing === 'function') loadMarketing(); }
+      if (r.ok) { setMsg('✓ Sent to ' + d.sent + ' of ' + d.total + ' recipients.' + (d.skipped ? ' (' + d.skipped + ' already had it — skipped.)' : ''), true); if (typeof loadMarketing === 'function') loadMarketing(); }
       else setMsg(d.error || 'Send failed.', false);
     } catch (e) { setMsg('Send failed — please try again.', false); }
     btn.disabled = false; btn.textContent = orig;

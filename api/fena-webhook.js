@@ -239,21 +239,35 @@ export default async function handler(req) {
     }
   }
 
-  // ── Mark paid (idempotent) ──────────────────────────────────────────────────
-  let justPaid = false;
+  // ── Mark paid (atomic, race-safe) ───────────────────────────────────────────
+  // Conditional PATCH (status=eq.pending) so only ONE path (webhook vs browser
+  // redirect) wins the pending→paid transition and sends emails/notifications.
+  let thisPathPaid = false;
   if (order.status !== 'paid' && order.status !== 'dispatched') {
     try {
       const patch = { status: 'paid' };
       if (paymentId) patch.fena_payment_id = String(paymentId);
-      const pr = await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}`, {
-        method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' }, body: JSON.stringify(patch),
+      const pr = await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}&status=eq.pending`, {
+        method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=representation' }, body: JSON.stringify(patch),
       });
       if (!pr.ok) {
         console.error('[fena-webhook] PATCH failed:', pr.status, (await pr.text()).slice(0, 200));
         return new Response('DB error', { status: 500 });
       }
-      justPaid = true;
-      console.log(`[fena-webhook] Order ${order.id} → paid`);
+      const rows = await pr.json().catch(() => []);
+      thisPathPaid = Array.isArray(rows) && rows.length > 0;
+      if (thisPathPaid) {
+        // Set email_sent_at flag (best-effort, column may not exist yet)
+        fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}`, {
+          method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' },
+          body: JSON.stringify({ email_sent_at: new Date().toISOString() }),
+        }).catch(() => {});
+      }
+      if (thisPathPaid) {
+        console.log(`[fena-webhook] Order ${order.id} → paid (won race)`);
+      } else {
+        console.log(`[fena-webhook] Order ${order.id} — lost race to confirm-fena-payment, skipping emails`);
+      }
     } catch (e) {
       console.error('[fena-webhook] PATCH threw:', e.message);
       return new Response('DB error', { status: 500 });
@@ -264,9 +278,8 @@ export default async function handler(req) {
 
   // ── Fulfilment + order alert ────────────────────────────────────────────────
   // Click & Drop + Xero are idempotent (safe on every webhook). The order ALERT
-  // (email + WhatsApp + push) fires ONLY on the pending→paid transition, so Fena
-  // retries can't re-notify. This is the browser-independent alert path — without
-  // it, a customer who pays but doesn't return to the site triggers no alert.
+  // (email + WhatsApp + push) fires ONLY when this path won the pending→paid
+  // transition, so the other path + Fena retries can't re-notify.
   const INTERNAL_SECRET = process.env.INTERNAL_TASK_SECRET;
   if (INTERNAL_SECRET) {
     const trigger = (path) => fetch(`https://veloxpeps.com${path}`, {
@@ -275,7 +288,7 @@ export default async function handler(req) {
       body: JSON.stringify({ order_id: order.id }),
     }).catch((e) => console.error(`[fena-webhook] ${path} trigger failed:`, e.message));
     const jobs = [trigger('/api/clickdrop/push'), trigger('/api/xero/create-invoice')];
-    if (justPaid) jobs.push(trigger('/api/send-order'));
+    if (thisPathPaid) jobs.push(trigger('/api/send-order'));
     await Promise.allSettled(jobs);
   }
 

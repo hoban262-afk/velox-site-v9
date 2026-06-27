@@ -4,10 +4,88 @@
   // ── Constants ─────────────────────────────────────────────────────────────
   var SHIPPING_FLAT     = 3.80;   // Royal Mail Tracked 48 (UK standard)
   var EXPRESS_FLAT      = 5.99;   // Royal Mail Tracked 24 (UK express)
-  var FREE_THRESHOLD    = 100;    // UK: both options free at £100+
-  var EU_SHIPPING_FLAT  = 9.99;
-  var EU_FREE_THRESHOLD = 100;
-  var EU_FX_RATE        = 1.18; // fixed GBP → EUR conversion rate
+  var FREE_THRESHOLD    = 0;      // SALE WEEK: free UK shipping site-wide. RESTORE TO 100 after.
+
+  // ── International (Rest of World) ──────────────────────────────────────────
+  // All international orders are charged in GBP. Our bank account is GBP (the
+  // GB IBAN customers pay to), so the old EUR display didn't match what they
+  // actually transferred — GBP everywhere removes that mismatch.
+  // Shipping is ZONE-BASED: the zone is derived from the chosen country.
+  // ↓↓ EDIT RATES / FREE THRESHOLD HERE ↓↓
+  var INTL_FREE_THRESHOLD = 150;  // free international shipping at/above this GBP subtotal
+  var INTL_ZONES = {
+    europe:  { label: 'Europe',         rate: 9.99,  eta: '3–6 working days'  },
+    northam: { label: 'North America',  rate: 12.99, eta: '5–8 working days'  },
+    oceania: { label: 'Australia & NZ', rate: 13.99, eta: '7–12 working days' },
+    rest:    { label: 'Rest of World',  rate: 13.99, eta: '7–14 working days' },
+  };
+  // Destinations shown in the Rest-of-World dropdown, each mapped to a zone above.
+  // High-risk jurisdictions (peptide import banned / near-certain customs seizure,
+  // or sanctioned) are simply OMITTED — to allow one, add it here; to block one,
+  // delete its line. The dropdown is built from this list at runtime.
+  var INTL_COUNTRIES = [
+    // ── Europe ──
+    { name: 'Albania', zone: 'europe' }, { name: 'Andorra', zone: 'europe' },
+    { name: 'Austria', zone: 'europe' }, { name: 'Belgium', zone: 'europe' },
+    { name: 'Bosnia and Herzegovina', zone: 'europe' }, { name: 'Bulgaria', zone: 'europe' },
+    { name: 'Croatia', zone: 'europe' }, { name: 'Cyprus', zone: 'europe' },
+    { name: 'Czech Republic', zone: 'europe' }, { name: 'Denmark', zone: 'europe' },
+    { name: 'Estonia', zone: 'europe' }, { name: 'Finland', zone: 'europe' },
+    { name: 'France', zone: 'europe' }, { name: 'Germany', zone: 'europe' },
+    { name: 'Gibraltar', zone: 'europe' }, { name: 'Greece', zone: 'europe' },
+    { name: 'Hungary', zone: 'europe' }, { name: 'Iceland', zone: 'europe' },
+    { name: 'Ireland', zone: 'europe' }, { name: 'Italy', zone: 'europe' },
+    { name: 'Kosovo', zone: 'europe' }, { name: 'Latvia', zone: 'europe' },
+    { name: 'Liechtenstein', zone: 'europe' }, { name: 'Lithuania', zone: 'europe' },
+    { name: 'Luxembourg', zone: 'europe' }, { name: 'Malta', zone: 'europe' },
+    { name: 'Moldova', zone: 'europe' }, { name: 'Monaco', zone: 'europe' },
+    { name: 'Montenegro', zone: 'europe' }, { name: 'Netherlands', zone: 'europe' },
+    { name: 'North Macedonia', zone: 'europe' }, { name: 'Norway', zone: 'europe' },
+    { name: 'Poland', zone: 'europe' }, { name: 'Portugal', zone: 'europe' },
+    { name: 'Romania', zone: 'europe' }, { name: 'San Marino', zone: 'europe' },
+    { name: 'Serbia', zone: 'europe' }, { name: 'Slovakia', zone: 'europe' },
+    { name: 'Slovenia', zone: 'europe' }, { name: 'Spain', zone: 'europe' },
+    { name: 'Sweden', zone: 'europe' }, { name: 'Switzerland', zone: 'europe' },
+    { name: 'Ukraine', zone: 'europe' },
+    // ── North America ──
+    { name: 'Canada', zone: 'northam' }, { name: 'Mexico', zone: 'northam' },
+    { name: 'United States', zone: 'northam' },
+    // ── Oceania ──
+    // NOTE: Australia is deliberately excluded — TGA/Border Force enforcement on
+    // research chemicals means a high parcel-seizure risk.
+    { name: 'New Zealand', zone: 'oceania' },
+    // ── Rest of World ──
+    // NOTE: SE Asia (Indonesia/Malaysia/Thailand/Vietnam/Philippines), MENA
+    // (Egypt/Jordan/Lebanon/Morocco/Tunisia/Turkey), South Asia (India/Pakistan/
+    // Bangladesh/Sri Lanka), Taiwan and Australia are deliberately excluded — strict
+    // customs enforcement on research chemicals means a high parcel-seizure risk.
+    { name: 'Argentina', zone: 'rest' }, { name: 'Brazil', zone: 'rest' },
+    { name: 'Chile', zone: 'rest' }, { name: 'Colombia', zone: 'rest' },
+    { name: 'Costa Rica', zone: 'rest' }, { name: 'Ecuador', zone: 'rest' },
+    { name: 'Ghana', zone: 'rest' }, { name: 'Israel', zone: 'rest' },
+    { name: 'Kenya', zone: 'rest' }, { name: 'Nigeria', zone: 'rest' },
+    { name: 'Peru', zone: 'rest' }, { name: 'South Africa', zone: 'rest' },
+    { name: 'Uruguay', zone: 'rest' },
+  ];
+  function zoneForCountry(name) {
+    var k = String(name || '').trim().toLowerCase();
+    for (var i = 0; i < INTL_COUNTRIES.length; i++) {
+      if (INTL_COUNTRIES[i].name.toLowerCase() === k) return INTL_COUNTRIES[i].zone;
+    }
+    return 'rest';
+  }
+  // Resolve the active international zone: live <select> on the shipping page,
+  // otherwise the value stored at the shipping step (payment/confirmation pages).
+  function currentZone() {
+    var sel = document.getElementById('sh-intl-country');
+    if (sel && sel.value) return zoneForCountry(sel.value);
+    try {
+      var s = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
+      if (s.zone && INTL_ZONES[s.zone]) return s.zone;
+      if (s.country) return zoneForCountry(s.country);
+    } catch (e) {}
+    return 'europe';
+  }
 
   // ── Core helpers ──────────────────────────────────────────────────────────
   function getCart() {
@@ -17,13 +95,14 @@
   function currentRegion() {
     try {
       var s = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
-      return s.region === 'EU' ? 'EU' : 'UK';
+      // 'EU' kept as an alias so any in-flight pre-launch session still resolves.
+      return (s.region === 'INTL' || s.region === 'EU') ? 'INTL' : 'UK';
     } catch (e) { return 'UK'; }
   }
 
-  function fmt(n, region) {
-    var r = (region !== undefined) ? region : currentRegion();
-    return (r === 'EU' ? '€' : '£') + Number(n).toFixed(2);
+  // Everything is charged in GBP — UK and international alike.
+  function fmt(n) {
+    return '£' + Number(n).toFixed(2);
   }
 
   function escHtml(s) {
@@ -45,10 +124,11 @@
   function cartTotals(cart, region) {
     var r = (region !== undefined) ? region : currentRegion();
     var subtotalGBP = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
-    if (r === 'EU') {
-      var sub = Math.round(subtotalGBP * EU_FX_RATE * 100) / 100;
-      var sh  = sub >= EU_FREE_THRESHOLD ? 0 : EU_SHIPPING_FLAT;
-      return { subtotal: sub, shipping: sh, total: Math.round((sub + sh) * 100) / 100, currency: 'EUR', subtotalGBP: subtotalGBP };
+    if (r === 'INTL') {
+      var zone = currentZone();
+      var z = INTL_ZONES[zone] || INTL_ZONES.rest;
+      var sh = subtotalGBP >= INTL_FREE_THRESHOLD ? 0 : z.rate;
+      return { subtotal: subtotalGBP, shipping: sh, total: Math.round((subtotalGBP + sh) * 100) / 100, currency: 'GBP', subtotalGBP: subtotalGBP, zone: zone };
     }
     // UK: Pro members ship free (their 24h perk), and both options are free at £100+.
     var m = shipMethod();
@@ -76,9 +156,8 @@
     return { code: match.code, type: match.type, value: match.value, saving: saving };
   }
 
-  // Convert GBP discount saving to customer's currency
-  function savingInCurrency(savingGBP, region) {
-    if (region === 'EU') return Math.round(savingGBP * EU_FX_RATE * 100) / 100;
+  // Savings are GBP everywhere now (UK + international both charge in GBP).
+  function savingInCurrency(savingGBP) {
     return savingGBP;
   }
 
@@ -149,12 +228,10 @@
       } else {
         var html = '<ul class="co-cart-list">';
         cart.forEach(function (item) {
-          var priceInCurrency = r === 'EU'
-            ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-            : item.price * (item.qty || 1);
+          var lineTotal = item.price * (item.qty || 1);
           html += '<li class="co-cart-row"><span class="co-cart-name">' + escHtml(item.name) +
             ' <span class="co-cart-size">' + escHtml(item.size) + '</span></span>' +
-            '<span class="co-cart-price">' + fmt(priceInCurrency, r) + '</span></li>';
+            '<span class="co-cart-price">' + fmt(lineTotal) + '</span></li>';
         });
         html += '</ul>';
         el.innerHTML = html;
@@ -165,12 +242,10 @@
     // so EVERY checkout stage shows the discounted total, not just the Pay Now button.
     var t = cartTotals(cart, r);
     var promo = bestPromoGBP(cart, appliedDiscount);
-    var saving = savingInCurrency(promo.saving, r);
-    var ptsSaving = savingInCurrency(appliedPointsSavingGBP, r);
+    var saving = savingInCurrency(promo.saving);
+    var ptsSaving = savingInCurrency(appliedPointsSavingGBP);
     var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
-    var freeThresh = r === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
-    var flatRate   = r === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
-    // Shipping comes straight from cartTotals (method-aware: 48/24/EU, free at £100+ or for Pro).
+    // Shipping comes straight from cartTotals (UK: method-aware 48/24; INTL: zone rate; free over threshold or for Pro).
     var shipping = t.shipping;
     var total = Math.round((discountedSubtotal + shipping) * 100) / 100;
 
@@ -181,14 +256,14 @@
     var discLine = document.getElementById('co-discount-line');
     var discLbl  = document.getElementById('co-discount-label');
     var discAmt  = document.getElementById('co-discount-amount');
-    if (subEl)  subEl.textContent  = fmt(t.subtotal, r);
-    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping, r);
-    if (totEl)  totEl.textContent  = fmt(total, r);
-    if (shpLbl) shpLbl.textContent = r === 'EU' ? 'Royal Mail International Tracked' : (shipMethod() === '24' ? 'Royal Mail Tracked 24' : 'Royal Mail Tracked 48');
+    if (subEl)  subEl.textContent  = fmt(t.subtotal);
+    if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping);
+    if (totEl)  totEl.textContent  = fmt(total);
+    if (shpLbl) shpLbl.textContent = r === 'INTL' ? 'Royal Mail International Tracked' : (shipMethod() === '24' ? 'Royal Mail Tracked 24' : 'Royal Mail Tracked 48');
     if (saving > 0) {
       if (discLine) discLine.style.display = '';
       if (discLbl)  discLbl.textContent = promo.label;
-      if (discAmt)  discAmt.textContent = '−' + fmt(saving, r);
+      if (discAmt)  discAmt.textContent = '−' + fmt(saving);
     } else if (discLine) {
       discLine.style.display = 'none';
     }
@@ -229,48 +304,70 @@
     // Restore region from sessionStorage if returning to this page
     var savedChk = {};
     try { savedChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
-    var activeRegion = savedChk.region === 'EU' ? 'EU' : 'UK';
+    var activeRegion = (savedChk.region === 'INTL' || savedChk.region === 'EU') ? 'INTL' : 'UK';
 
-    var regionUkBtn      = document.getElementById('region-uk');
-    var regionEuBtn      = document.getElementById('region-eu');
-    var ukCountryWrap    = document.getElementById('uk-country-wrap');
-    var euCountryWrap    = document.getElementById('eu-country-wrap');
-    var euComplianceWrap = document.getElementById('eu-compliance-wrap');
-    var euRegionNote     = document.getElementById('eu-region-note');
-    var shipOptName      = document.getElementById('ship-opt-name');
-    var shipOptSub       = document.getElementById('ship-opt-sub');
-    var shipPrice        = document.getElementById('ship-price');
+    var regionUkBtn        = document.getElementById('region-uk');
+    var regionIntlBtn      = document.getElementById('region-intl');
+    var ukCountryWrap      = document.getElementById('uk-country-wrap');
+    var intlCountryWrap    = document.getElementById('intl-country-wrap');
+    var intlComplianceWrap = document.getElementById('intl-compliance-wrap');
+    var intlRegionNote     = document.getElementById('intl-region-note');
+    var intlCountrySel     = document.getElementById('sh-intl-country');
+
+    // Build the worldwide dropdown from INTL_COUNTRIES, grouped by zone, with the
+    // shipping rate shown next to each zone header. Single source of truth: edit
+    // INTL_COUNTRIES / INTL_ZONES at the top of this file.
+    if (intlCountrySel && !intlCountrySel.dataset.built) {
+      var groups = { europe: [], northam: [], oceania: [], rest: [] };
+      INTL_COUNTRIES.slice().sort(function (a, b) { return a.name.localeCompare(b.name); })
+        .forEach(function (c) { if (groups[c.zone]) groups[c.zone].push(c.name); });
+      var html = '<option value="">Select your country…</option>';
+      ['europe', 'northam', 'oceania', 'rest'].forEach(function (zk) {
+        if (!groups[zk].length) return;
+        var z = INTL_ZONES[zk];
+        html += '<optgroup label="── ' + z.label + ' — £' + z.rate.toFixed(2) + ' ──">';
+        groups[zk].forEach(function (n) { html += '<option>' + n + '</option>'; });
+        html += '</optgroup>';
+      });
+      intlCountrySel.innerHTML = html;
+      intlCountrySel.dataset.built = '1';
+      if (savedChk.country && activeRegion === 'INTL') intlCountrySel.value = savedChk.country;
+    }
 
     function applyRegion(r) {
       activeRegion = r;
-      if (regionUkBtn) regionUkBtn.classList.toggle('region-btn-active', r === 'UK');
-      if (regionEuBtn) regionEuBtn.classList.toggle('region-btn-active', r === 'EU');
-      if (ukCountryWrap)    ukCountryWrap.style.display    = r === 'UK' ? '' : 'none';
-      if (euCountryWrap)    euCountryWrap.style.display    = r === 'EU' ? '' : 'none';
-      if (euComplianceWrap) euComplianceWrap.style.display = r === 'EU' ? '' : 'none';
-      if (euRegionNote)     euRegionNote.style.display     = r === 'EU' ? '' : 'none';
+      if (regionUkBtn)   regionUkBtn.classList.toggle('region-btn-active', r === 'UK');
+      if (regionIntlBtn) regionIntlBtn.classList.toggle('region-btn-active', r === 'INTL');
+      if (ukCountryWrap)      ukCountryWrap.style.display      = r === 'UK' ? '' : 'none';
+      if (intlCountryWrap)    intlCountryWrap.style.display    = r === 'INTL' ? '' : 'none';
+      if (intlComplianceWrap) intlComplianceWrap.style.display = r === 'INTL' ? '' : 'none';
+      if (intlRegionNote)     intlRegionNote.style.display     = r === 'INTL' ? '' : 'none';
       updateShipping(r);
       renderCartSummary(cart, r);
     }
 
-    if (regionUkBtn) regionUkBtn.addEventListener('click', function () { applyRegion('UK'); });
-    if (regionEuBtn) regionEuBtn.addEventListener('click', function () { applyRegion('EU'); });
+    if (regionUkBtn)   regionUkBtn.addEventListener('click', function () { applyRegion('UK'); });
+    if (regionIntlBtn) regionIntlBtn.addEventListener('click', function () { applyRegion('INTL'); });
 
     function updateShipping(r) {
-      var ukG = document.getElementById('ship-uk'), euG = document.getElementById('ship-eu');
-      if (ukG) ukG.style.display = (r === 'EU') ? 'none' : '';
-      if (euG) euG.style.display = (r === 'EU') ? '' : 'none';
+      var ukG = document.getElementById('ship-uk'), intlG = document.getElementById('ship-intl');
+      if (ukG)   ukG.style.display   = (r === 'INTL') ? 'none' : '';
+      if (intlG) intlG.style.display = (r === 'INTL') ? '' : 'none';
       var chk = document.querySelector('input[name="shipping"]:checked');
-      if (r === 'EU') { var intl = document.querySelector('input[name="shipping"][value="intl"]'); if (intl) intl.checked = true; }
+      if (r === 'INTL') { var intl = document.querySelector('input[name="shipping"][value="intl"]'); if (intl) intl.checked = true; }
       else if (!chk || chk.value === 'intl') { var d = document.querySelector('input[name="shipping"][value="48"]'); if (d) d.checked = true; }
       var subGBP = cart.reduce(function (s2, i) { return s2 + i.price * (i.qty || 1); }, 0);
-      if (r === 'EU') {
-        var te = cartTotals(cart, 'EU');
-        var pe = document.getElementById('ship-price-eu'); if (pe) pe.textContent = te.shipping === 0 ? 'FREE' : fmt(te.shipping, 'EU');
+      if (r === 'INTL') {
+        var te = cartTotals(cart, 'INTL');
+        var zone = te.zone || currentZone();
+        var z = INTL_ZONES[zone] || INTL_ZONES.rest;
+        var pe = document.getElementById('ship-price-intl'); if (pe) pe.textContent = te.shipping === 0 ? 'FREE' : fmt(te.shipping);
+        var sub = document.getElementById('ship-intl-sub');
+        if (sub) sub.textContent = z.eta + ', tracked. ' + z.label + (intlCountrySel && intlCountrySel.value ? '' : ' — select your country for the exact rate.');
       } else {
         var freeUK = memberFreeShip() || subGBP >= FREE_THRESHOLD;
-        var p48 = document.getElementById('ship-price-48'); if (p48) p48.textContent = freeUK ? 'FREE' : fmt(SHIPPING_FLAT, 'UK');
-        var p24 = document.getElementById('ship-price-24'); if (p24) p24.textContent = freeUK ? 'FREE' : fmt(EXPRESS_FLAT, 'UK');
+        var p48 = document.getElementById('ship-price-48'); if (p48) p48.textContent = freeUK ? 'FREE' : fmt(SHIPPING_FLAT);
+        var p24 = document.getElementById('ship-price-24'); if (p24) p24.textContent = freeUK ? 'FREE' : fmt(EXPRESS_FLAT);
       }
     }
     document.querySelectorAll('input[name="shipping"]').forEach(function (radio) {
@@ -279,6 +376,14 @@
         var rr = currentRegion(); updateShipping(rr); renderCartSummary(cart, rr);
       });
     });
+
+    // Re-price when the destination country (and therefore the zone) changes.
+    if (intlCountrySel) {
+      intlCountrySel.addEventListener('change', function () {
+        try { var st = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); st.country = intlCountrySel.value; st.zone = zoneForCountry(intlCountrySel.value); sessionStorage.setItem('vp_checkout', JSON.stringify(st)); } catch (e) {}
+        updateShipping('INTL'); renderCartSummary(cart, 'INTL');
+      });
+    }
 
     // Set initial state
     applyRegion(activeRegion);
@@ -323,24 +428,24 @@
       var ack = shippingForm.querySelector('input[name="ack"]');
       if (ack && !ack.checked) missing.push('ack');
 
-      // EU-specific validation
-      if (activeRegion === 'EU') {
-        var euCountryEl = document.getElementById('sh-eu-country');
-        if (!euCountryEl || !euCountryEl.value) missing.push('eu-country');
-        var euComp = shippingForm.querySelector('input[name="eu-compliance"]');
-        if (euComp && !euComp.checked) missing.push('eu-compliance');
+      // International-specific validation
+      if (activeRegion === 'INTL') {
+        var intlCountryEl = document.getElementById('sh-intl-country');
+        if (!intlCountryEl || !intlCountryEl.value) missing.push('intl-country');
+        var intlComp = shippingForm.querySelector('input[name="intl-compliance"]');
+        if (intlComp && !intlComp.checked) missing.push('intl-compliance');
       }
 
       if (missing.length) {
-        if (errEl) errEl.textContent = activeRegion === 'EU'
+        if (errEl) errEl.textContent = activeRegion === 'INTL'
           ? 'Please fill in all required fields, select your country, and tick both acknowledgements.'
           : 'Please fill in all required fields and tick the acknowledgement.';
         return;
       }
       if (errEl) errEl.textContent = '';
 
-      var country = activeRegion === 'EU'
-        ? (document.getElementById('sh-eu-country') || {}).value || ''
+      var country = activeRegion === 'INTL'
+        ? (document.getElementById('sh-intl-country') || {}).value || ''
         : 'United Kingdom';
 
       var data = {
@@ -354,7 +459,8 @@
         postcode: document.getElementById('sh-post').value.trim(),
         country:  country,
         region:   activeRegion,
-        currency: activeRegion === 'EU' ? 'EUR' : 'GBP',
+        zone:     activeRegion === 'INTL' ? zoneForCountry(country) : null,
+        currency: 'GBP',
       };
 
       try { sessionStorage.setItem('vp_checkout', JSON.stringify(data)); } catch (ex) {}
@@ -369,8 +475,9 @@
     var payRegion = currentRegion();
     renderCartSummary(cart, payRegion);
 
-    // EU: show IBAN/BIC details instead of UK sort code / account number
-    if (payRegion === 'EU') {
+    // International: surface IBAN/BIC details and an international transfer title
+    // (the dedicated EU/INTL styling is applied by the inline script in payment/index.html).
+    if (payRegion === 'INTL') {
       var ukBankDetails   = document.getElementById('uk-bank-details');
       var euBankDetails   = document.getElementById('eu-bank-details');
       var bankMethodTitle = document.getElementById('bank-method-title');
@@ -582,7 +689,7 @@
     }
 
 
-    // ── Bank transfer form submit (UK + EU) ───────────────────────────────
+    // ── Bank transfer form submit (UK + International) ─────────────────────
     paymentForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var errEl = document.getElementById('co-err');
@@ -599,11 +706,9 @@
       var ref        = 'VP-' + todayStr() + '-' + randChars(4);
       var t          = cartTotals(cart, payRegion);
       var promo      = bestPromoGBP(cart, appliedDiscount);
-      var saving     = savingInCurrency(promo.saving, payRegion);
-      var ptsSaving  = savingInCurrency(appliedPointsSavingGBP, payRegion);
+      var saving     = savingInCurrency(promo.saving);
+      var ptsSaving  = savingInCurrency(appliedPointsSavingGBP);
       var discountedSubtotal = Math.max(0, t.subtotal - saving - ptsSaving);
-      var freeThresh = payRegion === 'EU' ? EU_FREE_THRESHOLD : FREE_THRESHOLD;
-      var flatRate   = payRegion === 'EU' ? EU_SHIPPING_FLAT  : SHIPPING_FLAT;
       var finalShipping = t.shipping;
       var finalTotal    = Math.round((discountedSubtotal + finalShipping) * 100) / 100;
 
@@ -619,7 +724,7 @@
         existing.welcome_code         = welcomeCodeApplied;
         existing.total                = finalTotal;
         existing.cart_snapshot        = JSON.stringify(cart);
-        existing.currency             = payRegion === 'EU' ? 'EUR' : 'GBP';
+        existing.currency             = 'GBP';
         existing.region               = payRegion;
         existing.payment_method       = 'bank';
         existing.affiliate_id         = affiliateApplied ? affiliateApplied.id   : null;
@@ -637,7 +742,7 @@
   if (confirmSummary) {
     var chk = {};
     try { chk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
-    var confRegion = chk.region === 'EU' ? 'EU' : 'UK'; // bank transfer always UK, but defensive
+    var confRegion = (chk.region === 'EU' || chk.region === 'INTL') ? 'INTL' : 'UK';
 
     var confirmedCart = cart.slice();
     if (!confirmedCart.length && chk.cart_snapshot) {
@@ -648,15 +753,13 @@
     var countEl = document.getElementById('nav-cart-count');
     if (countEl) countEl.textContent = '0';
 
-    var currSym = confRegion === 'EU' ? '€' : '£';
-    var shippingMethod = confRegion === 'EU' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
+    var currSym = '£';
+    var shippingMethod = confRegion === 'INTL' ? 'Royal Mail International Tracked' : 'Royal Mail Tracked 24';
 
     var productsList = confirmedCart.map(function (item) {
-      var priceInCurrency = confRegion === 'EU'
-        ? Math.round(item.price * EU_FX_RATE * (item.qty || 1) * 100) / 100
-        : item.price * (item.qty || 1);
+      var lineTotal = item.price * (item.qty || 1);
       return item.name + ' ' + item.size + ' x' + (item.qty || 1) +
-             ' — ' + currSym + priceInCurrency.toFixed(2);
+             ' — ' + currSym + lineTotal.toFixed(2);
     }).join('\n');
 
     try {
