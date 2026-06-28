@@ -32,7 +32,7 @@
   .sc-name:focus{border-color:var(--g);}
   .sc-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px;}
   .sc-mini label{display:block;font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
-  .sc-mini select,.sc-mini input{width:100%;background:#05070a;border:1px solid var(--brd);border-radius:8px;color:#fff;font-size:13.5px;padding:8px 10px;outline:none;font-family:inherit;}
+  .sc-mini select,.sc-mini input{width:100%;min-width:0;background:#05070a;border:1px solid var(--brd);border-radius:8px;color:#fff;font-size:13.5px;padding:8px 10px;outline:none;font-family:inherit;}
   .sc-mini select:focus,.sc-mini input:focus{border-color:var(--g);}
   .sc-custom{display:none;}
   .sc-rm{position:absolute;right:9px;top:9px;width:22px;height:22px;border-radius:50%;border:1px solid var(--brd);background:var(--bg2);color:var(--mut);cursor:pointer;font-size:13px;line-height:1;}
@@ -62,11 +62,11 @@
   .ps-month .mn{font-family:'DM Mono',monospace;font-size:11px;color:var(--mut);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;}
   .ps-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
   .ps-dow{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);text-align:center;}
-  .ps-day{position:relative;aspect-ratio:1;border:1px solid var(--brd);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:var(--mut);background:#070b10;gap:3px;}
+  .ps-day{position:relative;aspect-ratio:1;border:1px solid var(--brd);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:var(--dim);background:#070b10;gap:3px;}
   .ps-day.blank{border:none;background:none;}
-  .ps-day.has{color:#fff;font-weight:700;border-color:rgba(255,255,255,.14);}
-  .ps-dots{display:flex;gap:2px;height:5px;align-items:center;}
-  .ps-dots i{width:5px;height:5px;border-radius:50%;display:block;}
+  .ps-day.has{color:#fff;font-weight:800;border-color:rgba(1,211,160,.38);background:rgba(1,211,160,.09);box-shadow:inset 0 0 0 1px rgba(1,211,160,.12);}
+  .ps-dots{display:flex;gap:3px;height:7px;align-items:center;}
+  .ps-dots i{width:6px;height:6px;border-radius:50%;display:block;}
 
   /* restock offer card */
   .ps-restock{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(1,211,160,.10),rgba(1,211,160,.03));border:1px solid rgba(1,211,160,.32);border-radius:16px;padding:16px 20px;margin:0 0 20px;}
@@ -88,14 +88,28 @@
   .toastc{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#fff;color:#04140f;font-weight:700;font-size:13px;padding:10px 18px;border-radius:999px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;}
   .toastc.show{opacity:1;}
   @media print{ .site-header,.ps-panel,.ps-disc,.ps-actions,.ps-gate{display:none!important;} .ps-grid{grid-template-columns:1fr;} }
+  @media(max-width:820px){
+    /* Clear the fixed mobile dock + chat button so the Generate button and
+       calendar actions are never hidden behind them. */
+    .ps-wrap{padding-bottom:150px;}
+  }
   @media(max-width:560px){
-    .ps-wrap{padding-left:14px;padding-right:14px;}
+    .ps-wrap{padding-left:14px;padding-right:14px;padding-top:24px;}
+    .ps-head h1{font-size:clamp(30px,9vw,40px);}
+    .ps-head .sub{font-size:14px;}
     .ps-panel{padding:14px;}
     .ps-cal-hd .t{font-size:20px;}
     .ps-actions{width:100%;}
-    .ps-btn{flex:1;text-align:center;padding:10px 10px;font-size:12.5px;}
+    .ps-btn{flex:1;text-align:center;padding:11px 10px;font-size:12.5px;}
     .ps-months{grid-template-columns:1fr;}
-    .ps-day{font-size:11px;}
+    .ps-day{font-size:13px;}
+    .ps-dots i{width:6px;height:6px;}
+    .ps-gen{padding:15px;font-size:16px;}
+    .ps-add{padding:14px;}
+    /* restock nudge: stack to a clean single column with a full-width CTA */
+    .ps-restock{flex-direction:column;align-items:stretch;gap:12px;padding:16px;}
+    .ps-restock-r{justify-content:space-between;}
+    .ps-restock .ps-btn.primary{flex:none;}
     .ps-gate-box{padding:24px 18px;}
   }
 </style>
