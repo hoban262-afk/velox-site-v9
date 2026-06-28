@@ -58,8 +58,8 @@
         align-items: center; justify-content: center; padding: 12px 8px; gap: 2px;
       }
       .h-stats-row .hsi-div { display: none; }
-      .h-stats-row .hsi-v { font-size: 19px; font-weight: 800; color: #01D3A0; }
-      .h-stats-row .hsi-l { font-size: 10px; color: #9CA3AF; letter-spacing: .04em; text-align: center; }
+      .h-stats-row .hsi-v { font-size: 19px; font-weight: 800; color: var(--g); }
+      .h-stats-row .hsi-l { font-size: 10px; color: var(--t3); letter-spacing: .04em; text-align: center; }
       .h-sub { display: block; font-size: 14px; margin-bottom: 20px; }
       .h-compliance { display: block; }
       .hero-panel { display: none !important; }
@@ -73,20 +73,20 @@
     /* ── Hero same-day dispatch countdown ── */
     .h-dispatch {
       display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
-      font-size: 13px; color: #E5E7EB; background: rgba(1,211,160,.07);
-      border: 1px solid rgba(1,211,160,.25); border-radius: 999px;
+      font-size: 13px; color: var(--body); background: rgba(22,214,166,.07);
+      border: 1px solid rgba(22,214,166,.25); border-radius: 999px;
       padding: 7px 14px; letter-spacing: .02em;
     }
     .h-dispatch[hidden] { display: none; }
     .h-dispatch-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: #01D3A0;
+      width: 8px; height: 8px; border-radius: 50%; background: var(--g);
       animation: vpPulse 1.8s infinite;
     }
-    .h-dispatch-txt b { color: #01D3A0; font-weight: 700; }
+    .h-dispatch-txt b { color: var(--g); font-weight: 700; }
     @keyframes vpPulse {
-      0%   { box-shadow: 0 0 0 0 rgba(1,211,160,.5); }
-      70%  { box-shadow: 0 0 0 7px rgba(1,211,160,0); }
-      100% { box-shadow: 0 0 0 0 rgba(1,211,160,0); }
+      0%   { box-shadow: 0 0 0 0 rgba(22,214,166,.5); }
+      70%  { box-shadow: 0 0 0 7px rgba(22,214,166,0); }
+      100% { box-shadow: 0 0 0 0 rgba(22,214,166,0); }
     }
 
     /* ── Sticky mobile shop bar ── */
@@ -103,21 +103,21 @@
         font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
         padding: 14px; border-radius: 8px; text-decoration: none;
       }
-      .vp-sticky-shop .ss-p { background: #01D3A0; color: #021; }
+      .vp-sticky-shop .ss-p { background: var(--g); color: #021; }
       .vp-sticky-shop .ss-o { flex: 0 0 auto; padding: 14px 18px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.18); }
       body.page-home { padding-bottom: 76px; }
     }
 
     /* ── Hero trust bar ── */
     .hero-trust-bar {
-      font-size: 11px; color: #6B7280; text-align: center;
+      font-size: 11px; color: var(--t4); text-align: center;
       letter-spacing: .05em; margin-top: 14px; line-height: 1.8;
     }
-    .hero-trust-bar b { color: #01D3A0; font-weight: 600; }
+    .hero-trust-bar b { color: var(--g); font-weight: 600; }
 
     /* ── Social proof strip ── */
     .hero-social-proof {
-      font-size: 12px; color: #9CA3AF; text-align: center;
+      font-size: 12px; color: var(--t3); text-align: center;
       margin-top: 6px; letter-spacing: .04em;
     }
     @media (max-width: 767px) {
@@ -130,8 +130,8 @@
     /* ── Metabolic featured banner ── */
     .hp-metabolic-banner {
       display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-      background: rgba(255,229,0,.06); border: 1px solid rgba(255,229,0,.2);
-      border-left: 4px solid #FFE500; border-radius: 6px;
+      background: rgba(255,229,0,.06); border: 1px solid rgba(255,229,0,.28);
+      border-radius: var(--rl);
       padding: 11px 16px; margin-bottom: 20px;
     }
     .hp-metabolic-eyebrow {
@@ -141,7 +141,7 @@
       white-space: nowrap;
     }
     .hp-metabolic-title {
-      font-size: 13px; font-weight: 700; color: #E5E7EB; flex: 1;
+      font-size: 13px; font-weight: 700; color: var(--body); flex: 1;
       letter-spacing: .05em; text-transform: uppercase;
     }
     .hp-metabolic-link {
@@ -164,12 +164,12 @@
 
     /* ── Order counter ── */
     .hero-order-count {
-      font-size: 12px; color: #6B7280; margin-top: 12px; letter-spacing: .03em;
+      font-size: 12px; color: var(--t4); margin-top: 12px; letter-spacing: .03em;
     }
-    .hero-order-count strong { color: #01D3A0; font-weight: 700; font-size: 13px; }
+    .hero-order-count strong { color: var(--g); font-weight: 700; font-size: 13px; }
 
     /* ── Process timeline section ── */
-    .vp-timeline-sec { background: rgba(1,211,160,.02); border-top: 1px solid rgba(1,211,160,.08); }
+    .vp-timeline-sec { background: rgba(22,214,166,.02); border-top: 1px solid rgba(22,214,166,.08); }
     .vp-timeline {
       display: grid; grid-template-columns: repeat(4, 1fr);
       gap: 0; margin-top: 28px; position: relative;
@@ -182,7 +182,7 @@
       .vp-tl-step {
         flex-direction: column; align-items: flex-start;
         padding: 0 24px 0 0;
-        border-right: 1px solid rgba(1,211,160,.12);
+        border-right: 1px solid rgba(22,214,166,.12);
       }
       .vp-tl-step:last-child { border-right: none; padding-right: 0; }
     }
@@ -194,15 +194,15 @@
     }
     .vp-tl-num {
       width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-      background: rgba(1,211,160,.1); border: 1px solid rgba(1,211,160,.28);
+      background: rgba(22,214,166,.1); border: 1px solid rgba(22,214,166,.28);
       display: flex; align-items: center; justify-content: center; font-size: 18px;
     }
     @media (min-width: 768px) { .vp-tl-num { margin-bottom: 12px; } }
     .vp-tl-title {
-      font-size: 12px; font-weight: 700; color: #E5E7EB;
+      font-size: 12px; font-weight: 700; color: var(--body);
       letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px;
     }
-    .vp-tl-desc { font-size: 12px; color: #6B7280; line-height: 1.6; }
+    .vp-tl-desc { font-size: 12px; color: var(--t4); line-height: 1.6; }
 
     /* ── First order FAQ ── */
     .vp-hp-faq { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
@@ -211,38 +211,38 @@
       border-radius: 8px; overflow: hidden;
     }
     .vp-hp-faq-q {
-      padding: 14px 18px; font-size: 14px; font-weight: 600; color: #E5E7EB;
+      padding: 14px 18px; font-size: 14px; font-weight: 600; color: var(--body);
       cursor: pointer; list-style: none; display: flex;
       justify-content: space-between; align-items: center;
     }
     .vp-hp-faq-q::-webkit-details-marker { display: none; }
     .vp-hp-faq-q::after {
-      content: '+'; color: #01D3A0; font-size: 20px; font-weight: 300;
+      content: '+'; color: var(--g); font-size: 20px; font-weight: 300;
       flex-shrink: 0; margin-left: 12px; transition: transform .2s;
     }
     .vp-hp-faq-item[open] .vp-hp-faq-q::after { transform: rotate(45deg); }
     .vp-hp-faq-a {
-      padding: 0 18px 14px; font-size: 13px; color: #9CA3AF; line-height: 1.7;
+      padding: 0 18px 14px; font-size: 13px; color: var(--t3); line-height: 1.7;
     }
 
     /* ── HOW TO ORDER section ── */
     .vp-hto-sec {
-      background: rgba(1,211,160,0.04);
-      border-top: 1px solid rgba(1,211,160,0.1);
-      border-bottom: 1px solid rgba(1,211,160,0.1);
+      background: rgba(22,214,166,0.04);
+      border-top: 1px solid rgba(22,214,166,0.1);
+      border-bottom: 1px solid rgba(22,214,166,0.1);
     }
     .vp-hto-inner {
       max-width: 860px; margin: 0 auto; padding: 44px 24px;
     }
     .vp-hto-eyebrow {
       font-size: 11px; font-weight: 700; letter-spacing: .12em;
-      color: #01D3A0; text-transform: uppercase; margin-bottom: 8px;
+      color: var(--g); text-transform: uppercase; margin-bottom: 8px;
     }
     .vp-hto-title {
       font-size: 22px; font-weight: 700; color: #F9FAFB; margin-bottom: 6px;
     }
     .vp-hto-sub {
-      font-size: 14px; color: #6B7280; margin-bottom: 32px; line-height: 1.6;
+      font-size: 14px; color: var(--t4); margin-bottom: 32px; line-height: 1.6;
     }
     .vp-hto-steps {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
@@ -259,11 +259,11 @@
       font-size: 28px; line-height: 1; margin-bottom: 10px;
     }
     .vp-hto-card-title {
-      font-size: 13px; font-weight: 700; color: #E5E7EB;
+      font-size: 13px; font-weight: 700; color: var(--body);
       text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px;
     }
     .vp-hto-card-desc {
-      font-size: 13px; color: #9CA3AF; line-height: 1.6;
+      font-size: 13px; color: var(--t3); line-height: 1.6;
     }
     .vp-hto-arrow {
       display: none;
@@ -273,14 +273,14 @@
     }
     .vp-hto-no-card {
       margin-top: 24px; display: flex; align-items: center; gap: 10px;
-      background: rgba(1,211,160,0.08); border: 1px solid rgba(1,211,160,0.22);
+      background: rgba(22,214,166,0.08); border: 1px solid rgba(22,214,166,0.22);
       border-radius: 8px; padding: 12px 16px;
     }
     .vp-hto-no-card-icon { font-size: 18px; flex-shrink: 0; }
     .vp-hto-no-card-text {
       font-size: 13px; color: #D1D5DB; line-height: 1.5;
     }
-    .vp-hto-no-card-text strong { color: #01D3A0; }
+    .vp-hto-no-card-text strong { color: var(--g); }
     .vp-hto-cta {
       margin-top: 24px; text-align: center;
     }
@@ -289,34 +289,34 @@
     .hp-panel-link {
       display: inline-flex; align-items: center; gap: 6px; margin-top: 20px;
       font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .05em;
-      color: #00D4A0; text-decoration: none; text-transform: uppercase; font-weight: 500;
+      color: var(--g); text-decoration: none; text-transform: uppercase; font-weight: 500;
     }
     .hp-panel-link:hover { text-decoration: underline; }
 
     /* ── Social-proof bar (under hero) ── */
     .vp-spbar { background: #0b0b0b; border-bottom: 1px solid var(--brd, rgba(255,255,255,.07)); }
     .vp-spbar-i { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 26px; padding: 15px 24px; }
-    .vp-spbar-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #9CA3AF; letter-spacing: .01em; }
-    .vp-spbar-item svg { width: 16px; height: 16px; stroke: #00D4A0; fill: none; flex: 0 0 auto; }
+    .vp-spbar-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--t3); letter-spacing: .01em; }
+    .vp-spbar-item svg { width: 16px; height: 16px; stroke: var(--g); fill: none; flex: 0 0 auto; }
     .vp-spbar-item b { color: #fff; font-weight: 600; }
 
     /* ── Anti-scam comparison block ── */
     .vp-vs { max-width: 1080px; margin: 0 auto; padding: 64px 24px; }
-    .vp-vs-eyebrow { font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .15em; color: #00D4A0; text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+    .vp-vs-eyebrow { font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .15em; color: var(--g); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
     .vp-vs-title { font-family: var(--disp, sans-serif); font-size: clamp(26px, 4.6vw, 40px); font-weight: 900; line-height: 1.04; text-transform: uppercase; text-align: center; margin: 0 auto 14px; max-width: 780px; }
-    .vp-vs-title em { color: #00D4A0; font-style: normal; }
-    .vp-vs-sub { font-size: 14px; color: #9CA3AF; text-align: center; max-width: 580px; margin: 0 auto 36px; line-height: 1.6; }
+    .vp-vs-title em { color: var(--g); font-style: normal; }
+    .vp-vs-sub { font-size: 14px; color: var(--t3); text-align: center; max-width: 580px; margin: 0 auto 36px; line-height: 1.6; }
     .vp-vs-table { border: 1px solid var(--brd, rgba(255,255,255,.07)); border-radius: 12px; overflow: hidden; background: #0b0b0b; }
     .vp-vs-row { display: grid; grid-template-columns: 1.25fr 1fr 1.15fr; align-items: stretch; }
     .vp-vs-row + .vp-vs-row { border-top: 1px solid var(--brd, rgba(255,255,255,.07)); }
     .vp-vs-cell { padding: 15px 18px; font-size: 13px; line-height: 1.5; display: flex; align-items: center; gap: 9px; }
     .vp-vs-cell.lab { color: #fff; font-weight: 600; }
-    .vp-vs-cell.them { color: #6B7280; border-left: 1px solid var(--brd, rgba(255,255,255,.07)); }
-    .vp-vs-cell.us { color: #E5E7EB; background: rgba(0,212,160,.05); border-left: 1px solid rgba(0,212,160,.2); font-weight: 500; }
-    .vp-vs-cell.us svg { width: 16px; height: 16px; stroke: #00D4A0; fill: none; flex: 0 0 auto; }
-    .vp-vs-cell.them svg { width: 15px; height: 15px; stroke: #6B7280; fill: none; flex: 0 0 auto; }
-    .vp-vs-head .vp-vs-cell { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; padding: 12px 18px; }
-    .vp-vs-head .us { color: #00D4A0; }
+    .vp-vs-cell.them { color: var(--t4); border-left: 1px solid var(--brd, rgba(255,255,255,.07)); }
+    .vp-vs-cell.us { color: var(--body); background: rgba(22,214,166,.05); border-left: 1px solid rgba(22,214,166,.2); font-weight: 500; }
+    .vp-vs-cell.us svg { width: 16px; height: 16px; stroke: var(--g); fill: none; flex: 0 0 auto; }
+    .vp-vs-cell.them svg { width: 15px; height: 15px; stroke: var(--t4); fill: none; flex: 0 0 auto; }
+    .vp-vs-head .vp-vs-cell { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--t3); padding: 12px 18px; }
+    .vp-vs-head .us { color: var(--g); }
     @media (max-width: 720px) {
       .vp-vs-row { grid-template-columns: 1fr 1fr; }
       .vp-vs-cell.lab { grid-column: 1 / -1; background: #111; border-bottom: 1px solid var(--brd, rgba(255,255,255,.07)); }
@@ -324,19 +324,19 @@
     }
 
     /* ── AOV / free-shipping band ── */
-    .vp-aov { background: linear-gradient(180deg, rgba(0,212,160,.045), transparent); border-top: 1px solid rgba(0,212,160,.12); }
+    .vp-aov { background: linear-gradient(180deg, rgba(22,214,166,.045), transparent); border-top: 1px solid rgba(22,214,166,.12); }
     .vp-aov-i { max-width: 1080px; margin: 0 auto; padding: 50px 24px; text-align: center; }
-    .vp-aov-eyebrow { font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .15em; color: #00D4A0; text-transform: uppercase; margin-bottom: 12px; }
+    .vp-aov-eyebrow { font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .15em; color: var(--g); text-transform: uppercase; margin-bottom: 12px; }
     .vp-aov-title { font-family: var(--disp, sans-serif); font-size: clamp(24px, 4vw, 34px); font-weight: 900; text-transform: uppercase; line-height: 1.05; margin: 0 auto 26px; max-width: 700px; }
-    .vp-aov-title em { color: #00D4A0; font-style: normal; }
+    .vp-aov-title em { color: var(--g); font-style: normal; }
     .vp-aov-tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 840px; margin: 0 auto; }
     @media (max-width: 640px) { .vp-aov-tiers { grid-template-columns: 1fr 1fr; } }
     .vp-aov-tier { background: #0f0f0f; border: 1px solid var(--brd, rgba(255,255,255,.07)); border-radius: 10px; padding: 18px 14px; }
-    .vp-aov-tier.hi { border-color: rgba(0,212,160,.35); background: rgba(0,212,160,.04); }
-    .vp-aov-tier-v { font-family: var(--disp, sans-serif); font-size: 30px; font-weight: 900; color: #00D4A0; line-height: 1; }
-    .vp-aov-tier-l { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: #9CA3AF; margin-top: 8px; line-height: 1.4; }
-    .vp-aov-note { font-size: 12.5px; color: #6B7280; margin-top: 20px; }
-    .vp-aov-note a { color: #00D4A0; text-decoration: none; }
+    .vp-aov-tier.hi { border-color: rgba(22,214,166,.35); background: rgba(22,214,166,.04); }
+    .vp-aov-tier-v { font-family: var(--disp, sans-serif); font-size: 30px; font-weight: 900; color: var(--g); line-height: 1; }
+    .vp-aov-tier-l { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--t3); margin-top: 8px; line-height: 1.4; }
+    .vp-aov-note { font-size: 12.5px; color: var(--t4); margin-top: 20px; }
+    .vp-aov-note a { color: var(--g); text-decoration: none; }
     .vp-aov-note a:hover { text-decoration: underline; }
   </style>
 
@@ -398,16 +398,16 @@ html{scroll-behavior:smooth}
 .page-home .vp-vs-row + .vp-vs-row{border-top-color:#151a21!important}
 .page-home .vp-vs-cell{padding:18px 20px!important;font-size:13.5px!important}
 .page-home .vp-vs-cell.them{border-left-color:#151a21!important}
-.page-home .vp-vs-cell.us{background:rgba(1,211,160,.05)!important;border-left-color:rgba(1,211,160,.26)!important}
+.page-home .vp-vs-cell.us{background:rgba(22,214,166,.05)!important;border-left-color:rgba(22,214,166,.26)!important}
 </style>
 <style>
 /* premium polish v4 — shipping tiers + how-to cards + clean step numbers */
 /* v4 — refined shipping tiers + how-to step cards matched to product cards */
 .page-home .vp-aov-tier{background:rgba(255,255,255,.012)!important;border-color:#1b2029!important;border-radius:12px;padding:20px 14px!important}
-.page-home .vp-aov-tier.hi{border-color:rgba(1,211,160,.32)!important;background:rgba(1,211,160,.05)!important}
+.page-home .vp-aov-tier.hi{border-color:rgba(22,214,166,.32)!important;background:rgba(22,214,166,.05)!important}
 .page-home .vp-hto-card{background:#0e141b!important;border:1px solid #1b2029!important;border-radius:12px!important;padding:24px 22px!important}
 
-.page-home .vp-hto-card-num{color:#01D3A0!important}</style>
+.page-home .vp-hto-card-num{color:var(--g)!important}</style>
 <style>
 /* mobile homepage refinements */
 @media (max-width:560px){
@@ -437,7 +437,7 @@ html{scroll-behavior:smooth}
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -475,7 +475,7 @@ html{scroll-behavior:smooth}
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -517,15 +517,15 @@ html{scroll-behavior:smooth}
         </div>
       </div>
       <p class="h-sub">
-        Buy <a href="/compounds/retatrutide/" style="color:#01D3A0;text-decoration:none">retatrutide</a> in the UK - HPLC-verified at &ge;99% with a batch-specific Certificate of
-        Analysis - alongside <a href="/compounds/bpc-157/" style="color:#01D3A0;text-decoration:none">BPC-157</a>, <a href="/compounds/tb-500/" style="color:#01D3A0;text-decoration:none">TB-500</a>, <a href="/compounds/tesamorelin/" style="color:#01D3A0;text-decoration:none">tesamorelin</a> and <a href="/compounds/mots-c/" style="color:#01D3A0;text-decoration:none">MOTS-C</a> &mdash; 15+ research peptides &amp; 10
+        Buy <a href="/compounds/retatrutide/" style="color:var(--g);text-decoration:none">retatrutide</a> in the UK - HPLC-verified at &ge;99% with a batch-specific Certificate of
+        Analysis - alongside <a href="/compounds/bpc-157/" style="color:var(--g);text-decoration:none">BPC-157</a>, <a href="/compounds/tb-500/" style="color:var(--g);text-decoration:none">TB-500</a>, <a href="/compounds/tesamorelin/" style="color:var(--g);text-decoration:none">tesamorelin</a> and <a href="/compounds/mots-c/" style="color:var(--g);text-decoration:none">MOTS-C</a> &mdash; 15+ research peptides &amp; 10
         bundles for laboratories worldwide. Dispatched from the UK within 24 hours, shipping to 60+ countries. For in vitro research use only.
       </p>
       <div class="h-btns">
         <a class="btn-p" href="/compounds/retatrutide/">BUY RETATRUTIDE &rarr;</a>
         <a class="btn-o" href="/compounds/">SHOP ALL COMPOUNDS &rarr;</a>
       </div>
-      <a href="/tools/reconstitution-calculator/" style="display:inline-block;margin-top:12px;color:#01D3A0;font-weight:600;font-size:14px;text-decoration:none">Free reconstitution calculator &rarr;</a>
+      <a href="/tools/reconstitution-calculator/" style="display:inline-block;margin-top:12px;color:var(--g);font-weight:600;font-size:14px;text-decoration:none">Free reconstitution calculator &rarr;</a>
       <div class="h-dispatch" id="vp-dispatch-cd" hidden>
         <span class="h-dispatch-dot" aria-hidden="true"></span>
         <span class="h-dispatch-txt"></span>
@@ -560,26 +560,25 @@ html{scroll-behavior:smooth}
   .dotd { padding: 34px 20px; border-top: 1px solid rgba(255,255,255,.07); border-bottom: 1px solid rgba(255,255,255,.07); }
   .dotd-card { display:flex; flex-direction:row; align-items:center; text-align:left;
     gap:30px; max-width:880px; margin:0 auto;
-    background:linear-gradient(165deg,#1ef0bd 0%,#01D3A0 55%,#00b489 100%); border:0;
-    border-radius:18px; padding:28px 36px; text-decoration:none; color:#053a2c;
-    box-shadow:0 0 60px rgba(1,211,160,.28);
-    transition:transform .15s ease, box-shadow .2s ease; animation:dotdGlow 3s ease-in-out infinite; }
-  .dotd-card:hover { transform:translateY(-3px); box-shadow:0 0 84px rgba(1,211,160,.45); }
-  @keyframes dotdGlow { 0%,100%{ box-shadow:0 0 50px rgba(1,211,160,.22); } 50%{ box-shadow:0 0 80px rgba(1,211,160,.42); } }
+    background:var(--g); border:1px solid var(--gh);
+    border-radius:var(--rxl); padding:28px 36px; text-decoration:none; color:#04120d;
+    box-shadow:var(--e3);
+    transition:transform var(--t-fast) var(--ease), box-shadow var(--t-base) var(--ease); }
+  .dotd-card:hover { transform:translateY(-2px); box-shadow:var(--e3); border-color:var(--ink); }
   .dotd-imgwrap { flex:0 0 200px; width:200px; height:200px; border-radius:16px; background:#0d0d0d;
     display:flex; align-items:center; justify-content:center; overflow:hidden;
     box-shadow:0 10px 40px rgba(0,0,0,.4); }
   .dotd-imgwrap img { width:100%; height:100%; object-fit:contain; }
   .dotd-body { flex:1; min-width:0; }
   .dotd-eyebrow { display:inline-block; font-family:'DM Mono',monospace; font-size:.72rem; font-weight:800; letter-spacing:.12em;
-    text-transform:uppercase; color:#01D3A0; background:#03150f; padding:5px 14px; border-radius:999px;
+    text-transform:uppercase; color:var(--g); background:#03150f; padding:5px 14px; border-radius:999px;
     box-shadow:0 4px 14px -4px rgba(0,0,0,.45); margin-bottom:12px; }
   .dotd-name { font-size:1.7rem; font-weight:800; color:#03150f; line-height:1.15; }
   .dotd-headline { font-size:.92rem; color:#0a4636; margin-top:6px; }
   .dotd-price { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:16px 0 4px; }
   .dotd-was { color:#0a6450; text-decoration:line-through; font-size:1.05rem; }
   .dotd-now { color:#03150f; font-weight:900; font-size:2.1rem; }
-  .dotd-badge { background:#03150f; color:#01D3A0; font-weight:800; font-size:.72rem; padding:4px 11px; border-radius:20px; box-shadow:0 4px 14px -4px rgba(0,0,0,.45); }
+  .dotd-badge { background:#03150f; color:var(--g); font-weight:800; font-size:.72rem; padding:4px 11px; border-radius:20px; box-shadow:0 4px 14px -4px rgba(0,0,0,.45); }
   .dotd-count { font-family:'DM Mono',monospace; font-weight:700; font-size:.82rem; color:#053a2c; margin-top:8px; }
   @media (max-width:600px){
     .dotd{ padding:24px 14px; }
@@ -591,7 +590,7 @@ html{scroll-behavior:smooth}
 </style>
 <section class="dotd" id="dotd-sec" hidden aria-label="Deal of the week">
   <a class="dotd-card" id="dotd-link" href="#">
-    <div class="dotd-imgwrap"><img id="dotd-img" alt="" loading="lazy"></div>
+    <div class="dotd-imgwrap"><img id="dotd-img" alt="" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E"></div>
     <div class="dotd-body">
       <div class="dotd-eyebrow">&#9733; Deal of the Week</div>
       <div class="dotd-name" id="dotd-name"></div>
@@ -610,7 +609,7 @@ html{scroll-behavior:smooth}
         <option value="one_month">Ship monthly</option>
         <option value="three_months">Ship every 3 months</option>
       </select>
-      <button id="dotd-sub-btn" style="background:#01D3A0;color:#04140f;font-weight:800;border:0;border-radius:9px;padding:11px 18px;cursor:pointer;font:inherit">&#128274; Subscribe &amp; lock this price</button>
+      <button id="dotd-sub-btn" style="background:var(--g);color:#04140f;font-weight:800;border:0;border-radius:9px;padding:11px 18px;cursor:pointer;font:inherit">&#128274; Subscribe &amp; lock this price</button>
     </div>
     <div style="font-size:12.5px;color:#9aa3ad;margin-top:8px">Keep this price for as long as you stay subscribed &mdash; even after the deal rotates. Cancel anytime in your account.</div>
     <div id="dotd-sub-msg" style="font-size:13px;margin-top:6px"></div>
@@ -704,7 +703,7 @@ html{scroll-behavior:smooth}
     <div class="vp-vs-eyebrow">Why Velox</div>
     <h2 class="vp-vs-title">The research peptide market is full of fakes. <em>We're built to be the opposite.</em></h2>
     <p class="vp-vs-sub">Anyone can claim &ldquo;99% purity.&rdquo; We document it - every batch, every order. Here's how we compare to a typical seller.</p>
-    <p style="margin:6px 0 0"><a href="/about/" style="color:#01D3A0;font-weight:600;text-decoration:none">Meet the team behind Velox &rarr;</a></p>
+    <p style="margin:6px 0 0"><a href="/about/" style="color:var(--g);font-weight:600;text-decoration:none">Meet the team behind Velox &rarr;</a></p>
     <div class="vp-vs-table">
       <div class="vp-vs-row vp-vs-head">
         <div class="vp-vs-cell lab"></div>
@@ -1050,17 +1049,17 @@ html{scroll-behavior:smooth}
   <div class="sec-i" style="max-width:1080px;margin:0 auto;padding:8px 20px">
     <div style="display:flex;gap:40px;align-items:center;flex-wrap:wrap;justify-content:center">
       <div style="flex:1;min-width:300px">
-        <div style="display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;color:#01D3A0;border:1px solid rgba(1,211,160,.3);background:rgba(1,211,160,.07);padding:5px 12px;border-radius:20px;letter-spacing:.06em;margin-bottom:18px">★ NEW · AI DESIGN TOOL</div>
-        <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(30px,4.4vw,48px);line-height:1.0;letter-spacing:-.5px;color:#fff;margin:0 0 14px">Stop buying the same<br>1990s peptides. <span style="color:#01D3A0">Design new ones.</span></h2>
+        <div style="display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--g);border:1px solid rgba(22,214,166,.3);background:rgba(22,214,166,.07);padding:5px 12px;border-radius:20px;letter-spacing:.06em;margin-bottom:18px">★ NEW · AI DESIGN TOOL</div>
+        <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(30px,4.4vw,48px);line-height:1.0;letter-spacing:-.5px;color:#fff;margin:0 0 14px">Stop buying the same<br>1990s peptides. <span style="color:var(--g)">Design new ones.</span></h2>
         <p style="font-size:16px;color:#9aa3ad;line-height:1.6;max-width:520px;margin:0 0 22px">Meet <strong style="color:#fff">Velox Design Lab</strong> — describe a target mechanism in plain English and our AI generates three novel research-peptide sequences, scored and novelty-checked, in under 60 seconds — then names the <strong style="color:#fff">closest compound you can order today</strong>. Your first design is free — no account needed.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
           <a class="btn-p" href="/design-lab/" style="padding:13px 26px;border-radius:10px;font-weight:800;text-decoration:none">Try Velox Design Lab free →</a>
-          <a href="/design-lab/leaderboard/" style="font-size:13px;color:#01D3A0;text-decoration:none;font-weight:600">🏆 See real designs →</a>
+          <a href="/design-lab/leaderboard/" style="font-size:13px;color:var(--g);text-decoration:none;font-weight:600">🏆 See real designs →</a>
         </div>
-        <div style="font-size:13px;color:#6b7a7a;margin-top:10px">Free to try · up to unlimited with <a href="/pro/" style="color:#01D3A0;text-decoration:none">Velox Pro</a></div>
+        <div style="font-size:13px;color:#6b7a7a;margin-top:10px">Free to try · up to unlimited with <a href="/pro/" style="color:var(--g);text-decoration:none">Velox Pro</a></div>
       </div>
       <div class="hdl-demo" id="hdlDemo" aria-hidden="true">
-        <div class="hdl-bar"><i style="background:#f0637e"></i><i style="background:#f0b03b"></i><i style="background:#01D3A0"></i><span>velox design lab &middot; live</span></div>
+        <div class="hdl-bar"><i style="background:#f0637e"></i><i style="background:#f0b03b"></i><i style="background:var(--g)"></i><span>velox design lab &middot; live</span></div>
         <div class="hdl-body">
           <div class="hdl-pr"><span class="pfx">&rsaquo; </span><span id="hdlType"></span><span class="hdl-cx" id="hdlCaret"></span></div>
           <div class="hdl-st" id="hdlStatus">&#10022; designing three novel candidates<span class="d">.</span><span class="d">.</span><span class="d">.</span></div>
@@ -1077,10 +1076,10 @@ html{scroll-behavior:smooth}
   .hdl-bar span{font-family:'DM Mono',monospace;font-size:10px;color:#8aa0a0;margin-left:7px;letter-spacing:.4px}
   .hdl-body{padding:15px 15px 16px;min-height:190px;font-family:'DM Mono',monospace}
   .hdl-pr{font-size:12.5px;color:#cdd6dd;line-height:1.55;min-height:20px}
-  .hdl-pr .pfx{color:#01D3A0}
-  .hdl-cx{display:inline-block;width:7px;height:13px;background:#01D3A0;margin-left:1px;vertical-align:-2px;animation:hdlBlink 1s step-end infinite}
+  .hdl-pr .pfx{color:var(--g)}
+  .hdl-cx{display:inline-block;width:7px;height:13px;background:var(--g);margin-left:1px;vertical-align:-2px;animation:hdlBlink 1s step-end infinite}
   @keyframes hdlBlink{50%{opacity:0}}
-  .hdl-st{font-size:10.5px;color:#01D3A0;margin:12px 0 4px;height:13px;opacity:0;transition:opacity .3s}
+  .hdl-st{font-size:10.5px;color:var(--g);margin:12px 0 4px;height:13px;opacity:0;transition:opacity .3s}
   .hdl-st.on{opacity:1}
   .hdl-st .d{animation:hdlDots 1.4s infinite}.hdl-st .d:nth-child(2){animation-delay:.2s}.hdl-st .d:nth-child(3){animation-delay:.4s}
   @keyframes hdlDots{0%,60%,100%{opacity:.2}30%{opacity:1}}
@@ -1090,12 +1089,12 @@ html{scroll-behavior:smooth}
   .hdl-c .sq{flex:1;font-size:13px;letter-spacing:1.5px;white-space:nowrap;overflow:hidden}
   .hdl-c .sq b{display:inline-block;font-weight:500;opacity:0;animation:hdlPop .26s ease forwards}
   @keyframes hdlPop{from{opacity:0;transform:translateY(-5px)}to{opacity:1}}
-  .hdl-c .sc{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:#01D3A0;min-width:24px;text-align:right}
+  .hdl-c .sc{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--g);min-width:24px;text-align:right}
   @media(prefers-reduced-motion:reduce){.hdl-cx,.hdl-st .d{animation:none}.hdl-c{opacity:1;transform:none}}
 </style>
 <script>
 (function(){
-  var COL={K:'#01D3A0',R:'#01D3A0',H:'#6cf7d6',D:'#f0637e',E:'#f0637e',A:'#01D3A0',I:'#01D3A0',L:'#01D3A0',M:'#01D3A0',F:'#01D3A0',W:'#01D3A0',P:'#01D3A0',V:'#01D3A0',C:'#f0b03b',G:'#f0b03b',Y:'#f0b03b',N:'#eef3f2',Q:'#eef3f2',S:'#8aa0a0',T:'#8aa0a0'};
+  var COL={K:'var(--g)',R:'var(--g)',H:'#6cf7d6',D:'#f0637e',E:'#f0637e',A:'var(--g)',I:'var(--g)',L:'var(--g)',M:'var(--g)',F:'var(--g)',W:'var(--g)',P:'var(--g)',V:'var(--g)',C:'#f0b03b',G:'#f0b03b',Y:'#f0b03b',N:'#eef3f2',Q:'#eef3f2',S:'#8aa0a0',T:'#8aa0a0'};
   var tx=document.getElementById('hdlType'),stt=document.getElementById('hdlStatus'),cc=document.getElementById('hdlCands'),cr=document.getElementById('hdlCaret');
   if(!tx||!cc) return;
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1114,7 +1113,7 @@ html{scroll-behavior:smooth}
   <div class="vp-hto-inner">
     <div class="vp-hto-eyebrow">Simple 3-step process</div>
     <h2 class="vp-hto-title">How to order from Velox Peptides</h2>
-    <p class="vp-hto-sub">No account needed. No card details required. Pay instantly with <strong>Pay by Bank</strong> - here&rsquo;s exactly what happens.</p>
+    <p class="vp-hto-sub">You don&rsquo;t need an account or card details. You pay straight from your banking app with <strong>Pay by Bank</strong> &mdash; here&rsquo;s exactly what happens.</p>
     <div class="vp-hto-steps">
       <div class="vp-hto-card">
         <div class="vp-hto-card-num">1</div>
@@ -1133,8 +1132,8 @@ html{scroll-behavior:smooth}
       </div>
     </div>
     <div class="vp-hto-no-card">
-      <span class="vp-hto-no-card-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#01D3A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-      <span class="vp-hto-no-card-text"><strong>No card details. No account.</strong> Just open your banking app, approve the payment, done - secured by Fena open banking (FCA-regulated, same protections as a standard bank transfer).</span>
+      <span class="vp-hto-no-card-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16d6a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+      <span class="vp-hto-no-card-text"><strong>You open your banking app and approve the payment</strong> &mdash; no card details or account required. It&rsquo;s secured by Fena open banking (FCA-regulated, with the same protections as a standard bank transfer).</span>
     </div>
     <div class="vp-hto-cta">
       <a class="btn-p" href="/compounds/">BROWSE COMPOUNDS &rarr;</a>
