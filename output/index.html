@@ -490,7 +490,96 @@ html{scroll-behavior:smooth}
 
 
 <main class="site-main">
+<style>
+/* ===== ASSAY HERO v2 — document-grade "specimen record" hero ===== */
+.hero{display:block;padding:0;min-height:auto;background:var(--bg);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.02),transparent 40%),
+    linear-gradient(rgba(170,200,195,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(170,200,195,.022) 1px,transparent 1px);
+  background-size:auto,34px 34px,34px 34px;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent 80%);
+          mask-image:linear-gradient(180deg,#000,transparent 80%);}
+.hero::after{display:none;}
+
+/* record header strip — reads like an opened lab document */
+.assay-recordbar{position:relative;z-index:1;max-width:1280px;margin:0 auto;width:100%;
+  display:flex;align-items:center;gap:16px;padding:13px 32px;border-bottom:1px solid var(--brd);
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--t2);}
+.assay-recordbar .arb-dot{width:6px;height:6px;border-radius:50%;background:var(--g);flex:none;}
+.assay-recordbar .arb-i{color:var(--t4);}
+.assay-recordbar .arb-sep{flex:1;height:1px;background:var(--brd);}
+.assay-recordbar .arb-r{color:var(--t4);}
+
+@media (min-width:768px){
+  .hero-i{max-width:1280px;margin:0 auto;padding:66px 32px 78px;gap:64px;
+    grid-template-columns:1.05fr 470px;align-items:center;}
+
+  .h-ey{font-family:var(--mono);font-size:10px;color:var(--t2);letter-spacing:.16em;
+    margin-bottom:24px;text-transform:uppercase;}
+  .h-ey::before{width:34px;background:var(--g);}
+
+  .h-h1{font-family:var(--disp);font-weight:900;text-transform:uppercase;
+    font-size:clamp(3.6rem,6.6vw,5.5rem);line-height:.84;letter-spacing:-.02em;
+    margin:0;color:var(--ink);}
+  .h-h1 em{font-style:normal;color:var(--g);}
+  .h-h1::after{content:'';display:block;width:88px;height:3px;background:var(--g);margin-top:28px;}
+
+  .h-stats-row{display:flex;align-items:stretch;gap:0;margin:34px 0 28px;
+    border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);}
+  .h-stats-row .h-stat-item{display:flex;flex-direction:column;gap:4px;
+    padding:18px 28px 18px 0;margin-right:28px;border-right:1px solid var(--brd);}
+  .h-stats-row .h-stat-item:last-child{border-right:none;margin-right:0;padding-right:0;}
+  .h-stats-row .hsi-div{display:none;}
+  .h-stats-row .hsi-v{font-family:var(--disp);font-size:32px;font-weight:900;color:var(--ink);line-height:1;}
+  .h-stats-row .hsi-l{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;}
+
+  .h-sub{font-size:15px;color:var(--t2);line-height:1.7;max-width:490px;margin-bottom:30px;}
+
+  /* certificate-of-analysis panel */
+  .hero-panel{background:var(--bg2);border:1px solid var(--brd2);border-radius:var(--rl);
+    padding:0;box-shadow:var(--e3);position:relative;margin:0;overflow:visible;}
+  .hero-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--g);border-radius:var(--rl) var(--rl) 0 0;opacity:1;}
+  .cert-tick{position:absolute;width:7px;height:7px;z-index:2;border:1px solid var(--g-deep);}
+  .cert-tick.tl{top:9px;left:9px;border-right:none;border-bottom:none;}
+  .cert-tick.tr{top:9px;right:9px;border-left:none;border-bottom:none;}
+  .cert-tick.bl{bottom:9px;left:9px;border-right:none;border-top:none;}
+  .cert-tick.br{bottom:9px;right:9px;border-left:none;border-top:none;}
+  .cert-head{display:flex;justify-content:space-between;align-items:flex-start;
+    padding:26px 28px 18px;border-bottom:1px solid var(--brd);}
+  .cert-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--g);margin-bottom:7px;}
+  .cert-no{font-family:var(--disp);font-size:22px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.01em;color:var(--ink);line-height:1;}
+  .cert-stamp{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;
+    color:var(--g);border:1px solid var(--g-deep);border-radius:4px;padding:6px 11px;
+    text-transform:uppercase;white-space:nowrap;}
+  .hero-panel .hp-rows{margin:18px 22px 0;}
+  .hero-panel .hp-tags{padding:18px 22px 0;}
+  .hero-panel .hp-panel-link{display:block;margin:18px 0 0;padding:16px 22px;
+    border-top:1px solid var(--brd);font-family:var(--mono);font-size:11px;
+    letter-spacing:.04em;color:var(--g);text-decoration:none;transition:background var(--t-fast) var(--ease);}
+  .hero-panel .hp-panel-link:hover{background:var(--gd);}
+}
+
+@media (max-width:767px){
+  .assay-recordbar{padding:11px 16px;gap:10px;font-size:9px;letter-spacing:.14em;}
+  .assay-recordbar .arb-i,.assay-recordbar .arb-r,.assay-recordbar .arb-sep{display:none;}
+  .h-h1{color:var(--ink);}
+  .h-h1 em{font-style:normal;color:var(--g);}
+  .h-h1::after{content:'';display:block;width:64px;height:3px;background:var(--g);margin-top:18px;}
+}
+</style>
 <section class="hero">
+  <div class="assay-recordbar">
+    <span class="arb-dot" aria-hidden="true"></span>
+    <span><b style="color:var(--g);font-weight:500">VELOX&nbsp;ASSAY</b></span>
+    <span class="arb-i">Batch-verified research peptides</span>
+    <span class="arb-sep" aria-hidden="true"></span>
+    <span class="arb-r">CRP Labs Ltd &middot; NI738125</span>
+  </div>
   <div class="hero-i">
     <div class="hero-content">
       <div class="h-ey">HPLC-Verified &middot; CoA-Supplied &middot; 24h UK Dispatch</div>
@@ -536,10 +625,17 @@ html{scroll-behavior:smooth}
       <p class="h-compliance"><strong>For in vitro research use only.</strong> Not for human or veterinary consumption.</p>
     </div>
     <div class="hero-panel hp-block">
-      <div class="hp-lbl">LATEST BATCH REPORT - 2026</div>
+      <span class="cert-tick tl" aria-hidden="true"></span><span class="cert-tick tr" aria-hidden="true"></span><span class="cert-tick bl" aria-hidden="true"></span><span class="cert-tick br" aria-hidden="true"></span>
+      <div class="cert-head">
+        <div>
+          <div class="cert-kicker">Certificate of Analysis</div>
+          <div class="cert-no">Retatrutide &middot; Lot 2026-05A</div>
+        </div>
+        <div class="cert-stamp">Verified &#x2713;</div>
+      </div>
       <div class="hp-rows">
-        <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Retatrutide &middot; Lot 2026-05A</span></div>
         <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">2381089-83-2</span></div>
+        <div class="hp-r"><span class="hp-k">Molecular Formula</span><span class="hp-v">C&#8322;&#8325;&#8323;H&#8323;&#8325;&#8326;N&#8325;&#8320;O&#8324;&#8324;</span></div>
         <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.2% - PASS &#x2713;</span></div>
         <div class="hp-r"><span class="hp-k">Mass Spec</span><span class="hp-v ok">4731.3 g/mol - CONFIRMED</span></div>
         <div class="hp-r"><span class="hp-k">Appearance</span><span class="hp-v ok">White lyophilised powder - PASS</span></div>
