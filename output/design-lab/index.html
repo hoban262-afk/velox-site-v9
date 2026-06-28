@@ -56,7 +56,7 @@
     .dl-cta-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
     .dl-btn{ font-family:Inter,sans-serif; font-weight:800; font-size:15px; padding:14px 26px; border-radius:10px; border:0; cursor:pointer; text-decoration:none; transition:.2s; display:inline-block; }
     .dl-btn-p{ background:var(--dl-g); color:#04140f; }
-    .dl-btn-p:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 12px 28px -10px rgba(1,211,160,.6); }
+    .dl-btn-p:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 12px 28px -10px rgba(0,0,0,.55); }
     .dl-btn-s{ background:#101822; color:#fff; border:1px solid #283341; }
     .dl-btn-s:hover{ border-color:var(--dl-g); color:var(--dl-g); }
     .dl-note{ font-size:12px; color:var(--dl-dim); font-family:'DM Mono',monospace; }
@@ -119,7 +119,7 @@
     /* Tier offer */
     .dl-tiers{ display:grid; grid-template-columns:repeat(2,minmax(0,230px)); justify-content:center; gap:16px; margin-top:42px; }
     .dl-tier{ background:var(--dl-bg3); border:1px solid var(--dl-brd); border-radius:14px; padding:24px 18px; text-align:center; }
-    .dl-tier.pop{ border-color:var(--dl-g); box-shadow:0 0 0 1px var(--dl-g) inset, 0 18px 50px -22px rgba(1,211,160,.5); }
+    .dl-tier.pop{ border-color:var(--dl-g); box-shadow:0 0 0 1px var(--dl-g) inset, 0 18px 50px -22px rgba(0,0,0,.55); }
     .dl-tier-name{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; color:#fff; }
     .dl-tier-runs{ font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:40px; color:var(--dl-g); line-height:1; margin:12px 0 2px; }
     .dl-tier-per{ font-size:12px; color:var(--dl-mut); font-family:'DM Mono',monospace; }
@@ -179,7 +179,7 @@
 
     /* Glowing primary CTA */
     .dl-cta-row .dl-btn-p{ animation:dlGlow 2.6s ease-in-out infinite; }
-    @keyframes dlGlow{ 0%,100%{ box-shadow:0 8px 24px -10px rgba(1,211,160,.55); } 50%{ box-shadow:0 8px 36px -6px rgba(1,211,160,.9); } }
+    @keyframes dlGlow{ 0%,100%{ box-shadow:0 8px 24px -10px rgba(0,0,0,.5); } 50%{ box-shadow:0 12px 30px -8px rgba(0,0,0,.6); } }
 
     /* Live demo terminal */
     .dl-demo{ max-width:640px; margin:40px auto 0; background:linear-gradient(180deg,#0b0f15,#070a0e); border:1px solid var(--dl-brd); border-radius:14px; overflow:hidden; box-shadow:0 44px 90px -42px rgba(0,0,0,.9); text-align:left; position:relative; z-index:2; }
@@ -206,12 +206,12 @@
 
     /* Card hover lifts */
     .dl-step,.dl-dcard,.dl-tier{ transition:border-color .25s,transform .25s,box-shadow .25s,background .25s; }
-    .dl-step:hover,.dl-dcard:hover{ transform:translateY(-4px); border-color:rgba(1,211,160,.4); box-shadow:0 22px 42px -28px rgba(1,211,160,.55); }
+    .dl-step:hover,.dl-dcard:hover{ transform:translateY(-4px); border-color:rgba(1,211,160,.4); box-shadow:0 22px 42px -28px rgba(0,0,0,.55); }
     .dl-tier:hover{ transform:translateY(-4px); border-color:rgba(1,211,160,.45); }
     .dl-step-ic{ transition:transform .25s; }
     .dl-step:hover .dl-step-ic{ transform:scale(1.12) rotate(-4deg); }
     .dl-tier.pop{ animation:dlPopGlow 3s ease-in-out infinite; }
-    @keyframes dlPopGlow{ 0%,100%{ box-shadow:0 0 0 1px var(--dl-g) inset,0 18px 50px -24px rgba(1,211,160,.5); } 50%{ box-shadow:0 0 0 1px var(--dl-g) inset,0 18px 62px -14px rgba(1,211,160,.85); } }
+    @keyframes dlPopGlow{ 0%,100%{ box-shadow:0 0 0 1px var(--dl-g) inset,0 18px 50px -24px rgba(0,0,0,.5); } 50%{ box-shadow:0 0 0 1px var(--dl-g) inset,0 20px 56px -16px rgba(0,0,0,.6); } }
 
     /* Shimmering accent bar on the sample window */
     .dl-win{ position:relative; }

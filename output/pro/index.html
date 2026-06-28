@@ -118,7 +118,7 @@
     /* Billing toggle */
     .pro-hero .toggle { display:inline-flex; background:#0b0f14; border:1px solid #1f262d; border-radius:999px; padding:5px; margin:28px auto 12px; box-shadow:inset 0 1px 0 rgba(255,255,255,.03); }
     .pro-hero .toggle button { border:0; background:transparent; color:#9aa3ad; font:600 14px Inter,Arial; padding:10px 22px; border-radius:999px; cursor:pointer; transition:.2s; }
-    .pro-hero .toggle button.on { background:#01D3A0; color:#021; box-shadow:0 4px 16px -4px rgba(1,211,160,.6); }
+    .pro-hero .toggle button.on { background:#01D3A0; color:#021; box-shadow:0 4px 16px -4px rgba(0,0,0,.55); }
     .pro-save-note { font-size:12px; color:#8c95a0; margin-bottom:36px; }
 
     /* ── Tiers grid ─────────────────────────────────────── */
@@ -143,7 +143,7 @@
     .tier li { padding:7px 0 7px 26px; position:relative; font-size:14px; color:#cdd3d9; line-height:1.4; }
     .tier li:before { content:"✓"; position:absolute; left:0; top:6px; color:#01D3A0; font-weight:800; }
     .tier button.cta { border:0; border-radius:11px; padding:14px; font:800 15px Inter,Arial; cursor:pointer; background:#01D3A0; color:#021; transition:.2s; }
-    .tier button.cta:hover { filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 10px 24px -8px rgba(1,211,160,.6); }
+    .tier button.cta:hover { filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 10px 24px -8px rgba(0,0,0,.55); }
     .tier:not(.featured) button.cta { background:#141b22; color:#fff; border:1px solid #2a323a; }
     .tier:not(.featured) button.cta:hover { border-color:#01D3A0; box-shadow:none; filter:none; }
 
@@ -164,16 +164,16 @@
 
     @keyframes proSpin { to { --proang:360deg; } }
     @keyframes proFloat { 0%,100%{ transform:translateY(-8px) scale(1.04); } 50%{ transform:translateY(-14px) scale(1.05); } }
-    @keyframes proGlow { 0%,100%{ box-shadow:0 16px 50px -16px rgba(1,211,160,.35); } 50%{ box-shadow:0 0 28px 2px rgba(1,211,160,.18), 0 22px 60px -14px rgba(1,211,160,.50); } }
+    @keyframes proGlow { 0%,100%{ box-shadow:0 16px 50px -16px rgba(0,0,0,.5); } 50%{ box-shadow:0 22px 60px -14px rgba(0,0,0,.6); } }
     @keyframes proShimmer { 0%{ background-position:160% 0; } 55%,100%{ background-position:-160% 0; } }
-    @keyframes proBadge { 0%,100%{ box-shadow:0 0 0 0 rgba(1,211,160,.5); } 50%{ box-shadow:0 0 16px 2px rgba(1,211,160,.65); } }
+    @keyframes proBadge { 0%,100%{ opacity:1; } 50%{ opacity:.72; } }
 
     @media (max-width:860px){
       .tier.featured { transform:none; animation:proGlow 3s ease-in-out infinite; }
     }
     @media (prefers-reduced-motion: reduce){
       .tier, .tier.featured, .tier.featured::before, .tier.featured::after, .tier.featured .badge { animation:none !important; }
-      .tier.featured { transform:translateY(-8px) scale(1.04); box-shadow:0 0 0 1.5px #01D3A0, 0 16px 50px -16px rgba(1,211,160,.4); }
+      .tier.featured { transform:translateY(-8px) scale(1.04); box-shadow:0 0 0 1.5px var(--g), 0 16px 50px -16px rgba(0,0,0,.55); }
     }
 
     .pro-msg { text-align:center; min-height:22px; color:#9aa3ad; font-size:13px; padding-bottom:30px; }

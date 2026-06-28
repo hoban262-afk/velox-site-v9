@@ -65,7 +65,7 @@
     .run::after{ content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-18deg); animation:runShine 3.4s ease-in-out infinite; }
     .run:disabled{ opacity:.6; cursor:default; }
     .run:disabled::after{ animation:none; }
-    .run:not(:disabled):hover{ transform:translateY(-1px); box-shadow:0 14px 30px -12px rgba(1,211,160,.7); transition:.15s; }
+    .run:not(:disabled):hover{ transform:translateY(-1px); box-shadow:0 14px 30px -12px rgba(0,0,0,.6); transition:.15s; }
     .run:not(:disabled):active{ transform:translateY(0) scale(.99); }
     @keyframes runShine{ 0%{ left:-60%; } 55%,100%{ left:130%; } }
     .msg{ font-size:13px; color:var(--red); min-height:16px; margin-top:10px; }
