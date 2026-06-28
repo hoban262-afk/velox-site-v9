@@ -257,7 +257,7 @@
 
   // ── Customer profile drawer (RFM) ───────────────────────────────────────────
   function rfmSegment(freq, spend, recencyDays) {
-    if (freq >= 3 || spend >= 300) return { label: 'VIP', color: '#01D3A0', bg: 'rgba(1,211,160,.15)' };
+    if (freq >= 3 || spend >= 300) return { label: 'VIP', color: '#16d6a6', bg: 'rgba(22,214,166,.15)' };
     if (recencyDays <= 30 && freq <= 1) return { label: 'New', color: '#60a5fa', bg: 'rgba(96,165,250,.15)' };
     if (recencyDays > 120) return { label: 'Lapsed', color: '#f87171', bg: 'rgba(248,113,113,.15)' };
     if (recencyDays > 60) return { label: 'At risk', color: '#fbbf24', bg: 'rgba(251,191,36,.15)' };
@@ -282,7 +282,7 @@
       return '<div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--brd,#1a1a1a)">' +
         '<div><div style="color:#fff;font-size:13px">' + fmtDate(o.created_at) + '</div>' +
         '<div style="font-size:11px;color:var(--t3,#6b7280)">' + esc(o.status || '—') + ' · ' + ic + ' item' + (ic === 1 ? '' : 's') + '</div></div>' +
-        '<div style="color:#01D3A0;font-weight:600">£' + (parseFloat(o.total) || 0).toFixed(2) + '</div></div>';
+        '<div style="color:#16d6a6;font-weight:600">£' + (parseFloat(o.total) || 0).toFixed(2) + '</div></div>';
     }).join('');
     var d = document.getElementById('cust-drawer'); if (!d) return;
     d.innerHTML =
@@ -307,7 +307,7 @@
   };
 
   // ── System health (workers + integrations) ──────────────────────────────────
-  function healthDot(ok) { return '<span style="width:8px;height:8px;border-radius:50%;display:inline-block;background:' + (ok ? '#01D3A0' : '#f87171') + ';flex:0 0 auto"></span>'; }
+  function healthDot(ok) { return '<span style="width:8px;height:8px;border-radius:50%;display:inline-block;background:' + (ok ? '#16d6a6' : '#f87171') + ';flex:0 0 auto"></span>'; }
   function healthAgo(iso) {
     if (!iso) return 'never';
     var s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -343,7 +343,7 @@
     if (iEl) iEl.innerHTML = (d.integrations || []).map(function (it) {
       return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--brd,#1a1a1a)">' + healthDot(it.ok) +
         '<div style="flex:1"><span style="color:#fff;font-size:13px">' + esc(it.label) + '</span>' + (it.note ? ' <span style="color:var(--t3,#6b7280);font-size:11px">' + esc(it.note) + '</span>' : '') + '</div>' +
-        '<span style="font-size:11px;color:' + (it.ok ? '#01D3A0' : 'var(--t3,#6b7280)') + '">' + (it.ok ? 'Connected' : 'Not set') + '</span></div>';
+        '<span style="font-size:11px;color:' + (it.ok ? '#16d6a6' : 'var(--t3,#6b7280)') + '">' + (it.ok ? 'Connected' : 'Not set') + '</span></div>';
     }).join('');
   }
 
@@ -444,7 +444,7 @@
   function mGbp(v) { return '£' + (Number(v) || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function mPct(v) { return (Number.isFinite(v) ? (v * 100).toFixed(1) : '0.0') + '%'; }
   function mTag(m) {
-    var c = m >= 0.45 ? '#01D3A0' : m >= 0.25 ? '#e0a64a' : '#f87171';
+    var c = m >= 0.45 ? '#16d6a6' : m >= 0.25 ? '#e0a64a' : '#f87171';
     return '<span style="font-weight:700;color:' + c + '">' + mPct(m) + '</span>';
   }
   function mNum(id, d) { var el = document.getElementById(id); var x = el ? parseFloat(el.value) : NaN; return Number.isFinite(x) ? x : d; }
@@ -644,7 +644,7 @@
       var t = ln.trim();
       if (/^###?\s+/.test(t)) {
         if (inList) { html += '</ul>'; inList = false; }
-        html += '<div style="color:#01D3A0;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px">' + inline(t.replace(/^#+\s+/, '')) + '</div>';
+        html += '<div style="color:#16d6a6;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px">' + inline(t.replace(/^#+\s+/, '')) + '</div>';
       } else if (/^[-*]\s+/.test(t)) {
         if (!inList) { html += '<ul style="margin:0 0 8px;padding-left:18px">'; inList = true; }
         html += '<li style="margin:3px 0">' + inline(t.replace(/^[-*]\s+/, '')) + '</li>';
@@ -763,7 +763,7 @@
       });
       var d = await r.json().catch(function () { return {}; });
       if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Failed: ' + esc((d && d.error) || ('HTTP ' + r.status)); } if (btn) { btn.disabled = false; btn.textContent = 'Notify'; } return; }
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = 'Sent ' + (d.sent || 0) + ' notification(s) for ' + name + '.'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = 'Sent ' + (d.sent || 0) + ' notification(s) for ' + name + '.'; }
       loadInterest();
     } catch (e) {
       if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Failed: ' + esc(e.message); }
@@ -803,7 +803,7 @@
       var reg = await navigator.serviceWorker.ready;
       var sub = await reg.pushManager.getSubscription();
       if (sub && Notification.permission === 'granted') {
-        pushStatus('✓ Alerts on for this device.', '#01D3A0');
+        pushStatus('✓ Alerts on for this device.', '#16d6a6');
         if (enableBtn) enableBtn.textContent = 'Re-enable';
         if (testBtn) testBtn.style.display = '';
       }
@@ -828,7 +828,7 @@
         body: JSON.stringify({ subscription: sub.toJSON(), label: navigator.userAgent.slice(0, 60) }),
       });
       if (!r.ok) { var d = await r.json().catch(function () { return {}; }); pushStatus('Could not save: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171'); if (btn) { btn.disabled = false; btn.textContent = 'Enable order alerts'; } return; }
-      pushStatus('✓ Alerts on for this device.', '#01D3A0');
+      pushStatus('✓ Alerts on for this device.', '#16d6a6');
       if (btn) { btn.disabled = false; btn.textContent = 'Re-enable'; }
       var testBtn = document.getElementById('push-test'); if (testBtn) testBtn.style.display = '';
       renderPushPrefs();
@@ -845,7 +845,7 @@
       var token = s && s.data && s.data.session && s.data.session.access_token;
       var r = await fetch('/api/admin/push-test', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
       var d = await r.json().catch(function () { return {}; });
-      if (r.ok) pushStatus('Test sent to ' + (d.sent || 0) + ' device(s).', '#01D3A0');
+      if (r.ok) pushStatus('Test sent to ' + (d.sent || 0) + ' device(s).', '#16d6a6');
       else pushStatus('Test failed: ' + esc((d && d.error) || ('HTTP ' + r.status)), '#f87171');
     } catch (e) { pushStatus('Test failed: ' + esc(e.message), '#f87171'); }
   }
@@ -900,7 +900,7 @@
       toggle.style.cssText = 'position:relative;display:inline-block;width:44px;min-width:44px;height:24px;cursor:pointer';
       toggle.innerHTML = '<input type="checkbox" data-cat="' + cat.key + '"' + (on ? ' checked' : '') +
         ' style="opacity:0;width:0;height:0;position:absolute">' +
-        '<span style="position:absolute;inset:0;border-radius:999px;transition:background .2s;background:' + (on ? '#01D3A0' : '#2a323a') + '"></span>' +
+        '<span style="position:absolute;inset:0;border-radius:999px;transition:background .2s;background:' + (on ? '#16d6a6' : '#2a323a') + '"></span>' +
         '<span style="position:absolute;top:2px;left:' + (on ? '22px' : '2px') + ';width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>';
       var inp = toggle.querySelector('input');
       inp.addEventListener('change', function () {
@@ -910,7 +910,7 @@
         savePushPrefs(prefs);
         var bg = this.nextElementSibling;
         var dot = bg.nextElementSibling;
-        bg.style.background = isOn ? '#01D3A0' : '#2a323a';
+        bg.style.background = isOn ? '#16d6a6' : '#2a323a';
         dot.style.left = isOn ? '22px' : '2px';
       });
       row.appendChild(info);
@@ -985,11 +985,11 @@
     if (!v) { prev.innerHTML = ''; return; }
     var base = Number(v.base_price); var dp = Math.round(base * (1 - pct / 100) * 100) / 100;
     prev.innerHTML = '<div style="background:var(--bg3,#0a0d12);border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:14px 16px">' +
-      '<div style="font-size:12px;color:#01D3A0;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Homepage preview</div>' +
+      '<div style="font-size:12px;color:#16d6a6;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Homepage preview</div>' +
       '<div style="font-size:15px;color:#fff;font-weight:700">' + esc(v.name) + ' · ' + esc(v.size) + '</div>' +
       '<div style="margin-top:4px"><span style="color:var(--t3,#6b7280);text-decoration:line-through">£' + base.toFixed(2) + '</span>' +
-      '<span style="color:#01D3A0;font-weight:800;font-size:18px;margin-left:8px">£' + dp.toFixed(2) + '</span>' +
-      '<span style="background:#01D3A0;color:#021;font-weight:800;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:8px">' + Math.round(pct) + '% OFF</span></div></div>';
+      '<span style="color:#16d6a6;font-weight:800;font-size:18px;margin-left:8px">£' + dp.toFixed(2) + '</span>' +
+      '<span style="background:#16d6a6;color:#021;font-weight:800;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:8px">' + Math.round(pct) + '% OFF</span></div></div>';
   }
 
   async function saveDeal() {
@@ -1019,7 +1019,7 @@
       var r = await fetch('/api/admin/deal', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) });
       var d = await r.json().catch(function () { return {}; });
       if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = (d && d.error) || ('HTTP ' + r.status); } return; }
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Deal is live on the homepage.'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = '✓ Deal is live on the homepage.'; }
       if (window.showToast) showToast('Deal of the Week updated', 'ok');
       var st = document.getElementById('deal-status'); if (st) st.textContent = 'Live: ' + parts[0] + ' · ' + pct + '% off';
     } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
@@ -1033,7 +1033,7 @@
       var token = s && s.data && s.data.session && s.data.session.access_token;
       var r = await fetch('/api/admin/deal', { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
       if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Clear failed'; } return; }
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = 'Deal cleared.'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = 'Deal cleared.'; }
       var st = document.getElementById('deal-status'); if (st) st.textContent = 'No deal running';
       if (window.showToast) showToast('Deal cleared', 'ok');
     } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
@@ -1074,7 +1074,7 @@
       return '<div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:16px 18px;margin-bottom:12px">' +
         '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">' +
           '<div style="font-size:14px;font-weight:700;color:#fff">' + esc(a.title) + '</div>' +
-          '<div style="font-size:11px;color:var(--g,#01D3A0);text-transform:uppercase;letter-spacing:.06em">' + esc(actionTypeLabel(a.type)) + ' · ' + esc(a.agent) + '</div>' +
+          '<div style="font-size:11px;color:var(--g,#16d6a6);text-transform:uppercase;letter-spacing:.06em">' + esc(actionTypeLabel(a.type)) + ' · ' + esc(a.agent) + '</div>' +
         '</div>' +
         (a.summary ? '<div style="font-size:12px;color:var(--t3,#6b7280);margin-top:4px">' + esc(a.summary) + '</div>' : '') +
         (body ? '<pre style="white-space:pre-wrap;word-break:break-word;font:inherit;font-size:13px;color:var(--t2,#9ca3af);background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:7px;padding:12px;margin:10px 0 0;max-height:240px;overflow:auto">' + esc(body) + '</pre>' : '') +
@@ -1126,7 +1126,7 @@
     // Reflect ?xero=connected|failed|invalid|denied from the OAuth redirect
     var qp = new URLSearchParams(window.location.search).get('xero');
     if (qp && statusEl) {
-      if (qp === 'connected') statusEl.innerHTML = '<span style="color:#01D3A0">✓ Just connected.</span>';
+      if (qp === 'connected') statusEl.innerHTML = '<span style="color:#16d6a6">✓ Just connected.</span>';
       else statusEl.innerHTML = '<span style="color:#f87171">Connection ' + esc(qp) + '. Try again.</span>';
     }
     try {
@@ -1136,7 +1136,7 @@
       var d = await r.json();
       if (!statusEl) return;
       if (d && d.connected) {
-        statusEl.innerHTML = '<span style="color:#01D3A0">✓ Connected</span>' + (d.org ? ' · ' + esc(d.org) : '');
+        statusEl.innerHTML = '<span style="color:#16d6a6">✓ Connected</span>' + (d.org ? ' · ' + esc(d.org) : '');
         if (btn) btn.textContent = 'Reconnect';
       } else if (!qp) {
         statusEl.textContent = d && d.configured === false ? 'Not configured — add Xero keys in Vercel.' : 'Not connected.';
@@ -1151,7 +1151,7 @@
     btn._wired = true;
     btn.addEventListener('click', async function () {
       var msg = document.getElementById('xero-backfill-msg');
-      function setMsg(t, ok) { if (msg) { msg.textContent = t; msg.style.color = ok === false ? '#f87171' : ok ? '#01D3A0' : 'var(--t3,#6b7280)'; } }
+      function setMsg(t, ok) { if (msg) { msg.textContent = t; msg.style.color = ok === false ? '#f87171' : ok ? '#16d6a6' : 'var(--t3,#6b7280)'; } }
       btn.disabled = true; setMsg('Finding unsynced orders…');
       try {
         var s = await window._sb.auth.getSession();
@@ -1200,7 +1200,7 @@
       if (it && it.ok) {
         var when = ga && ga.last ? (' · last sync ' + healthAgo(ga.last.ran_at) + (ga.last.ok ? '' : ' (failed)')) : ' · not synced yet';
         el.textContent = 'Connected' + when;
-        el.style.color = '#01D3A0';
+        el.style.color = '#16d6a6';
       } else {
         el.textContent = 'Not connected — add the GA4 environment variables below.';
         el.style.color = 'var(--t3,#6b7280)';
@@ -1214,7 +1214,7 @@
     btn._wired = true;
     btn.addEventListener('click', async function () {
       var el = document.getElementById('ga4-status');
-      function setMsg(t, ok) { if (el) { el.textContent = t; el.style.color = ok === false ? '#f87171' : ok ? '#01D3A0' : 'var(--t3,#6b7280)'; } }
+      function setMsg(t, ok) { if (el) { el.textContent = t; el.style.color = ok === false ? '#f87171' : ok ? '#16d6a6' : 'var(--t3,#6b7280)'; } }
       btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Syncing…'; setMsg('Pulling the latest GA4 data…');
       try {
         var s = await window._sb.auth.getSession();
@@ -1261,7 +1261,7 @@
     if (btn && !btn._wired) { btn._wired = true; btn.addEventListener('click', connectGmail); }
     var qp = new URLSearchParams(window.location.search).get('gmail');
     if (qp && statusEl) {
-      if (qp === 'connected') statusEl.innerHTML = '<span style="color:#01D3A0">✓ Just connected.</span>';
+      if (qp === 'connected') statusEl.innerHTML = '<span style="color:#16d6a6">✓ Just connected.</span>';
       else if (qp === 'norefresh') statusEl.innerHTML = '<span style="color:#f87171">Google didn\'t return offline access. Click Connect and choose "Allow" again.</span>';
       else statusEl.innerHTML = '<span style="color:#f87171">Connection ' + esc(qp) + '. Try again.</span>';
     }
@@ -1272,7 +1272,7 @@
       var d = await r.json();
       if (!statusEl) return;
       if (d && d.connected) {
-        statusEl.innerHTML = '<span style="color:#01D3A0">✓ Connected — inbox triaged 24/7</span>';
+        statusEl.innerHTML = '<span style="color:#16d6a6">✓ Connected — inbox triaged 24/7</span>';
         if (btn) btn.textContent = 'Reconnect';
       } else if (!qp) {
         statusEl.textContent = d && d.configured === false ? 'Not configured — add Google OAuth keys in Vercel.' : 'Not connected.';
@@ -1308,7 +1308,7 @@
       if (!d || d.configured === false) {
         el.textContent = 'Not connected — add your Click & Drop API key in the site environment settings.';
       } else if (d.connected) {
-        el.innerHTML = '<span style="color:#01D3A0">✓ Connected</span> · paid orders auto-import.';
+        el.innerHTML = '<span style="color:#16d6a6">✓ Connected</span> · paid orders auto-import.';
       } else {
         el.innerHTML = '<span style="color:#f87171">Key set but not authorising</span> — check the API key value.';
       }
@@ -1380,7 +1380,7 @@
       var max = Math.max.apply(null, series.map(function (x) { return x.revenue; }).concat([1]));
       chart.innerHTML = series.map(function (x) {
         var h = Math.max(2, Math.round(x.revenue / max * 88));
-        return '<div title="' + x.date + ': ' + gbp(x.revenue) + '" style="flex:1;min-width:0;height:' + h + 'px;background:linear-gradient(180deg,#01D3A0,#018a69);border-radius:3px 3px 0 0;opacity:' + (x.revenue ? 1 : .25) + '"></div>';
+        return '<div title="' + x.date + ': ' + gbp(x.revenue) + '" style="flex:1;min-width:0;height:' + h + 'px;background:linear-gradient(180deg,#16d6a6,#018a69);border-radius:3px 3px 0 0;opacity:' + (x.revenue ? 1 : .25) + '"></div>';
       }).join('');
     }
 
@@ -1393,7 +1393,7 @@
           '<td style="padding:9px 8px;font-size:13px;color:var(--t2,#9ca3af);text-align:right">' + f.sends + '</td>' +
           '<td style="padding:9px 8px;font-size:13px;color:var(--t2,#9ca3af);text-align:right">' + f.open_rate + '%</td>' +
           '<td style="padding:9px 8px;font-size:13px;color:var(--t2,#9ca3af);text-align:right">' + f.click_rate + '%</td>' +
-          '<td style="padding:9px 8px;font-size:13px;color:#01D3A0;font-weight:700;text-align:right">' + gbp(f.revenue) + '</td></tr>';
+          '<td style="padding:9px 8px;font-size:13px;color:#16d6a6;font-weight:700;text-align:right">' + gbp(f.revenue) + '</td></tr>';
       }).join('');
       flows.innerHTML = '<table style="width:100%;border-collapse:collapse;min-width:420px">' +
         '<tr><th style="text-align:left;padding:0 8px 6px;font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase">Flow</th>' +
@@ -1430,7 +1430,7 @@
 
   async function sendCampaign() {
     var msg = document.getElementById('camp-msg');
-    function setMsg(text, ok) { msg.textContent = text; msg.style.color = ok ? '#01D3A0' : '#f87171'; }
+    function setMsg(text, ok) { msg.textContent = text; msg.style.color = ok ? '#16d6a6' : '#f87171'; }
     var subject = document.getElementById('camp-subject').value.trim();
     var message = document.getElementById('camp-message').value.trim();
     if (!subject || !message) { setMsg('Subject and message are required.', false); return; }
@@ -1544,7 +1544,7 @@
 
   async function createOrder() {
     var m = document.getElementById('ord-create-msg');
-    function set(t, ok) { if (m) { m.textContent = t; m.style.color = ok ? '#01D3A0' : '#f87171'; } }
+    function set(t, ok) { if (m) { m.textContent = t; m.style.color = ok ? '#16d6a6' : '#f87171'; } }
     var name = ordVal('ord-name').trim();
     var email = ordVal('ord-email').trim();
     var sub = parseFloat(ordVal('ord-subtotal'));
@@ -1600,7 +1600,7 @@
       '<div><span style="color:var(--t3,#6b7280)">Subtotal</span> ' + money(o.subtotal) + '</div>' +
       '<div><span style="color:var(--t3,#6b7280)">Discount</span> −' + money(o.discount) + '</div>' +
       '<div><span style="color:var(--t3,#6b7280)">Shipping</span> ' + money(o.shipping) + '</div>' +
-      '<div><span style="color:var(--t3,#6b7280)">Total</span> <strong style="color:#01D3A0">' + money(o.total) + '</strong></div>' +
+      '<div><span style="color:var(--t3,#6b7280)">Total</span> <strong style="color:#16d6a6">' + money(o.total) + '</strong></div>' +
       '<div><span style="color:var(--t3,#6b7280)">Method</span> ' + esc(o.payment_method || '—') + '</div></div>';
     return '<div style="background:var(--bg3,#0a0d12);border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:14px 16px">' +
       '<table style="width:100%;border-collapse:collapse;font-size:12.5px"><thead><tr>' +
@@ -1633,7 +1633,7 @@
     function vxRow(o) {
         var ref = o.notes || o.id.slice(0, 8).toUpperCase();
         return '<tr style="cursor:pointer" onclick="toggleOrderDetails(\'' + o.id + '\')">' +
-          '<td style="color:var(--g,#01D3A0);width:14px">▸</td>' +
+          '<td style="color:var(--g,#16d6a6);width:14px">▸</td>' +
           '<td style="color:var(--t2)">' + fmtDateTime(o.created_at) + '</td>' +
           '<td><span style="font-family:monospace;font-size:11px;color:var(--t2)">' + esc(ref) + '</span></td>' +
           '<td><div style="color:#fff;font-size:13px;">' + esc(o.customer_name) + '</div>' +
@@ -1652,7 +1652,7 @@
         '<tr id="ord-det-' + o.id + '" style="display:none"><td colspan="8" style="padding:0 12px 14px">' + orderDetailsHtml(o) + '</td></tr>';
     }
     var vxBody = '';
-    if (vxTop.length) vxBody += vxGrp('Needs action \u00b7 ' + vxTop.length, '#01D3A0') + vxTop.map(vxRow).join('');
+    if (vxTop.length) vxBody += vxGrp('Needs action \u00b7 ' + vxTop.length, '#16d6a6') + vxTop.map(vxRow).join('');
     if (vxRest.length) vxBody += vxGrp('Completed & other \u00b7 ' + vxRest.length, '#6b7280') + vxRest.map(vxRow).join('');
     el.innerHTML = '<table class="adm-table">' +
       '<thead><tr>' +
@@ -1930,7 +1930,7 @@
     var max = Math.max.apply(null, vals.concat([1]));
     return '<div style="display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:8px">' + vals.map(function (v) {
       var h = Math.max(2, Math.round(v / max * 26));
-      return '<div style="flex:1;height:' + h + 'px;background:' + (v ? '#01D3A0' : '#1a1a1a') + ';border-radius:2px 2px 0 0;opacity:' + (v ? 1 : .5) + '"></div>';
+      return '<div style="flex:1;height:' + h + 'px;background:' + (v ? '#16d6a6' : '#1a1a1a') + ';border-radius:2px 2px 0 0;opacity:' + (v ? 1 : .5) + '"></div>';
     }).join('') + '</div>';
   }
   function kpiCard(label, value, sub, spark) {
@@ -2001,7 +2001,7 @@
     // highlight active period button
     document.querySelectorAll('.dash-per').forEach(function (b) {
       var on = b.dataset.period === DASH_PERIOD;
-      b.style.color = on ? '#01D3A0' : ''; b.style.borderColor = on ? '#01D3A0' : '';
+      b.style.color = on ? '#16d6a6' : ''; b.style.borderColor = on ? '#16d6a6' : '';
     });
     drawDashChart(orders);
   }
@@ -2025,7 +2025,7 @@
       var h = Math.round((b.rev / max) * 90);
       var lbl = b.d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
       return '<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px" title="' + lbl + ': £' + b.rev.toFixed(2) + '">' +
-        '<div style="width:60%;min-height:2px;height:' + Math.max(2, h) + 'px;background:' + (b.rev ? '#01D3A0' : '#1a1a1a') + ';border-radius:3px 3px 0 0"></div>' +
+        '<div style="width:60%;min-height:2px;height:' + Math.max(2, h) + 'px;background:' + (b.rev ? '#16d6a6' : '#1a1a1a') + ';border-radius:3px 3px 0 0"></div>' +
         '<div style="font-size:8px;color:var(--t3,#6b7280);writing-mode:vertical-rl;transform:rotate(180deg);height:34px;overflow:hidden">' + lbl + '</div>' +
       '</div>';
     }).join('');
@@ -2072,16 +2072,16 @@
     else if (cf === 'oneoff') list = list.filter(function (c) { return c.orders <= 1; });
     if (!list.length) { wrap.innerHTML = '<div class="adm-empty">No customers match.</div>'; return; }
     function custRow(c) {
-      return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#01D3A0;font-size:10px">★ repeat</span>' : '') + '</div>' +
+      return '<tr style="cursor:pointer" onclick="openCustomer(\'' + encodeURIComponent(c.key) + '\')"><td><div style="color:#fff">' + esc(c.name) + (c.orders > 1 ? ' <span style="color:#16d6a6;font-size:10px">★ repeat</span>' : '') + '</div>' +
         '<div style="color:var(--t3,#6b7280);font-size:11px">' + esc(c.email) + '</div></td>' +
-        '<td>' + c.orders + '</td><td style="color:var(--g,#01D3A0);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
+        '<td>' + c.orders + '</td><td style="color:var(--g,#16d6a6);font-weight:600">£' + c.spend.toFixed(2) + '</td>' +
         '<td style="color:var(--t2,#9ca3af)">' + fmtDate(c.last) + '</td></tr>';
     }
     function custGrp(label, color) { return '<tr><td colspan="4" style="padding:14px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
     var rep = list.filter(function (c) { return c.orders > 1; });
     var one = list.filter(function (c) { return c.orders <= 1; });
     var body = '';
-    if (rep.length) body += custGrp('Repeat buyers \u00b7 ' + rep.length, '#01D3A0') + rep.map(custRow).join('');
+    if (rep.length) body += custGrp('Repeat buyers \u00b7 ' + rep.length, '#16d6a6') + rep.map(custRow).join('');
     if (one.length) body += custGrp('One-off \u00b7 ' + one.length, '#6b7280') + one.map(custRow).join('');
     wrap.innerHTML = '<table class="adm-table"><thead><tr><th>Customer</th><th>Orders</th><th>Total spent</th><th>Last order</th></tr></thead><tbody>' + body + '</tbody></table>';
   }
@@ -2214,7 +2214,7 @@
     var base = (a.name || 'AFF').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
     return base || 'AFF';
   }
-  function setAffMsg(id, t, ok) { var e = document.getElementById('aff-' + id + '-msg'); if (e) { e.textContent = t; e.style.color = ok ? '#01D3A0' : '#f87171'; } }
+  function setAffMsg(id, t, ok) { var e = document.getElementById('aff-' + id + '-msg'); if (e) { e.textContent = t; e.style.color = ok ? '#16d6a6' : '#f87171'; } }
 
   function renderAffiliates(affs) {
     var el = document.getElementById('affiliates-table-wrap');
@@ -2339,7 +2339,7 @@
         '<td align="center">' + pvCheck(v.id, 'stock', v.in_stock) + '</td>' +
         '<td align="center">' + pvCheck(v.id, 'low', v.low_stock) + '</td>' +
         '<td align="center"><input id="pv-' + v.id + '-qty" class="status-select" type="number" step="1" min="0" value="' + (v.stock_qty == null ? '' : v.stock_qty) + '" style="width:58px;text-align:right"></td>' +
-        '<td id="pv-' + v.id + '-sells" style="color:#01D3A0;font-weight:600;white-space:nowrap">£' + Number(sells).toFixed(2) + '</td>' +
+        '<td id="pv-' + v.id + '-sells" style="color:#16d6a6;font-weight:600;white-space:nowrap">£' + Number(sells).toFixed(2) + '</td>' +
         '<td style="white-space:nowrap"><button class="btn-p" style="width:auto;padding:5px 12px" onclick="savePricing(\'' + v.id + '\')">Save</button> ' +
         '<span id="pv-' + v.id + '-msg" style="font-size:12px"></span></td>' +
         '</tr>';
@@ -2349,7 +2349,7 @@
     function pvGrp(label, color) { return '<tr><td colspan="12" style="padding:16px 12px 7px;color:' + color + ';font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + label + '</td></tr>'; }
     var body = '';
     if (attn.length) body += pvGrp('Needs attention \u00b7 ' + attn.length, '#f59e0b') + attn.map(pvRow).join('');
-    if (ok.length)   body += pvGrp('In stock \u00b7 ' + ok.length, '#01D3A0') + ok.map(pvRow).join('');
+    if (ok.length)   body += pvGrp('In stock \u00b7 ' + ok.length, '#16d6a6') + ok.map(pvRow).join('');
     var html = '<table class="adm-table"><thead><tr>' +
       '<th>Product</th><th>Size</th><th>Base £</th><th>Sale £</th><th>RRP £</th>' +
       '<th>Disc.</th><th>Deal</th><th>Stock</th><th>Low</th><th>Qty</th><th>Sells at</th><th></th>' +
@@ -2383,7 +2383,7 @@
       if (r.error) { if (msg) { msg.style.color = '#f87171'; msg.textContent = r.error.message; } return; }
       var sellsEl = document.getElementById('pv-' + id + '-sells');
       if (sellsEl) sellsEl.textContent = '£' + Number(sale != null ? sale : base).toFixed(2);
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Saved'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = '✓ Saved'; }
       if (window.showToast) showToast('Price updated', 'ok');
       scheduleRedeploy();
     });
@@ -2442,7 +2442,7 @@
         '<td style="color:var(--t3,#6b7280);font-size:11px">' + compList + '</td>' +
         '<td style="color:var(--t2,#9ca3af)">£' + sum.toFixed(2) + '</td>' +
         '<td><input id="bn-' + b.id + '-disc" class="status-select" type="number" step="0.5" min="0" max="90" value="' + b.discount_pct + '" style="width:70px;text-align:right"></td>' +
-        '<td id="bn-' + b.id + '-sells" style="color:#01D3A0;font-weight:600">£' + price.toFixed(2) + '</td>' +
+        '<td id="bn-' + b.id + '-sells" style="color:#16d6a6;font-weight:600">£' + price.toFixed(2) + '</td>' +
         '<td style="white-space:nowrap"><button class="btn-p" style="width:auto;padding:5px 12px" onclick="saveBundle(\'' + b.id + '\',' + sum + ')">Save</button> ' +
         '<span id="bn-' + b.id + '-msg" style="font-size:12px"></span></td>' +
         '</tr>';
@@ -2461,7 +2461,7 @@
       if (r.error) { if (msg) { msg.style.color = '#f87171'; msg.textContent = r.error.message; } return; }
       var sells = document.getElementById('bn-' + id + '-sells');
       if (sells) sells.textContent = '£' + (Math.round(Number(sum) * (1 - d / 100) * 100) / 100).toFixed(2);
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Saved'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = '✓ Saved'; }
     });
   };
 

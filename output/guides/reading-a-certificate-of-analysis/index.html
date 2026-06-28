@@ -79,7 +79,7 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #1a1600;
-      background: #01D3A0;
+      background: var(--g);
       padding: 3px 10px;
       border-radius: 3px;
       margin-bottom: 14px;
@@ -163,7 +163,7 @@
       letter-spacing: 0.01em;
       margin: 0 0 16px;
       padding-top: 8px;
-      border-top: 2px solid #01D3A0;
+      border-top: 2px solid var(--g);
       display: inline-block;
     }
     .rl-h3 {
@@ -174,7 +174,7 @@
     }
     .rl-h3::before {
       content: ' - ';
-      color: #01D3A0;
+      color: var(--g);
     }
     .rl-article p {
       font-size: 0.95rem;
@@ -183,7 +183,7 @@
       margin: 0 0 16px;
     }
     .rl-article strong { color: #D1D5DB; }
-    .rl-article a { color: #01D3A0; text-decoration: none; }
+    .rl-article a { color: var(--g); text-decoration: none; }
     .rl-article a:hover { text-decoration: underline; }
 
     /* ── Inline citation ── */
@@ -195,13 +195,13 @@
       margin-left: 2px;
     }
     .rl-cite a { color: #4B5563; }
-    .rl-cite a:hover { color: #01D3A0; }
+    .rl-cite a:hover { color: var(--g); }
 
     /* ── Study callout cards ── */
     .rl-study {
       background: #0a0d12;
       border: 1px solid #1a1d24;
-      border-top: 1px solid #01D3A0;
+      border-top: 1px solid var(--g);
       border-radius: 6px;
       padding: 20px 20px 16px;
       margin: 24px 0;
@@ -211,7 +211,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 6px;
     }
     .rl-study-title {
@@ -232,7 +232,7 @@
       margin-top: 10px !important;
     }
     .rl-study-pmid a { color: #4B5563; }
-    .rl-study-pmid a:hover { color: #01D3A0; }
+    .rl-study-pmid a:hover { color: var(--g); }
 
     /* ── Comparison table ── */
     .rl-table-wrap { overflow-x: auto; margin: 20px 0; }
@@ -254,8 +254,8 @@
       border-bottom: 1px solid #1a1d24;
     }
     .rl-table th.rl-table-highlight {
-      color: #01D3A0;
-      background: rgba(1,211,160,.05);
+      color: var(--g);
+      background: rgba(22,214,166,.05);
     }
     .rl-table td {
       padding: 11px 16px;
@@ -268,10 +268,10 @@
       font-weight: 500;
     }
     .rl-table td.rl-table-highlight {
-      background: rgba(1,211,160,.04);
+      background: rgba(22,214,166,.04);
       color: #D1D5DB;
     }
-    .rl-table .rl-yes { color: #01D3A0; font-weight: 700; }
+    .rl-table .rl-yes { color: var(--g); font-weight: 700; }
     .rl-table .rl-no  { color: #374151; }
     .rl-table tr:last-child td { border-bottom: none; }
 
@@ -308,7 +308,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -333,7 +333,7 @@
       font-family: 'DM Mono', monospace;
     }
     .rl-refs li a { color: #4B5563; }
-    .rl-refs li a:hover { color: #01D3A0; }
+    .rl-refs li a:hover { color: var(--g); }
 
     /* ── FAQ ── */
     .rl-faq-item {
@@ -391,7 +391,7 @@
     .rl-sb-purity {
       font-family: 'DM Mono', monospace;
       font-size: 0.72rem;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 14px;
     }
     .rl-sb-prices {
@@ -433,7 +433,7 @@
     .rl-sb-btn {
       display: block;
       text-align: center;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -474,17 +474,17 @@
       color: #4B5563;
       letter-spacing: 0.06em;
     }
-    .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
-    .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-sb-related-arr { color: var(--g); font-size: 0.85rem; }
+    .rl-sb-related-item:hover .rl-sb-related-name { color: var(--g); }
     .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
     .rl-fig svg { width: 100%; height: auto; display: block; }
     .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
     .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
     .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
-    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid var(--g);border-radius:8px;padding:15px 17px}
     .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
     .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
-    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(22,214,166,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
     .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
     @media (max-width:480px){.rl-cmp{grid-template-columns:1fr}}
   </style>
@@ -515,7 +515,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -553,7 +553,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -581,7 +581,7 @@
         <header class="rl-header">
           <a href="/about/quality-and-testing/" class="rl-cat-badge">QUALITY &amp; TESTING</a>
           <h1 class="rl-h1" itemprop="headline">Reading an HPLC Certificate of Analysis</h1>
-          <div class="rl-meta"><span style="color:#01D3A0;font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span><span>By <a href="/about/" rel="author" style="color:#01D3A0;font-weight:600">Declan Hoban</a>, Founder</span><span class="rl-meta-sep">·</span><span>Published May 2026</span><span class="rl-meta-sep">·</span><span>6 min read</span></div>
+          <div class="rl-meta"><span style="color:var(--g);font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span><span>By <a href="/about/" rel="author" style="color:var(--g);font-weight:600">Declan Hoban</a>, Founder</span><span class="rl-meta-sep">·</span><span>Published May 2026</span><span class="rl-meta-sep">·</span><span>6 min read</span></div>
           <div class="rl-compliance" role="note"><strong>For in vitro research use only.</strong> This guide is provided for scientific reference to help researchers interpret batch documentation. All Velox Peptides compounds are supplied for in vitro research use only.</div>
         </header>
         <section class="rl-section" aria-labelledby="sec-what">
@@ -602,12 +602,12 @@
           <div class="rl-fig">
             <svg viewBox="0 0 700 170" role="img" aria-label="Two separate proofs on a certificate of analysis: HPLC answers how pure the sample is, mass spectrometry answers which molecule it is">
               <g font-family="DM Mono, monospace">
-                <rect x="20" y="30" width="200" height="100" rx="9" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
-                <text x="120" y="58" text-anchor="middle" fill="#01D3A0" font-size="14" font-weight="700">HPLC</text>
+                <rect x="20" y="30" width="200" height="100" rx="9" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
+                <text x="120" y="58" text-anchor="middle" fill="#16d6a6" font-size="14" font-weight="700">HPLC</text>
                 <text x="120" y="84" text-anchor="middle" fill="#F9FAFB" font-size="12">answers</text>
                 <text x="120" y="104" text-anchor="middle" fill="#9CA3AF" font-size="12">&ldquo;how pure?&rdquo;</text>
-                <rect x="250" y="30" width="200" height="100" rx="9" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
-                <text x="350" y="58" text-anchor="middle" fill="#01D3A0" font-size="14" font-weight="700">Mass spec</text>
+                <rect x="250" y="30" width="200" height="100" rx="9" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
+                <text x="350" y="58" text-anchor="middle" fill="#16d6a6" font-size="14" font-weight="700">Mass spec</text>
                 <text x="350" y="84" text-anchor="middle" fill="#F9FAFB" font-size="12">answers</text>
                 <text x="350" y="104" text-anchor="middle" fill="#9CA3AF" font-size="12">&ldquo;which molecule?&rdquo;</text>
                 <path d="M450 80 L486 80" stroke="#2a2f3a" stroke-width="2"/><path d="M486 80 L478 75 L478 85 Z" fill="#2a2f3a"/>
@@ -632,23 +632,23 @@
                 <text x="60" y="50" fill="#6B7280" font-size="11">CERTIFICATE OF ANALYSIS</text>
                 <line x1="60" y1="60" x2="380" y2="60" stroke="#1a1d24" stroke-width="1"/>
                 <!-- compound row -->
-                <rect x="60" y="74" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <rect x="60" y="74" width="320" height="40" rx="6" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
                 <text x="74" y="91" fill="#9CA3AF" font-size="10">Compound</text>
                 <text x="74" y="107" fill="#F9FAFB" font-size="12" font-weight="700">Peptide name + batch / lot no.</text>
                 <!-- purity row -->
-                <rect x="60" y="124" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <rect x="60" y="124" width="320" height="40" rx="6" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
                 <text x="74" y="141" fill="#9CA3AF" font-size="10">HPLC purity</text>
                 <text x="74" y="157" fill="#F9FAFB" font-size="12" font-weight="700">&ge; percentage + chromatogram</text>
                 <!-- MS row -->
-                <rect x="60" y="174" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <rect x="60" y="174" width="320" height="40" rx="6" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
                 <text x="74" y="191" fill="#9CA3AF" font-size="10">Mass spec</text>
                 <text x="74" y="207" fill="#F9FAFB" font-size="12" font-weight="700">Confirmed molecular weight</text>
                 <!-- appearance row -->
-                <rect x="60" y="224" width="320" height="40" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <rect x="60" y="224" width="320" height="40" rx="6" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
                 <text x="74" y="241" fill="#9CA3AF" font-size="10">Appearance / form</text>
                 <text x="74" y="257" fill="#F9FAFB" font-size="12" font-weight="700">e.g. white lyophilised powder</text>
                 <!-- lab row -->
-                <rect x="60" y="274" width="320" height="50" rx="6" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
+                <rect x="60" y="274" width="320" height="50" rx="6" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
                 <text x="74" y="293" fill="#9CA3AF" font-size="10">Testing lab + date</text>
                 <text x="74" y="310" fill="#F9FAFB" font-size="12" font-weight="700">Independent lab, test date</text>
                 <!-- annotation callouts -->

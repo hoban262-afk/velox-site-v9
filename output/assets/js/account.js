@@ -44,7 +44,7 @@
   // ── Design Lab: My Designs tab ────────────────────────────────────────────────
   var dlToken = null;
   function dlEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-  function dlAaCol(a) { return 'KRH'.includes(a) ? '#01D3A0' : 'DE'.includes(a) ? '#f0637e' : 'AILMFWPV'.includes(a) ? '#7b8cff' : '#8aa0a0'; }
+  function dlAaCol(a) { return 'KRH'.includes(a) ? '#16d6a6' : 'DE'.includes(a) ? '#f0637e' : 'AILMFWPV'.includes(a) ? '#7b8cff' : '#8aa0a0'; }
   function dlSeqHTML(seq) { return String(seq).split('').map(function (a) { return '<span style="color:' + dlAaCol(a) + '">' + dlEsc(a) + '</span>'; }).join(''); }
 
   async function loadDesigns() {
@@ -69,11 +69,11 @@
               '<div style="font-size:14px;font-weight:700;color:#dfe6e4;margin-bottom:3px">' + dlEsc(run.name || 'Unnamed design') + '</div>' +
               '<div style="font-size:12px;color:#6b7a86;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + dlEsc(run.target || '') + '</div>' +
               (topCand ? '<div style="font-family:DM Mono,monospace;font-size:12px;letter-spacing:2px;margin:6px 0">' + dlSeqHTML(topCand.sequence || '') + '</div>' : '') +
-              '<div style="font-family:DM Mono,monospace;font-size:10px;color:#475262">' + cands.length + ' candidates · ' + dt + (run.is_shared ? ' · <span style="color:#01D3A0">shared</span>' : '') + '</div>' +
+              '<div style="font-family:DM Mono,monospace;font-size:10px;color:#475262">' + cands.length + ' candidates · ' + dt + (run.is_shared ? ' · <span style="color:#16d6a6">shared</span>' : '') + '</div>' +
             '</div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex-shrink:0">' +
               '<a href="/design-lab/app/" style="font-size:11px;font-family:DM Mono,monospace;border:1px solid #1a2230;color:#8aa0a0;padding:5px 9px;border-radius:6px;text-decoration:none" onclick="sessionStorage.setItem(\'vp_load_run\',\'' + dlEsc(run.id) + '\')">Load →</a>' +
-              (run.share_token ? '<a href="/design-lab/run/?r=' + dlEsc(run.share_token) + '" target="_blank" style="font-size:11px;font-family:DM Mono,monospace;border:1px solid #1a2230;color:' + (run.is_shared ? '#01D3A0' : '#8aa0a0') + ';padding:5px 9px;border-radius:6px;text-decoration:none">' + (run.is_shared ? '✓ Shared' : 'View') + '</a>' : '') +
+              (run.share_token ? '<a href="/design-lab/run/?r=' + dlEsc(run.share_token) + '" target="_blank" style="font-size:11px;font-family:DM Mono,monospace;border:1px solid #1a2230;color:' + (run.is_shared ? '#16d6a6' : '#8aa0a0') + ';padding:5px 9px;border-radius:6px;text-decoration:none">' + (run.is_shared ? '✓ Shared' : 'View') + '</a>' : '') +
               '<button onclick="deleteDesign(\'' + dlEsc(run.id) + '\',this)" style="font-size:11px;font-family:DM Mono,monospace;border:1px solid #1a2230;color:#8aa0a0;background:none;padding:5px 9px;border-radius:6px;cursor:pointer">Delete</button>' +
             '</div>' +
           '</div>' +

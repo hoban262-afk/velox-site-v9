@@ -108,48 +108,48 @@
 
     /* ── Hero ───────────────────────────────────────────── */
     .pro-hero { text-align: center; padding: 48px 0 26px; position: relative; }
-    .pro-hero::before { content:""; position:absolute; left:50%; top:-30px; transform:translateX(-50%); width:680px; max-width:120%; height:330px; background:radial-gradient(closest-side, rgba(1,211,160,.16), rgba(1,211,160,0) 70%); filter:blur(8px); pointer-events:none; z-index:0; }
+    .pro-hero::before { content:""; position:absolute; left:50%; top:-30px; transform:translateX(-50%); width:680px; max-width:120%; height:330px; background:radial-gradient(closest-side, rgba(22,214,166,.16), rgba(22,214,166,0) 70%); filter:blur(8px); pointer-events:none; z-index:0; }
     .pro-hero > * { position:relative; z-index:1; }
     .pro-hero .page-h1 { text-align:center; margin:0 0 16px; line-height:1; }
-    .pro-word { color:#01D3A0; text-shadow:0 0 24px rgba(1,211,160,.45); }
+    .pro-word { color:var(--g); text-shadow:0 0 24px rgba(22,214,166,.45); }
     .pro-hero .page-lede { max-width:620px; margin:0 auto; text-align:center; color:#aeb6bf; }
     .pro-hero .page-lede strong { color:#fff; }
 
     /* Billing toggle */
     .pro-hero .toggle { display:inline-flex; background:#0b0f14; border:1px solid #1f262d; border-radius:999px; padding:5px; margin:28px auto 12px; box-shadow:inset 0 1px 0 rgba(255,255,255,.03); }
     .pro-hero .toggle button { border:0; background:transparent; color:#9aa3ad; font:600 14px Inter,Arial; padding:10px 22px; border-radius:999px; cursor:pointer; transition:.2s; }
-    .pro-hero .toggle button.on { background:#01D3A0; color:#021; box-shadow:0 4px 16px -4px rgba(0,0,0,.55); }
+    .pro-hero .toggle button.on { background:var(--g); color:#021; box-shadow:0 4px 16px -4px rgba(0,0,0,.55); }
     .pro-save-note { font-size:12px; color:#8c95a0; margin-bottom:36px; }
 
     /* ── Tiers grid ─────────────────────────────────────── */
     .tiers { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; align-items:stretch; max-width:720px; margin:0 auto; padding:14px 0 40px; }
     @media (max-width:560px){ .tiers{ grid-template-columns:1fr; max-width:420px; gap:22px; } }
-    .tier .roi { font-size:11.5px; color:#01D3A0; font-weight:600; min-height:30px; margin:6px 4px 0; line-height:1.35; }
+    .tier .roi { font-size:11.5px; color:var(--g); font-weight:600; min-height:30px; margin:6px 4px 0; line-height:1.35; }
     .tier.featured .roi { color:#043f30; }
     .tier-free { background:linear-gradient(180deg,#0c1117,#080b0f); }
     .tier-free .disc { color:#9aa3ad; }
     a.cta.cta-free { display:block; text-align:center; text-decoration:none; border-radius:11px; padding:14px; font:800 15px Inter,Arial; background:#141b22; color:#fff; border:1px solid #2a323a; transition:.2s; }
-    a.cta.cta-free:hover { border-color:#01D3A0; }
+    a.cta.cta-free:hover { border-color:var(--g); }
 
     .tier { position:relative; z-index:1; background:linear-gradient(180deg,#0e141b,#0a0e13); border:1px solid #1f262d; border-radius:16px; padding:30px 24px; display:flex; flex-direction:column; text-align:center; transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
     .tier:hover { transform:translateY(-6px); border-color:#2f3a44; box-shadow:0 18px 50px -20px rgba(0,0,0,.85); }
-    .tier .badge { align-self:center; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#021; background:#01D3A0; border-radius:999px; padding:5px 14px; margin-bottom:14px; }
+    .tier .badge { align-self:center; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#021; background:var(--g); border-radius:999px; padding:5px 14px; margin-bottom:14px; }
     .tier h2 { margin:0 0 6px; font-size:22px; color:#fff; }
-    .tier .disc { font-size:13px; color:#01D3A0; font-weight:700; letter-spacing:.02em; }
+    .tier .disc { font-size:13px; color:var(--g); font-weight:700; letter-spacing:.02em; }
     .tier .price { margin:18px 0 2px; font-size:38px; font-weight:800; color:#fff; letter-spacing:-.02em; }
     .tier .price small { font-size:15px; font-weight:600; color:#9aa3ad; }
     .tier .annual-eq { font-size:12px; color:#9aa3ad; min-height:16px; }
     .tier ul { list-style:none; padding:0; margin:20px 0 24px; flex:1; text-align:left; }
     .tier li { padding:7px 0 7px 26px; position:relative; font-size:14px; color:#cdd3d9; line-height:1.4; }
-    .tier li:before { content:"✓"; position:absolute; left:0; top:6px; color:#01D3A0; font-weight:800; }
-    .tier button.cta { border:0; border-radius:11px; padding:14px; font:800 15px Inter,Arial; cursor:pointer; background:#01D3A0; color:#021; transition:.2s; }
+    .tier li:before { content:"✓"; position:absolute; left:0; top:6px; color:var(--g); font-weight:800; }
+    .tier button.cta { border:0; border-radius:11px; padding:14px; font:800 15px Inter,Arial; cursor:pointer; background:var(--g); color:#021; transition:.2s; }
     .tier button.cta:hover { filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 10px 24px -8px rgba(0,0,0,.55); }
     .tier:not(.featured) button.cta { background:#141b22; color:#fff; border:1px solid #2a323a; }
-    .tier:not(.featured) button.cta:hover { border-color:#01D3A0; box-shadow:none; filter:none; }
+    .tier:not(.featured) button.cta:hover { border-color:var(--g); box-shadow:none; filter:none; }
 
     /* ── Featured card - animated, glowing, elevated ────── */
     @property --proang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
-    .tier.featured { z-index:2; border:0; overflow:hidden; color:#053a2c; transform:translateY(-8px) scale(1.04); background:linear-gradient(165deg,#1ef0bd 0%,#01D3A0 55%,#00b489 100%); animation:proFloat 5s ease-in-out infinite, proGlow 3s ease-in-out infinite; }
+    .tier.featured { z-index:2; border:0; overflow:hidden; color:#053a2c; transform:translateY(-8px) scale(1.04); background:linear-gradient(165deg,#1ef0bd 0%,var(--g) 55%,#00b489 100%); animation:proFloat 5s ease-in-out infinite, proGlow 3s ease-in-out infinite; }
     .tier.featured h2 { color:#03150f; }
     .tier.featured .disc { color:#054636; }
     .tier.featured .price { color:#03150f; }
@@ -157,7 +157,7 @@
     .tier.featured .annual-eq { color:#0a4636; }
     .tier.featured li { color:#053a2c; }
     .tier.featured li:before { color:#03150f; }
-    .tier.featured .badge { background:#03150f; color:#01D3A0; box-shadow:0 4px 14px -4px rgba(0,0,0,.45); }
+    .tier.featured .badge { background:#03150f; color:var(--g); box-shadow:0 4px 14px -4px rgba(0,0,0,.45); }
     .tier.featured button.cta { background:#03150f; color:#fff; }
     .tier.featured button.cta:hover { background:#000; filter:none; box-shadow:0 10px 24px -8px rgba(0,0,0,.5); }
     .tier.featured::after { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.22) 50%, transparent 65%); background-size:280% 100%; animation:proShimmer 4.5s ease-in-out infinite; }
@@ -195,7 +195,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl active" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl active" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -233,7 +233,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -268,7 +268,7 @@
   <div class="pro-msg" id="msg"></div>
 
   <p style="text-align:center;max-width:660px;margin:6px auto 44px;font-size:13px;color:#8c95a0;line-height:1.65">
-    <strong style="color:#01D3A0">Why our prices are already lower:</strong> card processors charge high-risk industries like ours 15&ndash;20% per order, so we use Pay by Bank and pass that saving to you instead of the card companies. Velox Pro simply stacks more savings on top.
+    <strong style="color:var(--g)">Why our prices are already lower:</strong> card processors charge high-risk industries like ours 15&ndash;20% per order, so we use Pay by Bank and pass that saving to you instead of the card companies. Velox Pro simply stacks more savings on top.
   </p>
 </div>
 </main>
@@ -365,7 +365,7 @@
   var tiers = [];
 
   function money(p) { var v = p / 100; return '£' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
-  function setMsg(t, ok) { var m = document.getElementById('msg'); if (m) { m.textContent = t || ''; m.style.color = ok ? '#01D3A0' : '#9aa3ad'; } }
+  function setMsg(t, ok) { var m = document.getElementById('msg'); if (m) { m.textContent = t || ''; m.style.color = ok ? 'var(--g)' : '#9aa3ad'; } }
 
   function freeCard() {
     var feats = FEATURES.free.map(function (f) { return '<li>' + f + '</li>'; }).join('');

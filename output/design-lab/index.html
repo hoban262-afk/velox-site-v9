@@ -36,7 +36,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to design a novel research peptide with Velox Design Lab","description":"Use Velox Design Lab to turn a plain-English research target into three scored, novelty-checked candidate sequences for in vitro research.","totalTime":"PT1M","step":[{"@type":"HowToStep","position":1,"name":"Describe your research target","text":"Type the mechanism you want to study in plain English — no notation required."},{"@type":"HowToStep","position":2,"name":"Generate","text":"The model proposes three novel candidate sequences."},{"@type":"HowToStep","position":3,"name":"Review and score","text":"Each candidate is scored for synthesisability, novelty and length-optimisation."},{"@type":"HowToStep","position":4,"name":"Share or enquire about synthesis","text":"Share the run with a collaborator, or request a custom-synthesis quote."}]}</script>
 
   <style>
-    :root{ --dl-g:#01D3A0; --dl-g2:#6cf7d6; --dl-bg:#030407; --dl-bg2:#0a0d12; --dl-bg3:#0e141b; --dl-brd:#1a2230; --dl-mut:#8aa0a0; --dl-dim:#475262; --dl-vio:#7b8cff; --dl-amber:#f0b03b; --dl-red:#f0637e; }
+    :root{ --dl-g:var(--g); --dl-g2:#6cf7d6; --dl-bg:#030407; --dl-bg2:#0a0d12; --dl-bg3:#0e141b; --dl-brd:#1a2230; --dl-mut:#8aa0a0; --dl-dim:#475262; --dl-vio:#7b8cff; --dl-amber:#f0b03b; --dl-red:#f0637e; }
     .dl-mono{ font-family:'DM Mono',ui-monospace,monospace; }
     .dl-wrap{ max-width:1000px; margin:0 auto; padding:0 20px; }
 
@@ -46,7 +46,7 @@
     .dl-stream{ position:absolute; font-family:'DM Mono',monospace; font-size:13px; letter-spacing:4px; opacity:.05; white-space:nowrap; color:var(--dl-g); animation:dlStream 30s linear infinite; }
     @keyframes dlStream{ from{ transform:translateX(100vw);} to{ transform:translateX(-200%);} }
     .dl-hero-in{ position:relative; z-index:2; max-width:760px; margin:0 auto; }
-    .dl-badge{ display:inline-flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--dl-g); border:1px solid rgba(1,211,160,.3); background:rgba(1,211,160,.07); padding:6px 14px; border-radius:20px; margin-bottom:26px; letter-spacing:.5px; }
+    .dl-badge{ display:inline-flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--dl-g); border:1px solid rgba(22,214,166,.3); background:rgba(22,214,166,.07); padding:6px 14px; border-radius:20px; margin-bottom:26px; letter-spacing:.5px; }
     .dl-badge-dot{ width:6px; height:6px; border-radius:50%; background:var(--dl-g); animation:dlPulse 2s ease infinite; }
     @keyframes dlPulse{ 0%,100%{ opacity:1;} 50%{ opacity:.4;} }
     .dl-h1{ font-family:'Barlow Condensed',sans-serif; font-weight:900; text-transform:uppercase; font-size:clamp(40px,7vw,78px); line-height:.98; letter-spacing:-.5px; margin:0 0 20px; color:#fff; }
@@ -83,7 +83,7 @@
     .dl-sec.alt .dl-step{ background:var(--dl-bg3); }
     .dl-step:hover{ border-color:#2a3645; }
     .dl-step-n{ font-family:'DM Mono',monospace; font-size:11px; color:var(--dl-g); letter-spacing:1px; margin-bottom:14px; }
-    .dl-step-ic{ width:44px; height:44px; border-radius:9px; background:rgba(1,211,160,.08); border:1px solid rgba(1,211,160,.16); display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
+    .dl-step-ic{ width:44px; height:44px; border-radius:9px; background:rgba(22,214,166,.08); border:1px solid rgba(22,214,166,.16); display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
     .dl-step h3{ font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; margin:0 0 8px; color:#fff; }
     .dl-step p{ font-size:13.5px; color:var(--dl-mut); line-height:1.65; margin:0; }
 
@@ -96,7 +96,7 @@
     .dl-name{ font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; margin-bottom:10px; color:#fff; }
     .dl-badges{ display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
     .dl-bdg{ font-size:11px; padding:3px 10px; border-radius:5px; font-family:'DM Mono',monospace; }
-    .dl-bdg-g{ background:rgba(1,211,160,.1); color:var(--dl-g); border:1px solid rgba(1,211,160,.25); }
+    .dl-bdg-g{ background:rgba(22,214,166,.1); color:var(--dl-g); border:1px solid rgba(22,214,166,.25); }
     .dl-bdg-m{ background:var(--dl-bg3); color:var(--dl-mut); border:1px solid var(--dl-brd); }
     .dl-seq{ font-family:'DM Mono',monospace; font-size:18px; letter-spacing:4px; padding:14px 16px; background:var(--dl-bg); border:1px solid var(--dl-brd); border-radius:7px; margin-bottom:16px; }
     .dl-bars{ display:grid; gap:9px; }
@@ -111,7 +111,7 @@
     /* Differentiators */
     .dl-diff{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:42px; }
     .dl-dcard{ background:var(--dl-bg3); border:1px solid var(--dl-brd); border-radius:12px; padding:26px; }
-    .dl-dcard.hl{ border-color:rgba(1,211,160,.3); background:rgba(1,211,160,.04); }
+    .dl-dcard.hl{ border-color:rgba(22,214,166,.3); background:rgba(22,214,166,.04); }
     .dl-dic{ font-size:24px; margin-bottom:12px; }
     .dl-dcard h3{ font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700; margin:0 0 8px; color:#fff; }
     .dl-dcard p{ font-size:13.5px; color:var(--dl-mut); line-height:1.65; margin:0; }
@@ -128,11 +128,11 @@
 
     .dl-final{ text-align:center; }
     .dl-final .dl-box{ background:var(--dl-bg2); border:1px solid var(--dl-brd); border-radius:16px; padding:52px 40px; max-width:600px; margin:0 auto; position:relative; overflow:hidden; }
-    .dl-final .dl-box::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%, rgba(1,211,160,.08), transparent 60%); pointer-events:none; }
+    .dl-final .dl-box::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%, rgba(22,214,166,.08), transparent 60%); pointer-events:none; }
     .dl-form{ display:flex; flex-direction:column; gap:11px; max-width:420px; margin:26px auto 0; position:relative; }
     .dl-form input{ background:var(--dl-bg); border:1px solid var(--dl-brd); color:#eef3f2; font-family:Inter,sans-serif; font-size:14px; padding:13px 16px; border-radius:9px; outline:none; }
     .dl-form input:focus{ border-color:var(--dl-g); }
-    .dl-ok{ display:none; padding:14px; background:rgba(1,211,160,.08); border:1px solid rgba(1,211,160,.25); border-radius:9px; color:var(--dl-g); font-size:14px; }
+    .dl-ok{ display:none; padding:14px; background:rgba(22,214,166,.08); border:1px solid rgba(22,214,166,.25); border-radius:9px; color:var(--dl-g); font-size:14px; }
 
     /* Sample card scroll-reveal (only when JS is on, so no-JS shows full state) */
     .dl-js .dl-win{ opacity:0; transform:translateY(18px) scale(.99); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.9,.25,1); }
@@ -168,13 +168,13 @@
     .dl-anim .dl-revealed{ opacity:1 !important; transform:none !important; }
 
     /* Animated gradient headline accent */
-    .dl-h1 .ac{ background:linear-gradient(100deg,#01D3A0 0%,#6cf7d6 38%,#01D3A0 72%); background-size:220% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:dlShine 5s linear infinite; }
+    .dl-h1 .ac{ background:linear-gradient(100deg,var(--g) 0%,#6cf7d6 38%,var(--g) 72%); background-size:220% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:dlShine 5s linear infinite; }
     @keyframes dlShine{ to{ background-position:220% center; } }
 
     /* Hero ambient glow + scan line */
-    .dl-hero::before{ content:""; position:absolute; left:50%; top:-12%; width:920px; height:540px; max-width:140vw; transform:translateX(-50%); background:radial-gradient(ellipse at center,rgba(1,211,160,.16),transparent 62%); filter:blur(22px); pointer-events:none; z-index:0; animation:dlBreathe 7s ease-in-out infinite; }
+    .dl-hero::before{ content:""; position:absolute; left:50%; top:-12%; width:920px; height:540px; max-width:140vw; transform:translateX(-50%); background:radial-gradient(ellipse at center,rgba(22,214,166,.16),transparent 62%); filter:blur(22px); pointer-events:none; z-index:0; animation:dlBreathe 7s ease-in-out infinite; }
     @keyframes dlBreathe{ 0%,100%{ opacity:.65; } 50%{ opacity:1; } }
-    .dl-scan{ position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg,transparent,rgba(1,211,160,.45),transparent); pointer-events:none; z-index:1; opacity:.5; animation:dlScan 7s linear infinite; }
+    .dl-scan{ position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg,transparent,rgba(22,214,166,.45),transparent); pointer-events:none; z-index:1; opacity:.5; animation:dlScan 7s linear infinite; }
     @keyframes dlScan{ 0%{ top:0; } 100%{ top:100%; } }
 
     /* Glowing primary CTA */
@@ -206,8 +206,8 @@
 
     /* Card hover lifts */
     .dl-step,.dl-dcard,.dl-tier{ transition:border-color .25s,transform .25s,box-shadow .25s,background .25s; }
-    .dl-step:hover,.dl-dcard:hover{ transform:translateY(-4px); border-color:rgba(1,211,160,.4); box-shadow:0 22px 42px -28px rgba(0,0,0,.55); }
-    .dl-tier:hover{ transform:translateY(-4px); border-color:rgba(1,211,160,.45); }
+    .dl-step:hover,.dl-dcard:hover{ transform:translateY(-4px); border-color:rgba(22,214,166,.4); box-shadow:0 22px 42px -28px rgba(0,0,0,.55); }
+    .dl-tier:hover{ transform:translateY(-4px); border-color:rgba(22,214,166,.45); }
     .dl-step-ic{ transition:transform .25s; }
     .dl-step:hover .dl-step-ic{ transform:scale(1.12) rotate(-4deg); }
     .dl-tier.pop{ animation:dlPopGlow 3s ease-in-out infinite; }
@@ -243,7 +243,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn active" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -281,7 +281,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -310,7 +310,7 @@
       </div>
       <p class="dl-note">For in vitro research use only &middot; <a href="#how" style="color:var(--dl-mut)">how it works ↓</a></p>
       <div class="dl-demo" id="dlDemo" aria-hidden="true">
-        <div class="dl-demo-bar"><i style="background:#f0637e"></i><i style="background:#f0b03b"></i><i style="background:#01D3A0"></i><span>velox design lab &middot; live</span></div>
+        <div class="dl-demo-bar"><i style="background:#f0637e"></i><i style="background:#f0b03b"></i><i style="background:var(--g)"></i><span>velox design lab &middot; live</span></div>
         <div class="dl-demo-body">
           <div class="dl-demo-prompt"><span class="pfx">&rsaquo; </span><span id="dlType"></span><span class="dl-caret" id="dlCaret"></span></div>
           <div class="dl-demo-status" id="dlStatus">&#10022; designing three novel candidates<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
@@ -367,16 +367,16 @@
       <p class="dl-secsub">This isn't a made-up example. It's a real peptide the tool designed, graded and checked — ready to send off to be made.</p>
       <div class="dl-win" id="dlSample">
         <div class="dl-win-bar">
-          <span class="dl-dot" style="background:#f0637e"></span><span class="dl-dot" style="background:#f0b03b"></span><span class="dl-dot" style="background:#01D3A0"></span>
+          <span class="dl-dot" style="background:#f0637e"></span><span class="dl-dot" style="background:#f0b03b"></span><span class="dl-dot" style="background:var(--g)"></span>
           <span class="dl-mono" style="font-size:11px;color:var(--dl-mut);margin-left:8px">velox design lab &middot; pipeline v0.4</span>
         </div>
         <div class="dl-win-c">
           <div class="dl-meta">VDL-002 &middot; 10 building blocks &middot; est. £145&ndash;185 to make</div>
           <div class="dl-name">HydroNeu-10</div>
           <div class="dl-badges"><span class="dl-bdg dl-bdg-g">✦ No library match</span><span class="dl-bdg dl-bdg-m">Built to enter cells easily</span></div>
-          <div class="dl-seq"><span style="color:#01D3A0">K</span><span style="color:#01D3A0">V</span><span style="color:#01D3A0">L</span><span style="color:#01D3A0">F</span><span style="color:#01D3A0">F</span><span style="color:#01D3A0">P</span><span style="color:#eef3f2">N</span><span style="color:#6cf7d6">H</span><span style="color:#f0b03b">G</span><span style="color:#6cf7d6">K</span></div>
+          <div class="dl-seq"><span style="color:var(--g)">K</span><span style="color:var(--g)">V</span><span style="color:var(--g)">L</span><span style="color:var(--g)">F</span><span style="color:var(--g)">F</span><span style="color:var(--g)">P</span><span style="color:#eef3f2">N</span><span style="color:#6cf7d6">H</span><span style="color:#f0b03b">G</span><span style="color:#6cf7d6">K</span></div>
           <div class="dl-bars">
-            <div class="dl-bar"><span class="dl-bar-l">Easy to make</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:96%;background:#01D3A0"></div></div><span class="dl-bar-v" style="color:#01D3A0" data-to="96">96</span></div>
+            <div class="dl-bar"><span class="dl-bar-l">Easy to make</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:96%;background:var(--g)"></div></div><span class="dl-bar-v" style="color:var(--g)" data-to="96">96</span></div>
             <div class="dl-bar"><span class="dl-bar-l">Should dissolve well</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:55%;background:#7b8cff"></div></div><span class="dl-bar-v" style="color:#7b8cff" data-to="55">55</span></div>
             <div class="dl-bar"><span class="dl-bar-l">Good length</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:100%;background:#f0b03b"></div></div><span class="dl-bar-v" style="color:#f0b03b" data-to="100">100</span></div>
             <div class="dl-bar"><span class="dl-bar-l">Variety of parts</span><div class="dl-bar-t"><div class="dl-bar-f" style="--w:80%;background:#8aa0a0"></div></div><span class="dl-bar-v" style="color:#8aa0a0" data-to="80">80</span></div>
@@ -398,33 +398,33 @@
           <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">METABOLIC · GLP-CLASS</div>
           <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Triple-incretin triad</div>
           <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A GLP-1 / GIP / glucagon triple agonist optimised for synthesisability.</div>
-          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: Retatrutide →</span>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(22,214,166,.28);background:rgba(22,214,166,.08);padding:3px 9px;border-radius:5px">Closest: Retatrutide →</span>
         </a>
         <a href="/design-lab/r/2380db8d-d1ee-45f0-b2f6-af25be9c90b7" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
           <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">TISSUE REPAIR</div>
           <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Repair scaffold, hardened</div>
           <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A BPC-157-inspired repair peptide, hardened against protease cleavage.</div>
-          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: BPC-157 →</span>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(22,214,166,.28);background:rgba(22,214,166,.08);padding:3px 9px;border-radius:5px">Closest: BPC-157 →</span>
         </a>
         <a href="/design-lab/r/3f040be0-5890-4f56-b06a-e96fe9cb8649" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
           <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">COGNITIVE</div>
           <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">BBB-friendly nootropic</div>
           <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A short, blood-brain-barrier-friendly neuroprotective peptide.</div>
-          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: Semax →</span>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(22,214,166,.28);background:rgba(22,214,166,.08);padding:3px 9px;border-radius:5px">Closest: Semax →</span>
         </a>
         <a href="/design-lab/r/687903f5-330c-45ac-810b-736ef2065314" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
           <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">GROWTH HORMONE</div>
           <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Long-acting GH releaser</div>
           <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A GHRH analogue designed for an extended half-life.</div>
-          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: CJC-1295 →</span>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(22,214,166,.28);background:rgba(22,214,166,.08);padding:3px 9px;border-radius:5px">Closest: CJC-1295 →</span>
         </a>
         <a href="/design-lab/r/914c3337-ecb9-4548-99bb-03cf4c7a8f7c" style="display:block;text-decoration:none;background:var(--dl-bg3);border:1px solid var(--dl-brd);border-radius:12px;padding:22px;transition:border-color .2s">
           <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dl-mut);margin-bottom:8px">MITOCHONDRIAL</div>
           <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">Mitochondrial stress peptide</div>
           <div style="font-size:13px;color:var(--dl-mut);line-height:1.55;margin-bottom:12px">A mitochondrial-derived peptide for cellular stress resistance.</div>
-          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(1,211,160,.28);background:rgba(1,211,160,.08);padding:3px 9px;border-radius:5px">Closest: MOTS-c →</span>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--dl-g);border:1px solid rgba(22,214,166,.28);background:rgba(22,214,166,.08);padding:3px 9px;border-radius:5px">Closest: MOTS-c →</span>
         </a>
-        <a href="/design-lab/app/" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;background:rgba(1,211,160,.05);border:1px dashed rgba(1,211,160,.4);border-radius:12px;padding:22px;min-height:120px">
+        <a href="/design-lab/app/" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;background:rgba(22,214,166,.05);border:1px dashed rgba(22,214,166,.4);border-radius:12px;padding:22px;min-height:120px">
           <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--dl-g);margin-bottom:4px">Design your own →</div>
           <div style="font-size:12px;color:var(--dl-mut)">Free · one design to start</div>
         </a>
@@ -542,7 +542,7 @@
 <script>
 (function(){
   var AAs='ACDEFGHIKLMNPQRSTVWY';
-  var COL={K:'#01D3A0',R:'#01D3A0',H:'#6cf7d6',D:'#f0637e',E:'#f0637e',A:'#01D3A0',I:'#01D3A0',L:'#01D3A0',M:'#01D3A0',F:'#01D3A0',W:'#01D3A0',P:'#01D3A0',V:'#01D3A0',C:'#f0b03b',G:'#f0b03b',Y:'#f0b03b',N:'#eef3f2',Q:'#eef3f2',S:'#8aa0a0',T:'#8aa0a0'};
+  var COL={K:'var(--g)',R:'var(--g)',H:'#6cf7d6',D:'#f0637e',E:'#f0637e',A:'var(--g)',I:'var(--g)',L:'var(--g)',M:'var(--g)',F:'var(--g)',W:'var(--g)',P:'var(--g)',V:'var(--g)',C:'#f0b03b',G:'#f0b03b',Y:'#f0b03b',N:'#eef3f2',Q:'#eef3f2',S:'#8aa0a0',T:'#8aa0a0'};
 
   var bg=document.getElementById('dlHeroBg');
   if(bg){ for(var i=0;i<6;i++){ var d=document.createElement('div'); d.className='dl-stream'; d.style.top=(8+i*15)+'%'; d.style.animationDelay=(-i*5)+'s'; d.style.animationDuration=(25+i*5)+'s'; var s=''; for(var j=0;j<60;j++) s+=AAs[Math.floor(Math.random()*AAs.length)]; d.textContent=s; bg.appendChild(d); } }

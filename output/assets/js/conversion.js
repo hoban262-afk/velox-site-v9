@@ -69,12 +69,12 @@
     var css = [
       '#vp-ticker{position:fixed;bottom:20px;left:20px;z-index:9998;max-width:300px;pointer-events:none;}',
       '@media(max-width:767px){#vp-ticker{left:10px;right:10px;bottom:12px;max-width:none;}}',
-      '#vp-ticker-card{background:#0d0d0d;border:1px solid #1f2937;border-left:3px solid #01D3A0;',
+      '#vp-ticker-card{background:#0d0d0d;border:1px solid #1f2937;border-left:3px solid #16d6a6;',
       'border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:10px;',
       'box-shadow:0 4px 24px rgba(0,0,0,.55);opacity:0;transform:translateY(8px);',
       'transition:opacity .4s ease,transform .4s ease;}',
       '#vp-ticker-card.vp-show{opacity:1;transform:translateY(0);}',
-      '.vp-tk-logo{width:30px;height:30px;background:#01D3A0;border-radius:5px;flex-shrink:0;',
+      '.vp-tk-logo{width:30px;height:30px;background:#16d6a6;border-radius:5px;flex-shrink:0;',
       'display:flex;align-items:center;justify-content:center;',
       'font-weight:900;font-size:10px;color:#030407;letter-spacing:-.5px;font-family:sans-serif;}',
       '.vp-tk-body{flex:1;min-width:0;}',
@@ -264,8 +264,8 @@
         '#vp-viewing{',
           'display:flex;align-items:center;gap:10px;',
           'width:100%;box-sizing:border-box;',
-          'background:rgba(1,211,160,0.08);',
-          'border-left:3px solid #01D3A0;',
+          'background:rgba(22,214,166,0.08);',
+          'border-left:3px solid #16d6a6;',
           'padding:10px 16px;',
           'margin:10px 0 18px;',
           'font-family:inherit;',
@@ -273,7 +273,7 @@
         '#vp-viewing.vp-fade{animation:vp-fadein .35s ease;}',
         '#vp-viewing-dot{',
           'display:inline-block;width:8px;height:8px;',
-          'background:#01D3A0;border-radius:50%;',
+          'background:#16d6a6;border-radius:50%;',
           'animation:vp-pulse 1.5s ease-in-out infinite;',
           'flex-shrink:0;',
         '}',
@@ -428,18 +428,18 @@
         '.vp-frt-info{flex:1;min-width:0;}',
         '.vp-frt-name{font-size:13px;font-weight:600;color:#E5E7EB;text-decoration:none;',
         'display:block;margin-bottom:3px;}',
-        '.vp-frt-name:hover{color:#01D3A0;}',
+        '.vp-frt-name:hover{color:#16d6a6;}',
         '.vp-frt-price{font-size:12px;color:#9CA3AF;}',
-        '.vp-frt-view{font-size:12px;color:#01D3A0;text-decoration:none;',
+        '.vp-frt-view{font-size:12px;color:#16d6a6;text-decoration:none;',
         'font-weight:600;white-space:nowrap;flex-shrink:0;}',
         '.vp-frt-view:hover{text-decoration:underline;}',
         '.vp-frt-add-btn{display:inline-flex;align-items:center;gap:6px;',
-        'background:rgba(1,211,160,.08);color:#01D3A0;',
-        'border:1px solid rgba(1,211,160,.28);border-radius:6px;',
+        'background:rgba(22,214,166,.08);color:#16d6a6;',
+        'border:1px solid rgba(22,214,166,.28);border-radius:6px;',
         'padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;',
         'font-family:inherit;letter-spacing:.03em;transition:background .2s,color .2s;}',
-        '.vp-frt-add-btn:hover{background:rgba(1,211,160,.18);}',
-        '.vp-frt-add-btn.vp-added{background:rgba(1,211,160,.2);cursor:pointer;}',
+        '.vp-frt-add-btn:hover{background:rgba(22,214,166,.18);}',
+        '.vp-frt-add-btn.vp-added{background:rgba(22,214,166,.2);cursor:pointer;}',
       ].join('');
       document.head.appendChild(sc);
     }
@@ -609,9 +609,9 @@
     var html;
     if (!weekend && secs < cutoff) {
       var left = cutoff - secs, hh = Math.floor(left / 3600), mm = Math.floor((left % 3600) / 60);
-      html = 'Order within <strong style="color:#01D3A0">' + hh + 'h ' + mm + 'm</strong> for same-day dispatch';
+      html = 'Order within <strong style="color:#16d6a6">' + hh + 'h ' + mm + 'm</strong> for same-day dispatch';
     } else {
-      html = 'Order now — <strong style="color:#01D3A0">dispatched next working day</strong>';
+      html = 'Order now — <strong style="color:#16d6a6">dispatched next working day</strong>';
     }
     els.forEach(function (el) {
       var t = el.querySelector('.vp-pdp-dispatch-txt');

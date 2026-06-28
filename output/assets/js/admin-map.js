@@ -7,7 +7,7 @@
   try { localStorage.setItem('vx_admin_tab', 'map'); } catch (e) {}
 
   var SECTIONS = [
-    { label:'Main', color:'#01D3A0', tabs:[
+    { label:'Main', color:'#16d6a6', tabs:[
       { id:'overview', label:'Overview', desc:'KPIs & today at a glance', live:1 },
       { id:'stats',    label:'Stats',    desc:'Deeper sales & traffic stats' }
     ]},
@@ -209,7 +209,7 @@
     window._sb.from('product_variants').update({ base_price: base, in_stock: inEl.checked, stock_qty: qty }).eq('id', id).then(function (r) {
       if (r.error) { if (msg) { msg.style.color = '#f87171'; msg.textContent = r.error.message; } return; }
       if (bEl) bEl.setAttribute('data-orig', base);
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = '✓'; }
       if (window.showToast) showToast('Saved', 'ok');
       scheduleRedeploy();
       loadLive();
@@ -228,7 +228,7 @@
         return '<option value="' + esc(v.slug) + '|' + esc(v.size) + '"' + (current && current.slug === v.slug && current.size === v.size ? ' selected' : '') + '>' + esc(v.name) + ' · ' + esc(v.size) + ' (' + gbp2(v.base_price) + ')</option>';
       }).join('');
       body.innerHTML =
-        '<div style="color:' + (current ? '#01D3A0' : '#9ca3af') + ';font-size:12.5px;margin-bottom:4px">' +
+        '<div style="color:' + (current ? '#16d6a6' : '#9ca3af') + ';font-size:12.5px;margin-bottom:4px">' +
           (current ? ('Live: ' + esc(current.slug) + ' · ' + current.discount_pct + '% off') : 'No deal running') + '</div>' +
         '<label class="vxm-fld">Product</label><select class="vxm-sel" id="vxd-product">' + opts + '</select>' +
         '<label class="vxm-fld">Discount %</label><input class="vxm-in" type="number" min="1" max="95" step="1" id="vxd-pct" value="' + (current ? current.discount_pct : '') + '" style="max-width:160px">' +
@@ -254,7 +254,7 @@
       var r = await fetch('/api/admin/deal', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify(body) });
       var d = await r.json().catch(function(){return {};});
       if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = (d && d.error) || ('HTTP ' + r.status); } return; }
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = '✓ Live on the homepage.'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = '✓ Live on the homepage.'; }
       if (window.showToast) showToast('Deal of the Week updated', 'ok');
       loadLive();
     } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
@@ -267,7 +267,7 @@
     try {
       var r = await fetch('/api/admin/deal', { method: 'DELETE', headers: { Authorization: 'Bearer ' + t } });
       if (!r.ok) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Clear failed'; } return; }
-      if (msg) { msg.style.color = '#01D3A0'; msg.textContent = 'Deal cleared.'; }
+      if (msg) { msg.style.color = '#16d6a6'; msg.textContent = 'Deal cleared.'; }
       if (window.showToast) showToast('Deal cleared', 'ok');
       loadLive();
     } catch (e) { if (msg) { msg.style.color = '#f87171'; msg.textContent = e.message; } }
@@ -288,7 +288,7 @@
           h += '<tr>' +
             '<td style="color:#9ca3af">' + esc((o.created_at || '').slice(0, 10)) + '</td>' +
             '<td><div style="color:#fff">' + esc(o.customer_name) + '</div><div style="color:#6b7280;font-size:11px">' + esc(o.customer_email) + '</div></td>' +
-            '<td style="color:#01D3A0;font-weight:600">' + gbp2(o.total) + '</td>' +
+            '<td style="color:#16d6a6;font-weight:600">' + gbp2(o.total) + '</td>' +
             '<td style="white-space:nowrap"><button class="vxm-save" data-act="dispatch" data-id="' + o.id + '">Dispatch</button> ' +
             '<button class="vxm-danger" data-act="cancel-order" data-id="' + o.id + '">Cancel</button></td>' +
             '</tr>';

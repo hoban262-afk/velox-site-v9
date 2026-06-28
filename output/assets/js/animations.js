@@ -140,7 +140,7 @@
         'width:' + o.w + 'px;height:' + o.h + 'px;' +
         'left:' + o.left + ';top:' + o.top + ';' +
         'transform:translate(-50%,-50%);' +
-        'background:radial-gradient(circle,rgba(1,211,160,' + o.opacity + ') 0%,transparent 68%);' +
+        'background:radial-gradient(circle,rgba(22,214,166,' + o.opacity + ') 0%,transparent 68%);' +
         'border-radius:50%;pointer-events:none;position:absolute;' +
         'z-index:0;';
       hero.appendChild(el);

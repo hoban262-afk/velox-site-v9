@@ -39,7 +39,7 @@
     if (base === 0 || base == null) { pctTxt = 'new'; up = true; }
     else { var ch = (curr - base) / Math.abs(base) * 100; up = ch >= 0; pctTxt = (ch >= 0 ? '+' : '') + ch.toFixed(0) + '%'; }
     var good = up === goodUp;
-    var col = (base === 0 || base == null) ? '#01D3A0' : (good ? '#01D3A0' : '#f87171');
+    var col = (base === 0 || base == null) ? '#16d6a6' : (good ? '#16d6a6' : '#f87171');
     var arrow = (base === 0 || base == null) ? '★' : (up ? '▲' : '▼');
     return '<span style="color:' + col + ';font-weight:600">' + arrow + ' ' + pctTxt + '</span>';
   }
@@ -58,7 +58,7 @@
     return '<div style="display:flex;align-items:flex-end;gap:3px;height:' + height + 'px;border-bottom:1px solid var(--brd,#1a1a1a);padding-bottom:2px">' +
       data.map(function (d) {
         var h = Math.max(2, Math.round(d.value / max * (height - 18)));
-        var col = d.hi ? '#01D3A0' : (d.value ? '#2f6f60' : '#1a1a1a');
+        var col = d.hi ? '#16d6a6' : (d.value ? '#2f6f60' : '#1a1a1a');
         return '<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px" title="' + esc(d.label) + ': ' + fmt(d.value) + '">' +
           '<div style="width:72%;min-height:2px;height:' + h + 'px;background:' + col + ';border-radius:3px 3px 0 0"></div>' +
           '<div style="font-size:7px;color:var(--t3,#6b7280);writing-mode:vertical-rl;transform:rotate(180deg);height:34px;overflow:hidden">' + esc(d.short || '') + '</div>' +
@@ -89,7 +89,7 @@
       PERIODS.map(function (p) {
         var on = p.key === PERIOD.key;
         return '<button class="status-select" style="cursor:pointer;padding:7px 13px;' +
-          (on ? 'color:#01D3A0;border-color:#01D3A0' : '') + '" onclick="veloxSetPeriod(\'' + p.key + '\')">' + p.label + '</button>';
+          (on ? 'color:#16d6a6;border-color:#16d6a6' : '') + '" onclick="veloxSetPeriod(\'' + p.key + '\')">' + p.label + '</button>';
       }).join('') + '</div>';
   }
   function renderPeriodBars() {
@@ -152,7 +152,7 @@
     var msg = ((document.getElementById('camp-message') || {}).value || '').trim();
     var seg = (document.getElementById('camp-segment') || {}).value || 'all';
     var m = document.getElementById('camp-msg');
-    function set(t, ok) { if (m) { m.style.color = ok ? '#01D3A0' : '#f87171'; m.textContent = t; } }
+    function set(t, ok) { if (m) { m.style.color = ok ? '#16d6a6' : '#f87171'; m.textContent = t; } }
     if (!subj || !msg) { set('Add a subject and message first.', false); return; }
     var toEl = document.getElementById('mkt-test-to');
     var to = ((toEl && toEl.value) || '').trim();
@@ -244,8 +244,8 @@
       list.slice(0, 8).map(function (p) {
         var share = p.rev / totalRev * 100;
         return '<tr><td style="color:#fff">' + esc(p.name) + '</td><td>' + p.units + '</td>' +
-          '<td style="color:var(--g,#01D3A0);font-weight:600">' + gbp2(p.rev) + '</td>' +
-          '<td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;max-width:90px;height:6px;background:#15181d;border-radius:3px;overflow:hidden"><div style="width:' + share.toFixed(0) + '%;height:100%;background:#01D3A0"></div></div><span style="color:var(--t3,#6b7280);font-size:11px">' + share.toFixed(0) + '%</span></div></td></tr>';
+          '<td style="color:var(--g,#16d6a6);font-weight:600">' + gbp2(p.rev) + '</td>' +
+          '<td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;max-width:90px;height:6px;background:#15181d;border-radius:3px;overflow:hidden"><div style="width:' + share.toFixed(0) + '%;height:100%;background:#16d6a6"></div></div><span style="color:var(--t3,#6b7280);font-size:11px">' + share.toFixed(0) + '%</span></div></td></tr>';
       }).join('') + '</tbody></table>');
 
     // Recovery + affiliate contribution (window)
@@ -262,7 +262,7 @@
     var pendAff = AFFILIATES.filter(function (a) { return a.status === 'pending_approval'; }).length;
     var affRev = affCodes.reduce(function (s, a) { return s + a.rev; }, 0);
     setHTML('ovx-channels',
-      card('Recovered', gbp2(rec.rev), rec.n + (rec.n === 1 ? ' recovery order' : ' recovery orders'), '#01D3A0') +
+      card('Recovered', gbp2(rec.rev), rec.n + (rec.n === 1 ? ' recovery order' : ' recovery orders'), '#16d6a6') +
       card('Affiliate rev', gbp2(affRev), affCodes.length ? (affCodes[0].code + ' leads') : 'no coded orders') +
       card('Active affiliates', String(activeAff), pendAff + ' pending approval') +
       card('Top code', affCodes.length ? affCodes[0].code : '—', affCodes.length ? (affCodes[0].n + ' orders · ' + gbp2(affCodes[0].rev)) : 'recruit your first'));
@@ -291,8 +291,8 @@
     });
     var chip = function (txt, col) { return '<span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:' + col + '22;color:' + col + ';margin:0 6px 6px 0">' + esc(txt) + '</span>'; };
     setHTML('ovx-inv-stats',
-      card('Out of stock', String(out.length), out.length ? 'needs restocking' : 'all in stock', out.length ? '#f87171' : '#01D3A0') +
-      card('Low stock', String(low.length), '≤5 vials or flagged', low.length ? '#fbbf24' : '#01D3A0') +
+      card('Out of stock', String(out.length), out.length ? 'needs restocking' : 'all in stock', out.length ? '#f87171' : '#16d6a6') +
+      card('Low stock', String(low.length), '≤5 vials or flagged', low.length ? '#fbbf24' : '#16d6a6') +
       card('Live variants', String(VARIANTS.length), 'sizes across catalogue'));
 
     var rows = VARIANTS.filter(function (v) { return v.stock_qty != null; })
@@ -301,15 +301,15 @@
       rows.map(function (v) {
         var status = v.in_stock === false ? chip('OUT', '#f87171')
           : (v.low_stock || (v.stock_qty != null && v.stock_qty <= 5)) ? chip('LOW', '#fbbf24')
-          : chip('OK', '#01D3A0');
+          : chip('OK', '#16d6a6');
         return '<tr><td style="color:#fff">' + esc(v.name) + '</td><td style="color:var(--t2,#9ca3af)">' + esc(v.size) + '</td>' +
-          '<td>' + (v.in_stock === false ? '<span style="color:#f87171">no</span>' : '<span style="color:#01D3A0">yes</span>') + '</td>' +
+          '<td>' + (v.in_stock === false ? '<span style="color:#f87171">no</span>' : '<span style="color:#16d6a6">yes</span>') + '</td>' +
           '<td style="color:var(--t2,#9ca3af)">' + (v.stock_qty == null ? '—' : v.stock_qty) + '</td><td>' + status + '</td></tr>';
       }).join('') + '</tbody></table>' : '<div class="adm-empty">No per-variant stock quantities set yet — add them in the Pricing tab to power this watchlist.</div>';
     var alertHtml = '';
     if (out.length) alertHtml += '<div style="margin-bottom:10px"><span style="color:#f87171;font-weight:700;font-size:12px">OUT OF STOCK &nbsp;</span>' + out.map(function (v) { return chip(v.name + ' ' + v.size, '#f87171'); }).join('') + '</div>';
     if (low.length) alertHtml += '<div style="margin-bottom:10px"><span style="color:#fbbf24;font-weight:700;font-size:12px">RUNNING LOW &nbsp;</span>' + low.map(function (v) { return chip(v.name + ' ' + v.size, '#fbbf24'); }).join('') + '</div>';
-    if (!alertHtml) alertHtml = '<div style="color:#01D3A0;font-size:13px;margin-bottom:8px">✓ Everything in stock — no low or out-of-stock variants.</div>';
+    if (!alertHtml) alertHtml = '<div style="color:#16d6a6;font-size:13px;margin-bottom:8px">✓ Everything in stock — no low or out-of-stock variants.</div>';
     setHTML('ovx-inv-alerts', alertHtml);
     setHTML('ovx-inv-watch', watch);
   }
@@ -343,7 +343,7 @@
     var fSteps = [
       { l: 'Visitors', v: t.visitors, c: '#4a9fe0' },
       { l: 'Orders placed', v: placed, c: '#a78bfa' },
-      { l: 'Paid / dispatched', v: paidN, c: '#01D3A0' },
+      { l: 'Paid / dispatched', v: paidN, c: '#16d6a6' },
     ];
     var fmax = Math.max(t.visitors, 1);
     var funnel = '<div style="display:flex;flex-direction:column;gap:8px">' + fSteps.map(function (s, i) {
@@ -355,11 +355,11 @@
 
     var pages = (tr.topPages || []).slice(0, 10);
     var pagesT = pages.length ? '<table class="adm-table"><thead><tr><th>Page</th><th>Views</th><th>Visitors</th></tr></thead><tbody>' +
-      pages.map(function (p) { return '<tr><td style="color:#fff">' + esc(p.path) + '</td><td style="color:var(--g,#01D3A0);font-weight:600">' + num(p.views) + '</td><td style="color:var(--t2,#9ca3af)">' + num(p.visitors) + '</td></tr>'; }).join('') + '</tbody></table>' : '<div class="adm-empty">No page data.</div>';
+      pages.map(function (p) { return '<tr><td style="color:#fff">' + esc(p.path) + '</td><td style="color:var(--g,#16d6a6);font-weight:600">' + num(p.views) + '</td><td style="color:var(--t2,#9ca3af)">' + num(p.visitors) + '</td></tr>'; }).join('') + '</tbody></table>' : '<div class="adm-empty">No page data.</div>';
 
     var refs = (tr.topReferrers || []).slice(0, 10);
     var refsT = refs.length ? '<table class="adm-table"><thead><tr><th>Source</th><th>Visits</th></tr></thead><tbody>' +
-      refs.map(function (r) { return '<tr><td style="color:#fff">' + esc(r.source) + '</td><td style="color:var(--g,#01D3A0);font-weight:600">' + num(r.count) + '</td></tr>'; }).join('') + '</tbody></table>' : '<div class="adm-empty">No referrer data.</div>';
+      refs.map(function (r) { return '<tr><td style="color:#fff">' + esc(r.source) + '</td><td style="color:var(--g,#16d6a6);font-weight:600">' + num(r.count) + '</td></tr>'; }).join('') + '</tbody></table>' : '<div class="adm-empty">No referrer data.</div>';
 
     setHTML('traffic-body',
       '<div class="stat-grid">' + stats + '</div>' +
@@ -417,7 +417,7 @@
       card('Revenue', gbp2(winRev), periodLabel()) +
       card('New buyers', num(newN), periodLabel() + ' · first order') +
       card('Returning', num(retN), periodLabel() + ' · repeat order') +
-      card('Repeat rate', pct1(repeatRate), repeat + ' of ' + total + ' all-time', repeat ? '#01D3A0' : null) +
+      card('Repeat rate', pct1(repeatRate), repeat + ' of ' + total + ' all-time', repeat ? '#16d6a6' : null) +
       card('Avg LTV', gbp2(ltv), 'all-time per customer'));
 
     // Cohorts by first-order month (global)
@@ -433,7 +433,7 @@
       cohKeys.map(function (k) {
         var c = coh[k]; var rr = c.n ? (c.repeat / c.n * 100).toFixed(0) : 0;
         var label = new Date(k + '-01').toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
-        return '<tr><td style="color:#fff">' + label + '</td><td>' + c.n + '</td><td style="color:var(--t2,#9ca3af)">' + c.repeat + ' · ' + rr + '%</td><td style="color:var(--g,#01D3A0);font-weight:600">' + gbp2(c.spend) + '</td></tr>';
+        return '<tr><td style="color:#fff">' + label + '</td><td>' + c.n + '</td><td style="color:var(--t2,#9ca3af)">' + c.repeat + ' · ' + rr + '%</td><td style="color:var(--g,#16d6a6);font-weight:600">' + gbp2(c.spend) + '</td></tr>';
       }).join('') + '</tbody></table>' : '<div class="adm-empty">No cohorts yet.</div>');
 
     // Reorder-due: last order 25–60 days ago (global)
@@ -448,7 +448,7 @@
           '<td style="color:var(--t2,#9ca3af)">' + new Date(c.last).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + '</td>' +
           '<td style="color:#fbbf24;font-weight:600">' + x.days + 'd</td>' +
           '<td style="color:var(--t2,#9ca3af)">' + esc(lastProduct(c)) + '</td>' +
-          '<td style="color:var(--g,#01D3A0)">' + gbp2(c.spend) + '</td></tr>';
+          '<td style="color:var(--g,#16d6a6)">' + gbp2(c.spend) + '</td></tr>';
       }).join('') + '</tbody></table>' : '<div class="adm-empty">No customers are in the 25–60 day reorder window yet.</div>');
   }
 
@@ -466,7 +466,7 @@
   function seoBtn(key, label) {
     var on = SEO_RANGE.type === 'rel' && SEO_RANGE.key === key;
     return '<button class="status-select" style="cursor:pointer;padding:7px 13px;' +
-      (on ? 'color:#01D3A0;border-color:#01D3A0' : '') + '" onclick="veloxSeoSetRange(\'' + key + '\')">' + label + '</button>';
+      (on ? 'color:#16d6a6;border-color:#16d6a6' : '') + '" onclick="veloxSeoSetRange(\'' + key + '\')">' + label + '</button>';
   }
   function seoControlsHtml() {
     var monthOn = SEO_RANGE.type === 'month';
@@ -476,7 +476,7 @@
     return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:6px">' +
       '<span style="font-size:11px;color:var(--t3,#6b7280);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-right:2px">Time range</span>' +
       seoBtn('7d', '1 week') + seoBtn('1m', '1 month') + seoBtn('3m', '3 months') + seoBtn('quarter', 'Quarter') + seoBtn('year', 'Year') +
-      '<select class="status-select" style="cursor:pointer;padding:7px 10px;' + (monthOn ? 'color:#01D3A0;border-color:#01D3A0' : '') + '" onchange="veloxSeoSetMonth(this.value)">' + opts + '</select>' +
+      '<select class="status-select" style="cursor:pointer;padding:7px 10px;' + (monthOn ? 'color:#16d6a6;border-color:#16d6a6' : '') + '" onchange="veloxSeoSetMonth(this.value)">' + opts + '</select>' +
       '</div>' +
       '<div style="font-size:11px;color:var(--t3,#6b7280);margin-bottom:12px">Search Console data is daily and runs ~3 days behind, so hourly ranges aren\'t available here.</div>';
   }
@@ -503,7 +503,7 @@
       card('CTR', (t.ctr * 100).toFixed(1) + '%', delta(t.ctr, p.ctr) + ' vs prev') +
       card('Avg position', (t.position || 0).toFixed(1), delta(p.position, t.position, { goodUp: true }) + ' vs prev');
 
-    var posCol = function (v) { return v <= 10 ? '#01D3A0' : v <= 25 ? '#fbbf24' : '#f87171'; };
+    var posCol = function (v) { return v <= 10 ? '#16d6a6' : v <= 25 ? '#fbbf24' : '#f87171'; };
     var qrows = (d.queries || []).slice(0, 15);
     var qT = qrows.length ? '<table class="adm-table"><thead><tr><th>Query</th><th>Clicks</th><th>Impr.</th><th>CTR</th><th>Pos</th></tr></thead><tbody>' +
       qrows.map(function (q) {
@@ -582,7 +582,7 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
   function fmtT(iso) { try { var d = new Date(iso); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
   function srcBadge(src) {
-    var colors = { 'Instagram': '#E1306C', 'ChatGPT': '#01D3A0', 'Google': '#4285F4', 'Bing': '#008373', 'X / Twitter': '#888', 'Facebook': '#1877F2', 'Reddit': '#FF4500', 'Direct / none': '#6b7280', 'Internal': '#6b7280' };
+    var colors = { 'Instagram': '#E1306C', 'ChatGPT': '#16d6a6', 'Google': '#4285F4', 'Bing': '#008373', 'X / Twitter': '#888', 'Facebook': '#1877F2', 'Reddit': '#FF4500', 'Direct / none': '#6b7280', 'Internal': '#6b7280' };
     var c = colors[src] || '#8b5cf6';
     return '<span style="display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;background:' + c + '22;color:' + c + '">' + esc(src) + '</span>';
   }
@@ -624,7 +624,7 @@
         '<span>&pound;' + Number(o.total || 0).toFixed(2) + '</span>' +
         '<span style="font-size:11px;text-transform:uppercase;color:var(--t3,#6b7280)">' + esc(o.status) + ' &middot; ' + esc(o.payment_method || '') + '</span>' +
         (j ? srcBadge(j.source) : srcBadge('Direct / none')) + matchNote +
-        (o.affiliate_code_used ? '<span style="font-size:11px;color:#01D3A0">code: ' + esc(o.affiliate_code_used) + '</span>' : '') +
+        (o.affiliate_code_used ? '<span style="font-size:11px;color:#16d6a6">code: ' + esc(o.affiliate_code_used) + '</span>' : '') +
         '</div>';
       var detail = '';
       if (j) {

@@ -663,10 +663,10 @@
           var box = document.createElement('div');
           box.style.cssText = 'margin-top:14px;padding:14px;border:1px solid #1a1a1a;border-radius:8px;background:#0d0d0d';
           box.innerHTML =
-            '<div style="font-size:11px;color:#01D3A0;font-weight:700;letter-spacing:.08em;margin-bottom:8px">LOYALTY POINTS</div>' +
+            '<div style="font-size:11px;color:#16d6a6;font-weight:700;letter-spacing:.08em;margin-bottom:8px">LOYALTY POINTS</div>' +
             '<div style="font-size:13px;color:#9ca3af;margin-bottom:10px">You have <strong style="color:#fff">' + balance + '</strong> points (worth £' + (balance / 100).toFixed(2) + '). Redeem in multiples of 100, minimum 500.</div>' +
             '<div style="display:flex;gap:8px"><input id="pts-input" type="number" step="100" min="500" max="' + balance + '" placeholder="500" style="flex:1;background:#111;border:1px solid #1a1a1a;color:#fff;padding:9px 10px;border-radius:6px;font-size:14px">' +
-            '<button id="pts-apply" type="button" style="background:#01D3A0;color:#021;border:none;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer">Redeem</button></div>' +
+            '<button id="pts-apply" type="button" style="background:#16d6a6;color:#021;border:none;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer">Redeem</button></div>' +
             '<div id="pts-msg" style="font-size:12px;margin-top:8px"></div>';
           anchor.parentNode.insertBefore(box, anchor.nextSibling);
 
@@ -678,7 +678,7 @@
             if (pts > balance)     { m.style.color = '#f87171'; m.textContent = 'You only have ' + balance + ' points.'; return; }
             appliedPoints = pts;
             appliedPointsSavingGBP = pts / 100;   // 100 points = £1
-            m.style.color = '#01D3A0';
+            m.style.color = '#16d6a6';
             m.textContent = '✓ Redeeming ' + pts + ' points (−' + fmt(savingInCurrency(appliedPointsSavingGBP, payRegion), payRegion) + ')';
             document.getElementById('pts-input').disabled = true;
             document.getElementById('pts-apply').disabled = true;
@@ -903,7 +903,7 @@
             card.innerHTML =
               '<div style="color:#fff;font-size:15px;font-weight:700;margin-bottom:6px">Save your details &amp; earn points</div>' +
               '<p style="color:#9ca3af;font-size:13px;margin:0 0 14px">Create a free account to track this order, reorder in one click, and earn loyalty points on future purchases. This order will link to your account automatically.</p>' +
-              '<a href="/account/" style="display:inline-block;text-decoration:none;background:#01D3A0;color:#021;padding:10px 20px;border-radius:7px;font-weight:700;font-size:13px">Create account</a>';
+              '<a href="/account/" style="display:inline-block;text-decoration:none;background:#16d6a6;color:#021;padding:10px 20px;border-radius:7px;font-weight:700;font-size:13px">Create account</a>';
             host.parentNode.insertBefore(card, host.nextSibling);
           } catch (e) {}
         })();

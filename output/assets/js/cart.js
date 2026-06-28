@@ -142,7 +142,7 @@
         row = document.createElement('div');
         row.id = 'vp-pack-vol-row';
         row.className = 'cart-sum-row';
-        row.style.color = '#01D3A0';
+        row.style.color = '#16d6a6';
         totalRow.parentNode.insertBefore(row, totalRow);
       }
       row.innerHTML = '<span>10-Pack volume discount (' + (rate * 100) + '% off)</span>' +
@@ -161,7 +161,7 @@
         row = document.createElement('div');
         row.id = 'vp-vol-row';
         row.className = 'cart-sum-row';
-        row.style.color = '#01D3A0';
+        row.style.color = '#16d6a6';
         totalRow.parentNode.insertBefore(row, totalRow);
       }
       row.innerHTML = '<span>Volume discount (' + Math.round(rate * 100) + '% off)</span>' +
@@ -186,7 +186,7 @@
       n = document.createElement('div');
       n.id = 'vp-pack-nudge';
       n.className = 'cart-sum-row';
-      n.style.cssText = 'display:block;color:#01D3A0;font-size:12px;margin:2px 0 6px';
+      n.style.cssText = 'display:block;color:#16d6a6;font-size:12px;margin:2px 0 6px';
       totalRow.parentNode.insertBefore(n, totalRow);
     }
     var need = next.q - packQty;
@@ -209,7 +209,7 @@
       n = document.createElement('div');
       n.id = 'vp-vol-nudge';
       n.className = 'cart-sum-row';
-      n.style.cssText = 'display:block;color:#01D3A0;font-size:12px;margin:2px 0 6px';
+      n.style.cssText = 'display:block;color:#16d6a6;font-size:12px;margin:2px 0 6px';
       totalRow.parentNode.insertBefore(n, totalRow);
     }
     var remaining = Math.round((next.min - discBase) * 100) / 100;
@@ -230,13 +230,13 @@
     var remaining = FREE_THRESHOLD - subtotal;
     var pct = memberFree ? 100 : Math.max(0, Math.min(100, (subtotal / FREE_THRESHOLD) * 100));
     var msg = memberFree
-      ? '<strong style="color:#01D3A0">✓ Free UK shipping included with Velox Peps Pro</strong>'
+      ? '<strong style="color:#16d6a6">✓ Free UK shipping included with Velox Peps Pro</strong>'
       : (remaining > 0
-        ? 'You’re <strong style="color:#fff">' + fmt(remaining) + '</strong> away from <strong style="color:#01D3A0">free UK shipping</strong>'
-        : '<strong style="color:#01D3A0">✓ You’ve unlocked free UK shipping</strong>');
+        ? 'You’re <strong style="color:#fff">' + fmt(remaining) + '</strong> away from <strong style="color:#16d6a6">free UK shipping</strong>'
+        : '<strong style="color:#16d6a6">✓ You’ve unlocked free UK shipping</strong>');
     n.innerHTML = '<div style="margin-bottom:8px">' + msg + '</div>' +
       '<div style="height:6px;background:#1a1a1a;border-radius:99px;overflow:hidden">' +
-      '<div style="height:100%;width:' + pct.toFixed(0) + '%;background:#01D3A0;border-radius:99px;transition:width .3s"></div></div>';
+      '<div style="height:100%;width:' + pct.toFixed(0) + '%;background:#16d6a6;border-radius:99px;transition:width .3s"></div></div>';
   }
 
   function escHtml(s) {

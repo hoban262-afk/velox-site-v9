@@ -45,7 +45,7 @@
     '.rv-card{background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:8px;padding:16px 18px}' +
     '.rv-card-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}' +
     '.rv-card-name{font-weight:600;color:#fff;font-size:14px}' +
-    '.rv-vp{font-size:10px;font-family:var(--mono,monospace);color:var(--g,#01D3A0);border:1px solid rgba(1,211,160,.3);border-radius:3px;padding:1px 6px;margin-left:8px}' +
+    '.rv-vp{font-size:10px;font-family:var(--mono,monospace);color:var(--g,#16d6a6);border:1px solid rgba(22,214,166,.3);border-radius:3px;padding:1px 6px;margin-left:8px}' +
     '.rv-card-date{font-size:12px;color:var(--t3,#6b7280)}' +
     '.rv-card-title{font-weight:600;color:#fff;font-size:14px;margin:6px 0 4px}' +
     '.rv-card-body{color:var(--t2,#9ca3af);font-size:13px;line-height:1.6}' +
@@ -56,13 +56,13 @@
     '.rv-rate .rv-star{font-size:26px;cursor:pointer;transition:color .1s}' +
     '.rv-form .f-inp,.rv-form textarea{width:100%;box-sizing:border-box;margin-bottom:12px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:10px 12px;border-radius:6px;font:inherit;font-size:14px}' +
     '.rv-form textarea{min-height:90px;resize:vertical}' +
-    '.rv-msg{font-size:13px;margin-top:8px}.rv-msg.ok{color:var(--g,#01D3A0)}.rv-msg.err{color:#f87171}' +
+    '.rv-msg{font-size:13px;margin-top:8px}.rv-msg.ok{color:var(--g,#16d6a6)}.rv-msg.err{color:#f87171}' +
     /* top-of-page rating summary (below the product image) */
     '.cp-rating-summary{display:flex;align-items:center;gap:9px;margin:16px 0 0;text-decoration:none;font-family:var(--mono,monospace);font-size:13px;color:var(--t2,#9ca3af);transition:color .15s}' +
     '.cp-rating-summary .rv-star{font-size:20px}' +
     '.cp-rating-summary .crs-num{color:#fff;font-weight:700;font-size:15px}' +
     '.cp-rating-summary .crs-text{letter-spacing:.02em}' +
-    '.cp-rating-summary .crs-text b{color:var(--g,#01D3A0);font-weight:600}' +
+    '.cp-rating-summary .crs-text b{color:var(--g,#16d6a6);font-weight:600}' +
     '.cp-rating-summary:hover .crs-text{color:#fff}';
   document.head.appendChild(css);
 

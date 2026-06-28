@@ -143,25 +143,18 @@
                 box-shadow .3s ease !important;
   }
   .cc:hover {
-    transform: translateY(-6px) !important;
-    border-color: rgba(1,211,160,.45) !important;
+    transform: translateY(-2px) !important;
+    border-color: var(--g-deep) !important;
   }
-  .cc-healing:hover    { box-shadow: 0 16px 48px rgba(1,211,160,.12); }
-  .cc-cognitive:hover  { box-shadow: 0 16px 48px rgba(167,139,250,.12); }
-  .cc-metabolic:hover  { box-shadow: 0 16px 48px rgba(245,200,66,.1); }
-  .cc-growth:hover     { box-shadow: 0 16px 48px rgba(74,159,224,.12); }
-  .cc-antiageing:hover { box-shadow: 0 16px 48px rgba(244,114,182,.12); }
+  .cc-healing:hover,
+  .cc-cognitive:hover,
+  .cc-metabolic:hover,
+  .cc-growth:hover,
+  .cc-antiageing:hover { box-shadow: 0 16px 40px -18px rgba(0,0,0,.6); }
 
-  /* Card image zoom on hover — requires overflow:hidden on .cc-img-wrap */
+  /* Card image — no hover-scale (DESIGN.md: content is visible, not animated on hover) */
   .cc-img-wrap {
     overflow: hidden !important;
-  }
-  .cc-img {
-    transition: transform .5s cubic-bezier(0.16,1,0.3,1) !important;
-    transform-origin: center center;
-  }
-  .cc:hover .cc-img {
-    transform: scale(1.04) !important;
   }
 
   /* Price brightens on hover */
@@ -184,20 +177,10 @@
   .vp-featured::after {
     content: '';
     position: absolute;
-    inset: -1.5px;
-    border-radius: 11.5px;
-    background: conic-gradient(from var(--vp-angle, 0deg),
-      rgba(1,211,160,0) 0%,
-      rgba(1,211,160,.40) 20%,
-      rgba(74,159,224,.33) 40%,
-      rgba(167,139,250,.24) 60%,
-      rgba(1,211,160,.40) 80%,
-      rgba(1,211,160,0) 100%);
-    z-index: -1;
-    animation: vp-border-rotate 4s linear infinite;
-  }
-  .vp-featured:hover::after {
-    filter: brightness(1.3);
+    left: 0; right: 0; top: 0;
+    height: 1px;
+    background: var(--g);
+    z-index: 2;
   }
 
   /* LOW STOCK badge */
@@ -217,7 +200,6 @@
     border-radius: 4px;
     text-transform: uppercase;
     white-space: nowrap;
-    animation: vp-low-stock-pulse 2.5s ease-in-out infinite;
     pointer-events: none;
   }
 
@@ -228,7 +210,7 @@
     gap: 6px;
     background: rgba(255,68,68,.07);
     border: 1px solid rgba(255,68,68,.28);
-    border-left: 3px solid #FF4444;
+    border-top: 1px solid #FF4444;
     border-radius: 6px;
     padding: 8px 14px;
     font-size: 13px;
@@ -236,23 +218,9 @@
     color: #FF4444;
     margin: 8px 0 10px;
     line-height: 1.3;
-    animation: vp-low-stock-pulse 3s ease-in-out infinite;
   }
-  /* ── PART 4: Hero glow orbs ── */
-  .vp-orb {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    will-change: transform;
-  }
-  .vp-orb-1 { animation: vp-orb-1 80s ease-in-out infinite; }
-  .vp-orb-2 { animation: vp-orb-2 90s ease-in-out infinite; }
-  .vp-orb-3 { animation: vp-orb-3 70s ease-in-out infinite; }
-
-  /* On mobile — disable orbs entirely (JS also won't create them) */
-  @media (max-width: 767px) {
-    .vp-orb { display: none; }
-  }
+  /* ── PART 4: Hero glow orbs — REMOVED (DESIGN.md: no decorative glow particles) ── */
+  .vp-orb { display: none !important; }
 
   /* ── PART 5: Announcement bar ── */
   .ann-bar {
@@ -327,12 +295,11 @@
     left: 0;
     height: 2px;
     width: 0%;
-    background: linear-gradient(90deg, #01D3A0, #4A9FE0);
+    background: var(--g);
     z-index: 9999;
     transition: width .08s linear;
     pointer-events: none;
     will-change: width;
-    box-shadow: 0 0 8px rgba(1,211,160,.5);
   }
 
   /* ── Touch: tap highlight removal ── */

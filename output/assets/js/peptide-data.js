@@ -8,7 +8,7 @@
 (function () {
   // category → accent colour
   var CAT = {
-    growth:   { label: 'Growth / GH', color: '#01D3A0' },
+    growth:   { label: 'Growth / GH', color: '#16d6a6' },
     healing:  { label: 'Healing & repair', color: '#6cf7d6' },
     metabolic:{ label: 'Metabolic', color: '#7b8cff' },
     cosmetic: { label: 'Skin & cosmetic', color: '#f0b03b' },

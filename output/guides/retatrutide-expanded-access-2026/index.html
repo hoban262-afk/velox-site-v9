@@ -79,7 +79,7 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #1a1600;
-      background: #01D3A0;
+      background: var(--g);
       padding: 3px 10px;
       border-radius: 3px;
       margin-bottom: 14px;
@@ -163,7 +163,7 @@
       letter-spacing: 0.01em;
       margin: 0 0 16px;
       padding-top: 8px;
-      border-top: 2px solid #01D3A0;
+      border-top: 2px solid var(--g);
       display: inline-block;
     }
     .rl-h3 {
@@ -174,7 +174,7 @@
     }
     .rl-h3::before {
       content: ' - ';
-      color: #01D3A0;
+      color: var(--g);
     }
     .rl-article p {
       font-size: 0.95rem;
@@ -183,7 +183,7 @@
       margin: 0 0 16px;
     }
     .rl-article strong { color: #D1D5DB; }
-    .rl-article a { color: #01D3A0; text-decoration: none; }
+    .rl-article a { color: var(--g); text-decoration: none; }
     .rl-article a:hover { text-decoration: underline; }
 
     /* ── Inline citation ── */
@@ -195,13 +195,13 @@
       margin-left: 2px;
     }
     .rl-cite a { color: #4B5563; }
-    .rl-cite a:hover { color: #01D3A0; }
+    .rl-cite a:hover { color: var(--g); }
 
     /* ── Study callout cards ── */
     .rl-study {
       background: #0a0d12;
       border: 1px solid #1a1d24;
-      border-top: 1px solid #01D3A0;
+      border-top: 1px solid var(--g);
       border-radius: 6px;
       padding: 20px 20px 16px;
       margin: 24px 0;
@@ -211,7 +211,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 6px;
     }
     .rl-study-title {
@@ -232,14 +232,14 @@
       margin-top: 10px !important;
     }
     .rl-study-pmid a { color: #4B5563; }
-    .rl-study-pmid a:hover { color: #01D3A0; }
+    .rl-study-pmid a:hover { color: var(--g); }
 
     /* ── Timeline ── */
     .rl-timeline { margin: 22px 0; padding-left: 22px; border-top: 1px solid #1a1d24; }
     .rl-tl-item { position: relative; padding: 0 0 18px; }
-    .rl-tl-item::before { content: ''; position: absolute; left: -28px; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: #01D3A0; }
-    .rl-tl-item.rl-tl-pending::before { background: #374151; border: 2px solid #01D3A0; }
-    .rl-tl-yr { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #01D3A0; letter-spacing: 0.06em; }
+    .rl-tl-item::before { content: ''; position: absolute; left: -28px; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: var(--g); }
+    .rl-tl-item.rl-tl-pending::before { background: #374151; border: 2px solid var(--g); }
+    .rl-tl-yr { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--g); letter-spacing: 0.06em; }
     .rl-tl-pending .rl-tl-yr { color: #6B7280; }
     .rl-tl-txt { font-size: 0.86rem; color: #9CA3AF; line-height: 1.55; margin-top: 2px; }
 
@@ -270,7 +270,7 @@
     }
     .rl-table tr td:first-child { color: #D1D5DB; font-weight: 500; }
     .rl-table tr:last-child td { border-bottom: none; }
-    .rl-tag-green { color: #01D3A0; font-weight: 700; font-family: 'DM Mono', monospace; font-size: 0.78rem; }
+    .rl-tag-green { color: var(--g); font-weight: 700; font-family: 'DM Mono', monospace; font-size: 0.78rem; }
     .rl-tag-amber { color: #F5B800; font-weight: 700; font-family: 'DM Mono', monospace; font-size: 0.78rem; }
 
     /* ── Supply info box ── */
@@ -301,7 +301,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -323,7 +323,7 @@
       font-family: 'DM Mono', monospace;
     }
     .rl-refs li a { color: #4B5563; }
-    .rl-refs li a:hover { color: #01D3A0; }
+    .rl-refs li a:hover { color: var(--g); }
 
     /* ── FAQ ── */
     .rl-faq-item { border-bottom: 1px solid #1a1d24; padding: 20px 0; }
@@ -352,7 +352,7 @@
       margin-bottom: 12px;
     }
     .rl-sb-compound-name { font-size: 1rem; font-weight: 700; color: #F9FAFB; margin-bottom: 4px; }
-    .rl-sb-purity { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #01D3A0; margin-bottom: 14px; }
+    .rl-sb-purity { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--g); margin-bottom: 14px; }
     .rl-sb-prices { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
     .rl-sb-price-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
     .rl-sb-price-size { color: #6B7280; }
@@ -360,7 +360,7 @@
     .rl-sb-btn {
       display: block;
       text-align: center;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -396,8 +396,8 @@
     .rl-sb-related-item:last-child { border-bottom: none; }
     .rl-sb-related-name { font-size: 0.875rem; color: #D1D5DB; font-weight: 500; }
     .rl-sb-related-cat { font-size: 0.68rem; font-family: 'DM Mono', monospace; color: #4B5563; letter-spacing: 0.06em; }
-    .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
-    .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-sb-related-arr { color: var(--g); font-size: 0.85rem; }
+    .rl-sb-related-item:hover .rl-sb-related-name { color: var(--g); }
   </style>
 
   <script defer src="/_vercel/insights/script.js"></script>
@@ -426,7 +426,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -464,7 +464,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -495,9 +495,9 @@
           <a href="/compounds/metabolic/" class="rl-cat-badge" aria-label="Metabolic category">METABOLIC</a>
           <h1 class="rl-h1" itemprop="headline">Retatrutide FDA Expanded Access 2026: What the Compassionate Use Grant Signals</h1>
           <div class="rl-meta">
-            <span style="color:#01D3A0;font-weight:600">Published: 27 June 2026</span>
+            <span style="color:var(--g);font-weight:600">Published: 27 June 2026</span>
             <span class="rl-meta-sep">·</span>
-            <span>By <a href="/about/" rel="author" style="color:#01D3A0;font-weight:600">Declan Hoban</a>, Founder</span>
+            <span>By <a href="/about/" rel="author" style="color:var(--g);font-weight:600">Declan Hoban</a>, Founder</span>
             <span class="rl-meta-sep">·</span>
             <span>Third-party trial news summary</span>
           </div>
@@ -830,7 +830,7 @@
         <!-- Compliance reminder -->
         <div class="rl-sb-card" style="border-color:rgba(245,183,0,.3);">
           <div class="rl-sb-hdr" style="color:#D1A400;">RESEARCH USE ONLY</div>
-          <p style="font-size:0.8rem;color:#9CA3AF;line-height:1.6;margin:0;">Velox Peptides supplies retatrutide as an in vitro research reagent only. Not a medicine. Not for human or veterinary use. See our <a href="/legal/research-use-policy/" style="color:#01D3A0;">Research Use Policy</a>.</p>
+          <p style="font-size:0.8rem;color:#9CA3AF;line-height:1.6;margin:0;">Velox Peptides supplies retatrutide as an in vitro research reagent only. Not a medicine. Not for human or veterinary use. See our <a href="/legal/research-use-policy/" style="color:var(--g);">Research Use Policy</a>.</p>
         </div>
 
       </aside>

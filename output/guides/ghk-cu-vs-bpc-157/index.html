@@ -79,7 +79,7 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #1a1600;
-      background: #01D3A0;
+      background: var(--g);
       padding: 3px 10px;
       border-radius: 3px;
       margin-bottom: 14px;
@@ -163,7 +163,7 @@
       letter-spacing: 0.01em;
       margin: 0 0 16px;
       padding-top: 8px;
-      border-top: 2px solid #01D3A0;
+      border-top: 2px solid var(--g);
       display: inline-block;
     }
     .rl-h3 {
@@ -174,7 +174,7 @@
     }
     .rl-h3::before {
       content: ' - ';
-      color: #01D3A0;
+      color: var(--g);
     }
     .rl-article p {
       font-size: 0.95rem;
@@ -183,7 +183,7 @@
       margin: 0 0 16px;
     }
     .rl-article strong { color: #D1D5DB; }
-    .rl-article a { color: #01D3A0; text-decoration: none; }
+    .rl-article a { color: var(--g); text-decoration: none; }
     .rl-article a:hover { text-decoration: underline; }
 
     /* ── Inline citation ── */
@@ -195,13 +195,13 @@
       margin-left: 2px;
     }
     .rl-cite a { color: #4B5563; }
-    .rl-cite a:hover { color: #01D3A0; }
+    .rl-cite a:hover { color: var(--g); }
 
     /* ── Study callout cards ── */
     .rl-study {
       background: #0a0d12;
       border: 1px solid #1a1d24;
-      border-top: 1px solid #01D3A0;
+      border-top: 1px solid var(--g);
       border-radius: 6px;
       padding: 20px 20px 16px;
       margin: 24px 0;
@@ -211,7 +211,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 6px;
     }
     .rl-study-title {
@@ -232,7 +232,7 @@
       margin-top: 10px !important;
     }
     .rl-study-pmid a { color: #4B5563; }
-    .rl-study-pmid a:hover { color: #01D3A0; }
+    .rl-study-pmid a:hover { color: var(--g); }
 
     /* ── Comparison table ── */
     .rl-table-wrap { overflow-x: auto; margin: 20px 0; }
@@ -254,8 +254,8 @@
       border-bottom: 1px solid #1a1d24;
     }
     .rl-table th.rl-table-highlight {
-      color: #01D3A0;
-      background: rgba(1,211,160,.05);
+      color: var(--g);
+      background: rgba(22,214,166,.05);
     }
     .rl-table td {
       padding: 11px 16px;
@@ -268,10 +268,10 @@
       font-weight: 500;
     }
     .rl-table td.rl-table-highlight {
-      background: rgba(1,211,160,.04);
+      background: rgba(22,214,166,.04);
       color: #D1D5DB;
     }
-    .rl-table .rl-yes { color: #01D3A0; font-weight: 700; }
+    .rl-table .rl-yes { color: var(--g); font-weight: 700; }
     .rl-table .rl-no  { color: #374151; }
     .rl-table tr:last-child td { border-bottom: none; }
 
@@ -308,7 +308,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -333,7 +333,7 @@
       font-family: 'DM Mono', monospace;
     }
     .rl-refs li a { color: #4B5563; }
-    .rl-refs li a:hover { color: #01D3A0; }
+    .rl-refs li a:hover { color: var(--g); }
 
     /* ── FAQ ── */
     .rl-faq-item {
@@ -391,7 +391,7 @@
     .rl-sb-purity {
       font-family: 'DM Mono', monospace;
       font-size: 0.72rem;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 14px;
     }
     .rl-sb-prices {
@@ -433,7 +433,7 @@
     .rl-sb-btn {
       display: block;
       text-align: center;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -474,8 +474,8 @@
       color: #4B5563;
       letter-spacing: 0.06em;
     }
-    .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
-    .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-sb-related-arr { color: var(--g); font-size: 0.85rem; }
+    .rl-sb-related-item:hover .rl-sb-related-name { color: var(--g); }
 
     /* ── Diagrams ── */
     .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
@@ -483,10 +483,10 @@
     .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
     .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
     .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
-    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid var(--g);border-radius:8px;padding:15px 17px}
     .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
     .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
-    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(22,214,166,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
     .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
@@ -516,7 +516,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -554,7 +554,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -582,7 +582,7 @@
         <header class="rl-header">
           <a href="/compounds/recovery/" class="rl-cat-badge">ANGIOGENIC &amp; TISSUE RESEARCH</a>
           <h1 class="rl-h1" itemprop="headline">GHK-Cu vs BPC-157: A Tissue &amp; Repair Research Comparison</h1>
-          <div class="rl-meta"><span style="color:#01D3A0;font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span><span>By <a href="/about/" rel="author" style="color:#01D3A0;font-weight:600">Declan Hoban</a>, Founder</span><span class="rl-meta-sep">·</span><span>Updated June 2026</span><span class="rl-meta-sep">·</span><span>8 min read</span></div>
+          <div class="rl-meta"><span style="color:var(--g);font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span><span>By <a href="/about/" rel="author" style="color:var(--g);font-weight:600">Declan Hoban</a>, Founder</span><span class="rl-meta-sep">·</span><span>Updated June 2026</span><span class="rl-meta-sep">·</span><span>8 min read</span></div>
           <div class="rl-stats" role="list" aria-label="Comparison summary">
             <div class="rl-stat" role="listitem"><div class="rl-stat-label">GHK-Cu</div><div class="rl-stat-value">Copper tripeptide</div></div>
             <div class="rl-stat" role="listitem"><div class="rl-stat-label">BPC-157</div><div class="rl-stat-value">Pentadecapeptide</div></div>
@@ -619,8 +619,8 @@
           <p>BPC-157&rsquo;s standout feature in animal and cell models is its link to angiogenesis - the growing of new blood vessels. It has also been studied in tendon and ligament fibroblast models (connective-tissue cells) and in gastrointestinal mucosal models (the gut lining). So BPC-157 is the tool for studying blood-vessel growth, connective tissue and the gut lining. These are research observations only, not therapeutic effects.</p>
           <div class="rl-fig"><svg viewBox="0 0 660 220" role="img" aria-label="Side by side: GHK-Cu studied in dermal fibroblast collagen, elastin and antioxidant remodelling, BPC-157 studied in angiogenesis, connective tissue and gut-lining models">
             <g font-family="DM Mono, monospace" text-anchor="middle">
-              <rect x="20" y="16" width="290" height="40" rx="8" fill="#01D3A0"/><text x="165" y="41" fill="#021" font-size="13" font-weight="700">GHK-Cu</text>
-              <rect x="350" y="16" width="290" height="40" rx="8" fill="#01D3A0"/><text x="495" y="41" fill="#021" font-size="13" font-weight="700">BPC-157</text>
+              <rect x="20" y="16" width="290" height="40" rx="8" fill="#16d6a6"/><text x="165" y="41" fill="#021" font-size="13" font-weight="700">GHK-Cu</text>
+              <rect x="350" y="16" width="290" height="40" rx="8" fill="#16d6a6"/><text x="495" y="41" fill="#021" font-size="13" font-weight="700">BPC-157</text>
               <path d="M165 56 V82" stroke="#2a2f3a" stroke-width="2"/><path d="M165 82 l-4 -9 h8 z" fill="#2a2f3a"/>
               <path d="M495 56 V82" stroke="#2a2f3a" stroke-width="2"/><path d="M495 82 l-4 -9 h8 z" fill="#2a2f3a"/>
               <rect x="20" y="84" width="290" height="40" rx="8" fill="#0d1117" stroke="#1a1d24"/><text x="165" y="109" fill="#9CA3AF" font-size="12">Collagen/elastin &amp; antioxidant</text>

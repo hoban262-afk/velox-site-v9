@@ -78,7 +78,7 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #1a1600;
-      background: #01D3A0;
+      background: var(--g);
       padding: 3px 10px;
       border-radius: 3px;
       margin-bottom: 14px;
@@ -158,7 +158,7 @@
       letter-spacing: 0.01em;
       margin: 0 0 16px;
       padding-top: 8px;
-      border-top: 2px solid #01D3A0;
+      border-top: 2px solid var(--g);
       display: inline-block;
     }
     .rl-h3 {
@@ -167,7 +167,7 @@
       color: #E5E7EB;
       margin: 28px 0 10px;
     }
-    .rl-h3::before { content: ' - '; color: #01D3A0; }
+    .rl-h3::before { content: ' - '; color: var(--g); }
     .rl-article p {
       font-size: 0.95rem;
       color: #9CA3AF;
@@ -175,7 +175,7 @@
       margin: 0 0 16px;
     }
     .rl-article strong { color: #D1D5DB; }
-    .rl-article a { color: #01D3A0; text-decoration: none; }
+    .rl-article a { color: var(--g); text-decoration: none; }
     .rl-article a:hover { text-decoration: underline; }
 
     .rl-cite {
@@ -186,12 +186,12 @@
       margin-left: 2px;
     }
     .rl-cite a { color: #4B5563; }
-    .rl-cite a:hover { color: #01D3A0; }
+    .rl-cite a:hover { color: var(--g); }
 
     .rl-study {
       background: #0a0d12;
       border: 1px solid #1a1d24;
-      border-top: 1px solid #01D3A0;
+      border-top: 1px solid var(--g);
       border-radius: 6px;
       padding: 20px 20px 16px;
       margin: 24px 0;
@@ -201,7 +201,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 6px;
     }
     .rl-study-title {
@@ -219,7 +219,7 @@
       margin-top: 10px !important;
     }
     .rl-study-pmid a { color: #4B5563; }
-    .rl-study-pmid a:hover { color: #01D3A0; }
+    .rl-study-pmid a:hover { color: var(--g); }
 
     .rl-table-wrap { overflow-x: auto; margin: 20px 0; }
     .rl-table {
@@ -239,7 +239,7 @@
       text-align: left;
       border-bottom: 1px solid #1a1d24;
     }
-    .rl-table th.rl-table-highlight { color: #01D3A0; background: rgba(1,211,160,.05); }
+    .rl-table th.rl-table-highlight { color: var(--g); background: rgba(22,214,166,.05); }
     .rl-table td {
       padding: 11px 16px;
       color: #9CA3AF;
@@ -247,7 +247,7 @@
       vertical-align: middle;
     }
     .rl-table tr td:first-child { color: #D1D5DB; font-weight: 500; }
-    .rl-table td.rl-table-highlight { background: rgba(1,211,160,.04); color: #D1D5DB; }
+    .rl-table td.rl-table-highlight { background: rgba(22,214,166,.04); color: #D1D5DB; }
     .rl-table tr:last-child td { border-bottom: none; }
 
     .rl-supply-box {
@@ -277,7 +277,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -298,7 +298,7 @@
       font-family: 'DM Mono', monospace;
     }
     .rl-refs li a { color: #4B5563; }
-    .rl-refs li a:hover { color: #01D3A0; }
+    .rl-refs li a:hover { color: var(--g); }
 
     .rl-faq-item { border-bottom: 1px solid #1a1d24; padding: 20px 0; }
     .rl-faq-item:last-child { border-bottom: none; }
@@ -325,7 +325,7 @@
       margin-bottom: 12px;
     }
     .rl-sb-compound-name { font-size: 1rem; font-weight: 700; color: #F9FAFB; margin-bottom: 4px; }
-    .rl-sb-purity { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #01D3A0; margin-bottom: 14px; }
+    .rl-sb-purity { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--g); margin-bottom: 14px; }
     .rl-sb-prices { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
     .rl-sb-price-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
     .rl-sb-price-size { color: #6B7280; }
@@ -355,7 +355,7 @@
     .rl-sb-btn {
       display: block;
       text-align: center;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -391,8 +391,8 @@
     .rl-sb-related-item:last-child { border-bottom: none; }
     .rl-sb-related-name { font-size: 0.875rem; color: #D1D5DB; font-weight: 500; }
     .rl-sb-related-cat { font-size: 0.68rem; font-family: 'DM Mono', monospace; color: #4B5563; letter-spacing: 0.06em; }
-    .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
-    .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-sb-related-arr { color: var(--g); font-size: 0.85rem; }
+    .rl-sb-related-item:hover .rl-sb-related-name { color: var(--g); }
 
     .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
     .rl-fig svg { width: 100%; height: auto; display: block; }
@@ -400,8 +400,8 @@
 
     .rl-timeline { margin: 22px 0; padding-left: 22px; border-top: 1px solid #1a1d24; }
     .rl-tl-item { position: relative; padding: 0 0 16px; }
-    .rl-tl-item::before { content: ''; position: absolute; left: -28px; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: #01D3A0; }
-    .rl-tl-yr { font-family: 'DM Mono', monospace; font-size: .72rem; color: #01D3A0; letter-spacing: .06em; }
+    .rl-tl-item::before { content: ''; position: absolute; left: -28px; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: var(--g); }
+    .rl-tl-yr { font-family: 'DM Mono', monospace; font-size: .72rem; color: var(--g); letter-spacing: .06em; }
     .rl-tl-txt { font-size: .86rem; color: #9CA3AF; line-height: 1.55; margin-top: 2px; }
   </style>
 
@@ -431,7 +431,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -469,7 +469,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -500,7 +500,7 @@
           <a href="/compounds/metabolic/" class="rl-cat-badge" aria-label="Metabolic category">METABOLIC · PHASE 3 TRIAL DATA</a>
           <h1 class="rl-h1" itemprop="headline">TRIUMPH-1 Phase 3: Retatrutide 80-Week Obesity Trial Data (2026)</h1>
           <div class="rl-meta">
-            <span style="color:#01D3A0;font-weight:600">Published: 15 June 2026</span>
+            <span style="color:var(--g);font-weight:600">Published: 15 June 2026</span>
             <span class="rl-meta-sep">·</span>
             <span>Velox Peptides Research Team</span>
             <span class="rl-meta-sep">·</span>
@@ -602,7 +602,7 @@
                 <tr>
                   <td>Retatrutide 12&thinsp;mg</td>
                   <td>&minus;28.3%</td>
-                  <td class="rl-table-highlight"><strong style="color:#01D3A0;">+26.1 pp</strong></td>
+                  <td class="rl-table-highlight"><strong style="color:var(--g);">+26.1 pp</strong></td>
                 </tr>
                 <tr>
                   <td>Placebo</td>
@@ -621,7 +621,7 @@
               <defs>
                 <linearGradient id="t1-bar-grad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#2BF0C0"/>
-                  <stop offset="100%" stop-color="#01D3A0"/>
+                  <stop offset="100%" stop-color="var(--g)"/>
                 </linearGradient>
                 <linearGradient id="t1-bar-dim" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#1a2a24"/>

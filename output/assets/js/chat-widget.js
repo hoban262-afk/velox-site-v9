@@ -14,7 +14,7 @@
   if (window.__veloxChatLoaded) return;
   window.__veloxChatLoaded = true;
 
-  var ACCENT = '#01D3A0';
+  var ACCENT = '#16d6a6';
   var messages = [];          // {role, content}
   var emailCaptured = false;
   var busy = false;
@@ -78,8 +78,8 @@
   var css = '' +
   '.vcw-btn{position:fixed;right:20px;bottom:calc(var(--vpdock-h, 0px) + 20px);z-index:99998;display:inline-flex;align-items:center;gap:9px;' +
     'background:' + ACCENT + ';color:#021;border:0;border-radius:999px;padding:13px 18px;font:800 14px Inter,Arial,sans-serif;' +
-    'cursor:pointer;box-shadow:0 10px 34px -8px rgba(1,211,160,.6);transition:transform .15s ease,box-shadow .2s ease}' +
-  '.vcw-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px -8px rgba(1,211,160,.7)}' +
+    'cursor:pointer;box-shadow:0 10px 34px -8px rgba(22,214,166,.6);transition:transform .15s ease,box-shadow .2s ease}' +
+  '.vcw-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px -8px rgba(22,214,166,.7)}' +
   '.vcw-btn svg{width:18px;height:18px}' +
   '.vcw-panel{position:fixed;right:20px;bottom:20px;z-index:99999;width:380px;max-width:calc(100vw - 32px);' +
     'height:600px;max-height:calc(100vh - 40px);background:#0b0f14;border:1px solid #1f262d;border-radius:18px;' +

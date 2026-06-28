@@ -5,7 +5,7 @@
  * so canvases size correctly instead of collapsing to 0. */
 (function () {
   'use strict';
-  var GREEN = '#01D3A0', GREEN2 = '#6cf7d6', VIO = '#7b8cff', GRID = 'rgba(255,255,255,.06)', MUT = '#8aa0a0';
+  var GREEN = '#16d6a6', GREEN2 = '#6cf7d6', VIO = '#7b8cff', GRID = 'rgba(255,255,255,.06)', MUT = '#8aa0a0';
   var DATA = null, period = 30, booted = false, renderToken = 0, io = null;
 
   function gbp(n) { return '£' + (Math.round(n) || 0).toLocaleString('en-GB'); }

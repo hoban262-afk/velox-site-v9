@@ -115,7 +115,7 @@
     b.type = 'button';
     b.id = 'vp-subscribe-btn';
     b.className = 'cp-order-btn';
-    b.style.cssText = 'margin-top:10px;background:transparent;border:1px solid #01D3A0;color:#01D3A0';
+    b.style.cssText = 'margin-top:10px;background:transparent;border:1px solid #16d6a6;color:#16d6a6';
     b.textContent = 'Subscribe & save — deliver monthly';
     addBtn.insertAdjacentElement('afterend', b);
     b.addEventListener('click', async function () {

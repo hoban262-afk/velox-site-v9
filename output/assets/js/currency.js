@@ -443,7 +443,7 @@
       '.vx-cur-list{overflow-y:auto;flex:1;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}' +
       '.vx-cur-row{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:none;border:none;cursor:pointer;color:var(--t2,#8a8f9a);font-size:13px;font-family:inherit;text-align:left;transition:background .1s}' +
       '.vx-cur-row:hover{background:var(--bg4,#161b22);color:#fff}' +
-      '.vx-cur-row.active{color:#01D3A0}' +
+      '.vx-cur-row.active{color:#16d6a6}' +
       '.vx-cur-row-flag{font-size:16px;line-height:1;flex-shrink:0}' +
       '.vx-cur-row-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
       '.vx-cur-row-code{font-family:var(--mono,monospace);font-size:11px;opacity:.6;flex-shrink:0}' +

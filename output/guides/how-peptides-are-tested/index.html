@@ -79,7 +79,7 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #1a1600;
-      background: #01D3A0;
+      background: var(--g);
       padding: 3px 10px;
       border-radius: 3px;
       margin-bottom: 14px;
@@ -163,7 +163,7 @@
       letter-spacing: 0.01em;
       margin: 0 0 16px;
       padding-top: 8px;
-      border-top: 2px solid #01D3A0;
+      border-top: 2px solid var(--g);
       display: inline-block;
     }
     .rl-h3 {
@@ -174,7 +174,7 @@
     }
     .rl-h3::before {
       content: ' - ';
-      color: #01D3A0;
+      color: var(--g);
     }
     .rl-article p {
       font-size: 0.95rem;
@@ -183,7 +183,7 @@
       margin: 0 0 16px;
     }
     .rl-article strong { color: #D1D5DB; }
-    .rl-article a { color: #01D3A0; text-decoration: none; }
+    .rl-article a { color: var(--g); text-decoration: none; }
     .rl-article a:hover { text-decoration: underline; }
 
     /* ── Inline citation ── */
@@ -195,13 +195,13 @@
       margin-left: 2px;
     }
     .rl-cite a { color: #4B5563; }
-    .rl-cite a:hover { color: #01D3A0; }
+    .rl-cite a:hover { color: var(--g); }
 
     /* ── Study callout cards ── */
     .rl-study {
       background: #0a0d12;
       border: 1px solid #1a1d24;
-      border-top: 1px solid #01D3A0;
+      border-top: 1px solid var(--g);
       border-radius: 6px;
       padding: 20px 20px 16px;
       margin: 24px 0;
@@ -211,7 +211,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 6px;
     }
     .rl-study-title {
@@ -232,7 +232,7 @@
       margin-top: 10px !important;
     }
     .rl-study-pmid a { color: #4B5563; }
-    .rl-study-pmid a:hover { color: #01D3A0; }
+    .rl-study-pmid a:hover { color: var(--g); }
 
     /* ── Comparison table ── */
     .rl-table-wrap { overflow-x: auto; margin: 20px 0; }
@@ -254,8 +254,8 @@
       border-bottom: 1px solid #1a1d24;
     }
     .rl-table th.rl-table-highlight {
-      color: #01D3A0;
-      background: rgba(1,211,160,.05);
+      color: var(--g);
+      background: rgba(22,214,166,.05);
     }
     .rl-table td {
       padding: 11px 16px;
@@ -268,10 +268,10 @@
       font-weight: 500;
     }
     .rl-table td.rl-table-highlight {
-      background: rgba(1,211,160,.04);
+      background: rgba(22,214,166,.04);
       color: #D1D5DB;
     }
-    .rl-table .rl-yes { color: #01D3A0; font-weight: 700; }
+    .rl-table .rl-yes { color: var(--g); font-weight: 700; }
     .rl-table .rl-no  { color: #374151; }
     .rl-table tr:last-child td { border-bottom: none; }
 
@@ -308,7 +308,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -333,7 +333,7 @@
       font-family: 'DM Mono', monospace;
     }
     .rl-refs li a { color: #4B5563; }
-    .rl-refs li a:hover { color: #01D3A0; }
+    .rl-refs li a:hover { color: var(--g); }
 
     /* ── FAQ ── */
     .rl-faq-item {
@@ -391,7 +391,7 @@
     .rl-sb-purity {
       font-family: 'DM Mono', monospace;
       font-size: 0.72rem;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 14px;
     }
     .rl-sb-prices {
@@ -433,7 +433,7 @@
     .rl-sb-btn {
       display: block;
       text-align: center;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -474,17 +474,17 @@
       color: #4B5563;
       letter-spacing: 0.06em;
     }
-    .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
-    .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-sb-related-arr { color: var(--g); font-size: 0.85rem; }
+    .rl-sb-related-item:hover .rl-sb-related-name { color: var(--g); }
     .rl-fig { background: #0a0d12; border: 1px solid #1a1d24; border-radius: 8px; padding: 22px 20px 16px; margin: 24px 0; }
     .rl-fig svg { width: 100%; height: auto; display: block; }
     .rl-fig-cap { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5563; margin-top: 14px; text-align: center; }
     .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
     .rl-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
-    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid var(--g);border-radius:8px;padding:15px 17px}
     .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
     .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
-    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(22,214,166,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
     .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
     @media (max-width:480px){.rl-cmp{grid-template-columns:1fr}}
   </style>
@@ -515,7 +515,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -553,7 +553,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -582,10 +582,10 @@
         <header class="rl-header">
           <a href="/guides/" class="rl-cat-badge" aria-label="Guides">GUIDE</a>
           <h1 class="rl-h1" itemprop="headline">How Peptides Are Tested: HPLC &amp; Mass Spec</h1>
-          <div class="rl-meta"><span style="color:#01D3A0;font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span>
+          <div class="rl-meta"><span style="color:var(--g);font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span>
             <span>Published 1 June 2026</span>
             <span class="rl-meta-sep">&middot;</span>
-            <span>By <a href="/about/" rel="author" style="color:#01D3A0;font-weight:600">Declan Hoban</a>, Founder</span>
+            <span>By <a href="/about/" rel="author" style="color:var(--g);font-weight:600">Declan Hoban</a>, Founder</span>
             <span class="rl-meta-sep">&middot;</span>
             <span>Quality &amp; testing guide</span>
           </div>
@@ -614,8 +614,8 @@
                 <text x="62" y="110" text-anchor="middle" fill="#9CA3AF" font-size="10">injected</text>
                 <path d="M110 96 L140 96" stroke="#2a2f3a" stroke-width="2"/><path d="M140 96 L132 91 L132 101 Z" fill="#2a2f3a"/>
                 <!-- column -->
-                <rect x="144" y="60" width="120" height="72" rx="8" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
-                <text x="204" y="86" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">column</text>
+                <rect x="144" y="60" width="120" height="72" rx="8" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
+                <text x="204" y="86" text-anchor="middle" fill="#16d6a6" font-size="12" font-weight="700">column</text>
                 <text x="204" y="104" text-anchor="middle" fill="#9CA3AF" font-size="10">components</text>
                 <text x="204" y="118" text-anchor="middle" fill="#9CA3AF" font-size="10">separate by speed</text>
                 <path d="M264 96 L294 96" stroke="#2a2f3a" stroke-width="2"/><path d="M294 96 L286 91 L286 101 Z" fill="#2a2f3a"/>
@@ -630,10 +630,10 @@
                 <line x1="446" y1="140" x2="668" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
                 <line x1="446" y1="72" x2="446" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
                 <!-- big target peak + small impurity peaks -->
-                <path d="M456 140 L470 140 L478 82 L486 140 L500 140" fill="none" stroke="#01D3A0" stroke-width="2.5"/>
+                <path d="M456 140 L470 140 L478 82 L486 140 L500 140" fill="none" stroke="#16d6a6" stroke-width="2.5"/>
                 <path d="M520 140 L526 124 L532 140" fill="none" stroke="#6B7280" stroke-width="2"/>
                 <path d="M560 140 L566 130 L572 140" fill="none" stroke="#6B7280" stroke-width="2"/>
-                <text x="482" y="78" text-anchor="middle" fill="#01D3A0" font-size="9">target</text>
+                <text x="482" y="78" text-anchor="middle" fill="#16d6a6" font-size="9">target</text>
                 <text x="600" y="135" text-anchor="middle" fill="#6B7280" font-size="9">impurities</text>
               </g>
             </svg>
@@ -655,8 +655,8 @@
                 <text x="62" y="110" text-anchor="middle" fill="#9CA3AF" font-size="10">molecules in</text>
                 <path d="M110 96 L140 96" stroke="#2a2f3a" stroke-width="2"/><path d="M140 96 L132 91 L132 101 Z" fill="#2a2f3a"/>
                 <!-- ionise -->
-                <rect x="144" y="60" width="110" height="72" rx="8" fill="#0d1117" stroke="#01D3A0" stroke-width="2"/>
-                <text x="199" y="86" text-anchor="middle" fill="#01D3A0" font-size="12" font-weight="700">ionise</text>
+                <rect x="144" y="60" width="110" height="72" rx="8" fill="#0d1117" stroke="#16d6a6" stroke-width="2"/>
+                <text x="199" y="86" text-anchor="middle" fill="#16d6a6" font-size="12" font-weight="700">ionise</text>
                 <text x="199" y="104" text-anchor="middle" fill="#9CA3AF" font-size="10">give molecules</text>
                 <text x="199" y="118" text-anchor="middle" fill="#9CA3AF" font-size="10">a charge</text>
                 <path d="M254 96 L284 96" stroke="#2a2f3a" stroke-width="2"/><path d="M284 96 L276 91 L276 101 Z" fill="#2a2f3a"/>
@@ -670,10 +670,10 @@
                 <text x="559" y="60" text-anchor="middle" fill="#9CA3AF" font-size="10">mass spectrum</text>
                 <line x1="450" y1="140" x2="668" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
                 <line x1="450" y1="72" x2="450" y2="140" stroke="#2a2f3a" stroke-width="1.5"/>
-                <line x1="556" y1="140" x2="556" y2="82" stroke="#01D3A0" stroke-width="3"/>
+                <line x1="556" y1="140" x2="556" y2="82" stroke="#16d6a6" stroke-width="3"/>
                 <line x1="500" y1="140" x2="500" y2="124" stroke="#6B7280" stroke-width="2"/>
                 <line x1="610" y1="140" x2="610" y2="128" stroke="#6B7280" stroke-width="2"/>
-                <text x="556" y="78" text-anchor="middle" fill="#01D3A0" font-size="9">measured weight</text>
+                <text x="556" y="78" text-anchor="middle" fill="#16d6a6" font-size="9">measured weight</text>
                 <text x="559" y="156" text-anchor="middle" fill="#6B7280" font-size="9">compare with expected</text>
               </g>
             </svg>

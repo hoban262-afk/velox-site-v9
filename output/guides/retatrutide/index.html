@@ -79,7 +79,7 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #1a1600;
-      background: #01D3A0;
+      background: var(--g);
       padding: 3px 10px;
       border-radius: 3px;
       margin-bottom: 14px;
@@ -163,7 +163,7 @@
       letter-spacing: 0.01em;
       margin: 0 0 16px;
       padding-top: 8px;
-      border-top: 2px solid #01D3A0;
+      border-top: 2px solid var(--g);
       display: inline-block;
     }
     .rl-h3 {
@@ -174,7 +174,7 @@
     }
     .rl-h3::before {
       content: ' - ';
-      color: #01D3A0;
+      color: var(--g);
     }
     .rl-article p {
       font-size: 0.95rem;
@@ -183,7 +183,7 @@
       margin: 0 0 16px;
     }
     .rl-article strong { color: #D1D5DB; }
-    .rl-article a { color: #01D3A0; text-decoration: none; }
+    .rl-article a { color: var(--g); text-decoration: none; }
     .rl-article a:hover { text-decoration: underline; }
 
     /* ── Inline citation ── */
@@ -195,13 +195,13 @@
       margin-left: 2px;
     }
     .rl-cite a { color: #4B5563; }
-    .rl-cite a:hover { color: #01D3A0; }
+    .rl-cite a:hover { color: var(--g); }
 
     /* ── Study callout cards ── */
     .rl-study {
       background: #0a0d12;
       border: 1px solid #1a1d24;
-      border-top: 1px solid #01D3A0;
+      border-top: 1px solid var(--g);
       border-radius: 6px;
       padding: 20px 20px 16px;
       margin: 24px 0;
@@ -211,7 +211,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 6px;
     }
     .rl-study-title {
@@ -232,7 +232,7 @@
       margin-top: 10px !important;
     }
     .rl-study-pmid a { color: #4B5563; }
-    .rl-study-pmid a:hover { color: #01D3A0; }
+    .rl-study-pmid a:hover { color: var(--g); }
 
     /* ── Comparison table ── */
     .rl-table-wrap { overflow-x: auto; margin: 20px 0; }
@@ -254,8 +254,8 @@
       border-bottom: 1px solid #1a1d24;
     }
     .rl-table th.rl-table-highlight {
-      color: #01D3A0;
-      background: rgba(1,211,160,.05);
+      color: var(--g);
+      background: rgba(22,214,166,.05);
     }
     .rl-table td {
       padding: 11px 16px;
@@ -268,10 +268,10 @@
       font-weight: 500;
     }
     .rl-table td.rl-table-highlight {
-      background: rgba(1,211,160,.04);
+      background: rgba(22,214,166,.04);
       color: #D1D5DB;
     }
-    .rl-table .rl-yes { color: #01D3A0; font-weight: 700; }
+    .rl-table .rl-yes { color: var(--g); font-weight: 700; }
     .rl-table .rl-no  { color: #374151; }
     .rl-table tr:last-child td { border-bottom: none; }
 
@@ -308,7 +308,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -333,7 +333,7 @@
       font-family: 'DM Mono', monospace;
     }
     .rl-refs li a { color: #4B5563; }
-    .rl-refs li a:hover { color: #01D3A0; }
+    .rl-refs li a:hover { color: var(--g); }
 
     /* ── FAQ ── */
     .rl-faq-item {
@@ -391,7 +391,7 @@
     .rl-sb-purity {
       font-family: 'DM Mono', monospace;
       font-size: 0.72rem;
-      color: #01D3A0;
+      color: var(--g);
       margin-bottom: 14px;
     }
     .rl-sb-prices {
@@ -433,7 +433,7 @@
     .rl-sb-btn {
       display: block;
       text-align: center;
-      background: #01D3A0;
+      background: var(--g);
       color: #030407;
       font-weight: 700;
       font-size: 0.875rem;
@@ -474,21 +474,21 @@
       color: #4B5563;
       letter-spacing: 0.06em;
     }
-    .rl-sb-related-arr { color: #01D3A0; font-size: 0.85rem; }
-    .rl-sb-related-item:hover .rl-sb-related-name { color: #01D3A0; }
+    .rl-sb-related-arr { color: var(--g); font-size: 0.85rem; }
+    .rl-sb-related-item:hover .rl-sb-related-name { color: var(--g); }
     .rl-fig{background:#0a0d12;border:1px solid #1a1d24;border-radius:8px;padding:22px 20px 16px;margin:24px 0}
     .rl-fig svg{width:100%;height:auto;display:block}
     .rl-fig-cap{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#4B5563;margin-top:14px;text-align:center}
     .rl-cards{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}
-    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid #01D3A0;border-radius:8px;padding:15px 17px}
+    .rl-dcard{background:#0a0d12;border:1px solid #1a1d24;border-top: 1px solid var(--g);border-radius:8px;padding:15px 17px}
     .rl-dcard h4{margin:0 0 5px;font-size:.95rem;color:#F9FAFB;font-weight:700}
     .rl-dcard p{margin:0;font-size:.85rem;color:#9CA3AF;line-height:1.6}
     .rl-timeline{margin:22px 0;padding-left:22px;border-top: 1px solid #1a1d24}
     .rl-tl-item{position:relative;padding:0 0 16px}
-    .rl-tl-item::before{content:'';position:absolute;left:-28px;top:3px;width:10px;height:10px;border-radius:50%;background:#01D3A0}
-    .rl-tl-yr{font-family:'DM Mono',monospace;font-size:.72rem;color:#01D3A0;letter-spacing:.06em}
+    .rl-tl-item::before{content:'';position:absolute;left:-28px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--g)}
+    .rl-tl-yr{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--g);letter-spacing:.06em}
     .rl-tl-txt{font-size:.86rem;color:#9CA3AF;line-height:1.55;margin-top:2px}
-    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(1,211,160,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
+    .rl-carousel{background:linear-gradient(135deg,#06140f,#0a0d12);border:1px solid rgba(22,214,166,.25);border-radius:12px;padding:22px 22px 8px;margin:28px 0}
     .rl-carousel-h{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 14px}
   </style>
 
@@ -518,7 +518,7 @@
     <div class="nav-links">
       <a class="nl" href="/compounds/">Shop</a>
       <div class="nl-drop"><a class="nl nl-drop-btn" href="/tools/">Tools <span class="nl-caret">&#9662;</span></a><div class="nl-menu"><a class="nl-item" href="/design-lab/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.4 4 2.6 6.2 6.6 6.6C14.6 10 12.4 12.2 12 16.2 11.6 12.2 9.4 10 5.4 9.6 9.4 9.2 11.6 7 12 3Z"/></svg>Design Lab</a><a class="nl-item" href="/tools/compare/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v17M6 21h12M12 6 5 8l3 5a3 3 0 0 1-6 0l3-5M12 6l7 2-3 5a3 3 0 0 0 6 0l-3-5"/></svg>Comparison Tool</a><a class="nl-item" href="/tools/scheduler/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Protocol Scheduler</a><a class="nl-item" href="/tools/reconstitution-calculator/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 8 12 3Z"/></svg>Reconstitution Calc</a></div></div>
-      <a class="nl" href="/pro/" style="color:#01D3A0;font-weight:700">Pro</a>
+      <a class="nl" href="/pro/" style="color:var(--g);font-weight:700">Pro</a>
       <div class="nl-drop">
         <a class="nl nl-drop-btn active" href="/guides/">Guide Hub <span class="nl-caret">&#9662;</span></a>
         <div class="nl-menu">
@@ -556,7 +556,7 @@
     <a href="/tools/compare/" class="mob-nl mob-nl-sub">Comparison Tool</a>
     <a href="/tools/scheduler/" class="mob-nl mob-nl-sub">Protocol Scheduler</a>
     <a href="/tools/reconstitution-calculator/" class="mob-nl mob-nl-sub">Reconstitution Calc</a>
-    <a href="/pro/" class="mob-nl" style="color:#01D3A0;font-weight:700">Pro</a>
+    <a href="/pro/" class="mob-nl" style="color:var(--g);font-weight:700">Pro</a>
     <div class="mob-nl-head">Guides</div>
     <a href="/guides/" class="mob-nl mob-nl-sub">Guide Hub</a>
     <a href="/guides/glossary/" class="mob-nl mob-nl-sub">Glossary</a>
@@ -586,10 +586,10 @@
         <header class="rl-header">
           <a href="/compounds/metabolic/" class="rl-cat-badge" aria-label="Metabolic category">METABOLIC</a>
           <h1 class="rl-h1" itemprop="headline">Retatrutide: Preclinical Research Overview</h1>
-          <div class="rl-meta"><span style="color:#01D3A0;font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span>
+          <div class="rl-meta"><span style="color:var(--g);font-weight:600">Last updated: June 2026</span><span class="rl-meta-sep">·</span>
             <span>Published 17 May 2026</span>
             <span class="rl-meta-sep">·</span>
-            <span>By <a href="/about/" rel="author" style="color:#01D3A0;font-weight:600">Declan Hoban</a>, Founder</span>
+            <span>By <a href="/about/" rel="author" style="color:var(--g);font-weight:600">Declan Hoban</a>, Founder</span>
             <span class="rl-meta-sep">·</span>
             <span>Peer-reviewed literature summary</span>
           </div>
@@ -667,10 +667,10 @@
 
           <div class="rl-fig"><svg viewBox="0 0 640 220" role="img" aria-label="Retatrutide is a single molecule that activates the GLP-1, GIP and glucagon receptors at the same time">
             <g font-family="DM Mono, monospace" text-anchor="middle">
-              <rect x="40" y="30" width="160" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="58" fill="#01D3A0" font-size="14">GLP-1 R</text>
-              <rect x="40" y="90" width="160" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="118" fill="#01D3A0" font-size="14">GIP R</text>
-              <rect x="40" y="150" width="160" height="46" rx="8" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="178" fill="#01D3A0" font-size="14">Glucagon R</text>
-              <rect x="430" y="86" width="170" height="54" rx="10" fill="#01D3A0"/><text x="515" y="118" fill="#021" font-size="15" font-weight="700">RETATRUTIDE</text>
+              <rect x="40" y="30" width="160" height="46" rx="8" fill="#0d1117" stroke="#16d6a6"/><text x="120" y="58" fill="#16d6a6" font-size="14">GLP-1 R</text>
+              <rect x="40" y="90" width="160" height="46" rx="8" fill="#0d1117" stroke="#16d6a6"/><text x="120" y="118" fill="#16d6a6" font-size="14">GIP R</text>
+              <rect x="40" y="150" width="160" height="46" rx="8" fill="#0d1117" stroke="#16d6a6"/><text x="120" y="178" fill="#16d6a6" font-size="14">Glucagon R</text>
+              <rect x="430" y="86" width="170" height="54" rx="10" fill="#16d6a6"/><text x="515" y="118" fill="#021" font-size="15" font-weight="700">RETATRUTIDE</text>
               <path d="M200 53 H360 V108 H430" fill="none" stroke="#2a2f3a" stroke-width="2"/>
               <path d="M200 113 H430" fill="none" stroke="#2a2f3a" stroke-width="2"/>
               <path d="M200 173 H360 V118 H430" fill="none" stroke="#2a2f3a" stroke-width="2"/>
@@ -750,13 +750,13 @@
                   <td>Receptor targets</td>
                   <td>1</td>
                   <td>2</td>
-                  <td class="rl-table-highlight"><strong style="color:#01D3A0;">3</strong></td>
+                  <td class="rl-table-highlight"><strong style="color:var(--g);">3</strong></td>
                 </tr>
                 <tr>
                   <td>Research generation</td>
                   <td>First generation</td>
                   <td>Second generation</td>
-                  <td class="rl-table-highlight"><strong style="color:#01D3A0;">Third generation (triple)</strong></td>
+                  <td class="rl-table-highlight"><strong style="color:var(--g);">Third generation (triple)</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -769,18 +769,18 @@
               <rect x="30" y="40" width="180" height="120" rx="10" fill="#0d1117" stroke="#2a2f3a"/>
               <text x="120" y="66" fill="#D1D5DB" font-size="13" font-weight="700">Semaglutide</text>
               <text x="120" y="86" fill="#6B7280" font-size="11">single agonist</text>
-              <rect x="55" y="100" width="130" height="22" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="120" y="115" fill="#01D3A0" font-size="11">GLP-1</text>
+              <rect x="55" y="100" width="130" height="22" rx="5" fill="#0d1117" stroke="#16d6a6"/><text x="120" y="115" fill="#16d6a6" font-size="11">GLP-1</text>
               <rect x="240" y="40" width="180" height="120" rx="10" fill="#0d1117" stroke="#2a2f3a"/>
               <text x="330" y="66" fill="#D1D5DB" font-size="13" font-weight="700">Tirzepatide</text>
               <text x="330" y="86" fill="#6B7280" font-size="11">dual agonist</text>
-              <rect x="265" y="100" width="130" height="20" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="330" y="114" fill="#01D3A0" font-size="11">GLP-1</text>
-              <rect x="265" y="126" width="130" height="20" rx="5" fill="#0d1117" stroke="#01D3A0"/><text x="330" y="140" fill="#01D3A0" font-size="11">GIP</text>
-              <rect x="450" y="40" width="180" height="120" rx="10" fill="#06140f" stroke="#01D3A0"/>
+              <rect x="265" y="100" width="130" height="20" rx="5" fill="#0d1117" stroke="#16d6a6"/><text x="330" y="114" fill="#16d6a6" font-size="11">GLP-1</text>
+              <rect x="265" y="126" width="130" height="20" rx="5" fill="#0d1117" stroke="#16d6a6"/><text x="330" y="140" fill="#16d6a6" font-size="11">GIP</text>
+              <rect x="450" y="40" width="180" height="120" rx="10" fill="#06140f" stroke="#16d6a6"/>
               <text x="540" y="66" fill="#fff" font-size="13" font-weight="700">Retatrutide</text>
-              <text x="540" y="84" fill="#01D3A0" font-size="11">triple agonist</text>
-              <rect x="475" y="94" width="130" height="18" rx="4" fill="#01D3A0"/><text x="540" y="107" fill="#021" font-size="10" font-weight="700">GLP-1</text>
-              <rect x="475" y="116" width="130" height="18" rx="4" fill="#01D3A0"/><text x="540" y="129" fill="#021" font-size="10" font-weight="700">GIP</text>
-              <rect x="475" y="138" width="130" height="18" rx="4" fill="#01D3A0"/><text x="540" y="151" fill="#021" font-size="10" font-weight="700">Glucagon</text>
+              <text x="540" y="84" fill="#16d6a6" font-size="11">triple agonist</text>
+              <rect x="475" y="94" width="130" height="18" rx="4" fill="#16d6a6"/><text x="540" y="107" fill="#021" font-size="10" font-weight="700">GLP-1</text>
+              <rect x="475" y="116" width="130" height="18" rx="4" fill="#16d6a6"/><text x="540" y="129" fill="#021" font-size="10" font-weight="700">GIP</text>
+              <rect x="475" y="138" width="130" height="18" rx="4" fill="#16d6a6"/><text x="540" y="151" fill="#021" font-size="10" font-weight="700">Glucagon</text>
             </g></svg><div class="rl-fig-cap">Single &rarr; dual &rarr; triple receptor agonism</div></div>
         </section>
 
@@ -851,11 +851,11 @@
               <defs>
                 <linearGradient id="rl-bar-grad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#2BF0C0"/>
-                  <stop offset="100%" stop-color="#01D3A0"/>
+                  <stop offset="100%" stop-color="var(--g)"/>
                 </linearGradient>
                 <linearGradient id="rl-bar-grad-bright" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#6BFFDE"/>
-                  <stop offset="100%" stop-color="#01D3A0"/>
+                  <stop offset="100%" stop-color="var(--g)"/>
                 </linearGradient>
                 <filter id="rl-bar-glow" x="-40%" y="-40%" width="180%" height="180%">
                   <feGaussianBlur stdDeviation="6" result="b"/>
@@ -909,15 +909,15 @@
               <line x1="193" y1="46" x2="193" y2="150" stroke="#1a1d24" stroke-width="1"/>
               <line x1="367" y1="46" x2="367" y2="150" stroke="#1a1d24" stroke-width="1"/>
               <!-- Metric 1: A1C reduction -->
-              <text x="103" y="92" text-anchor="middle" fill="#01D3A0" font-family="'DM Mono', monospace" font-size="36" font-weight="700">&#8722;2.0</text>
+              <text x="103" y="92" text-anchor="middle" fill="#16d6a6" font-family="'DM Mono', monospace" font-size="36" font-weight="700">&#8722;2.0</text>
               <text x="103" y="116" text-anchor="middle" fill="#9CA3AF" font-family="'DM Mono', monospace" font-size="12.5">A1C reduction (pts)</text>
               <text x="103" y="136" text-anchor="middle" fill="#4B5563" font-family="'DM Mono', monospace" font-size="11">up to &middot; 40 weeks</text>
               <!-- Metric 2: normal A1C -->
-              <text x="280" y="92" text-anchor="middle" fill="#01D3A0" font-family="'DM Mono', monospace" font-size="36" font-weight="700">46%</text>
+              <text x="280" y="92" text-anchor="middle" fill="#16d6a6" font-family="'DM Mono', monospace" font-size="36" font-weight="700">46%</text>
               <text x="280" y="116" text-anchor="middle" fill="#9CA3AF" font-family="'DM Mono', monospace" font-size="12.5">reached normal A1C</text>
               <text x="280" y="136" text-anchor="middle" fill="#4B5563" font-family="'DM Mono', monospace" font-size="11">up to</text>
               <!-- Metric 3: weight -->
-              <text x="457" y="92" text-anchor="middle" fill="#01D3A0" font-family="'DM Mono', monospace" font-size="36" font-weight="700">16.8%</text>
+              <text x="457" y="92" text-anchor="middle" fill="#16d6a6" font-family="'DM Mono', monospace" font-size="36" font-weight="700">16.8%</text>
               <text x="457" y="116" text-anchor="middle" fill="#9CA3AF" font-family="'DM Mono', monospace" font-size="12.5">weight reduction</text>
               <text x="457" y="136" text-anchor="middle" fill="#4B5563" font-family="'DM Mono', monospace" font-size="11">&asymp; 36.6 lb</text>
             </svg>
@@ -929,11 +929,11 @@
             <svg viewBox="0 0 560 210" role="img" style="width:100%;max-width:560px;height:auto;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg" aria-label="An A1C scale from 5 to 9 percent with three zones - normal below 5.7, pre-diabetes 5.7 to 6.4, diabetes 6.5 and above - and an arrow showing a reduction of up to 2.0 percentage points from the diabetes zone into the normal zone.">
               <rect x="0" y="0" width="560" height="210" fill="#05080c"/>
               <!-- zone bands (A1C 5.0 at x=70, 9.0 at x=490; 105px per point) -->
-              <rect x="70" y="108" width="73.5" height="30" fill="#01D3A0" opacity="0.85"/>
+              <rect x="70" y="108" width="73.5" height="30" fill="#16d6a6" opacity="0.85"/>
               <rect x="143.5" y="108" width="84" height="30" fill="#374151"/>
               <rect x="227.5" y="108" width="262.5" height="30" fill="#1f2530"/>
               <!-- zone labels -->
-              <text x="106" y="100" text-anchor="middle" fill="#01D3A0" font-family="'DM Mono', monospace" font-size="11" font-weight="700">NORMAL</text>
+              <text x="106" y="100" text-anchor="middle" fill="#16d6a6" font-family="'DM Mono', monospace" font-size="11" font-weight="700">NORMAL</text>
               <text x="185" y="100" text-anchor="middle" fill="#9CA3AF" font-family="'DM Mono', monospace" font-size="10">PRE-DIABETES</text>
               <text x="360" y="100" text-anchor="middle" fill="#9CA3AF" font-family="'DM Mono', monospace" font-size="11">DIABETES</text>
               <!-- threshold ticks -->
@@ -945,7 +945,7 @@
               <circle cx="353.5" cy="74" r="4" fill="#2BF0C0"/>
               <text x="252" y="60" text-anchor="middle" fill="#E5E7EB" font-family="'DM Mono', monospace" font-size="13" font-weight="700">up to &#8722;2.0 percentage points</text>
               <!-- normal callout -->
-              <text x="106" y="184" text-anchor="middle" fill="#01D3A0" font-family="'DM Mono', monospace" font-size="11" font-weight="700">up to 46% reached normal</text>
+              <text x="106" y="184" text-anchor="middle" fill="#16d6a6" font-family="'DM Mono', monospace" font-size="11" font-weight="700">up to 46% reached normal</text>
             </svg>
             <figcaption style="font-size:0.78rem;color:#6B7280;line-height:1.6;margin-top:12px;max-width:560px;margin-left:auto;margin-right:auto;">A1C zones shown are the standard ADA reference ranges (normal &lt;5.7%, pre-diabetes 5.7&ndash;6.4%, diabetes &ge;6.5%) for context. TRANSCEND-T2D-1 reported A1C reductions of up to 2.0 percentage points and up to 46% of participants reaching normal A1C. Research reference only.</figcaption>
           </figure>

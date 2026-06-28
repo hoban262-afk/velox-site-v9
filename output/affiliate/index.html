@@ -21,19 +21,19 @@
     .auth-box{max-width:460px;margin:40px auto;background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:12px;padding:34px 30px}
     .auth-tabs{display:flex;gap:6px;margin-bottom:24px}
     .auth-tab{flex:1;text-align:center;font-size:13px;font-weight:600;color:var(--t3,#6b7280);background:none;border:none;border-bottom:2px solid transparent;padding:8px;cursor:pointer}
-    .auth-tab.active{color:#fff;border-bottom-color:var(--g,#01D3A0)}
+    .auth-tab.active{color:#fff;border-bottom-color:var(--g,var(--g))}
     .auth-form{display:none}.auth-form.active{display:block}
     .auth-form h1{font-size:20px;color:#fff;margin:0 0 6px}
     .auth-form p.sub{font-size:13px;color:var(--t3,#6b7280);margin:0 0 20px;line-height:1.5}
     .f-lbl{display:block;font-size:12px;color:var(--t2,#9ca3af);margin:0 0 5px;font-weight:500}
     .f-inp{width:100%;box-sizing:border-box;margin-bottom:14px;background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);color:#fff;padding:11px 12px;border-radius:7px;font:inherit;font-size:14px}
     textarea.f-inp{min-height:70px;resize:vertical}
-    .btn-p{width:100%;background:var(--g,#01D3A0);color:#021;border:none;border-radius:7px;padding:12px;font-weight:700;font-size:14px;cursor:pointer}
+    .btn-p{width:100%;background:var(--g,var(--g));color:#021;border:none;border-radius:7px;padding:12px;font-weight:700;font-size:14px;cursor:pointer}
     .btn-p:disabled{opacity:.6;cursor:default}
     .btn-o{background:none;border:1px solid var(--brd,#1a1a1a);color:#fff;border-radius:7px;padding:9px 16px;font-size:13px;cursor:pointer}
-    .auth-link{background:none;border:none;color:var(--g,#01D3A0);font-size:12px;cursor:pointer;padding:0;margin-top:10px}
+    .auth-link{background:none;border:none;color:var(--g,var(--g));font-size:12px;cursor:pointer;padding:0;margin-top:10px}
     .auth-msg{font-size:13px;margin-top:12px;min-height:18px}
-    .auth-msg.ok{color:var(--g,#01D3A0)}.auth-msg.err{color:#f87171}
+    .auth-msg.ok{color:var(--g,var(--g))}.auth-msg.err{color:#f87171}
 
     /* Status (awaiting / rejected / disabled) */
     .status-box{max-width:520px;margin:60px auto;text-align:center;background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:12px;padding:40px 34px}
@@ -45,10 +45,10 @@
     .dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px}
     .dash-hello{font-size:24px;font-weight:700;color:#fff}
     .dash-signout{font-size:12px;color:var(--t3,#6b7280);background:none;border:1px solid var(--brd,#1a1a1a);border-radius:5px;padding:6px 14px;cursor:pointer}
-    .code-box{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(180deg,rgba(1,211,160,.08),rgba(1,211,160,.02));border:1px solid rgba(1,211,160,.3);border-radius:12px;padding:18px 22px;margin-bottom:22px}
-    .code-box .lbl{font-size:11px;font-weight:700;color:var(--g,#01D3A0);letter-spacing:.12em;text-transform:uppercase}
+    .code-box{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(180deg,rgba(22,214,166,.08),rgba(22,214,166,.02));border:1px solid rgba(22,214,166,.3);border-radius:12px;padding:18px 22px;margin-bottom:22px}
+    .code-box .lbl{font-size:11px;font-weight:700;color:var(--g,var(--g));letter-spacing:.12em;text-transform:uppercase}
     .code-box .code{font-family:'DM Mono',monospace;font-size:26px;font-weight:600;color:#fff;letter-spacing:.04em}
-    .code-copy{background:var(--g,#01D3A0);color:#021;border:none;border-radius:7px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer}
+    .code-copy{background:var(--g,var(--g));color:#021;border:none;border-radius:7px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer}
     .pts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
     .pts-card{background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:18px 20px}
     .pts-label{font-size:10px;font-weight:700;color:var(--t3,#6b7280);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
@@ -56,20 +56,20 @@
     .pts-sub{font-size:11px;color:var(--t3,#6b7280);margin-top:4px}
     .acc-tabs{display:flex;gap:4px;border-bottom:1px solid var(--brd,#1a1a1a);margin:6px 0 24px;flex-wrap:wrap}
     .acc-tab{font-size:13px;font-weight:500;color:var(--t3,#6b7280);background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;cursor:pointer;margin-bottom:-1px}
-    .acc-tab.active{color:#fff;border-bottom-color:var(--g,#01D3A0)}
-    .acc-tab .pill{display:none;margin-left:6px;background:#01D3A0;color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 6px}
+    .acc-tab.active{color:#fff;border-bottom-color:var(--g,var(--g))}
+    .acc-tab .pill{display:none;margin-left:6px;background:var(--g);color:#021;font-size:10px;font-weight:800;border-radius:9px;padding:1px 6px}
     .acc-panel{display:none}.acc-panel.active{display:block}
     .card{background:var(--bg2,#0d0d0d);border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:20px 22px;margin-bottom:18px}
     .card h3{font-size:14px;color:#fff;margin:0 0 14px}
     .flt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
     .flt button{font-size:12px;color:var(--t2,#9ca3af);background:var(--bg3,#111);border:1px solid var(--brd,#1a1a1a);border-radius:20px;padding:5px 13px;cursor:pointer}
-    .flt button.active{color:#021;background:var(--g,#01D3A0);border-color:var(--g,#01D3A0);font-weight:700}
+    .flt button.active{color:#021;background:var(--g,var(--g));border-color:var(--g,var(--g));font-weight:700}
     table.acc-tbl{width:100%;border-collapse:collapse;font-size:13px}
     .acc-tbl th{text-align:left;color:var(--t3,#6b7280);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--brd,#1a1a1a);white-space:nowrap}
     .acc-tbl td{padding:10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--t2,#9ca3af)}
     .badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;text-transform:uppercase;white-space:nowrap}
     .b-payable{background:rgba(74,159,224,.12);color:#4a9fe0}
-    .b-paid{background:rgba(1,211,160,.12);color:#01D3A0}
+    .b-paid{background:rgba(22,214,166,.12);color:var(--g)}
     .b-pending{background:rgba(255,255,255,.06);color:#9ca3af}
     .b-reversed{background:rgba(248,113,113,.12);color:#f87171}
     .b-clawback{background:rgba(245,179,1,.15);color:#f5b301}
@@ -78,7 +78,7 @@
     .b-refunded{background:rgba(248,113,113,.12);color:#f87171}
     .empty{color:var(--t3,#6b7280);font-size:13px;padding:6px 0}
     .notif{display:flex;gap:12px;align-items:flex-start;padding:12px 4px;border-bottom:1px solid rgba(255,255,255,.04)}
-    .notif .dot{width:8px;height:8px;border-radius:50%;background:var(--g,#01D3A0);margin-top:5px;flex:0 0 8px}
+    .notif .dot{width:8px;height:8px;border-radius:50%;background:var(--g,var(--g));margin-top:5px;flex:0 0 8px}
     .notif.read .dot{background:transparent;border:1px solid var(--brd,#333)}
     .notif .msg{font-size:13px;color:#fff}
     .notif.read .msg{color:var(--t2,#9ca3af)}
@@ -151,13 +151,13 @@
 
     <!-- ── Affiliate brief: how to promote Velox (Design Lab is the hook) ── -->
     <div style="max-width:760px;margin:34px auto 0;background:#0a0d12;border:1px solid #1a2230;border-radius:16px;padding:28px 26px;text-align:left">
-      <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#01D3A0;margin-bottom:8px">Affiliate brief</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g);margin-bottom:8px">Affiliate brief</div>
       <h2 style="font-family:'Barlow Condensed','Inter',sans-serif;font-weight:800;text-transform:uppercase;font-size:26px;color:#fff;margin:0 0 8px;line-height:1.05">Your signature demo: watch AI invent a peptide in 60 seconds</h2>
       <p style="color:#aeb9bd;font-size:14px;line-height:1.7;margin:0 0 18px">The easiest thing you'll ever promote isn't a discount — it's <strong style="color:#fff">Velox Design Lab</strong>. Nobody else has an AI that designs brand-new research peptides on demand. Show it once and people share it for you. Every order from your link is tracked and commissioned automatically.</p>
 
       <div style="background:#0e141b;border:1px solid #1a2230;border-radius:10px;padding:16px 18px;margin-bottom:18px">
         <div style="font-size:13px;color:#8aa0a0;margin-bottom:6px">Your link (find your code in the dashboard after sign-in):</div>
-        <code style="font-family:'DM Mono',monospace;font-size:14px;color:#01D3A0;word-break:break-all">veloxpeps.com/design-lab/?ref=<strong>YOURCODE</strong></code>
+        <code style="font-family:'DM Mono',monospace;font-size:14px;color:var(--g);word-break:break-all">veloxpeps.com/design-lab/?ref=<strong>YOURCODE</strong></code>
         <div style="font-size:12px;color:#6b7280;margin-top:8px;line-height:1.6">This auto-applies your customer discount <em>and</em> attributes the commission — they don't need to type anything at checkout.</div>
       </div>
 
@@ -183,13 +183,13 @@
       <p style="color:#aeb9bd;font-size:13.5px;line-height:1.7;margin:0 0 18px">Post a prompt to your audience ("design the most novel triple-agonist you can"), have them share their run link, and feature the best. It turns your followers into content — and into Velox customers.</p>
 
       <h3 style="font-family:'Space Grotesk','Inter',sans-serif;font-size:15px;color:#fff;margin:0 0 8px">Ready-to-post designs</h3>
-      <p style="color:#aeb9bd;font-size:13.5px;line-height:1.7;margin:0 0 10px">No time to record? Share one of these real designs — each links to a clean page with the closest orderable compound. Add your <code style="font-family:'DM Mono',monospace;color:#01D3A0">?ref=YOURCODE</code> to attribute the sale, e.g. <code style="font-family:'DM Mono',monospace;color:#01D3A0">veloxpeps.com/design-lab/r/…?ref=YOURCODE</code>.</p>
+      <p style="color:#aeb9bd;font-size:13.5px;line-height:1.7;margin:0 0 10px">No time to record? Share one of these real designs — each links to a clean page with the closest orderable compound. Add your <code style="font-family:'DM Mono',monospace;color:var(--g)">?ref=YOURCODE</code> to attribute the sale, e.g. <code style="font-family:'DM Mono',monospace;color:var(--g)">veloxpeps.com/design-lab/r/…?ref=YOURCODE</code>.</p>
       <ul style="color:#aeb9bd;font-size:13.5px;line-height:1.9;margin:0 0 18px;padding-left:18px">
-        <li><a href="/design-lab/r/5c10f445-a5a3-42f0-aec8-85a2e65ee3c0" style="color:#01D3A0;text-decoration:none">Triple-incretin triad</a> — GLP-1/GIP/glucagon → Retatrutide</li>
-        <li><a href="/design-lab/r/2380db8d-d1ee-45f0-b2f6-af25be9c90b7" style="color:#01D3A0;text-decoration:none">Repair scaffold, hardened</a> — BPC-157-inspired</li>
-        <li><a href="/design-lab/r/3f040be0-5890-4f56-b06a-e96fe9cb8649" style="color:#01D3A0;text-decoration:none">BBB-friendly nootropic</a> — Semax-class</li>
-        <li><a href="/design-lab/r/687903f5-330c-45ac-810b-736ef2065314" style="color:#01D3A0;text-decoration:none">Long-acting GH releaser</a> — CJC-1295-class</li>
-        <li><a href="/design-lab/leaderboard/" style="color:#01D3A0;text-decoration:none">🏆 The live design leaderboard</a> — always fresh</li>
+        <li><a href="/design-lab/r/5c10f445-a5a3-42f0-aec8-85a2e65ee3c0" style="color:var(--g);text-decoration:none">Triple-incretin triad</a> — GLP-1/GIP/glucagon → Retatrutide</li>
+        <li><a href="/design-lab/r/2380db8d-d1ee-45f0-b2f6-af25be9c90b7" style="color:var(--g);text-decoration:none">Repair scaffold, hardened</a> — BPC-157-inspired</li>
+        <li><a href="/design-lab/r/3f040be0-5890-4f56-b06a-e96fe9cb8649" style="color:var(--g);text-decoration:none">BBB-friendly nootropic</a> — Semax-class</li>
+        <li><a href="/design-lab/r/687903f5-330c-45ac-810b-736ef2065314" style="color:var(--g);text-decoration:none">Long-acting GH releaser</a> — CJC-1295-class</li>
+        <li><a href="/design-lab/leaderboard/" style="color:var(--g);text-decoration:none">🏆 The live design leaderboard</a> — always fresh</li>
       </ul>
       <p style="color:#6b7280;font-size:12px;line-height:1.6;margin:0;border-top:1px solid #1a2230;padding-top:14px">Keep it research-framed: Velox products and Design Lab outputs are for <em>in vitro</em> research use only. No health, medical, dosing or human-use claims.</p>
     </div>
@@ -239,7 +239,7 @@
       <div class="card">
         <h3>Content kit — ready-to-post designs</h3>
         <p style="font-size:13px;color:var(--t2,#9ca3af);margin:0 0 6px;line-height:1.6">Share any of these AI-designed peptides. Each link is stamped with <strong style="color:#fff">your code</strong>, so any resulting order is attributed to you automatically. Pair it with the hook: <em>"watch an AI invent a novel peptide in 60 seconds."</em></p>
-        <p style="font-size:13px;color:var(--t2,#9ca3af);margin:0 0 18px;line-height:1.6">Want a fresh one? <a href="/design-lab/app/" target="_blank" style="color:#01D3A0;text-decoration:none">Design it in the Lab →</a>, hit "Get share link", then add <code style="font-family:monospace;color:#01D3A0">?ref=YOURCODE</code>.</p>
+        <p style="font-size:13px;color:var(--t2,#9ca3af);margin:0 0 18px;line-height:1.6">Want a fresh one? <a href="/design-lab/app/" target="_blank" style="color:var(--g);text-decoration:none">Design it in the Lab →</a>, hit "Get share link", then add <code style="font-family:monospace;color:var(--g)">?ref=YOURCODE</code>.</p>
         <div id="content-wrap"><p class="empty">Loading designs…</p></div>
       </div>
     </div>
@@ -275,7 +275,7 @@
         </p>
         <label class="f-lbl" for="split-slider">Your commission: <strong id="split-commission-display" style="color:#fff">10</strong>%</label>
         <input id="split-slider" type="range" min="5" max="15" step="1" value="10"
-          style="width:100%;height:6px;accent-color:#01D3A0;cursor:pointer;margin-bottom:6px">
+          style="width:100%;height:6px;accent-color:var(--g);cursor:pointer;margin-bottom:6px">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3,#6b7280);margin-bottom:20px">
           <span>5% commission / 15% customer discount</span>
           <span>15% commission / 5% customer discount</span>
@@ -283,7 +283,7 @@
         <div class="pts-grid" style="margin-bottom:22px">
           <div class="pts-card">
             <div class="pts-label">Your commission</div>
-            <div class="pts-value" id="split-commission-val" style="color:#01D3A0">10%</div>
+            <div class="pts-value" id="split-commission-val" style="color:var(--g)">10%</div>
             <div class="pts-sub">You earn per referred order</div>
           </div>
           <div class="pts-card">

@@ -281,7 +281,7 @@
         return '<div style="border:1px solid var(--brd,#1a1a1a);border-radius:10px;padding:14px 16px;margin-bottom:10px">' +
           '<div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap">' +
             '<div style="font-weight:600;color:#fff">' + esc(x.name) + '</div>' +
-            (x.closest ? '<span style="font-size:11px;font-family:monospace;color:#01D3A0;border:1px solid rgba(1,211,160,.3);border-radius:5px;padding:2px 8px">&rarr; ' + esc(x.closest) + '</span>' : '') +
+            (x.closest ? '<span style="font-size:11px;font-family:monospace;color:#16d6a6;border:1px solid rgba(22,214,166,.3);border-radius:5px;padding:2px 8px">&rarr; ' + esc(x.closest) + '</span>' : '') +
           '</div>' +
           '<div style="font-size:12.5px;color:var(--t3,#6b7280);margin:4px 0 10px">' + esc(x.mech) + '</div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
