@@ -101,7 +101,7 @@ module.exports = async function handler(req, res) {
 
   const body = `<!DOCTYPE html><html lang="en-GB"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Design Lab Leaderboard — Top AI-designed research peptides | Velox</title>
+<title>Design Lab Leaderboard – Top AI-Designed Peptides | Velox</title>
 <meta name="description" content="The top community-designed research peptides on Velox Design Lab, ranked by novelty and synthesisability. For in vitro research use only.">
 <link rel="canonical" href="https://veloxpeps.com/design-lab/leaderboard/">
 <meta property="og:title" content="Velox Design Lab Leaderboard"><meta property="og:description" content="The most novel, most makeable AI-designed research peptides this season.">
