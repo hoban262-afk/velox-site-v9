@@ -40,6 +40,35 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="/assets/css/core.css">
   <link rel="stylesheet" href="/assets/css/animations.css">
+  <style>
+    .cp-verified-banner {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      background: rgba(1,211,160,.09); border: 1px solid rgba(1,211,160,.38);
+      border-left: 4px solid #01D3A0; border-radius: 8px;
+      padding: 12px 16px; margin: 16px 0 4px; text-decoration: none;
+      animation: cpvbPulse 2.6s infinite;
+    }
+    .cp-verified-banner:hover { background: rgba(1,211,160,.14); }
+    .cpvb-badge {
+      display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; color: #021711;
+      background: #01D3A0; padding: 5px 10px; border-radius: 4px; white-space: nowrap;
+    }
+    .cpvb-txt { font-size: 13.5px; color: #E5E7EB; flex: 1; min-width: 180px; letter-spacing: .01em; }
+    .cpvb-txt b { color: #01D3A0; font-weight: 800; font-size: 15px; }
+    .cpvb-id { color: #7fb39c; font-family: 'DM Mono', monospace; font-size: 11px; }
+    .cpvb-cta { font-size: 12px; font-weight: 700; color: #01D3A0; white-space: nowrap; font-family: 'DM Mono', monospace; letter-spacing: .04em; }
+    @keyframes cpvbPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(1,211,160,.35); }
+      70%  { box-shadow: 0 0 0 9px rgba(1,211,160,0); }
+      100% { box-shadow: 0 0 0 0 rgba(1,211,160,0); }
+    }
+    @media (max-width: 767px) {
+      .cp-verified-banner { padding: 11px 13px; gap: 9px; margin: 14px 0 4px; }
+      .cpvb-cta { display: none; }
+      .cpvb-txt { font-size: 12.5px; min-width: 0; }
+    }
+  </style>
 
   <!-- Homepage hash-redirect map (only on /) -->
   
@@ -158,6 +187,14 @@
   <span>For <strong>in vitro research use only</strong>. Retatrutide is not for human or veterinary consumption, diagnosis, treatment, or prevention of any condition.</span>
 </div>
     <p class="cp-lede"><strong>Retatrutide is a synthetic peptide that activates three different metabolic receptors (specialised docking points on cells) at the same time: GLP-1, GIP, and glucagon receptors.</strong> Each of these is involved in how the body manages energy, responds to insulin (the hormone that controls blood sugar), and processes fat. By targeting all three at once, it gives researchers a tool for studying how these pathways work together.</p>
+    <a class="cp-verified-banner" href="https://verify.janoshik.com/tests/165920-Sample_1_K9X8LPDYNFSM" target="_blank" rel="noopener nofollow" aria-label="Verify this Retatrutide batch lab report at Janoshik">
+      <span class="cpvb-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+        LAB-VERIFIED
+      </span>
+      <span class="cpvb-txt">This batch <b>99.15%</b> purity &mdash; independently blind-tested by Janoshik <span class="cpvb-id">#165920</span></span>
+      <span class="cpvb-cta">Verify &rarr;</span>
+    </a>
     <dl class="cp-spec"><div><dt>CAS Number</dt><dd>2381089-83-2</dd></div><div><dt>Molecular Formula</dt><dd>Synthetic peptide (MW 4731.3 Da)</dd></div><div><dt>HPLC Purity</dt><dd>≥99% (batch-verified)</dd></div><div><dt>Form</dt><dd>Lyophilised powder</dd></div><div><dt>Storage</dt><dd>2–8°C, desiccated, protected from light</dd></div><div><dt>Classification</dt><dd>Research reagent - in vitro use only</dd></div></dl>
   </div>
 
