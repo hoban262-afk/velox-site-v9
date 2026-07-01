@@ -27,7 +27,7 @@ var DISCOUNT_CODES = [
   // Public 20%-off promo. Percentage codes apply to the subtotal AFTER volume
   // discounts, so this stacks on top of vial-volume and 10-pack pricing. No
   // usage cap and no per-customer check — anyone can use it, unlimited times.
-  { code: "RETA20", type: "percentage", value: 20, active: true },
+  { code: "CLAIREAYR20", type: "percentage", value: 20, active: true },
   // Newsletter subscriber thank-you code (sale week broadcast). Stacks on the
   // catalogue Deal of the Week pricing. Disable (active:false) after the sale.
   { code: "INSIDER10", type: "percentage", value: 10, active: true },
