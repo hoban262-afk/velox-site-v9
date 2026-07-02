@@ -527,6 +527,7 @@
       discountInput.disabled = true;
       if (discountApply) { discountApply.textContent = 'Applied'; discountApply.disabled = true; }
       renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
+      try { document.dispatchEvent(new Event('vp:discount-applied')); } catch (e) {}
     }
 
     function handleApply() {
