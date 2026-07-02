@@ -2,7 +2,7 @@
   'use strict';
 
   var SHIPPING_FLAT = 3.80;
-  var FREE_THRESHOLD = 0;   // SALE WEEK: free UK shipping site-wide. RESTORE TO 100 after.
+  var FREE_THRESHOLD = 100;
 
   function getCart() {
     try {
@@ -124,7 +124,7 @@
       countEl.textContent = String(totalQty);
     }
 
-    // Free-shipping progress nudge — based on the pre-discount subtotal (matches checkout & the '£80' promise).
+    // Free-shipping progress nudge — based on the pre-discount subtotal (matches checkout & the £100 threshold).
     renderFreeShipNudge(subtotal);
 
     // Tell currency.js the cart was just re-rendered (in GBP) so it can re-apply

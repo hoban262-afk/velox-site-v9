@@ -4,7 +4,7 @@
   // ── Constants ─────────────────────────────────────────────────────────────
   var SHIPPING_FLAT     = 3.80;   // Royal Mail Tracked 48 (UK standard)
   var EXPRESS_FLAT      = 5.99;   // Royal Mail Tracked 24 (UK express)
-  var FREE_THRESHOLD    = 0;      // SALE WEEK: free UK shipping site-wide. RESTORE TO 100 after.
+  var FREE_THRESHOLD    = 100;    // Free UK shipping on orders £100+
 
   // ── International (Rest of World) ──────────────────────────────────────────
   // All international orders are charged in GBP. Our bank account is GBP (the
