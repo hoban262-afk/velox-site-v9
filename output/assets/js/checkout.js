@@ -449,18 +449,19 @@
         : 'United Kingdom';
 
       var data = {
-        fname:    document.getElementById('sh-fname').value.trim(),
-        lname:    document.getElementById('sh-lname').value.trim(),
-        email:    document.getElementById('sh-email').value.trim(),
-        phone:    document.getElementById('sh-phone').value.trim(),
-        addr1:    document.getElementById('sh-addr1').value.trim(),
-        addr2:    (document.getElementById('sh-addr2') || {}).value || '',
-        city:     document.getElementById('sh-city').value.trim(),
-        postcode: document.getElementById('sh-post').value.trim(),
-        country:  country,
-        region:   activeRegion,
-        zone:     activeRegion === 'INTL' ? zoneForCountry(country) : null,
-        currency: 'GBP',
+        fname:       document.getElementById('sh-fname').value.trim(),
+        lname:       document.getElementById('sh-lname').value.trim(),
+        email:       document.getElementById('sh-email').value.trim(),
+        phone:       document.getElementById('sh-phone').value.trim(),
+        addr1:       document.getElementById('sh-addr1').value.trim(),
+        addr2:       (document.getElementById('sh-addr2') || {}).value || '',
+        city:        document.getElementById('sh-city').value.trim(),
+        postcode:    document.getElementById('sh-post').value.trim(),
+        country:     country,
+        region:      activeRegion,
+        zone:        activeRegion === 'INTL' ? zoneForCountry(country) : null,
+        currency:    'GBP',
+        ship_method: shipMethod(),
       };
 
       try { sessionStorage.setItem('vp_checkout', JSON.stringify(data)); } catch (ex) {}
