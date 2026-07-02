@@ -874,6 +874,7 @@
   'use strict';
 
   var SHIPPING_FLAT  = 3.80;
+  var EXPRESS_FLAT   = 5.99;
   var FREE_THRESHOLD = 100;
   var API_TIMEOUT_MS = 10000; // 10 seconds before we show fallback
 
@@ -883,9 +884,14 @@
   function getChk() {
     try { return JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (e) { return {}; }
   }
+  function shipRate() {
+    try { var m = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').ship_method; if (m === '24') return EXPRESS_FLAT; } catch (e) {}
+    return SHIPPING_FLAT;
+  }
   function cartTotals(cart) {
     var sub  = cart.reduce(function (s, i) { return s + i.price * (i.qty || 1); }, 0);
-    var ship = sub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    var rate = shipRate();
+    var ship = sub >= FREE_THRESHOLD ? 0 : rate;
     return { subtotal: sub, shipping: ship, total: sub + ship };
   }
   function randChars(n) {
@@ -953,7 +959,7 @@
     var promo    = bestPromo(cart);
     var saving   = promo.saving;
     var discSub  = Math.max(0, t.subtotal - saving);
-    var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+    var ship     = discSub >= FREE_THRESHOLD ? 0 : shipRate();
     var el = document.getElementById('fena-total');
     if (el) el.textContent = fmtPounds(discSub + ship);
   }
@@ -1033,7 +1039,7 @@
       var promo    = bestPromo(cart);
       var saving   = promo.saving;
       var discSub  = Math.max(0, t.subtotal - saving);
-      var ship     = discSub >= FREE_THRESHOLD ? 0 : SHIPPING_FLAT;
+      var ship     = discSub >= FREE_THRESHOLD ? 0 : shipRate();
       var total    = discSub + ship;
       var totalPence = Math.round(total * 100);
 
