@@ -632,20 +632,19 @@
       });
     }
 
-    // ── Auto-apply a captured affiliate ?ref= code (set in core.js) ───────────
-    // If the customer arrived via an affiliate link and hasn't already applied a
-    // code, prefill + validate it so the discount applies AND attribution attaches
-    // to the order (orders.affiliate_code_used). Customer can still override it.
-    (function autoApplyRef() {
+    // ── Pre-fill a captured affiliate ?ref= code (set in core.js) ──────────
+    // If the customer arrived via an affiliate link, pre-fill the discount field
+    // so they can see it and click Apply. Don't auto-submit — the customer may
+    // want to use a different code or skip the discount entirely.
+    (function prefillRef() {
       try {
         if (!discountInput || appliedDiscount || affiliateApplied || welcomeCodeApplied) return;
-        if ((window.VELOX_MEMBER_PCT || 0) > 0) return; // member pricing already applied — don't stack
+        if ((window.VELOX_MEMBER_PCT || 0) > 0) return;
         if (discountInput.value.trim()) return;
         var stored = JSON.parse(localStorage.getItem('vp_ref') || 'null');
         if (!stored || !stored.code || !stored.ts) return;
         if (Date.now() - stored.ts > 30 * 864e5) return; // expired
         discountInput.value = stored.code;
-        handleApply();
       } catch (e) {}
     })();
 
