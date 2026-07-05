@@ -8,107 +8,107 @@
   },
   "crons": [
     {
-      "path": "/api/recovery/run",
+      "path": "/api/recovery/run/",
       "schedule": "*/5 * * * *"
     },
     {
-      "path": "/api/recovery/sub-fulfil-run",
+      "path": "/api/recovery/sub-fulfil-run/",
       "schedule": "0 7 * * *"
     },
     {
-      "path": "/api/recovery/reorder-run",
+      "path": "/api/recovery/reorder-run/",
       "schedule": "0 10 * * *"
     },
     {
-      "path": "/api/recovery/welcome-run",
+      "path": "/api/recovery/welcome-run/",
       "schedule": "0 * * * *"
     },
     {
-      "path": "/api/recovery/restock-run",
+      "path": "/api/recovery/restock-run/",
       "schedule": "*/15 * * * *"
     },
     {
-      "path": "/api/recovery/review-run",
+      "path": "/api/recovery/review-run/",
       "schedule": "0 11 * * *"
     },
     {
-      "path": "/api/recovery/design-nurture-run",
+      "path": "/api/recovery/design-nurture-run/",
       "schedule": "15 * * * *"
     },
     {
-      "path": "/api/recovery/affiliate-commission-run",
+      "path": "/api/recovery/affiliate-commission-run/",
       "schedule": "45 * * * *"
     },
     {
-      "path": "/api/admin/insights-run",
+      "path": "/api/admin/insights-run/",
       "schedule": "0 8 * * 1"
     },
     {
-      "path": "/api/analytics/gsc-run",
+      "path": "/api/analytics/gsc-run/",
       "schedule": "30 6 * * *"
     },
     {
-      "path": "/api/analytics/ga-run",
+      "path": "/api/analytics/ga-run/",
       "schedule": "0 6 * * *"
     },
     {
-      "path": "/api/agents/reorder-check",
+      "path": "/api/agents/reorder-check/",
       "schedule": "0 9 * * *"
     },
     {
-      "path": "/api/pack/sync",
+      "path": "/api/pack/sync/",
       "schedule": "*/10 * * * *"
     },
     {
-      "path": "/api/agents/run-approved",
+      "path": "/api/agents/run-approved/",
       "schedule": "*/10 * * * *"
     },
     {
-      "path": "/api/agents/support-autoreply",
+      "path": "/api/agents/support-autoreply/",
       "schedule": "*/10 * * * *"
     },
     {
-      "path": "/api/agents/daily-briefing",
+      "path": "/api/agents/daily-briefing/",
       "schedule": "0 7 * * *"
     },
     {
-      "path": "/api/agents/weekly-finance",
+      "path": "/api/agents/weekly-finance/",
       "schedule": "0 9 * * 1"
     },
     {
-      "path": "/api/agents/compliance-audit",
+      "path": "/api/agents/compliance-audit/",
       "schedule": "0 7 * * 0"
     },
     {
-      "path": "/api/agents/health-monitor",
+      "path": "/api/agents/health-monitor/",
       "schedule": "*/15 * * * *"
     },
     {
-      "path": "/api/agents/backup-run",
+      "path": "/api/agents/backup-run/",
       "schedule": "0 5 * * 1"
     },
     {
-      "path": "/api/agents/anomaly-watch",
+      "path": "/api/agents/anomaly-watch/",
       "schedule": "0 10 * * *"
     },
     {
-      "path": "/api/agents/content-draft",
+      "path": "/api/agents/content-draft/",
       "schedule": "0 8 1 * *"
     },
     {
-      "path": "/api/indexnow",
+      "path": "/api/indexnow/",
       "schedule": "30 6 * * *"
     },
     {
-      "path": "/api/deal-rotate",
+      "path": "/api/deal-rotate/",
       "schedule": "20 * * * *"
     },
     {
-      "path": "/api/agents/chat-transcripts?mode=flush",
+      "path": "/api/agents/chat-transcripts/?mode=flush",
       "schedule": "*/15 * * * *"
     },
     {
-      "path": "/api/agents/chat-transcripts?mode=digest",
+      "path": "/api/agents/chat-transcripts/?mode=digest",
       "schedule": "30 7 * * *"
     }
   ],
