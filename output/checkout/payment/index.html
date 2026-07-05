@@ -426,6 +426,52 @@
     body.eu-checkout .bank-row-intl { display: block; }
     body.eu-checkout .bank-row-domestic { display: none; }
     body.eu-checkout .bank-fallback-note { display: none; }
+
+    /* ── UK checkout: give bank transfer EQUAL prominence to Fena ──────────────
+       Mirror the international treatment (open, card-styled, solid CTA) but keep
+       Fena visible above it, so the two sit as co-equal options. Scoped with
+       :not(.eu-checkout) so the international path is untouched. */
+    .pay-or-divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 22px 0 18px; color: #6B7280;
+      font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .pay-or-divider::before, .pay-or-divider::after {
+      content: ''; flex: 1; height: 1px; background: #1F2937;
+    }
+    body.eu-checkout .pay-or-divider { display: none; }
+
+    body:not(.eu-checkout) .bank-fallback {
+      border: 2px solid #01D3A0;
+      background: linear-gradient(135deg, #030f0b 0%, #020806 100%);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    body:not(.eu-checkout) .bank-fallback > summary {
+      font-size: 18px; font-weight: 800; color: #fff;
+      letter-spacing: 0; text-transform: none;
+      padding: 18px 20px 12px;
+      cursor: default; pointer-events: none;   /* always-open co-equal panel */
+    }
+    body:not(.eu-checkout) .bank-fallback > summary::before { display: none; }
+    body:not(.eu-checkout) .bank-fallback-body { padding: 0 20px 20px; border-top: none; }
+    body:not(.eu-checkout) .bank-note-amber {
+      background: rgba(1,211,160,.07);
+      border-color: rgba(1,211,160,.32);
+      color: #cdd3d9;
+    }
+    body:not(.eu-checkout) #bank-pay-btn {
+      width: 100%; min-height: 56px;
+      background: #01D3A0; color: #04140f;
+      font-size: 17px; font-weight: 800;
+      border: none; border-radius: 10px;
+      cursor: pointer; margin-top: 16px;
+    }
+    body:not(.eu-checkout) #bank-pay-btn:hover:not(:disabled) { background: #00c090; }
+
+    .crypto-teaser { font-size: 13px; color: #6B7280; text-align: center; margin: 16px 0 0; }
+    .crypto-teaser a { color: #9CA3AF; text-decoration: underline; }
+    .crypto-teaser a:hover { color: #01D3A0; }
   </style>
 
   <!-- Open Graph -->
@@ -656,17 +702,16 @@
           <!-- ── Error display (used by checkout.js for bank path) ──── -->
           <div class="co-err" id="co-err"></div>
 
-          <!-- ── MANUAL BANK TRANSFER FALLBACK ─────────────────────── -->
-          <p style="font-size:13px;color:#6b7280;margin:16px 0 8px;text-align:center;">No banking app? Can't use open banking? <a href="#bank-transfer" onclick="document.getElementById('bank-transfer-details').open=true;document.getElementById('bank-transfer-details').scrollIntoView({behavior:'smooth'});return false;" style="color:#01D3A0;text-decoration:underline;">Pay by manual bank transfer instead ↓</a></p>
-          <details class="bank-fallback" id="bank-transfer-details">
-            <summary>Prefer to pay by manual bank transfer?</summary>
+          <!-- ── BANK TRANSFER — co-equal option (open by default on UK) ────── -->
+          <div class="pay-or-divider">or pay by bank transfer</div>
+          <details class="bank-fallback" id="bank-transfer-details" open>
+            <summary><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#01D3A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M3 21h18"/><path d="M4 21V10"/><path d="M20 21V10"/><path d="M3 10l9-6 9 6"/><path d="M8 21v-6"/><path d="M12 21v-6"/><path d="M16 21v-6"/></svg>Pay by bank transfer</summary>
             <div class="bank-fallback-body">
               <p class="eu-pay-intro"><strong style="color:#01D3A0">How to pay — international orders.</strong> We accept payment by bank transfer in GBP. Follow the three steps below — it only takes a minute.</p>
 
-              <!-- UK manual-transfer warning (hidden for international, which has no Fena option) -->
+              <!-- UK manual-transfer note (hidden for international, which has no Fena option) -->
               <div class="bank-note-amber">
-                <strong>⚠ Manual transfer is slower - and your order isn't reserved until we receive it.</strong><br>
-                <strong style="color:#01D3A0">Pay by Bank above is instant, confirmed in seconds, and ships the same working day.</strong> Choose manual transfer only if you can't use it. Stock is held for <strong>24 hours</strong> - if payment hasn't arrived by then the order is released and your items may sell out. Please send the exact amount using your order ID as the reference.
+                Transfer the exact total from your banking app to the account below, using your <strong style="color:#01D3A0">order ID as the payment reference</strong> so we can match it. Stock is held for <strong>24 hours</strong> - once your transfer arrives we dispatch the same working day. Most UK bank transfers clear within a few hours.
               </div>
 
               <!-- International-only: clear amount + step-by-step instructions -->
@@ -698,9 +743,11 @@
               </dl>
               <p class="bank-fallback-note">For international orders: IBAN GB76APSF08719914617029 &middot; BIC APSFGB2LXXX &middot; Please transfer in GBP. International transfers typically clear within 1&ndash;3 working days.</p>
 
-              <button type="submit" id="bank-pay-btn">CONFIRM ORDER (MANUAL TRANSFER) &rarr;</button>
+              <button type="submit" id="bank-pay-btn">CONFIRM ORDER &amp; GET BANK DETAILS &rarr;</button>
             </div>
           </details>
+
+          <p class="crypto-teaser">Prefer crypto? <a href="mailto:support@veloxpeps.com?subject=Pay%20by%20crypto%20for%20my%20order">Email us and we&rsquo;ll send a secure link &rarr;</a></p>
 
           <a href="/checkout/shipping/" class="co-back">&larr; Back to delivery</a>
 
@@ -1002,6 +1049,7 @@
   function revealBankFallback() {
     var details = document.querySelector('.bank-fallback');
     if (details) {
+      try { if (window.vpTrack) window.vpTrack('payment_method_selected', { method: 'bank' }); } catch (e) {}
       details.open = true;
       setTimeout(function () {
         details.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1034,6 +1082,8 @@
         showErr('Your order appears to be empty. Please return to the shop.');
         return;
       }
+      // Funnel: a valid Pay-by-Bank attempt was initiated (per-method drop-off).
+      try { if (window.vpTrack) window.vpTrack('payment_method_selected', { method: 'fena' }); } catch (e) {}
       var t        = cartTotals(cart);
       var promo    = bestPromo(cart);
       var saving   = promo.saving;
