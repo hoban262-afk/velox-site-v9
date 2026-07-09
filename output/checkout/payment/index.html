@@ -960,15 +960,29 @@
     var input = document.getElementById('discount-input');
     if (!input || !input.disabled) return null;
     var code = input.value.trim().toUpperCase();
-    if (!code || typeof DISCOUNT_CODES === 'undefined') return null;
-    for (var i = 0; i < DISCOUNT_CODES.length; i++) {
-      var dc = DISCOUNT_CODES[i];
-      if (dc.active && dc.code.toUpperCase() === code) {
-        var saving = dc.type === 'percentage'
-          ? Math.round(subtotal * dc.value) / 100
-          : Math.min(dc.value, subtotal);
-        return { code: dc.code, saving: Math.round(saving * 100) / 100 };
+    if (!code) return null;
+    // 1) Static public codes (JOSIE20, etc.) — recomputed locally off the subtotal.
+    if (typeof DISCOUNT_CODES !== 'undefined') {
+      for (var i = 0; i < DISCOUNT_CODES.length; i++) {
+        var dc = DISCOUNT_CODES[i];
+        if (dc.active && dc.code.toUpperCase() === code) {
+          var saving = dc.type === 'percentage'
+            ? Math.round(subtotal * dc.value) / 100
+            : Math.min(dc.value, subtotal);
+          return { code: dc.code, saving: Math.round(saving * 100) / 100 };
+        }
       }
+    }
+    // 2) Server-validated codes (personal / newsletter / first-order / affiliate)
+    //    aren't in DISCOUNT_CODES — checkout.js publishes the authoritative GBP
+    //    saving it already computed. Trust that so the charge matches the display.
+    var g = window.__vpAppliedPromo;
+    if (g && g.code && String(g.code).toUpperCase() === code) {
+      return {
+        code:     g.code,
+        saving:   Math.round((Number(g.saving) || 0) * 100) / 100,
+        priority: !!g.priority,
+      };
     }
     return null;
   }
@@ -991,6 +1005,13 @@
   function bestPromo(cart) {
     var base = vpDiscountableGBP(cart);
     var code = getAppliedDiscount(base);
+    // Priority personal code (e.g. GERALDINE40): its saving is already computed
+    // off each item's full base price across the whole cart. It overrides the
+    // volume/sale/member discounts and is NOT subject to the vial cap or the
+    // 10-pack track, so use its saving directly — matching checkout.js's display.
+    if (code && code.priority) {
+      return { code: code.code, saving: Math.round((code.saving || 0) * 100) / 100 };
+    }
     var codeSaving = (code && code.saving) || 0;
     var rate = vpVolumeRate(base);
     var volSaving = Math.round(base * rate * 100) / 100;

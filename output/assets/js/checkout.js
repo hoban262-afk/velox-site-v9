@@ -185,10 +185,55 @@
   function packVolumeRate(q) { return q >= 5 ? 0.30 : (q === 4 ? 0.25 : (q === 3 ? 0.175 : (q === 2 ? 0.10 : 0))); }
   function packVolumeGBP(cart) { return Math.round(packGBP(cart) * packVolumeRate(packQty(cart)) * 100) / 100; }
 
+  // ── Personal / per-email codes (e.g. GERALDINE40) ─────────────────────────
+  // A different class of code from the public DISCOUNT_CODES list + volume tiers:
+  // it is bound to one email (server-validated) and follows the "40% off the FULL
+  // price, never the discounted price, takes priority" rule. That means it must
+  // bypass the volume comparison and the 25% vial cap entirely and price each line
+  // off the item's BASE price — never charging MORE than the customer would
+  // otherwise pay (so a deeper site sale still wins). Base prices come from
+  // product_variants (public anon read, same source pricing.js uses).
+  var PC_SB_URL  = 'https://stkjdtyhaxejxqmbzyua.supabase.co';
+  var PC_SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2pkdHloYXhlanhxbWJ6eXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUxMTgsImV4cCI6MjA5NTM5MTExOH0.QtkaubtNsJkFruoJ-hsxfd5qTlgX5Hs-9wTqJRQC4S0';
+  var PV_PRICES = null; // { 'slug|size': { base, sale } } — lazy-loaded when a personal code is applied
+  function loadPvPrices() {
+    if (PV_PRICES) return Promise.resolve(PV_PRICES);
+    return fetch(PC_SB_URL + '/rest/v1/product_variants?select=slug,size,base_price,sale_price', { headers: { apikey: PC_SB_ANON, Authorization: 'Bearer ' + PC_SB_ANON } })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (rows) {
+        var m = {};
+        (rows || []).forEach(function (v) { m[v.slug + '|' + v.size] = { base: Number(v.base_price), sale: (v.sale_price != null ? Number(v.sale_price) : null) }; });
+        PV_PRICES = m; return m;
+      })
+      .catch(function () { PV_PRICES = {}; return PV_PRICES; });
+  }
+  // GBP saving for the active personal code, priced off each line's base price.
+  function personalSavingGBP(cart) {
+    if (!personalCode) return 0;
+    var rate = (Number(personalCode.value) || 0) / 100;      // 0.40 for 40% off
+    var useBase = personalCode.basis === 'base';
+    var saving = 0;
+    cart.forEach(function (i) {
+      var eff  = Number(i.price) || 0;                        // current per-unit price (snapshot)
+      var pv   = PV_PRICES ? PV_PRICES[(i.slug || '') + '|' + (i.size || '')] : null;
+      var full = (useBase && pv) ? pv.base : eff;            // full/base price (fallback: current price)
+      var codeUnit  = Math.round(full * (1 - rate) * 100) / 100;
+      var finalUnit = Math.min(codeUnit, eff);              // priority, but never dearer than the price she'd otherwise pay
+      saving += Math.max(0, eff - finalUnit) * (Number(i.qty) || 1);
+    });
+    return Math.round(saving * 100) / 100;
+  }
+
   // Promotional saving (GBP) = [larger of (code, vial-volume) on the vial subtotal]
   //   PLUS the 10-pack volume saving (separate track, on the 10-pack subtotal).
   // Code + vial-volume never stack; the 10-pack tier is its own track and never touches vials.
   function bestPromoGBP(cart, codeDiscount) {
+    // A personal per-email code takes over completely: off-base, priority, no cap,
+    // no volume comparison. Its own guard keeps the customer at the better price.
+    if (personalCode) {
+      var ps = personalSavingGBP(cart);
+      return { saving: ps, label: personalCode.code, code: personalCode.code };
+    }
     var base = discountableGBP(cart);
     var codeSaving = (codeDiscount && codeDiscount.saving) || 0;
     var rate = vpVolumeRate(base);
@@ -296,6 +341,7 @@
   var appliedPointsSavingGBP = 0;   // their £ value (100 points = £1)
   var welcomeCodeApplied = null;    // VELOX-XXXXXX newsletter code applied (server-validated)
   var affiliateApplied = null;      // { id, code, discount_pct } — affiliate ref code applied
+  var personalCode = null;          // { code, value, basis, priority, applies_to } — per-email code (server-validated)
 
   // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
   var shippingForm = document.getElementById('shipping-form');
@@ -527,6 +573,19 @@
       discountInput.disabled = true;
       if (discountApply) { discountApply.textContent = 'Applied'; discountApply.disabled = true; }
       renderTotalsWithDiscount(cart, appliedDiscount, payRegion);
+      // Bridge to the inline charge engine on the payment page (bestPromo /
+      // getAppliedDiscount). Server-validated codes (personal, newsletter,
+      // first-order, affiliate) aren't in the static DISCOUNT_CODES array, so the
+      // charge path can't recompute them — publish the authoritative GBP saving
+      // here so the actual Fena amount matches this display. `priority` marks a
+      // personal code that overrides item discounts and bypasses the vial cap.
+      try {
+        window.__vpAppliedPromo = {
+          code:     result.code,
+          saving:   Number(result.saving) || 0,
+          priority: !!(personalCode && personalCode.priority && personalCode.code === result.code),
+        };
+      } catch (e) {}
       try { document.dispatchEvent(new Event('vp:discount-applied')); } catch (e) {}
     }
 
@@ -605,24 +664,56 @@
         return;
       }
 
-      // Try affiliate ref code — validate server-side (last fallback)
+      // Personal / per-email code (server-validated, e.g. GERALDINE40). Bound to
+      // the checkout email; overrides other item discounts at 40% off full price.
+      var pcEmail = '';
+      try { pcEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
       discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
-      fetch('/api/affiliate/validate', {
+      fetch('/api/personal-code/validate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code }),
+        body: JSON.stringify({ code: code, email: pcEmail }),
       }).then(function (r) { return r.json(); }).then(function (d) {
         if (d && d.valid) {
-          affiliateApplied = { id: d.affiliate_id, code: code.toUpperCase(), discount_pct: d.discount_pct };
-          var saving = Math.round(discountableGBP(cart) * d.discount_pct) / 100;
-          applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: d.discount_pct, saving: saving });
-        } else {
-          affiliateApplied = null; appliedDiscount = null;
-          discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
-          renderTotalsWithDiscount(cart, null, payRegion);
+          loadPvPrices().then(function () {
+            personalCode = { code: d.code || code.toUpperCase(), value: Number(d.value) || 0, basis: d.basis || 'current', priority: d.priority === true, applies_to: d.applies_to || 'all' };
+            var saving = personalSavingGBP(cart);
+            applyDiscountResult({ code: personalCode.code, type: 'percentage', value: personalCode.value, saving: saving });
+          });
+          return;
         }
-      }).catch(function () {
-        discountMsg.innerHTML = '<span class="dc-err">Could not validate code. Please try again.</span>';
-      });
+        if (d && (d.reason === 'email_required' || d.reason === 'email_mismatch')) {
+          personalCode = null;
+          discountMsg.innerHTML = '<span class="dc-err">' + (d.reason === 'email_required'
+            ? 'Enter your email above first, then apply the code.'
+            : 'This code was issued to a different email address.') + '</span>';
+          renderTotalsWithDiscount(cart, null, payRegion);
+          return;
+        }
+        // Not a personal code → fall back to affiliate ref codes.
+        tryAffiliate();
+      }).catch(function () { tryAffiliate(); });
+      return;
+
+      // Try affiliate ref code — validate server-side (last fallback)
+      function tryAffiliate() {
+        discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
+        fetch('/api/affiliate/validate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.valid) {
+            affiliateApplied = { id: d.affiliate_id, code: code.toUpperCase(), discount_pct: d.discount_pct };
+            var saving = Math.round(discountableGBP(cart) * d.discount_pct) / 100;
+            applyDiscountResult({ code: code.toUpperCase(), type: 'percentage', value: d.discount_pct, saving: saving });
+          } else {
+            affiliateApplied = null; appliedDiscount = null;
+            discountMsg.innerHTML = '<span class="dc-err">Invalid or inactive discount code.</span>';
+            renderTotalsWithDiscount(cart, null, payRegion);
+          }
+        }).catch(function () {
+          discountMsg.innerHTML = '<span class="dc-err">Could not validate code. Please try again.</span>';
+        });
+      }
     }
 
     if (discountApply) discountApply.addEventListener('click', handleApply);
