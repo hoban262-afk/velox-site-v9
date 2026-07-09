@@ -168,20 +168,28 @@
     var cart;
     try { cart = JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { return; }
     if (!Array.isArray(cart) || !cart.length) return;
-    var effBy = {};
-    variantRows.forEach(function (v) { effBy[v.slug + '|' + v.size] = eff(v); });
+    var effBy = {}, rrpBy = {};
+    variantRows.forEach(function (v) {
+      var k = v.slug + '|' + v.size;
+      effBy[k] = eff(v);
+      rrpBy[k] = wasOf(v);   // strikethrough "was" price (base_price on a deal, compare_at on a markdown), else null
+    });
     var changed = false;
     cart.forEach(function (it) {
       if (!it || typeof it !== 'object') return;
-      var np = null;
+      var np = null, nr = null;
       var b = bundleMap[it.slug];
       if (b && typeof b.price === 'number' && b.price > 0) {
         np = b.price;                                   // bundle line (slug = stack slug)
+        nr = (typeof b.was === 'number' && b.was > np) ? b.was : np;
       } else {
         var k = it.slug + '|' + it.size;
         if (effBy[k] != null && effBy[k] > 0) np = effBy[k]; // single variant line
+        if (np != null) { var w = rrpBy[k]; nr = (w != null && w > np) ? w : np; }
       }
       if (np != null && Math.abs(np - (Number(it.price) || 0)) > 0.005) { it.price = np; changed = true; }
+      // Stamp the per-line RRP so checkout can show the full RRP→final saving.
+      if (nr != null && Math.abs(nr - (Number(it.rrp) || 0)) > 0.005) { it.rrp = nr; changed = true; }
     });
     if (changed) { try { localStorage.setItem('vp_cart', JSON.stringify(cart)); } catch (e) {} }
     try { document.dispatchEvent(new CustomEvent('vp:cart-repriced')); } catch (e) {}

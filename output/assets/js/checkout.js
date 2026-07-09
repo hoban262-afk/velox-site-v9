@@ -312,6 +312,25 @@
     } else if (discLine) {
       discLine.style.display = 'none';
     }
+
+    // Total savings vs. RRP — one figure capturing the WHOLE markdown the customer
+    // gets: RRP (deal/compare-at strikethrough) → sale price → volume discount →
+    // codes → points. it.rrp is stamped per line by pricing.js; fall back to the
+    // current price when a line has no recorded RRP (so it contributes no saving).
+    var rrpSubtotal = cart.reduce(function (s, i) {
+      var unit = (Number(i.rrp) > 0 ? Number(i.rrp) : (Number(i.price) || 0));
+      return s + unit * (i.qty || 1);
+    }, 0);
+    var totalSaving = Math.round(Math.max(0, rrpSubtotal - discountedSubtotal) * 100) / 100;
+    var savePct     = rrpSubtotal > 0 ? Math.round(totalSaving / rrpSubtotal * 100) : 0;
+    var saveRow = document.getElementById('co-savings-row');
+    var saveAmt = document.getElementById('co-savings-amount');
+    if (totalSaving > 0.005) {
+      if (saveRow) saveRow.style.display = '';
+      if (saveAmt) saveAmt.textContent = '−' + fmt(totalSaving) + (savePct > 0 ? ' (' + savePct + '% off RRP)' : '');
+    } else if (saveRow) {
+      saveRow.style.display = 'none';
+    }
   }
 
   function randChars(n) {
