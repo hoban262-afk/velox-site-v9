@@ -19,6 +19,7 @@
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
 const { STAGES, buildRecoveryEmail } = require('../../lib/recovery-emails');
+const { recordRun } = require('../../lib/worker-log');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -160,12 +161,25 @@ async function isUnsubscribed(email) {
 }
 
 module.exports = async function handler(req, res) {
-  if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Supabase not configured' });
-  if (!authorised(req)) return res.status(401).json({ error: 'Unauthorised' });
+  if (!SUPABASE_URL || !SERVICE) {
+    await recordRun('recovery', false, { error: 'Supabase not configured' });
+    return res.status(500).json({ error: 'Supabase not configured' });
+  }
+  if (!authorised(req)) return res.status(401).json({ error: 'Unauthorised' }); // attack noise — not logged
 
-  if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: 'Resend not configured' });
+  if (!process.env.RESEND_API_KEY) {
+    await recordRun('recovery', false, { error: 'Resend not configured' });
+    return res.status(500).json({ error: 'Resend not configured' });
+  }
 
-  const summary = { scanned: 0, reconciled: 0, sent: 0, skipped_unsub: 0, errors: 0, by_stage: { 1: 0, 2: 0, 3: 0 } };
+  // One-shot backlog sweep: an authorised manual trigger with ?backlog=1 widens
+  // the cancelled-cart lookback from 72h to 21 days ONCE, so stranded carts that
+  // aged out of the normal window get a single recovery touch. The scheduled
+  // */5 cron never sets this flag, so routine runs keep the tight 72h window and
+  // no cart is ever chased twice (each is marked recovery_stage=50 after sending).
+  const backlogMode = String((req.query && req.query.backlog) || '').trim() === '1';
+
+  const summary = { scanned: 0, reconciled: 0, sent: 0, skipped_unsub: 0, errors: 0, by_stage: { 1: 0, 2: 0, 3: 0 }, backlog: backlogMode };
 
   let candidates = [];
   try {
@@ -180,6 +194,7 @@ module.exports = async function handler(req, res) {
     );
   } catch (e) {
     console.error('[recovery/run] query failed:', e.message);
+    await recordRun('recovery', false, { phase: 'pending_query', error: e.message });
     return res.status(500).json({ error: 'Query failed', detail: e.message });
   }
 
@@ -262,7 +277,8 @@ module.exports = async function handler(req, res) {
   // so they can re-pay the SAME order). Marked recovery_stage 50 = one-shot sent.
   summary.cancel_chased = 0;
   try {
-    const lo = new Date(Date.now() - 72 * 3.6e6).toISOString();        // not older than 72h
+    const lookbackHrs = backlogMode ? 21 * 24 : 72;                    // 21d one-shot sweep, else 72h
+    const lo = new Date(Date.now() - lookbackHrs * 3.6e6).toISOString();
     const hi = new Date(Date.now() - STAGES[1] * 3.6e6).toISOString(); // at least 30 min old
     const cancelled = await sbGet(
       // Include all bank-redirect methods, not just 'fena': a cancelled Pay-by-Bank
@@ -323,8 +339,11 @@ module.exports = async function handler(req, res) {
     }
   } catch (e) {
     console.error('[recovery/run] cancelled-pass query failed:', e.message);
+    summary.errors++;
+    summary.cancel_pass_error = e.message;
   }
 
   console.log('[recovery/run] done', JSON.stringify(summary));
+  await recordRun('recovery', summary.errors === 0, summary);
   return res.status(200).json({ ok: true, ...summary });
 };
