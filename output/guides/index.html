@@ -198,10 +198,19 @@
     .gh-anim .rl-card.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s ease; }
 
     /* sticky filter bar */
-    .gh-filters { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 12px; margin: 26px 0 4px; background: rgba(3,4,7,.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-    .gh-pill { font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; background: #0a0d12; border: 1px solid #1a1d24; border-radius: 999px; padding: 7px 15px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; }
+    .gh-filters { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 0 14px; margin: 26px 0 4px; background: transparent; }
+    .gh-pill { font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; background: #0a0d12; border: 1px solid #1a1d24; border-radius: 999px; padding: 10px 22px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; position: relative; overflow: hidden; }
+    .gh-pill::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); animation: pillShimmer 3s ease-in-out infinite; pointer-events: none; }
+    @keyframes pillShimmer { 0% { left: -100%; } 50% { left: 150%; } 100% { left: 150%; } }
+    .gh-pill:nth-child(2)::before { animation-delay: .4s; }
+    .gh-pill:nth-child(3)::before { animation-delay: .8s; }
+    .gh-pill:nth-child(4)::before { animation-delay: 1.2s; }
+    .gh-pill:nth-child(5)::before { animation-delay: 1.6s; }
+    .gh-pill:nth-child(6)::before { animation-delay: 2.0s; }
+    .gh-pill:nth-child(7)::before { animation-delay: 2.4s; }
     .gh-pill:hover { color: #fff; border-color: #374151; }
     .gh-pill.active { color: #021; background: #01D3A0; border-color: #01D3A0; }
+    .gh-pill.active::before { background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent); }
     .rl-section-label { margin: 30px 0 4px; scroll-margin-top: 70px; }
   </style>
 
@@ -308,6 +317,8 @@
       <button class="gh-pill" data-filter="research">Compounds</button>
       <button class="gh-pill" data-filter="comparison">Comparisons</button>
       <button class="gh-pill" data-filter="educational">Guides</button>
+      <button class="gh-pill" data-filter="regulatory">Regulatory</button>
+      <button class="gh-pill" data-filter="conference">Trial Data</button>
       <button class="gh-pill" data-filter="glossary">Glossary &amp; FAQ</button>
     </div>
 
