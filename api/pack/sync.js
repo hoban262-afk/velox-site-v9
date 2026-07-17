@@ -61,7 +61,12 @@ module.exports = async function handler(req, res) {
   const ids = orders.map((o) => o.clickdrop_order_identifier).filter(Boolean);
   let info = [];
   let cdError = null;
-  try { info = await cd.getOrdersInfo(ids); } catch (e) { info = []; cdError = e.message; }
+  let cdDiag = null;
+  try {
+    const d = await cd.getOrdersInfoDiag(ids);
+    info = d.orders || [];
+    cdDiag = { ok: d.ok, status: d.status, shape: d.shape, count: d.count, topKeys: d.topKeys, msg: d.msg, reason: d.reason };
+  } catch (e) { info = []; cdError = e.message; }
   const byId = {};
   for (const i of info) if (i && i.orderIdentifier != null) byId[String(i.orderIdentifier)] = i;
 
@@ -73,6 +78,7 @@ module.exports = async function handler(req, res) {
   // (Click & Drop status timestamps + tracking + the key names actually returned),
   // so a renamed/emptied field shows up immediately without guessing.
   const diag = { checked: orders.length, dispatched: 0, no_live: 0, printed_no_track: 0, not_printed: 0, cd_returned: info.length };
+  if (cdDiag) diag.cd = cdDiag;
   if (cdError) diag.cd_error = String(cdError).slice(0, 200);
   const sample = [];
   let dispatched = 0;
