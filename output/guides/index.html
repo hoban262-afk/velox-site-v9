@@ -198,10 +198,19 @@
     .gh-anim .rl-card.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s ease; }
 
     /* sticky filter bar */
-    .gh-filters { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0 12px; margin: 26px 0 4px; background: rgba(3,4,7,.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-    .gh-pill { font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; background: #0a0d12; border: 1px solid #1a1d24; border-radius: 999px; padding: 7px 15px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; }
+    .gh-filters { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 0 14px; margin: 26px 0 4px; background: transparent; }
+    .gh-pill { font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; background: #0a0d12; border: 1px solid #1a1d24; border-radius: 999px; padding: 10px 22px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; position: relative; overflow: hidden; }
+    .gh-pill::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); animation: pillShimmer 3s ease-in-out infinite; pointer-events: none; }
+    @keyframes pillShimmer { 0% { left: -100%; } 50% { left: 150%; } 100% { left: 150%; } }
+    .gh-pill:nth-child(2)::before { animation-delay: .4s; }
+    .gh-pill:nth-child(3)::before { animation-delay: .8s; }
+    .gh-pill:nth-child(4)::before { animation-delay: 1.2s; }
+    .gh-pill:nth-child(5)::before { animation-delay: 1.6s; }
+    .gh-pill:nth-child(6)::before { animation-delay: 2.0s; }
+    .gh-pill:nth-child(7)::before { animation-delay: 2.4s; }
     .gh-pill:hover { color: #fff; border-color: #374151; }
     .gh-pill.active { color: #021; background: #01D3A0; border-color: #01D3A0; }
+    .gh-pill.active::before { background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent); }
     .rl-section-label { margin: 30px 0 4px; scroll-margin-top: 70px; }
   </style>
 
@@ -292,7 +301,7 @@
     <p class="page-lede">
       Educational resources for researchers working with HPLC-verified peptides - plain-English explainers, side-by-side compound comparisons, a research-terms glossary, and frequently asked questions. Everything you need to understand the science and the documentation behind each compound.
     </p>
-    <p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:#01D3A0;font-weight:600;margin:0 0 10px;">Last updated: 4 July 2026</p>
+    <p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:#01D3A0;font-weight:600;margin:0 0 10px;">Last updated: 17 July 2026</p>
     <p class="page-compliance">
       <strong>For scientific reference only - not medical advice.</strong>
       All content is derived from peer-reviewed preclinical and clinical research. Summaries are provided for scientific reference, not medical advice, diagnosis, or treatment. All compounds are for in vitro research use only. Not for human or veterinary consumption.
@@ -308,77 +317,368 @@
       <button class="gh-pill" data-filter="research">Compounds</button>
       <button class="gh-pill" data-filter="comparison">Comparisons</button>
       <button class="gh-pill" data-filter="educational">Guides</button>
+      <button class="gh-pill" data-filter="regulatory">Regulatory</button>
+      <button class="gh-pill" data-filter="conference">Trial Data</button>
       <button class="gh-pill" data-filter="glossary">Glossary &amp; FAQ</button>
     </div>
 
     <!-- Recently updated -->
     <div class="rl-section-label">Recently updated</div>
     <div class="rl-grid">
-      <a class="rl-card rl-card-published" href="/guides/retatrutide-side-effects/">
-        <div class="rl-card-cat rl-card-cat-metabolic">Guide</div>
-        <div class="rl-card-title">Retatrutide Side Effects &amp; Tolerability</div>
-        <div class="rl-card-excerpt">A research summary of the adverse events reported in retatrutide trials - the gastrointestinal-led, dose-related profile, the dose-escalation pattern and the transient heart-rate signal.</div>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-triumph-9-dose-escalation-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide TRIUMPH-9: Dose-Escalation Trial</div>
+        <div class="rl-card-excerpt">New ClinicalTrials.gov listing NCT07357415, informally tracked as TRIUMPH-9, tests dose-escalation regimens in ~600 adults with obesity, no type 2 diabetes.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
-      <a class="rl-card rl-card-published" href="/guides/retatrutide-triumph-1/">
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-triumph-2-3-pending-trials-2026/">
         <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
-        <div class="rl-card-title">TRIUMPH-1 Phase 3: Retatrutide's Pivotal Obesity Trial</div>
-        <div class="rl-card-excerpt">The headline 2026 Phase 3 read-out for retatrutide in obesity — design, reported results and research context.</div>
+        <div class="rl-card-title">Retatrutide TRIUMPH-2 &amp; TRIUMPH-3: What's Left</div>
+        <div class="rl-card-excerpt">TRIUMPH-1 and TRANSCEND-T2D-1 have reported; TRIUMPH-2, TRIUMPH-3 and the ~10,000-patient cardiovascular outcomes trial (NCT06383390) remain pending.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
-      <a class="rl-card rl-card-published" href="/guides/glp-1-physical-activity-endo-2026/">
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-arrhythmia-cardiovascular-signal-2026/">
         <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
-        <div class="rl-card-title">GLP-1 Agonists &amp; Physical Activity (ENDO 2026)</div>
-        <div class="rl-card-excerpt">What the ENDO 2026 data shows on GLP-1 receptor agonists and physical-activity endpoints.</div>
+        <div class="rl-card-title">Retatrutide Arrhythmia Signal: TRANSCEND-T2D-1</div>
+        <div class="rl-card-excerpt">STAT News (6 Jun 2026): TRANSCEND-T2D-1 reported arrhythmia in 7 of 403 retatrutide participants vs 0 of 134 on placebo, plus 3 major CV events vs 0.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/pcac-july-2026-peptide-hearing/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">PCAC Hearing: BPC-157, TB-500 &amp; 5 More Peptides (July 2026)</div>
+        <div class="rl-card-excerpt">The FDA&rsquo;s Pharmacy Compounding Advisory Committee meets 23&ndash;24 July 2026 to evaluate seven peptides for 503A bulk-compounding status. What researchers need to know.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/tirzepatide-generic-anda-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">Sandoz Files First Generic Tirzepatide ANDA</div>
+        <div class="rl-card-excerpt">The FDA accepted Sandoz&rsquo;s abbreviated applications for generic tirzepatide (Mounjaro &amp; Zepbound) on 29 June 2026 &mdash; the first generic filing for a GIP/GLP-1 dual agonist.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-triumph-1-obesity/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Phase 3 Data</div>
+        <div class="rl-card-title">TRIUMPH-1: Retatrutide 80-Week Obesity Data</div>
+        <div class="rl-card-excerpt">The pivotal 80-week Phase 3 read-out (n=2,339): retatrutide 12&nbsp;mg reported 28.3% body-weight reduction vs 2.2% placebo. Full data presented at ADA 2026.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-dysesthesia/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide Dysesthesia: TRIUMPH-4 Safety Signal</div>
+        <div class="rl-card-excerpt">TRIUMPH-4 (ADA 2026) reported dysesthesia in 20.9% on retatrutide 12&nbsp;mg vs 0.7% placebo &mdash; a class-unique signal not seen with tirzepatide or semaglutide.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/oral-semaglutide-mhra-uk-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">Oral Semaglutide: MHRA UK Approval (June 2026)</div>
+        <div class="rl-card-excerpt">The MHRA approved oral semaglutide (Wegovy tablet) for UK weight management on 11 June 2026 &mdash; the first oral GLP-1 in Europe. OASIS 4 reported 13.6% weight loss at 64 weeks.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
       <a class="rl-card rl-card-published" href="/guides/peptide-research-landscape-2026/">
         <div class="rl-card-cat rl-card-cat-metabolic">Overview</div>
         <div class="rl-card-title">Peptide Research Landscape 2026</div>
-        <div class="rl-card-excerpt">The year's major trials across every compound class — the hub linking to every compound summary and comparison.</div>
+        <div class="rl-card-excerpt">TRIUMPH-1, SYNCHRONIZE-1, orforglipron approval, oral semaglutide MHRA, FDA reclassification and the upcoming PCAC hearing &mdash; every major 2026 development in one hub.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
-          <span class="rl-card-arr">&rarr;</span>
-        </div>
-      </a>
-      <a class="rl-card rl-card-published" href="/guides/surmount-5-tirzepatide-vs-semaglutide/">
-        <div class="rl-card-cat rl-card-cat-metabolic">Comparison</div>
-        <div class="rl-card-title">SURMOUNT-5: Tirzepatide vs Semaglutide</div>
-        <div class="rl-card-excerpt">The first major head-to-head trial of tirzepatide against semaglutide for weight reduction.</div>
-        <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
-          <span class="rl-card-arr">&rarr;</span>
-        </div>
-      </a>
-      <a class="rl-card rl-card-published" href="/guides/retatrutide-sleep-apnea/">
-        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
-        <div class="rl-card-title">Retatrutide &amp; Obstructive Sleep Apnea (ADA 2026)</div>
-        <div class="rl-card-excerpt">Pre-specified TRIUMPH-1 subgroup data on retatrutide and obstructive sleep apnea, presented at ADA 2026.</div>
-        <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
     </div>
 
-    <!-- Educational Guides -->
+    <!-- Regulatory & News -->
+    <div class="rl-section-label">Regulatory &amp; News</div>
+    <div class="rl-grid">
+      <a class="rl-card rl-card-published" href="/guides/fda-peptide-reclassification-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">FDA Peptide Reclassification 2026</div>
+        <div class="rl-card-excerpt">Twelve peptides including BPC-157, TB-500 and Semax removed from FDA 503A Category 2 in April 2026. Full list, timeline and context for researchers.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/pcac-july-2026-bpc-157-tb-500/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">FDA PCAC 2026: BPC-157, TB-500 &amp; 5 More</div>
+        <div class="rl-card-excerpt">The PCAC meets 23&ndash;24 July 2026 to vote on 503A Category 1 status for seven peptides. Public comments closed 9 July. Guide to each compound&rsquo;s evidence dossier.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/pcac-july-2026-fda-evidence-review/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">FDA Flags Peptide Evidence Gaps (2026 Briefing)</div>
+        <div class="rl-card-excerpt">The FDA&rsquo;s 29 June 2026 briefing documents found no human data for TB-500 and KPV, and insufficient evidence for BPC-157, ahead of the PCAC vote.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-fda-approval-timeline/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">Retatrutide FDA Approval Timeline 2026&ndash;2028</div>
+        <div class="rl-card-excerpt">NDA filing expected Q4 2026, FDA approval estimated late 2027, MHRA UK ~2028. Phase 3 milestones, pending trials and research-use context.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-expanded-access-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">Retatrutide FDA Expanded Access (2026)</div>
+        <div class="rl-card-excerpt">In June 2026 the FDA granted compassionate-use expanded access to retatrutide for one patient outside Phase 3 trials. What it means for the approval timeline.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+          <a class="rl-card rl-card-published" href="/guides/fda-503b-bulks-list-tirzepatide-semaglutide-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">FDA Curbs Bulk Tirzepatide &amp; Semaglutide Compounding</div>
+        <div class="rl-card-excerpt">FDA (30 Apr 2026) proposed excluding tirzepatide, semaglutide and liraglutide from the 503B bulks list. Public comments close 30 July 2026.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/generic-semaglutide-canada-sevmia-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">Canada Approves Generic Semaglutide: Sevmia</div>
+        <div class="rl-card-excerpt">Health Canada approved Sevmia (Apotex) on 29 June 2026 &mdash; the first generic Wegovy-referencing product licensed for weight management anywhere.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/ghk-cu-melanotan-pcac-february-2027/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">GHK-Cu &amp; Melanotan-II: PCAC Date Set for Feb 2027</div>
+        <div class="rl-card-excerpt">FDA set a February 2027 PCAC date for GHK-Cu (injectable) and Melanotan-II compounding review &mdash; the second batch after July 2026&rsquo;s seven-peptide hearing.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/glp-1-advertising-crackdown-uk-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">UK GLP-1 Advertising Crackdown: MHRA &amp; ASA (2026)</div>
+        <div class="rl-card-excerpt">MHRA, ASA and GPhC jointly warned UK sellers (18 June 2026) against advertising unlicensed weight-loss pipeline drugs and unregulated waiting lists.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/peptide-compounding-grey-market-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Regulatory</div>
+        <div class="rl-card-title">BPC-157 Grey Market: FDA Compounding Curbs Backfire</div>
+        <div class="rl-card-excerpt">NPR (8 Jul 2026): US compounding limits pushed BPC-157, TB-500 and MOTS-c buyers to unvetted overseas sellers ahead of the 23&ndash;24 Jul PCAC vote.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- 2026 Conference & Trial Data -->
+    <div class="rl-section-label">2026 Conference &amp; Trial Data</div>
+    <div class="rl-grid">
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-triumph-9-dose-escalation-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide TRIUMPH-9: Dose-Escalation Trial</div>
+        <div class="rl-card-excerpt">NCT07357415 tests different dose-escalation regimens in ~600 adults with obesity, no T2D &mdash; a design question, not a new maintenance dose.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-triumph-2-3-pending-trials-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide TRIUMPH-2 &amp; TRIUMPH-3: What's Left</div>
+        <div class="rl-card-excerpt">TRIUMPH-2 (NCT05929079) and TRIUMPH-3 (NCT05882045) are still pending; neither is powered for cardiovascular safety &mdash; that falls to a separate ~10,000-patient outcomes trial.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-triumph-1/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">TRIUMPH-1 Phase 3: Retatrutide&rsquo;s Pivotal Obesity Trial</div>
+        <div class="rl-card-excerpt">Design, reported results and research context for the headline 2026 Phase 3 read-out &mdash; 28.3% body-weight reduction at 80 weeks on the 12&nbsp;mg dose.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-cardiometabolic-trial-data/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide Cardiometabolic Markers (ADA 2026)</div>
+        <div class="rl-card-excerpt">TRIUMPH-1 Phase 3 data at ADA 2026: retatrutide 12&nbsp;mg reduced triglycerides 41%, non-HDL cholesterol 24.2% and systolic BP 12.3&nbsp;mmHg at 80 weeks.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-dysesthesia/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide Dysesthesia: TRIUMPH-4 Signal</div>
+        <div class="rl-card-excerpt">TRIUMPH-4 (ADA 2026) reported dysesthesia in 20.9% on retatrutide 12&nbsp;mg vs 0.7% placebo &mdash; a class-unique adverse event not seen with other incretin agonists.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-arrhythmia-cardiovascular-signal-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide Arrhythmia Signal: TRANSCEND-T2D-1</div>
+        <div class="rl-card-excerpt">TRANSCEND-T2D-1 (Lancet, ADA 2026) found arrhythmia in 7 of 403 retatrutide participants vs 0 of 134 placebo, plus 3 major cardiovascular events vs 0.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/elecoglipron-solstice-ada-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Elecoglipron: Oral GLP-1 Phase 2 (ADA 2026)</div>
+        <div class="rl-card-excerpt">SOLSTICE &amp; VISTA Phase 2 data (ADA 2026, The Lancet): AstraZeneca&rsquo;s oral GLP-1 achieved &minus;1.9% HbA1c and up to 10.5% weight loss at 26 weeks. Phase 3 planned.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/lilly-quintuple-agonist-ada-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Lilly&rsquo;s Quintuple Agonist: 5 Receptors (ADA 2026)</div>
+        <div class="rl-card-excerpt">Poster 2839-LB (ADA 2026): VRX-0075 targets GLP-1, GIP, glucagon, amylin and calcitonin receptors and outperformed retatrutide for weight loss in obese rats. Preclinical only.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/glp-1-epigenetic-aging-2026/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Research Summary</div>
+        <div class="rl-card-title">GLP-1 &amp; Epigenetic Aging: 2026 RCT Evidence</div>
+        <div class="rl-card-excerpt">A 2026 Nature Communications RCT reports semaglutide reduced biological age by 3.1&ndash;4.9 years across multiple epigenetic clocks in a 32-week randomised trial.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/glp-1-autoimmune-cardiovascular-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">GLP-1 Agonists &amp; Autoimmune CVD Data (2026)</div>
+        <div class="rl-card-excerpt">Target trial emulation (JAHA, June 2026; n=26,000): GLP-1 RA use linked to 44% lower mortality and fewer cardiac events in obesity with autoimmune disease.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/tirzepatide-brown-adipose-tissue-endo-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Tirzepatide &amp; Brown Fat: TABFAT Trial (ENDO 2026)</div>
+        <div class="rl-card-excerpt">TABFAT trial (ENDO 2026, n=34): tirzepatide raised PET/CT-detected brown adipose tissue activity from 41% to 65% in 24 weeks, independent of weight loss.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/semaglutide-epigenetic-aging-2026/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Research Summary</div>
+        <div class="rl-card-title">Semaglutide &amp; Biological Aging: Epigenetic Study</div>
+        <div class="rl-card-excerpt">Nature Communications RCT (2026): semaglutide reduced biological age by 3&ndash;5 years on epigenetic clocks &mdash; the first randomised evidence of GLP-1 anti-ageing effects.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-vs-survodutide-liver-fat-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Comparison</div>
+        <div class="rl-card-title">Retatrutide vs Survodutide: Liver-Fat Data</div>
+        <div class="rl-card-excerpt">Survodutide&rsquo;s Phase 3 SYNCHRONIZE-MASLD liver-fat data (Nature Medicine, June 2026) compared with retatrutide&rsquo;s own Phase 2a MASLD trial results.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-vs-berobenatide-enicepatide/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Comparison</div>
+        <div class="rl-card-title">Retatrutide vs Berobenatide &amp; Enicepatide</div>
+        <div class="rl-card-excerpt">Pfizer&rsquo;s berobenatide and Roche&rsquo;s enicepatide posted ADA 2026 Phase 2 data (15.9% and 22.7% weight loss) &mdash; how they compare with retatrutide&rsquo;s TRIUMPH-1 numbers.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/mots-c-phase-2a-trial-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">MOTS-c Phase 2a Human Trial (2026)</div>
+        <div class="rl-card-excerpt">Hudson Biotech&rsquo;s Phase 2a trial (NCT07505745) is MOTS-c&rsquo;s first human efficacy study, testing insulin sensitivity in prediabetes and obesity.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-cognitive-effects-preclinical-study/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide &amp; Cognition: Preclinical Study</div>
+        <div class="rl-card-excerpt">A 2026 bioRxiv preprint reports retatrutide preserved memory and cut hippocampal TNF-&alpha; in diabetic rats. Preclinical, not yet peer-reviewed.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+          <a class="rl-card rl-card-published" href="/guides/glp-1-physical-activity-endo-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">GLP-1 &amp; Physical Activity: Daily Steps Fell 11% (ENDO 2026)</div>
+        <div class="rl-card-excerpt">ENDO 2026 steps study (n&equals;753): daily step counts fell 11% after starting a GLP-1 RA. What the data shows on activity, lean mass and metabolism.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-black-market-poison-centers-2026/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide Black-Market Sales: Poison Centre Data (2026)</div>
+        <div class="rl-card-excerpt">US poison centres logged a 265% surge in retatrutide exposures as unapproved vials spread to clinics and retail outlets ahead of approval.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+    </div>
+
+        <!-- Educational Guides -->
     <div class="rl-section-label">Educational Guides</div>
     <div class="rl-grid">
       <a class="rl-card rl-card-published" href="/guides/peptide-research-landscape-2026/">
         <div class="rl-card-cat rl-card-cat-metabolic">Overview</div>
         <div class="rl-card-title">Peptide Research Landscape 2026</div>
-        <div class="rl-card-excerpt">The year's major trials across every compound class - SURMOUNT-5, retatrutide TRIUMPH, survodutide and more. The hub that links to every compound summary and comparison.</div>
+        <div class="rl-card-excerpt">TRIUMPH-1, SYNCHRONIZE-1, orforglipron approval, oral semaglutide MHRA, FDA reclassification and the upcoming PCAC hearing &mdash; every major 2026 development in one hub.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 17 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -387,7 +687,7 @@
         <div class="rl-card-title">What Are Research Peptides? A Plain-English Primer</div>
         <div class="rl-card-excerpt">A simple introduction to what peptides are, how they differ from proteins, and why they are supplied strictly as in vitro research reagents.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -396,7 +696,7 @@
         <div class="rl-card-title">Peptide Storage &amp; Handling in the Lab</div>
         <div class="rl-card-excerpt">How to keep lyophilised and reconstituted research peptides stable - temperature, light, desiccants, and good laboratory practice.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -405,7 +705,7 @@
         <div class="rl-card-title">Bacteriostatic Water Explained</div>
         <div class="rl-card-excerpt">What bacteriostatic water is, how it differs from sterile water, and why it is commonly used to reconstitute peptides in the lab.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -414,7 +714,7 @@
         <div class="rl-card-title">How Peptides Are Tested: HPLC &amp; Mass Spec</div>
         <div class="rl-card-excerpt">A plain-English walk through the two main analytical methods used to confirm a peptide&rsquo;s purity and identity.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -423,7 +723,7 @@
         <div class="rl-card-title">Peptide Reconstitution Guide</div>
         <div class="rl-card-excerpt">A technical reference for dissolving lyophilised peptides - concentration calculations, sterile handling, and storage guidance.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -432,7 +732,7 @@
         <div class="rl-card-title">How to Read a Certificate of Analysis</div>
         <div class="rl-card-excerpt">What HPLC purity figures mean, how to interpret a CoA, and why mass spectrometry confirmation matters.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -441,7 +741,7 @@
         <div class="rl-card-title">How to Buy Research Peptides in the UK</div>
         <div class="rl-card-excerpt">What to look for in a UK supplier - HPLC documentation, CoA transparency, batch testing, and shipping standards.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -450,10 +750,38 @@
         <div class="rl-card-title">Are Research Peptides Legal in the UK?</div>
         <div class="rl-card-excerpt">The legal status of research peptides under UK law and what &ldquo;for research use only&rdquo; means for researchers.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
+      <a class="rl-card rl-card-published" href="/guides/most-popular-research-peptides-uk/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">Most Popular Research Peptides UK (2026)</div>
+        <div class="rl-card-excerpt">The most-studied research peptides in the UK in 2026, by research area &mdash; tissue repair, incretin/metabolic, neuropeptide, growth-hormone axis and oxidative stress.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/what-makes-a-peptide-novel/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">What Makes a Peptide Novel?</div>
+        <div class="rl-card-excerpt">A plain-English explainer on sequences, how novelty is checked against databases, and why synthesisability and chain length matter for research peptide design.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/ai-peptide-design/">
+        <div class="rl-card-cat rl-card-cat-guide">Guide</div>
+        <div class="rl-card-title">AI Peptide Design, Explained</div>
+        <div class="rl-card-excerpt">How an AI model turns a plain-English research target into novel, scored peptide sequences &mdash; and where machine-learning fits in an in-vitro research workflow.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+
     </div>
 
     <!-- Comparisons -->
@@ -464,7 +792,7 @@
         <div class="rl-card-title">SURMOUNT-5: Tirzepatide vs Semaglutide</div>
         <div class="rl-card-excerpt">The first major head-to-head trial of tirzepatide against semaglutide for weight reduction - reported results, trial design and what they mean for the field.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -473,7 +801,7 @@
         <div class="rl-card-title">BPC-157 vs TB-500</div>
         <div class="rl-card-excerpt">Two tissue-repair peptides compared side by side - mechanisms, study models, and the rationale for combining them in research.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -482,7 +810,7 @@
         <div class="rl-card-title">Semax vs Selank</div>
         <div class="rl-card-excerpt">Two Russian neuropeptides compared - their BDNF and GABA pathway mechanisms and combined research rationale.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -491,7 +819,7 @@
         <div class="rl-card-title">CJC-1295 vs Tesamorelin</div>
         <div class="rl-card-excerpt">Two GHRH analogues compared - half-life profiles and GH pulse amplitude data from rodent models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -500,7 +828,7 @@
         <div class="rl-card-title">Retatrutide vs Tirzepatide vs Semaglutide</div>
         <div class="rl-card-excerpt">Three incretin receptor agonists compared - receptor targets and the difference between single, dual, and triple agonism.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -509,7 +837,7 @@
         <div class="rl-card-title">Is Retatrutide a GLP-1?</div>
         <div class="rl-card-excerpt">Answer-first explainer - why Retatrutide is a GLP-1 / GIP / glucagon triple agonist, with plain-English diagrams.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -518,7 +846,7 @@
         <div class="rl-card-title">Selank vs DSIP</div>
         <div class="rl-card-excerpt">An anxiolytic neuropeptide compared with a sleep-modulating peptide - distinct mechanisms studied in rodent models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -527,10 +855,29 @@
         <div class="rl-card-title">GHK-Cu vs BPC-157</div>
         <div class="rl-card-excerpt">A copper-tripeptide compared with a pentadecapeptide - their differing roles in tissue-remodelling and repair research.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-vs-ozempic/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Comparison</div>
+        <div class="rl-card-title">Retatrutide vs Ozempic (Semaglutide)</div>
+        <div class="rl-card-excerpt">Triple GLP-1/GIP/glucagon agonism vs single GLP-1 agonism &mdash; receptor mechanisms, trial weight-loss data and research context compared side by side.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-vs-wegovy/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Comparison</div>
+        <div class="rl-card-title">Retatrutide vs Wegovy (Semaglutide)</div>
+        <div class="rl-card-excerpt">Triple agonism vs single GLP-1 agonism for weight management &mdash; TRIUMPH-1 vs STEP trial data, mechanisms and where each stands in 2026.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+
     </div>
 
     <!-- Glossary & FAQs -->
@@ -541,7 +888,7 @@
         <div class="rl-card-title">Research Peptide Glossary (A&ndash;Z)</div>
         <div class="rl-card-excerpt">Plain-English definitions of the key scientific and laboratory terms you will meet across our guides and research summaries.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -550,7 +897,7 @@
         <div class="rl-card-title">Frequently Asked Questions</div>
         <div class="rl-card-excerpt">Answers to common questions about ordering, shipping, documentation, and the research-use-only nature of our compounds.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -562,18 +909,18 @@
       <a class="rl-card rl-card-published" href="/guides/survodutide/">
         <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
         <div class="rl-card-title">Survodutide (BI 456906)</div>
-        <div class="rl-card-excerpt">A GLP-1/glucagon dual receptor agonist studied in obesity and MASH (NASH) research - mechanism, Phase 2 data and where it sits in the incretin field.</div>
+        <div class="rl-card-excerpt">A GLP-1/glucagon dual agonist now in Phase 3. SYNCHRONIZE-1 reported 16.6% weight loss at 46 weeks; LIVERAGE MASH programme ongoing. Updated with 2026 trial data.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
       <a class="rl-card rl-card-published" href="/guides/tirzepatide/">
         <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
         <div class="rl-card-title">Tirzepatide: Preclinical Research Overview</div>
-        <div class="rl-card-excerpt">A dual GIP/GLP-1 receptor agonist studied in incretin biology and comparative metabolic-signalling research.</div>
+        <div class="rl-card-excerpt">A dual GIP/GLP-1 receptor agonist with SURMOUNT-5 head-to-head data vs semaglutide. Updated with 2026 trial results and the Sandoz generic ANDA filing.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -582,7 +929,7 @@
         <div class="rl-card-title">Ipamorelin: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A selective growth hormone secretagogue (ghrelin-receptor agonist) studied in GH-signalling research.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -591,7 +938,7 @@
         <div class="rl-card-title">Retatrutide: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A GLP-1/GIP/glucagon triple agonist studied in preclinical and early clinical metabolic research.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -600,7 +947,7 @@
         <div class="rl-card-title">Retatrutide Reconstitution &amp; Dosing</div>
         <div class="rl-card-excerpt">Bacteriostatic water ratios, mg-per-unit concentration maths, the Phase 2 trial titration schedule and half-life - for research handling.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -609,7 +956,7 @@
         <div class="rl-card-title">Retatrutide &amp; Type 2 Diabetes Research</div>
         <div class="rl-card-excerpt">How the GLP-1/GIP/glucagon triple agonist is studied in glycaemic-control and type 2 diabetes research models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -618,7 +965,7 @@
         <div class="rl-card-title">Retatrutide &amp; Sleep Apnea Research</div>
         <div class="rl-card-excerpt">Research context for retatrutide in obstructive sleep apnea and weight-related respiratory studies.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -627,7 +974,7 @@
         <div class="rl-card-title">Retatrutide &amp; Osteoarthritis Research</div>
         <div class="rl-card-excerpt">Retatrutide in obesity-related osteoarthritis research - mechanism and study context.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 2 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -636,7 +983,7 @@
         <div class="rl-card-title">Retatrutide Side Effects &amp; Tolerability</div>
         <div class="rl-card-excerpt">What the clinical trials reported on retatrutide adverse events and tolerability - gastrointestinal events, dose escalation and the heart-rate signal. Research summary.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 4 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -645,7 +992,7 @@
         <div class="rl-card-title">BPC-157: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A synthetic pentadecapeptide studied in angiogenesis, tendon and ligament, and gastrointestinal repair models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -654,7 +1001,7 @@
         <div class="rl-card-title">TB-500: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A thymosin &beta;4 fragment studied for actin binding, cell migration, and angiogenesis in tissue-repair models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -663,7 +1010,7 @@
         <div class="rl-card-title">Semax: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A neuropeptide studied for BDNF and NGF pathway activity in preclinical neuroscience models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -672,7 +1019,7 @@
         <div class="rl-card-title">Selank: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A neuropeptide studied for anxiolytic effects and GABA pathway modulation in rodent models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -681,7 +1028,7 @@
         <div class="rl-card-title">CJC-1295: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A modified GHRH analogue studied for growth-hormone pulse amplitude in preclinical models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -690,7 +1037,7 @@
         <div class="rl-card-title">Tesamorelin: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A GHRH analogue studied for receptor activation and pulsatile GH secretion in rodent models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -699,7 +1046,7 @@
         <div class="rl-card-title">GHK-Cu: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A naturally-occurring copper-tripeptide studied in dermal fibroblast and tissue-remodelling models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -708,7 +1055,7 @@
         <div class="rl-card-title">MOTS-C: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A mitochondrially-encoded peptide studied for AMPK activation and metabolic signalling in rodent models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -717,7 +1064,7 @@
         <div class="rl-card-title">NAD+: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A cellular cofactor studied for energy metabolism and sirtuin pathway activation in animal models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -726,7 +1073,7 @@
         <div class="rl-card-title">KPV: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">An alpha-MSH C-terminal tripeptide studied for NF-&#954;B inhibition and mucosal inflammation models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -735,7 +1082,7 @@
         <div class="rl-card-title">Melanotan II: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A melanocortin receptor agonist studied for pigmentation pathway signalling in rodent models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -744,7 +1091,7 @@
         <div class="rl-card-title">Glutathione: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">An endogenous tripeptide antioxidant studied for oxidative stress pathways in cellular and animal models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 1 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
@@ -753,16 +1100,44 @@
         <div class="rl-card-title">DSIP: Preclinical Research Overview</div>
         <div class="rl-card-excerpt">A delta sleep-inducing neuropeptide studied for sleep modulation and stress response in rodent models.</div>
         <div class="rl-card-footer">
-          <span class="rl-card-date">Last updated: 3 Jul 2026</span>
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
           <span class="rl-card-arr">&rarr;</span>
         </div>
       </a>
+      <a class="rl-card rl-card-published" href="/guides/epitalon/">
+        <div class="rl-card-cat rl-card-cat-antiageing">Research Summary</div>
+        <div class="rl-card-title">Epitalon (Epithalon): Preclinical Research Overview</div>
+        <div class="rl-card-excerpt">A synthetic pineal tetrapeptide studied for telomerase activity and melatonin-rhythm regulation in ageing research models.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-mechanism-of-action/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Guide</div>
+        <div class="rl-card-title">How Retatrutide Works: Mechanism of Action</div>
+        <div class="rl-card-excerpt">A research-focused breakdown of GLP-1, GIP and glucagon receptor pathways activated by LY3437943 &mdash; why triple agonism matters for metabolic research.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 15 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+      <a class="rl-card rl-card-published" href="/guides/retatrutide-clinical-research/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Research Summary</div>
+        <div class="rl-card-title">Retatrutide Clinical Research: All Trial Data</div>
+        <div class="rl-card-excerpt">Summary of published retatrutide clinical research: Phase 1 (Lancet 2022), Phase 2 (NEJM 2023) and TRIUMPH Phase 3 data for LY3437943.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 16 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+
     </div>
 
   </div>
 </section>
 
-<section class="research-cta">
+<section class="research-cta" style="margin-top:48px">
   <div class="sec-i">
     <div class="cta-card">
       <div>
@@ -936,4 +1311,13 @@
   })();
   </script>
 </body>
-</html>
+</html>      <a class="rl-card rl-card-published" href="/guides/retatrutide-peptide-uk/">
+        <div class="rl-card-cat rl-card-cat-metabolic">Guide</div>
+        <div class="rl-card-title">Retatrutide Peptide UK: Research-Grade LY3437943</div>
+        <div class="rl-card-excerpt">Retatrutide (LY3437943) availability in the UK as a research-grade peptide &mdash; regulatory status, purity standards, and sourcing for researchers.</div>
+        <div class="rl-card-footer">
+          <span class="rl-card-date">Last updated: 14 Jul 2026</span>
+          <span class="rl-card-arr">&rarr;</span>
+        </div>
+      </a>
+    
