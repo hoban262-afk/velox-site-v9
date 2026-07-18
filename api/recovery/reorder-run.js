@@ -11,7 +11,7 @@
 
 const crypto = require('crypto');
 const { sendMail } = require('../../lib/mail');
-const { buildReorderEmail } = require('../../lib/reorder-email');
+const { buildReorderEmail, REORDER_WINDOW } = require('../../lib/reorder-email');
 const {
   cadenceDue, findPurchaseOrder, restockCodeFor,
   LEAD_DAYS, GRACE_DAYS, CODE_PCT, CODE_TTL_DAYS,
@@ -72,6 +72,10 @@ module.exports = async function handler(req, res) {
 
   const summary = { scanned: 0, sent: 0, skipped_nopurchase: 0, skipped_unsub: 0, errors: 0 };
 
+  // Order ids emailed in THIS run (either pass) so the purchase-based pass below
+  // never double-touches an order the cadence pass already nudged today.
+  const emailedThisRun = new Set();
+
   const now = Date.now();
   const upper = new Date(now + LEAD_DAYS * 864e5).toISOString();   // cycle-end at most LEAD_DAYS away
   const lower = new Date(now - GRACE_DAYS * 864e5).toISOString();  // and not more than GRACE_DAYS past
@@ -106,6 +110,10 @@ module.exports = async function handler(req, res) {
     catch (e) { summary.errors++; continue; }
     if (!order) { summary.skipped_nopurchase++; continue; }   // no stamp — they may buy within the window
 
+    // The purchase-based pass may have already nudged this exact order on a prior
+    // day. If so, stamp the cadence and skip so the customer isn't emailed twice.
+    if (order.reorder_nudged_at) { await stamp(); continue; }
+
     let code = '';
     try { code = await restockCodeFor(order); }
     catch (e) { console.error('[reorder-run] code mint failed', row.id, e.message); summary.errors++; continue; }
@@ -130,6 +138,10 @@ module.exports = async function handler(req, res) {
       });
       if (!sendRes.ok) { summary.errors++; continue; }
       await stamp({ code: code });
+      // Mark the underlying order nudged too, so the purchase-based pass never
+      // re-touches it on a later day (symmetric dedupe with that pass).
+      await sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { reorder_nudged_at: new Date().toISOString() }).catch(() => {});
+      emailedThisRun.add(order.id);
       summary.sent++;
       console.log(`[reorder-run] cadence ${row.id} (${row.compound_key}) -> ${row.email}`);
     } catch (e) {
@@ -137,6 +149,90 @@ module.exports = async function handler(req, res) {
       summary.errors++;
     }
   }
+
+  // ── Purchase-based pass ───────────────────────────────────────────────────────
+  // The cadence pass above only reaches customers who entered a cycle in the
+  // Protocol Scheduler (research_cadence). This pass nudges EVERY past buyer once,
+  // ~REORDER_WINDOW after their order was DISPATCHED, whether or not they set a
+  // cadence. It is deliberately code-LESS (current catalogue pricing, no discount)
+  // so we don't train buyers to wait for a coupon — the incentive stays on the
+  // opt-in cadence path. Exactly one nudge per order, ever (orders.reorder_nudged_at).
+  const pSummary = { scanned: 0, sent: 0, skipped_reordered: 0, skipped_cadence: 0, skipped_unsub: 0, errors: 0 };
+  try {
+    const hi = new Date(now - REORDER_WINDOW.minDays * 864e5).toISOString(); // dispatched at least minDays ago
+    const lo = new Date(now - REORDER_WINDOW.maxDays * 864e5).toISOString(); // but no more than maxDays ago
+    const pOrders = await sbGet(
+      'orders?status=eq.dispatched&reorder_nudged_at=is.null' +
+      `&total=gt.0&dispatched_at=lte.${encodeURIComponent(hi)}&dispatched_at=gte.${encodeURIComponent(lo)}` +
+      '&select=id,created_at,dispatched_at,customer_name,customer_email,items,total' +
+      '&order=dispatched_at.asc&limit=200'
+    );
+
+    for (const order of pOrders) {
+      if (pSummary.sent >= MAX_PER_RUN) break;
+      pSummary.scanned++;
+      if (!order.customer_email) continue;
+      if (emailedThisRun.has(order.id)) continue; // cadence pass already emailed it this run
+
+      const pStamp = () => sbPatch(
+        `orders?id=eq.${encodeURIComponent(order.id)}`,
+        { reorder_nudged_at: new Date().toISOString() }
+      ).catch(() => {});
+
+      // Already reordered? A newer paid/dispatched order for this email means the
+      // customer came back on their own — don't nudge, just stamp so we skip it.
+      try {
+        const newer = await sbGet(
+          `orders?customer_email=eq.${encodeURIComponent(String(order.customer_email).toLowerCase())}` +
+          `&status=in.(paid,dispatched)&created_at=gt.${encodeURIComponent(order.dispatched_at)}` +
+          '&select=id&limit=1'
+        );
+        if (Array.isArray(newer) && newer.length) { pSummary.skipped_reordered++; await pStamp(); continue; }
+      } catch (e) { pSummary.errors++; continue; }
+
+      // A recovery_code already bound to this order means the cadence path (or an
+      // abandoned-cart stage 3) already offered this buyer a code — skip to avoid
+      // a double touch, and stamp so we never reconsider it.
+      try {
+        const existingCode = await sbGet(`recovery_codes?order_id=eq.${encodeURIComponent(order.id)}&select=code&limit=1`);
+        if (Array.isArray(existingCode) && existingCode.length) { pSummary.skipped_cadence++; await pStamp(); continue; }
+      } catch { /* non-fatal — proceed to send */ }
+
+      if (await isUnsubscribed(order.customer_email)) { pSummary.skipped_unsub++; await pStamp(); continue; }
+
+      const links = {
+        reorderUrl:     `${SITE}/api/recovery/reorder?token=${encodeURIComponent(signReorderToken(order.id))}`,
+        unsubscribeUrl: `${SITE}/api/newsletter/unsubscribe?token=${encodeURIComponent(signEmailToken(order.customer_email))}`,
+      };
+
+      let email;
+      try { email = buildReorderEmail(order, links, {}); } // code-less variant (no discount)
+      catch (e) { console.error('[reorder-run] purchase build failed', order.id, e.message); pSummary.errors++; continue; }
+
+      try {
+        const sendRes = await sendMail({
+          to: order.customer_email, subject: email.subject, html: email.html,
+          flow: 'reorder', orderId: order.id,
+          headers: {
+            'List-Unsubscribe': `<${links.unsubscribeUrl}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
+        });
+        if (!sendRes.ok) { pSummary.errors++; continue; }
+        await pStamp();
+        emailedThisRun.add(order.id);
+        pSummary.sent++;
+        console.log(`[reorder-run] purchase nudge order ${order.id} -> ${order.customer_email}`);
+      } catch (e) {
+        console.error('[reorder-run] purchase send failed', order.id, e.message);
+        pSummary.errors++;
+      }
+    }
+  } catch (e) {
+    console.error('[reorder-run] purchase pass query failed:', e.message);
+    pSummary.errors++;
+  }
+  summary.purchase = pSummary;
 
   console.log('[reorder-run] done', JSON.stringify(summary));
   return res.status(200).json({ ok: true, ...summary });

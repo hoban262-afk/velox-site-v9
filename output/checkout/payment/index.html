@@ -766,6 +766,15 @@
         <div class="co-sum-hdr">Order summary</div>
         <div id="co-cart-items"></div>
 
+        <!-- Order bump: one-tap add of the consumable nearly every peptide order needs -->
+        <div id="co-bump" hidden style="display:flex;align-items:center;gap:12px;margin:14px 0 4px;padding:12px 14px;border:1px dashed rgba(1,211,160,.45);border-radius:10px;background:rgba(1,211,160,.05)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:#fff;line-height:1.35">Add <span id="co-bump-name">Bac Water</span> <span id="co-bump-size" style="color:#01D3A0">10ml</span>?</div>
+            <div style="font-size:12px;color:#9CA3AF;line-height:1.5;margin-top:3px">Reconstitute your peptides &mdash; add it now so it ships together, no second delivery.</div>
+          </div>
+          <button type="button" id="co-bump-add" style="flex-shrink:0;background:#01D3A0;color:#030407;border:0;border-radius:6px;padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap">+ <span id="co-bump-price">&pound;9.99</span></button>
+        </div>
+
         <!-- Discount code -->
         <div class="co-discount-wrap">
           <div class="co-discount-row">
@@ -1341,6 +1350,53 @@
     }
     if (document.readyState !== 'loading') apply();
     else document.addEventListener('DOMContentLoaded', apply);
+  })();
+  </script>
+
+  <script>
+  /* Checkout order-bump — one-tap add of Bacteriostatic Water, the consumable
+     nearly every peptide order needs. Purely additive: it appends a real
+     catalogue SKU to vp_cart and fires vp:cart-repriced, so checkout.js
+     re-renders the order summary AND republishes __vpCheckoutTotals — the same
+     single source of truth the Pay-by-Bank (Fena) charge engine reads. There is
+     NO separate charge-path maths here (that drift caused the #2943 overcharge).
+     Self-hides when the cart is empty or already contains bac water. */
+  (function () {
+    var BUMP = { slug: 'bacteriostatic-water', name: 'Bac Water', size: '10ml', price: 9.99, url: '/supplies/bacteriostatic-water/' };
+    function getCart() { try { return JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { return []; } }
+    function hasBump(cart) { return cart.some(function (i) { return String(i.slug || '').toLowerCase() === BUMP.slug; }); }
+
+    var box = document.getElementById('co-bump');
+    if (!box) return;
+    var btn     = document.getElementById('co-bump-add');
+    var nameEl  = document.getElementById('co-bump-name');
+    var sizeEl  = document.getElementById('co-bump-size');
+    var priceEl = document.getElementById('co-bump-price');
+    if (nameEl)  nameEl.textContent  = BUMP.name;
+    if (sizeEl)  sizeEl.textContent  = BUMP.size;
+    if (priceEl) priceEl.textContent = '£' + BUMP.price.toFixed(2);
+
+    function refresh() {
+      var cart = getCart();
+      box.hidden = (!cart.length || hasBump(cart));
+    }
+
+    if (btn) btn.addEventListener('click', function () {
+      var cart = getCart();
+      if (!cart.length || hasBump(cart)) { refresh(); return; }   // guard against double-add
+      cart.push({ slug: BUMP.slug, name: BUMP.name, url: BUMP.url, size: BUMP.size, price: BUMP.price, qty: 1 });
+      try { localStorage.setItem('vp_cart', JSON.stringify(cart)); } catch (e) {}
+      // Re-render the summary + republish the authoritative totals the charge
+      // engine reads. checkout.js listens for this exact event.
+      try { document.dispatchEvent(new Event('vp:cart-repriced')); } catch (e) {}
+      box.hidden = true;
+    });
+
+    // Evaluate visibility on load and whenever the cart / totals change.
+    if (document.readyState !== 'loading') refresh();
+    else document.addEventListener('DOMContentLoaded', refresh);
+    try { document.addEventListener('vp:cart-repriced', refresh); } catch (e) {}
+    try { document.addEventListener('vp:totals-updated', refresh); } catch (e) {}
   })();
   </script>
 </body>
