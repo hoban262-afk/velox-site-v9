@@ -186,10 +186,12 @@ module.exports = async function handler(req, res) {
     // Only Fena pending orders older than the earliest threshold, with a real
     // email and a positive total. Oldest first so the backlog drains fairly.
     const cutoff = new Date(Date.now() - STAGES[1] * 3.6e6).toISOString();
+    // Include 'superseded' (a retry replaced this attempt) so we still self-heal a
+    // superseded order the customer actually paid — but it's never EMAILED below.
     candidates = await sbGet(
-      'orders?status=eq.pending&payment_method=eq.fena' +
+      'orders?status=in.(pending,superseded)&payment_method=eq.fena' +
       `&total=gt.0&created_at=lt.${encodeURIComponent(cutoff)}` +
-      '&select=id,created_at,customer_name,customer_email,items,total,recovery_stage,fena_payment_id' +
+      '&select=id,status,created_at,customer_name,customer_email,items,total,recovery_stage,fena_payment_id' +
       '&order=created_at.asc&limit=200'
     );
   } catch (e) {
@@ -216,6 +218,11 @@ module.exports = async function handler(req, res) {
       }
       continue; // never nag a paid customer
     }
+
+    // Superseded = a newer retry replaced this attempt. We self-heal it above
+    // (fulfil if the customer actually paid THIS one), but never send it an
+    // abandoned-cart email — the newer attempt is the live one to chase.
+    if (order.status === 'superseded') continue;
 
     const stage = dueStage(order);
     if (!stage) continue;

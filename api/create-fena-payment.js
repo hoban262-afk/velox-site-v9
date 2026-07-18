@@ -19,6 +19,20 @@ export const config = { runtime: 'edge' };
 
 const FENA_ENDPOINT = 'https://epos.api.prod-gcp.fena.co/open/payments/single/create-and-process';
 
+// Ask Fena's own public status endpoint whether a payment id has settled.
+// Same contract used by confirm-fena-payment.js / fena-webhook.js / recovery.
+const FENA_PAID_STATUSES = new Set(['paid', 'completed', 'settled', 'captured', 'complete', 'success']);
+async function fenaPaymentPaid(paymentId) {
+  if (!paymentId) return false;
+  try {
+    const r = await fetch(`https://epos.api.prod-gcp.fena.co/public/payment-flow/single/${encodeURIComponent(paymentId)}/data`);
+    if (!r.ok) return false;
+    const j = await r.json().catch(() => null);
+    const s = j && j.data && j.data.status ? String(j.data.status).toLowerCase() : '';
+    return FENA_PAID_STATUSES.has(s);
+  } catch { return false; }
+}
+
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -195,6 +209,44 @@ export default async function handler(req) {
       }
     } catch (e) {
       console.error('[create-fena-payment] price guard threw (non-fatal):', e.message);
+    }
+  }
+
+  // ── Collapse rapid retry duplicates ─────────────────────────────────────────
+  // Every checkout submit used to INSERT a fresh 'pending' order, so a customer
+  // who retried a Pay-by-Bank attempt (bank app closed, timed out, tried again)
+  // left a trail of extra rows. Those later surfaced as separate 'cancelled'
+  // orders, badly inflating the cancelled / lost-revenue metrics (a single buyer
+  // who succeeded on their 3rd tap looked like 2 lost sales). Before inserting,
+  // mark any still-unpaid 'pending' attempt from THIS visitor (same sid, last 2h)
+  // as 'superseded' so it's excluded from cancelled/abandoned metrics and never
+  // chased by the recovery cron. We check Fena FIRST and skip any attempt it has
+  // actually settled, so a real payment is never hidden. Fully best-effort: any
+  // error here must never block taking payment.
+  if (SB_URL && SB_SERVICE && meta.sid) {
+    try {
+      const since  = new Date(Date.now() - 2 * 3600 * 1000).toISOString();
+      const dupUrl = `${SB_URL}/rest/v1/orders?payment_method=eq.fena&status=eq.pending`
+        + `&sid=eq.${encodeURIComponent(meta.sid)}&created_at=gt.${encodeURIComponent(since)}`
+        + `&select=id,fena_payment_id`;
+      const dr = await fetch(dupUrl, { headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` } });
+      if (dr.ok) {
+        const dupes = await dr.json().catch(() => []);
+        for (const d of (Array.isArray(dupes) ? dupes : [])) {
+          // Never hide an attempt the customer actually paid — leave it pending so
+          // the webhook / confirm / recovery self-heal fulfils it as normal.
+          if (d.fena_payment_id && await fenaPaymentPaid(d.fena_payment_id)) continue;
+          // Conditional PATCH (status=eq.pending) so we can't clobber a row a
+          // webhook just flipped to 'paid' in the same moment.
+          await fetch(`${SB_URL}/rest/v1/orders?id=eq.${encodeURIComponent(d.id)}&status=eq.pending`, {
+            method:  'PATCH',
+            headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+            body:    JSON.stringify({ status: 'superseded' }),
+          }).catch(() => {});
+        }
+      }
+    } catch (e) {
+      console.error('[create-fena-payment] supersede-dupes threw (non-fatal):', e.message);
     }
   }
 
