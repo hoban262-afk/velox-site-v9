@@ -331,6 +331,28 @@
     } else if (saveRow) {
       saveRow.style.display = 'none';
     }
+
+    // ── Single source of truth for the charge engine ──────────────────────────
+    // Publish the EXACT totals we just rendered (the #co-total the customer sees)
+    // so the Pay-by-Bank (Fena) button charges the same figure. The inline charge
+    // script must never re-derive discounts/points/shipping on its own — that
+    // parallel maths drifted and overcharged (ticket #2943: cart £62.09 but
+    // Pay by Bank showed ~£72 because the code wasn't seen). Fires on every render
+    // (load, reprice, code applied, points applied, shipping change).
+    try {
+      window.__vpCheckoutTotals = {
+        subtotal:        t.subtotal,
+        shipping:        shipping,
+        discount_code:   promo.code  || '',
+        discount_label:  promo.label || '',
+        discount_saving: saving,
+        points_saving:   ptsSaving,
+        total:           total,
+        region:          r,
+        currency:        t.currency || 'GBP',
+      };
+      document.dispatchEvent(new Event('vp:totals-updated'));
+    } catch (e) {}
   }
 
   function randChars(n) {

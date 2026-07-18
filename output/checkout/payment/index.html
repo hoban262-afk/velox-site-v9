@@ -1025,22 +1025,38 @@
     return { code: code ? code.code : '', saving: Math.round((vialPromo + packSaving) * 100) / 100 };
   }
 
+  // Authoritative totals published by checkout.js (renderCartSummary) — the exact
+  // figures shown in the order summary (#co-total), already accounting for the
+  // discount code, points redemption, Pro free-shipping and method-aware shipping.
+  // This is the ONLY correct source for the Fena charge. The legacy bestPromo()
+  // recompute below is a last-resort fallback for if checkout.js hasn't rendered
+  // yet; it must never be the amount we actually charge when authoritative exists.
+  function authoritativeTotals() {
+    var a = window.__vpCheckoutTotals;
+    if (a && typeof a.total === 'number' && isFinite(a.total)) return a;
+    return null;
+  }
+
   // Update the PAY NOW button amount display
   function updateFenaTotal() {
+    var el = document.getElementById('fena-total');
+    if (!el) return;
+    var a = authoritativeTotals();
+    if (a) { el.textContent = fmtPounds(a.total); return; }
+    // Fallback: checkout.js not ready yet — approximate from local cart state.
     var cart     = getCart();
     var t        = cartTotals(cart);
     var promo    = bestPromo(cart);
-    var saving   = promo.saving;
-    var discSub  = Math.max(0, t.subtotal - saving);
+    var discSub  = Math.max(0, t.subtotal - promo.saving);
     var ship     = discSub >= FREE_THRESHOLD ? 0 : shipRate();
-    var el = document.getElementById('fena-total');
-    if (el) el.textContent = fmtPounds(discSub + ship);
+    el.textContent = fmtPounds(discSub + ship);
   }
 
   updateFenaTotal();
-  // Refresh the Pay Now amount whenever checkout.js applies a discount or
-  // pricing.js re-prices the cart from the live source.
+  // Refresh the Pay Now amount whenever checkout.js recomputes the totals
+  // (discount applied, points applied, shipping changed) or the cart is repriced.
   try {
+    document.addEventListener('vp:totals-updated', updateFenaTotal);
     document.addEventListener('vp:discount-applied', updateFenaTotal);
     document.addEventListener('vp:cart-repriced', updateFenaTotal);
   } catch (e) {}
@@ -1109,12 +1125,27 @@
       }
       // Funnel: a valid Pay-by-Bank attempt was initiated (per-method drop-off).
       try { if (window.vpTrack) window.vpTrack('payment_method_selected', { method: 'fena' }); } catch (e) {}
-      var t        = cartTotals(cart);
-      var promo    = bestPromo(cart);
-      var saving   = promo.saving;
-      var discSub  = Math.max(0, t.subtotal - saving);
-      var ship     = discSub >= FREE_THRESHOLD ? 0 : shipRate();
-      var total    = discSub + ship;
+      // Charge the EXACT total checkout.js rendered (see #co-total). Never
+      // re-derive it here — the parallel recompute overcharged when a code,
+      // points, or Pro shipping was in play (ticket #2943).
+      var A        = authoritativeTotals();
+      var t        = cartTotals(cart);   // subtotal source + fallback shipping
+      var promo, saving, ship, total, ptsSaving;
+      if (A) {
+        saving    = Number(A.discount_saving) || 0;
+        ptsSaving = Number(A.points_saving)   || 0;
+        ship      = Number(A.shipping)        || 0;
+        total     = Number(A.total);
+        promo     = { code: A.discount_code || '', saving: saving };
+        t.subtotal = (typeof A.subtotal === 'number') ? A.subtotal : t.subtotal;
+      } else {
+        promo     = bestPromo(cart);
+        saving    = promo.saving;
+        ptsSaving = 0;
+        var discSub = Math.max(0, t.subtotal - saving);
+        ship      = discSub >= FREE_THRESHOLD ? 0 : shipRate();
+        total     = discSub + ship;
+      }
       var totalPence = Math.round(total * 100);
 
       // 3. Generate order reference
@@ -1136,6 +1167,7 @@
         shipping:        ship,
         discount_code:   promo.code,
         discount_saving: saving,
+        points_saving:   ptsSaving,
         total:           total,
         cart_snapshot:   JSON.stringify(cart),
         payment_method:  'fena',
@@ -1176,6 +1208,7 @@
         shipping:         ship.toFixed(2),
         discount_code:    promo.code,
         discount_saving:  saving.toFixed(2),
+        points_saving:    ptsSaving.toFixed(2),
         points_redeemed:  Number(chk.points_redeemed) || 0,
         total:            total.toFixed(2),
         currency:         'GBP',
