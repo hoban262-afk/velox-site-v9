@@ -1,0 +1,153 @@
+# Velox Peptides — Compound Datasheet (research reagents, in vitro use only)
+
+> Structured spec facts for each compound Velox Peptides supplies. Research reagents for in vitro laboratory use only — not medicines, not for human or veterinary use. Figures are from batch-verified product data.
+
+### Buy BPC-157 UK — ≥99% HPLC-Verified + CoA
+https://veloxpeps.com/compounds/bpc-157/
+- CAS Number: 137525-51-0
+- Molecular weight: 1419.5 g/mol
+- Molecular Formula: C₆₂H₉₈N₁₆O₂₂
+- Sequence: GEPPPGKPADDAGLV
+- HPLC Purity: 99.4% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy BPC-157 & TB-500 UK – Research Blend
+https://veloxpeps.com/compounds/bpc157-tb500-mix/
+- CAS Number: 137525-51-0 / 77591-33-4
+- Molecular weight: 1419.5 + 4963.4 g/mol
+- Molecular Formula: BPC-157 (C₆₂H₉₈N₁₆O₂₂) + TB-500 fragment
+- Sequence: GEPPPGKPADDAGLV (BPC-157) + Ac-SD...Ac-SDKPDMAEIEKFDKS-fragment (TB-500)
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy CJC-1295 (no DAC) UK – GHRH Peptide
+https://veloxpeps.com/compounds/cjc-1295/
+- CAS Number: 863288-34-0
+- Molecular weight: 3367.8 g/mol
+- Molecular Formula: C₁₅₂H₂₅₂N₄₄O₄₂
+- Sequence: HAIBU-Y-D-Ala-DFA-LRKVLGQLSARKLLQDIMSR-NH2 (no DAC)
+- HPLC Purity: 99.1% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy DSIP UK - Delta Sleep-Inducing Peptide
+https://veloxpeps.com/compounds/dsip/
+- CAS Number: 62568-57-4
+- Molecular weight: 848.9 g/mol
+- Molecular Formula: C₃₅H₄₈N₁₀O₁₅
+- Sequence: WAGGDASGE
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy GHK-Cu UK – Copper Tripeptide-1
+https://veloxpeps.com/compounds/ghk-cu/
+- CAS Number: 49557-75-7
+- Molecular weight: 402.9 g/mol
+- Molecular Formula: C₁₄H₂₃CuN₆O₄
+- Sequence: Gly-His-Lys · Cu²⁺
+- HPLC Purity: 99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy Glutathione UK – Research Reagent
+https://veloxpeps.com/compounds/glutathione/
+- CAS Number: 70-18-8
+- Molecular weight: 307.3 g/mol
+- Molecular Formula: C₁₀H₁₇N₃O₆S
+- Sequence: γ-L-glutamyl-L-cysteinyl-glycine
+- HPLC Purity: 99.2% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy Ipamorelin UK – GH Secretagogue
+https://veloxpeps.com/compounds/ipamorelin/
+- CAS Number: 170851-70-4
+- Molecular weight: 711.85 g/mol
+- Molecular Formula: C₃₈H₄₉N₉O₅
+- Sequence: Aib-His-D-2-Nal-D-Phe-Lys-NH₂
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy KPV UK – Anti-Inflammatory Peptide
+https://veloxpeps.com/compounds/kpv/
+- CAS Number: 13147-97-2
+- Molecular weight: 299.4 g/mol
+- Molecular Formula: C₁₄H₂₅N₃O₄
+- Sequence: Lys-Pro-Val
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy MOTS-C UK – Mitochondrial Peptide
+https://veloxpeps.com/compounds/mots-c/
+- CAS Number: 1627580-64-6
+- Molecular weight: 2174.5 g/mol
+- Molecular Formula: C₁₀₁H₁₅₂N₂₈O₂₂S₂
+- Sequence: MRWQEMGYIFYPRKLR
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy NAD+ UK - Research Reagent
+https://veloxpeps.com/compounds/nad-plus/
+- CAS Number: 53-84-9
+- Molecular weight: 663.4 g/mol
+- Molecular Formula: C₂₁H₂₇N₇O₁₄P₂
+- Sequence: -
+- HPLC Purity: 99.5% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy Retatrutide UK — ≥99% HPLC-Verified
+https://veloxpeps.com/compounds/retatrutide/
+- CAS Number: 2381089-83-2
+- Molecular weight: 4731.3 g/mol
+- Molecular Formula: Synthetic peptide (MW 4731.3 Da)
+- Sequence: Modified 39-aa peptide - triple agonist
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy Selank UK - Anxiolytic Research Peptide
+https://veloxpeps.com/compounds/selank/
+- CAS Number: 129954-34-3
+- Molecular weight: 751.9 g/mol
+- Molecular Formula: C₃₃H₅₇N₉O₁₁
+- Sequence: TKPRPGP
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy Semax UK – Neuropeptide Research
+https://veloxpeps.com/compounds/semax/
+- CAS Number: 80714-61-0
+- Molecular weight: 813.9 g/mol
+- Molecular Formula: C₃₇H₅₁N₉O₁₀S
+- Sequence: MEHFPGP
+- HPLC Purity: 99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy TB-500 UK – Thymosin Beta-4 Peptide
+https://veloxpeps.com/compounds/tb-500/
+- CAS Number: 77591-33-4
+- Molecular weight: 4963.4 g/mol
+- Molecular Formula: C₂₁₂H₃₅₀N₅₆O₇₈S
+- Sequence: Ac-SDKPDMAEIEKFDKSKLKKTETQEKNPLPSKETIEQEKQAGES-OH (frag)
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
+
+### Buy Tesamorelin UK – GHRH Peptide
+https://veloxpeps.com/compounds/tesamorelin/
+- CAS Number: 218949-48-5
+- Molecular weight: 5195.8 g/mol
+- Molecular Formula: C₂₂₁H₃₅₆N₆₄O₆₈S
+- Sequence: trans-3-hexenoyl-YADAIFTNSYRKVLGQLSARKLLQDIMSR-NH2
+- HPLC Purity: ≥99% (batch-verified)
+- Form: Lyophilised powder
+- Storage: 2–8°C, desiccated, protected from light
