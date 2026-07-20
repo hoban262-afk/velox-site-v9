@@ -19,7 +19,8 @@
 {"@type":"ListItem","position":1,"item":{"@type":"WebApplication","name":"Velox Design Lab","applicationCategory":"Science","operatingSystem":"Web","url":"https://veloxpeps.com/design-lab/","description":"AI tool that invents novel research peptides from a plain-English brief, graded and novelty-checked.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}},
 {"@type":"ListItem","position":2,"item":{"@type":"WebApplication","name":"Peptide Comparison Tool","applicationCategory":"Science","operatingSystem":"Web","url":"https://veloxpeps.com/tools/compare/","description":"Compare research peptides side by side — mechanism, receptors, research data, molecular weight, solubility and pricing.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}},
 {"@type":"ListItem","position":3,"item":{"@type":"WebApplication","name":"Protocol Scheduler","applicationCategory":"Science","operatingSystem":"Web","url":"https://veloxpeps.com/tools/scheduler/","description":"Plan a multi-compound research register on a calendar and export it to your calendar app.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}},
-{"@type":"ListItem","position":4,"item":{"@type":"WebApplication","name":"Reconstitution Calculator","applicationCategory":"Science","operatingSystem":"Web","url":"https://veloxpeps.com/tools/reconstitution-calculator/","description":"Calculate bacteriostatic water volume and draw level with an animated syringe guide.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}}
+{"@type":"ListItem","position":4,"item":{"@type":"WebApplication","name":"Reconstitution Calculator","applicationCategory":"Science","operatingSystem":"Web","url":"https://veloxpeps.com/tools/reconstitution-calculator/","description":"Calculate bacteriostatic water volume and draw level with an animated syringe guide.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}},
+{"@type":"ListItem","position":5,"item":{"@type":"WebApplication","name":"Velox Research Assistant","applicationCategory":"Science","operatingSystem":"Web","url":"https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant","description":"A free AI reference assistant for research peptides — mechanisms, comparisons, reconstitution maths, purity/CoA and UK regulatory status, built on Velox's HPLC batch-verified compound data. For in vitro research reference only.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}}
 ]}</script>
 <style>
   :root{ --g:#01D3A0; --g2:#6cf7d6; --bg:#04070b; --bg2:#0a0e13; --bg3:#0e141b; --brd:#1a2230; --mut:#8aa0a0; --dim:#4b5563; }
@@ -52,6 +53,20 @@
   .th-pro h3{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:30px;margin:0 0 8px;}
   .th-pro p{color:var(--mut);font-size:15px;line-height:1.6;max-width:560px;margin:0 auto 18px;}
   .th-pro a{display:inline-block;background:var(--g);color:#04140f;font-weight:800;font-size:15px;padding:13px 26px;border-radius:11px;text-decoration:none;}
+  /* Research Assistant band */
+  .th-ra{display:flex;align-items:center;gap:22px;margin-top:16px;background:linear-gradient(120deg,rgba(1,211,160,.09),rgba(1,211,160,.02) 62%);border:1px solid rgba(1,211,160,.3);border-radius:20px;padding:24px 26px;text-decoration:none;color:#fff;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;}
+  .th-ra:hover{transform:translateY(-4px);border-color:rgba(1,211,160,.5);box-shadow:0 20px 50px -24px rgba(1,211,160,.4);}
+  .th-ra-ic{flex:0 0 auto;width:66px;height:66px;border-radius:18px;overflow:hidden;border:1px solid rgba(1,211,160,.25);}
+  .th-ra-ic img{width:100%;height:100%;object-fit:cover;display:block;}
+  .th-ra-body{flex:1;min-width:0;}
+  .th-ra-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--g);}
+  .th-ra-body h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;margin:6px 0 8px;}
+  .th-ra-body p{color:var(--mut);font-size:14px;line-height:1.55;margin:0 0 12px;}
+  .th-ra-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .th-ra-chips span{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.03em;color:#cdd6dd;background:rgba(255,255,255,.04);border:1px solid var(--brd);border-radius:999px;padding:4px 10px;}
+  .th-ra-cta{flex:0 0 auto;align-self:center;background:var(--g);color:#04140f;font-weight:800;font-size:14.5px;padding:12px 20px;border-radius:11px;white-space:nowrap;}
+  .th-ra:hover .th-ra-cta{filter:brightness(1.05);}
+  @media(max-width:720px){.th-ra{flex-direction:column;align-items:flex-start;}.th-ra-cta{align-self:stretch;text-align:center;}}
   .th-legal{text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);margin-top:30px;}
 </style>
 </head>
@@ -125,7 +140,7 @@
   <div class="th-hero">
     <div class="th-eyebrow">The Velox Tool Suite</div>
     <h1>Research peptide tools.<br><span class="ac">Built for the bench.</span></h1>
-    <p>Four free tools for peptide researchers — invent brand-new peptides with AI, compare the field side by side, plan a research register, and calculate reconstitution. Try each free; unlock unlimited use with Velox Pro.</p>
+    <p>Free tools for peptide researchers — invent brand-new peptides with AI, compare the field side by side, plan a research register, calculate reconstitution, and ask our AI research assistant anything. Try each free; unlock unlimited use with Velox Pro.</p>
   </div>
 
   <div class="th-grid">
@@ -165,6 +180,17 @@
       <span class="th-cta">Open calculator →</span>
     </a>
   </div>
+
+  <a class="th-ra" href="https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant" target="_blank" rel="noopener">
+    <div class="th-ra-ic"><img src="/assets/images/icon-192.png" alt="Velox Research Assistant" width="66" height="66" loading="lazy"></div>
+    <div class="th-ra-body">
+      <span class="th-ra-eyebrow">New · Available in the ChatGPT store</span>
+      <h3>Velox Research Assistant</h3>
+      <p>A free AI reference for research peptides — mechanisms, comparisons, reconstitution maths, purity/CoA and UK regulatory status. Every answer is built on our HPLC batch-verified compound data and points back to primary sources. For in vitro research reference only; not medical or dosing advice.</p>
+      <div class="th-ra-chips"><span>✓ Verified by veloxpeps.com</span><span>✓ Built on batch-verified data</span><span>✓ In vitro reference only</span></div>
+    </div>
+    <span class="th-ra-cta">Open in ChatGPT →</span>
+  </a>
 
   <div class="th-pro">
     <h3>One membership unlocks it all</h3>
