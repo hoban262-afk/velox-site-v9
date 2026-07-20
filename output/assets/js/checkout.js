@@ -444,7 +444,7 @@
       if (ukCountryWrap)      ukCountryWrap.style.display      = r === 'UK' ? '' : 'none';
       if (intlCountryWrap)    intlCountryWrap.style.display    = r === 'INTL' ? '' : 'none';
       if (intlComplianceWrap) intlComplianceWrap.style.display = r === 'INTL' ? '' : 'none';
-      if (intlRegionNote)     intlRegionNote.style.display     = r === 'INTL' ? '' : 'none';
+      if (intlRegionNote)     intlRegionNote.style.display     = r === 'INTL' ? 'block' : 'none';
       updateShipping(r);
       // Persist region (+ zone) immediately so the charge engine and the region-
       // dependent payment UI see it the moment the customer toggles it on the
