@@ -4,6 +4,8 @@
 
 Key facts: every batch is HPLC-verified with certificates of analysis available in the public CoA library. Flagship compound: Retatrutide (LY3437943), a GLP-1/GIP/glucagon triple agonist. The site also hosts free research tools, including Velox Design Lab — an AI tool that generates novel research-peptide sequences scored for novelty and synthesisability.
 
+For a single-fetch digest of the definitive answer to every research guide and compound, see [llms-full.txt](https://veloxpeps.com/llms-full.txt).
+
 ## Compounds (research reagents)
 
 - [Retatrutide](https://veloxpeps.com/compounds/retatrutide/): GLP-1/GIP/glucagon triple agonist (LY3437943), 10mg, 15mg, 20mg lyophilised vials and 10mg 10-pack, ≥99% HPLC purity

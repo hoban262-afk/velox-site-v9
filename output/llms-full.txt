@@ -1,0 +1,423 @@
+# Velox Peptides — Full Answer Digest (llms-full.txt)
+
+> One-fetch digest of the definitive answer for every research guide and compound on veloxpeps.com. Velox Peptides (CRP Labs Ltd, Northern Ireland, UK) supplies research-grade peptides for in vitro laboratory use only — not medicines, not for human or veterinary use. Each entry gives the page's canonical answer and URL for citation.
+
+## Research guides (84)
+
+### AI Peptide Design, Explained
+https://veloxpeps.com/guides/ai-peptide-design/
+AI peptide design turns a plain-English research goal into novel candidate peptide sequences in under a minute, scoring each for properties such as binding and stability. It is a discovery tool for researchers, not a source of therapeutics. Everything Velox supplies is a research reagent for in vitro lab use only.
+
+### Are Research Peptides Legal in the UK?
+https://veloxpeps.com/guides/are-research-peptides-legal-uk/
+Yes — research peptides are legal to buy and own in the UK provided they are sold and used strictly for in vitro research (lab and test-tube work, never inside a living body). They are not controlled substances and need no prescription, but they are not approved medicines and are not for human or veterinary use.
+
+### Bacteriostatic Water Explained
+https://veloxpeps.com/guides/bacteriostatic-water-explained/
+Bacteriostatic water is sterile water containing 0.9% benzyl alcohol, a preservative that stops bacteria multiplying (holding them “static”). It is used to reconstitute lyophilised research peptides so a multi-use vial resists contamination. Supplied for in vitro laboratory research only.
+
+### BPC-157 vs TB-500: Tissue Repair
+https://veloxpeps.com/guides/bpc-157-vs-tb-500/
+BPC-157 and TB-500 are both peptides studied in tissue-repair models, but by different mechanisms: BPC-157 is studied for angiogenesis (new blood-vessel growth) and gut protection, while TB-500 is studied for cell migration to sites of repair. Both are supplied strictly as research reagents for in vitro use only.
+
+### BPC-157 Research Overview
+https://veloxpeps.com/guides/bpc-157/
+BPC-157 (Body Protection Compound-157) is a synthetic pentadecapeptide (15 amino acids, sequence GEPPPGKPADDAGLV), a lab-made copy of a fragment found in gastric juice. In preclinical models it is studied for angiogenesis, gut protection and tissue repair. Supplied strictly as a research reagent for in vitro use only.
+
+### CJC-1295 vs Tesamorelin
+https://veloxpeps.com/guides/cjc-1295-vs-tesamorelin/
+CJC-1295 (without DAC) and Tesamorelin are both GHRH-analogue peptides acting on the GHRH receptor to prompt pulsatile growth-hormone release, but they differ in build and duration: CJC-1295 is a short-acting copy of GHRH(1-29); Tesamorelin is a longer-lasting stabilised analogue. Both supplied for in vitro research use only.
+
+### CJC-1295 Without DAC Research Overview
+https://veloxpeps.com/guides/cjc-1295/
+CJC-1295 without DAC (Modified GRF 1-29) is a synthetic peptide that mimics GHRH, the hormone signalling pulsatile growth-hormone release, acting on the GHRH receptor. It is sold only as a research chemical for in vitro lab use, not for use in people or animals.
+
+### DSIP Research Overview
+https://veloxpeps.com/guides/dsip/
+DSIP (Delta Sleep-Inducing Peptide) is a nonapeptide (9 amino acids, Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu). In animal studies it is examined in relation to deep sleep and stress-response regulation. Supplied only as a research reagent for in vitro lab use, not for human or veterinary use.
+
+### Elecoglipron: Oral GLP-1 Phase 2 (ADA 2026)
+https://veloxpeps.com/guides/elecoglipron-solstice-ada-2026/
+Elecoglipron, AstraZeneca’s oral GLP-1 RA, achieved −1.9% HbA1c and up to 10.5% weight loss at 26 wks in Phase 2 (ADA 2026, Lancet); Phase 3 now planned.
+
+### Epitalon (Epithalon) Research Overview
+https://veloxpeps.com/guides/epitalon/
+Epitalon (Epithalon) is a synthetic tetrapeptide (Ala-Glu-Asp-Gly / AEDG) derived from the pineal extract epithalamin. In the lab it is studied for effects on telomerase and pineal melatonin rhythm. Sold only as a research chemical for in vitro use, not for use in people or animals.
+
+### FDA Curbs Bulk Tirzepatide Compounding
+https://veloxpeps.com/guides/fda-503b-bulks-list-tirzepatide-semaglutide-2026/
+FDA proposed dropping tirzepatide, semaglutide and liraglutide from the 503B bulks list (30 Apr 2026); comments now close 30 Jul 2026.
+
+### FDA Peptide Reclassification 2026
+https://veloxpeps.com/guides/fda-peptide-reclassification-2026/
+In April 2026 the FDA removed BPC-157, TB-500, MOTS-c, Semax & 8 more peptides from its 503A Category 2 list. PCAC review: July 2026.
+
+### Canada Approves Generic Semaglutide: Sevmia
+https://veloxpeps.com/guides/generic-semaglutide-canada-sevmia-2026/
+Health Canada approved Sevmia, Apotex's generic semaglutide, 29 Jun 2026 — first generic Wegovy for weight management.
+
+### GHK-Cu & Melanotan-II PCAC Date: Feb 2027
+https://veloxpeps.com/guides/ghk-cu-melanotan-pcac-february-2027/
+FDA set a Feb 2027 PCAC date for GHK-Cu and Melanotan-II compounding review, the second batch after July 2026's 7-peptide hearing.
+
+### GHK-Cu vs BPC-157: Tissue Repair
+https://veloxpeps.com/guides/ghk-cu-vs-bpc-157/
+GHK-Cu and BPC-157 are both peptides studied in tissue-repair models but in different systems: GHK-Cu, a copper tripeptide, is studied in dermal fibroblast, collagen/elastin and antioxidant pathways; BPC-157 is studied for angiogenesis and gut protection. Both supplied strictly as research reagents for in vitro use only.
+
+### GHK-Cu Research Overview
+https://veloxpeps.com/guides/ghk-cu/
+GHK-Cu (copper tripeptide-1) is a peptide of three amino acids (glycine, histidine, lysine) bound to a copper ion, first identified in human plasma. In the lab it is studied for collagen/elastin expression, antioxidant activity and tissue remodelling. Supplied strictly as a research reagent for in vitro use only.
+
+### Research Peptide Glossary (A–Z)
+https://veloxpeps.com/guides/glossary/
+A plain-English A–Z of common research-peptide terms — receptor, agonist, lyophilised, HPLC, CoA and more — written clearly enough for a 15-year-old. Definitions are general scientific explanations, not usage advice. Everything Velox supplies is a research reagent for lab use only.
+
+### UK GLP-1 Ad Crackdown: MHRA & ASA Rules 2026
+https://veloxpeps.com/guides/glp-1-advertising-crackdown-uk-2026/
+MHRA, ASA and GPhC warned UK sellers (18 Jun 2026) against advertising unlicensed weight-loss 'pipeline' drugs and waiting lists.
+
+### GLP-1 Agonists & Autoimmune Disease: CVD Data 2026
+https://veloxpeps.com/guides/glp-1-autoimmune-cardiovascular-2026/
+JAHA study (n=26,000, June 2026): GLP-1 RA use linked to 44% lower mortality and 31% fewer PE events in adults with obesity and autoimmune disease.
+
+### GLP-1 Epigenetic Aging: 2026 RCT Evidence
+https://veloxpeps.com/guides/glp-1-epigenetic-aging-2026/
+A 2026 Nature Communications RCT found semaglutide slowed biological aging by up to 9% across six epigenetic clocks in a 32-week randomised trial.
+
+### GLP-1 & Physical Activity: Daily Steps Fell 11% (ENDO 2026)
+https://veloxpeps.com/guides/glp-1-physical-activity-endo-2026/
+ENDO 2026 (n=753): GLP-1 users’ steps fell 11%, from 5,047 to 4,487 per day — raising lean-mass questions for researchers.
+
+### Glutathione Research Overview
+https://veloxpeps.com/guides/glutathione/
+Glutathione (GSH) is a tripeptide (glutamate, cysteine, glycine) and the most abundant antioxidant inside cells. It is studied as a central player in redox balance and as the cofactor for detoxifying enzymes. Supplied strictly as a research reagent for in vitro use only.
+
+### How Peptides Are Tested: HPLC & Mass Spec
+https://veloxpeps.com/guides/how-peptides-are-tested/
+Third-party testing means an independent lab that does not sell the product runs the analysis, so results cannot be flattered. HPLC confirms purity (how much of the vial is the target peptide) and mass spectrometry confirms identity (that it is the right molecule). This is how a Certificate of Analysis proves what is really in the vial.
+
+### How to Buy Research Peptides in the UK
+https://veloxpeps.com/guides/how-to-buy-research-peptides-uk/
+Buying research peptides safely in the UK comes down to three checks: every batch third-party tested with a Certificate of Analysis; a UK-based seller shipping tracked with secure payment; and products sold strictly as research chemicals for in vitro use. These are lab reagents, not medicines.
+
+### Ipamorelin Research Overview
+https://veloxpeps.com/guides/ipamorelin/
+Ipamorelin is a synthetic pentapeptide and selective growth-hormone secretagogue that acts on the ghrelin receptor (GHS-R1a) to prompt the body’s own growth-hormone release. It is sold only as a research chemical for in vitro lab use, not for use in people or animals.
+
+### Is Retatrutide a GLP-1? Triple Agonist
+https://veloxpeps.com/guides/is-retatrutide-a-glp-1/
+Retatrutide is not only a GLP-1 — it is a triple agonist that activates three receptors at once: GLP-1, GIP and glucagon. A pure GLP-1 compound such as semaglutide hits one receptor; retatrutide hits three. So the GLP-1 receptor is one of its three targets, but calling it a plain GLP-1 misses two-thirds of what it does. Supplied by Velox Peptides for in vitro research use only.
+
+### KPV Research Overview
+https://veloxpeps.com/guides/kpv/
+KPV is a tripeptide (lysine-proline-valine), the C-terminal fragment of alpha-melanocyte-stimulating hormone (α-MSH). In lab studies it is examined for anti-inflammatory activity. Sold strictly as a research chemical for in vitro use, not for human or veterinary use.
+
+### Lilly's Quintuple Agonist 2026: 5 Receptors
+https://veloxpeps.com/guides/lilly-quintuple-agonist-ada-2026/
+Eli Lilly’s quintuple agonist (GLP-1/GIP/glucagon/amylin/calcitonin) outperformed retatrutide in preclinical rat data; ADA 2026, June 7.
+
+### Melanotan II Research Overview
+https://veloxpeps.com/guides/melanotan-ii/
+Melanotan II (MT-2) is a synthetic analogue of alpha-melanocyte-stimulating hormone (α-MSH) that activates melanocortin receptors in vitro. Researchers use it as a reference tool to study those receptor pathways. Supplied strictly as a research chemical for in vitro use only — not for human or veterinary use.
+
+### Most Popular Research Peptides UK (2026)
+https://veloxpeps.com/guides/most-popular-research-peptides-uk/
+The most-studied research peptides in the UK for 2026 span five groups: tissue repair (BPC-157, TB-500), incretin/metabolic (retatrutide, MOTS-c), neuropeptides (Semax, Selank), the growth-hormone group (Tesamorelin, CJC-1295) and oxidative pathways. All supplied strictly as research reagents for in vitro use only.
+
+### MOTS-c Phase 2a Human Trial (2026)
+https://veloxpeps.com/guides/mots-c-phase-2a-trial-2026/
+MOTS-c enters its first human efficacy trial in 2026 — Hudson Biotech Phase 2a tests insulin sensitivity in prediabetes.
+
+### MOTS-C Research Overview
+https://veloxpeps.com/guides/mots-c/
+MOTS-c is a 16-amino-acid mitochondrial-derived peptide, encoded within mitochondrial DNA. In lab studies it is examined for its role in cellular energy and fuel handling, largely via activation of the metabolic sensor AMPK. Supplied strictly as a research reagent for in vitro use only.
+
+### NAD+ Research Overview
+https://veloxpeps.com/guides/nad-plus/
+NAD+ (nicotinamide adenine dinucleotide) is a coenzyme present in every cell, central to energy transfer and a substrate for sirtuin and PARP enzymes. It is studied in metabolism and cellular-ageing research. Supplied strictly as a research reagent for in vitro use only.
+
+### Oral Semaglutide UK MHRA Approval 2026
+https://veloxpeps.com/guides/oral-semaglutide-mhra-uk-2026/
+MHRA approved oral semaglutide (Wegovy tablet) for UK weight management on 11 Jun 2026 — first oral GLP-1 in Europe; OASIS 4 reported 13.6% weight loss.
+
+### Oral Wegovy Wins EU-Wide Approval (Jul 2026)
+https://veloxpeps.com/guides/oral-wegovy-eu-approval-2026/
+The EU approved Novo Nordisk's oral Wegovy pill (25mg semaglutide) on 15 Jul 2026 — first oral GLP-1 cleared EU-wide for weight management.
+
+### FDA PCAC 2026: BPC-157, TB-500 & 5 More
+https://veloxpeps.com/guides/pcac-july-2026-bpc-157-tb-500/
+FDA PCAC meets 23–24 Jul 2026 to vote on Category 1 status for BPC-157, TB-500, MOTS-c, KPV, Semax, DSIP & Epitalon. Comment deadline: 9 Jul.
+
+### PCAC 2026: Patient Safety Groups vs Compounders
+https://veloxpeps.com/guides/pcac-july-2026-comment-fight/
+PSM urged FDA's PCAC to reject all 7 peptides (Jul 2026); compounders want a regulated 'third way' before the 23-24 Jul vote.
+
+### FDA Flags Peptide Evidence Gaps 2026
+https://veloxpeps.com/guides/pcac-july-2026-fda-evidence-review/
+FDA briefing docs (29 Jun 2026) found no human data for TB-500/KPV, insufficient evidence for BPC-157, ahead of the 23-24 Jul PCAC vote.
+
+### BPC-157 & TB-500 PCAC Hearing: July 2026
+https://veloxpeps.com/guides/pcac-july-2026-peptide-hearing/
+FDA's PCAC meets 23–24 Jul 2026 to vote on 503A compounding eligibility for BPC-157, TB-500, KPV, MOTS-c, Semax, DSIP & Epitalon.
+
+### BPC-157 Grey Market: FDA Curbs Backfire
+https://veloxpeps.com/guides/peptide-compounding-grey-market-2026/
+NPR (8 Jul 2026) finds US compounding curbs push BPC-157, TB-500 and MOTS-c buyers to unvetted overseas sellers ahead of the FDA's 23-24 Jul vote.
+
+### Peptide Reconstitution: Technical Guide
+https://veloxpeps.com/guides/peptide-reconstitution-guide/
+Reconstitution means dissolving a lyophilised (freeze-dried) peptide powder into a known-strength solution, usually with bacteriostatic water, ready for lab use. The key figure is concentration: mg/ml = mg of peptide ÷ ml of water added. This is lab-preparation chemistry, not human dosing guidance.
+
+### Peptide Research Landscape 2026: Trials
+https://veloxpeps.com/guides/peptide-research-landscape-2026/
+The past year in peptide research was defined by the incretin class: SURMOUNT-5 delivered the first large head-to-head of tirzepatide vs semaglutide, the triple agonist retatrutide advanced through Phase 3 TRIUMPH, and the dual GLP-1/glucagon agonist survodutide drew growing attention. A summary of published research, not therapeutic claims.
+
+### Peptide Storage & Handling in the Lab
+https://veloxpeps.com/guides/peptide-storage-and-handling/
+Most research peptides arrive lyophilised (freeze-dried) — the most stable form — and should be kept cool, dry and dark until reconstitution, then refrigerated and used within a limited window. Correct storage preserves purity and identity. Supplied strictly as research reagents for in vitro use only.
+
+### How to Read an HPLC Certificate (CoA)
+https://veloxpeps.com/guides/reading-a-certificate-of-analysis/
+A Certificate of Analysis (CoA) is the batch-specific lab report proving what is really in a vial — its identity, purity and form. A genuine CoA is always tied to a specific batch or lot number, not to the product in general. It is the main proof of quality for a research compound.
+
+### Retatrutide Arrhythmia Signal: TRANSCEND-T2D-1
+https://veloxpeps.com/guides/retatrutide-arrhythmia-cardiovascular-signal-2026/
+TRANSCEND-T2D-1 (Lancet, Jun 2026) found arrhythmia in 7/403 retatrutide participants vs 0/134 placebo, plus 3 major CV events vs 0.
+
+### Retatrutide Black-Market Sales: Poison Data 2026
+https://veloxpeps.com/guides/retatrutide-black-market-poison-centers-2026/
+US poison centers logged a 265% jump in retatrutide cases as unapproved vials reach bodegas; still unapproved anywhere.
+
+### Retatrutide Cardiometabolic Markers: TRIUMPH-1 (ADA 2026)
+https://veloxpeps.com/guides/retatrutide-cardiometabolic-trial-data/
+TRIUMPH-1 (ADA 2026): retatrutide 12 mg cut triglycerides −41%, non-HDL −24.2%, systolic BP −12.3 mmHg, waist −24.1 cm at 80 weeks.
+
+### Retatrutide Clinical Research: Trial Data
+https://veloxpeps.com/guides/retatrutide-clinical-research/
+Retatrutide (LY3437943) is one of the most extensively published triple-agonist research peptides. Its evidence base rests on three core studies: Coskun et al., Cell Metabolism 2022 (preclinical and receptor characterisation), Urva et al., The Lancet 2022 (Phase 1b), and Jastreboff et al., NEJM 2023 (Phase 2 RCT). All figures here are from published literature, not therapeutic claims. Supplied for in vitro research use only.
+
+### Retatrutide & Cognition: Preclinical Rat Study
+https://veloxpeps.com/guides/retatrutide-cognitive-effects-preclinical-study/
+A 2026 preprint found retatrutide partly preserved memory and cut hippocampal TNF-α in diabetic rats — preclinical, not yet peer-reviewed.
+
+### Retatrutide Dysesthesia: TRIUMPH-4 Safety Signal 2026
+https://veloxpeps.com/guides/retatrutide-dysesthesia/
+TRIUMPH-4 (ADA 2026) reported dysesthesia in 20.9% on retatrutide 12 mg vs 0.7% placebo—a class-unique signal not seen with tirzepatide or semaglutide.
+
+### Retatrutide FDA Expanded Access 2026
+https://veloxpeps.com/guides/retatrutide-expanded-access-2026/
+In June 2026 the FDA granted expanded access to retatrutide for one patient outside Phase 3 trials; NDA submission expected no earlier than 2027.
+
+### Retatrutide FDA Approval Timeline 2026–2028
+https://veloxpeps.com/guides/retatrutide-fda-approval-timeline/
+Retatrutide (LY3437943) is not yet FDA-approved; Lilly targets Q4 2026 NDA filing after TRIUMPH-1 success, with US approval expected ~late 2027.
+
+### How Retatrutide Works: Mechanism
+https://veloxpeps.com/guides/retatrutide-mechanism-of-action/
+Retatrutide (LY3437943) is a synthetic triple agonist engineered to bind and activate three receptors simultaneously: GLP-1, GIP and glucagon. In preclinical models GLP-1 links to insulin secretion and appetite signalling, GIP to pancreatic insulin and fat-tissue signalling, and glucagon to hepatic glucose output and energy expenditure. Supplied by Velox Peptides for in vitro research use only.
+
+### Retatrutide & Knee OA: 75.8% Pain Cut, TRIUMPH-4 (2026)
+https://veloxpeps.com/guides/retatrutide-osteoarthritis/
+TRIUMPH-4 (Dec 2025, n=445) — retatrutide 12 mg cut knee OA pain 75.8% and body weight 28.7% at 68 weeks; first Phase 3 to hit both endpoints.
+
+### Retatrutide Peptide UK – Research Grade LY3437943
+https://veloxpeps.com/guides/retatrutide-peptide-uk/
+Retatrutide (LY3437943) is available in the UK as a research-grade, lyophilised triple agonist (GLP-1, GIP and glucagon receptors) for in vitro laboratory use only. It is not a licensed medicine and has no MHRA approval; UK researchers may legally buy it as a research chemical. Velox Peptides supplies it with ≥99% HPLC purity, batch Certificate of Analysis and tracked UK delivery.
+
+### How to Reconstitute Retatrutide: Dosing & mg Chart
+https://veloxpeps.com/guides/retatrutide-reconstitution-and-dosing/
+Retatrutide ships as a lyophilised (freeze-dried) powder that must be reconstituted with bacteriostatic water before it can be measured in the lab. The key number is concentration: mg/ml = milligrams of peptide in the vial ÷ millilitres of water added. A 10 mg vial reconstituted with 2 ml gives 5 mg/ml. This is reconstitution chemistry, not human dosing guidance. Supplied for in vitro research use only.
+
+### Retatrutide Side Effects & Tolerability
+https://veloxpeps.com/guides/retatrutide-side-effects/
+In the published retatrutide (LY3437943) trial programme the most frequently reported adverse events were gastrointestinal — nausea, diarrhoea, vomiting and constipation — dose-related, predominantly mild to moderate, and concentrated during dose escalation. A transient, dose-related rise in heart rate was also reported; serious events were infrequent. This summarises trial literature only, not medical advice. Supplied for in vitro research use only.
+
+### Retatrutide & Sleep Apnea: 60.6% AHI Drop, Phase 3 (2026)
+https://veloxpeps.com/guides/retatrutide-sleep-apnea/
+TRIUMPH-1 subgroup (ADA, June 2026): retatrutide 12 mg reduced AHI by 60.6% (36.1 events/h) in moderate-to-severe OSA at 80 weeks.
+
+### TRIUMPH-1: Retatrutide 80-Week Obesity Data
+https://veloxpeps.com/guides/retatrutide-triumph-1-obesity/
+TRIUMPH-1 (n=2,339, 80 wks) reported 28.3% body-weight reduction on retatrutide 12mg vs 2.2% placebo; Lilly targets NDA filing Q4 2026.
+
+### TRIUMPH-1: Retatrutide 28.3% Weight Loss (Phase 3, 2026)
+https://veloxpeps.com/guides/retatrutide-triumph-1/
+TRIUMPH-1 Phase 3 (ADA 2026): retatrutide 12 mg reported 28.3% weight loss at 80 weeks in 2,339 adults with obesity — 45.3% achieved ≥30% reduction.
+
+### Retatrutide TRIUMPH-2 & TRIUMPH-3: What's Left
+https://veloxpeps.com/guides/retatrutide-triumph-2-3-pending-trials-2026/
+Retatrutide has reported 2 of 5 TRIUMPH trials; TRIUMPH-2, TRIUMPH-3 and its cardiovascular outcomes trial remain pending in 2026.
+
+### Retatrutide TRIUMPH-9: Dose-Escalation Trial
+https://veloxpeps.com/guides/retatrutide-triumph-9-dose-escalation-2026/
+New ClinicalTrials.gov listing NCT07357415 ("TRIUMPH-9") tests retatrutide dose-escalation regimens in ~600 adults with obesity, no T2D.
+
+### Retatrutide in Type 2 Diabetes: 1.94% A1C Drop, Phase 3
+https://veloxpeps.com/guides/retatrutide-type-2-diabetes/
+TRANSCEND-T2D-1 (The Lancet, June 2026): retatrutide 12 mg reported −1.94% A1C reduction and 16.8% weight loss at 40 weeks in early-onset type 2 diabetes.
+
+### Retatrutide vs Berobenatide & Enicepatide
+https://veloxpeps.com/guides/retatrutide-vs-berobenatide-enicepatide/
+Pfizer's berobenatide (15.9% wt loss) and Roche's enicepatide (22.7%) trail retatrutide's 28.3% TRIUMPH-1 result at ADA 2026.
+
+### Retatrutide vs Ozempic (Semaglutide)
+https://veloxpeps.com/guides/retatrutide-vs-ozempic/
+Ozempic contains semaglutide, a single GLP-1 receptor agonist (one pathway). Retatrutide (LY3437943) is a triple agonist that activates GLP-1, GIP and glucagon receptors at once (three pathways). They share the GLP-1 target, but retatrutide adds two more mechanisms researchers can study. Supplied by Velox Peptides for in vitro research use only.
+
+### Retatrutide vs Survodutide: Liver-Fat Data
+https://veloxpeps.com/guides/retatrutide-vs-survodutide-liver-fat-2026/
+Survodutide's Phase 3 MASLD liver-fat trial (Nature Medicine, 8 Jun 2026) just published; retatrutide's own liver data is still Phase 2a.
+
+### Retatrutide vs Tirzepatide vs Semaglutide
+https://veloxpeps.com/guides/retatrutide-vs-tirzepatide-vs-semaglutide/
+These three research peptides differ by how many receptors they activate: semaglutide turns on one (GLP-1), tirzepatide two (GLP-1 and GIP), and retatrutide all three (GLP-1, GIP and glucagon). This page compares them purely by receptor pharmacology, not clinical outcomes. None is supplied for human or veterinary consumption — in vitro research use only.
+
+### Retatrutide vs Wegovy (Semaglutide)
+https://veloxpeps.com/guides/retatrutide-vs-wegovy/
+Wegovy contains semaglutide, a selective GLP-1 receptor agonist (one pathway). Retatrutide (LY3437943) is a triple agonist activating GLP-1, GIP and glucagon receptors (three pathways). Both engage the GLP-1 receptor, but retatrutide additionally engages the GIP and glucagon receptors. Wegovy is a licensed medicine not supplied by Velox Peptides; retatrutide is supplied for in vitro research use only.
+
+### Retatrutide Research: TRIUMPH-1 Phase 3
+https://veloxpeps.com/guides/retatrutide/
+Retatrutide (LY3437943) is a synthetic peptide developed by Eli Lilly that acts as a triple agonist, activating the GLP-1, GIP and glucagon receptors simultaneously — the only late-stage compound studied across all three incretin pathways. In the published TRIUMPH-1 Phase 3 trial (May 2026, n=2,339), once-weekly retatrutide 12 mg was reported to produce a mean body-weight reduction of 28.3% at 80 weeks. Velox Peptides supplies retatrutide as an HPLC-verified (≥99% purity) lyophilised reagent in 10 mg and 20 mg vials, UK-dispatched, strictly for in vitro research use.
+
+### Selank vs DSIP: Neuropeptide Comparison
+https://veloxpeps.com/guides/selank-vs-dsip/
+Selank and DSIP are both neuropeptides studied in preclinical models but for different pathways: Selank (a synthetic tuftsin analogue) is studied for anxiety-related behaviour via GABA and BDNF pathways, while DSIP (Delta Sleep-Inducing Peptide) is studied for sleep and stress response. Both supplied for in vitro research use only.
+
+### Selank Research Overview
+https://veloxpeps.com/guides/selank/
+Selank is a synthetic heptapeptide (Thr-Lys-Pro-Arg-Pro-Gly-Pro), a neuropeptide derived from the immune peptide tuftsin. In animal studies it is examined for anxiety-like behaviour via the brain’s GABA and BDNF pathways. Sold only as a research chemical for in vitro use, not for use in people or animals.
+
+### GLP-1 & Biological Aging: Semaglutide Epigenetic Study 2026
+https://veloxpeps.com/guides/semaglutide-epigenetic-aging-2026/
+Nature Communications RCT (2026): semaglutide slowed biological aging by ~9% (DunedinPACE) and reduced epigenetic age by 3–5 years across multiple validated clocks in a 32-week trial.
+
+### Semax vs Selank: Neuropeptide Comparison
+https://veloxpeps.com/guides/semax-vs-selank/
+Semax and Selank are both Russian-developed neuropeptides with a Pro-Gly-Pro tail for stability, but they differ in focus: Semax (from ACTH) is studied for BDNF/NGF and neuroprotection, while Selank (from tuftsin) is studied for anxiety-related behaviour. Both supplied for in vitro research use only.
+
+### Semax Research Overview
+https://veloxpeps.com/guides/semax/
+Semax is a synthetic heptapeptide (Met-Glu-His-Phe-Pro-Gly-Pro), a neuropeptide derived from a fragment of the hormone ACTH. In lab and animal studies it is examined in relation to BDNF, NGF and neuroprotection. Sold only as a research chemical for in vitro use, not for use in people or animals.
+
+### SURMOUNT-5: Tirzepatide vs Semaglutide
+https://veloxpeps.com/guides/surmount-5-tirzepatide-vs-semaglutide/
+SURMOUNT-5 was a randomised, open-label Phase 3b trial that compared tirzepatide directly against semaglutide in adults with obesity (without type 2 diabetes) over 72 weeks, with percentage change in body weight as the primary endpoint. A summary of published trial data, not therapeutic advice.
+
+### Survodutide (BI 456906) Research
+https://veloxpeps.com/guides/survodutide/
+Survodutide (BI 456906) is a synthetic peptide dual agonist of the GLP-1 and glucagon receptors, developed by Boehringer Ingelheim with Zealand Pharma and studied primarily in obesity and MASH (formerly NASH) research. A summary of published research; supplied for in vitro research use only.
+
+### TB-500 (Thymosin Beta-4) Research Overview
+https://veloxpeps.com/guides/tb-500/
+TB-500 is a synthetic peptide based on the natural protein Thymosin β4. In lab and animal studies it is examined for cell migration, angiogenesis (new blood-vessel growth) and tissue repair. Supplied strictly as a research reagent for in vitro use only.
+
+### Tesamorelin Research Overview
+https://veloxpeps.com/guides/tesamorelin/
+Tesamorelin is a GHRH analogue — a synthetic copy of the signal that prompts pulsatile growth-hormone release — acting on the GHRH receptor on the pituitary. Researchers study it as a tool for stimulating the body’s own growth-hormone release. Supplied strictly as a research reagent for in vitro use only.
+
+### MHRA Acts on Tesco Pharmacy Weight-Loss Ads (2026)
+https://veloxpeps.com/guides/tesco-pharmacy-mhra-weight-loss-ads-2026/
+MHRA acted against Tesco Pharmacy's weight-loss ads (7 Jul 2026); 97% of pharmacies fear a counterfeit surge.
+
+### Tirzepatide Brown Fat: TABFAT Trial Data
+https://veloxpeps.com/guides/tirzepatide-brown-adipose-tissue-endo-2026/
+TABFAT trial (ENDO 2026, n=34) found tirzepatide raised brown-fat PET/CT activity 41%→65% in 24 weeks, independent of weight loss.
+
+### Sandoz Files First Generic Tirzepatide ANDA
+https://veloxpeps.com/guides/tirzepatide-generic-anda-2026/
+FDA accepted Sandoz's ANDAs for generic tirzepatide (29 Jun 2026) — first filing, but patents likely delay launch past 2027.
+
+### Tirzepatide Research Overview
+https://veloxpeps.com/guides/tirzepatide/
+Tirzepatide is a synthetic peptide dual agonist (“twincretin”) that activates both the GIP and GLP-1 receptors — the two main incretin pathways influencing glucose and insulin signalling. It is sold only as a research chemical for in vitro lab use, not for use in people or animals.
+
+### What Are Research Peptides? A Primer
+https://veloxpeps.com/guides/what-are-research-peptides/
+A peptide is a short chain of amino acids — the same building blocks as proteins, just fewer of them. “Research peptides” are defined, lab-made peptides supplied purely for in vitro study (test-tube and lab work). They are not medicines and not for human or veterinary use.
+
+### What Makes a Peptide Novel? Sequence & Design
+https://veloxpeps.com/guides/what-makes-a-peptide-novel/
+A “novel” peptide is a genuinely new amino-acid sequence, rather than one of the handful discovered decades ago that most vendors resell. Novelty is checked against known-sequence databases, and it is the foundation of AI peptide design. Everything Velox supplies is a research reagent for in vitro use only.
+
+## Compounds (20)
+
+### Buy Antioxidant Research Peptides UK
+https://veloxpeps.com/compounds/antioxidant/
+Buy antioxidant research compounds UK from Velox — GHK-Cu, Glutathione and NAD+ for oxidative-pathway research.
+
+### Buy BPC-157 UK — ≥99% HPLC-Verified + CoA
+https://veloxpeps.com/compounds/bpc-157/
+Buy BPC-157 research peptides UK from Velox. Body Protection Compound-157, HPLC-verified 99.4% purity, Janoshik CoA with every order, tracked 24h UK dispatch.
+
+### Buy BPC-157 & TB-500 UK – Research Blend
+https://veloxpeps.com/compounds/bpc157-tb500-mix/
+Buy BPC-157 & TB-500 research peptides UK from Velox Peptides. Dual-compound angiogenic and tissue research blend, co-lyophilised, Janoshik third-party tested, dispatched from the UK.
+
+### Buy CJC-1295 (no DAC) UK – GHRH Peptide
+https://veloxpeps.com/compounds/cjc-1295/
+Buy CJC-1295 wo DAC research peptides UK from Velox Peptides. GHRH analogue, HPLC-verified 99.1% purity, dispatched from the UK from £29
+
+### Buy Cognitive Research Peptides UK
+https://veloxpeps.com/compounds/cognitive/
+Buy cognitive research peptides UK from Velox — Semax, Selank and DSIP, HPLC-verified ≥99% with a CoA, tracked 24h dispatch via Royal Mail.
+
+### Buy DSIP UK - Delta Sleep-Inducing Peptide
+https://veloxpeps.com/compounds/dsip/
+Buy DSIP research peptides UK from Velox Peptides. Delta Sleep-Inducing Peptide, endogenous nonapeptide, HPLC-verified ≥99% purity, third-party HPLC verified
+
+### Buy GHK-Cu UK – Copper Tripeptide-1
+https://veloxpeps.com/compounds/ghk-cu/
+Buy GHK-Cu research peptides UK from Velox Peptides. Copper Tripeptide-1, naturally occurring human tripeptide, HPLC-verified 99% purity from £39
+
+### Buy Glutathione UK – Research Reagent
+https://veloxpeps.com/compounds/glutathione/
+Buy Glutathione research reagent UK from Velox Peptides. L-Glutathione (reduced, GSH), HPLC-verified 99.2% purity, dispatched from the UK from £54
+
+### Buy GH-Axis Research Peptides UK
+https://veloxpeps.com/compounds/growth/
+Buy GH-axis research peptides UK from Velox — Tesamorelin, CJC-1295 (no DAC) and Ipamorelin, HPLC-verified ≥99% with a CoA, tracked 24h UK dispatch.
+
+### Buy Ipamorelin UK – GH Secretagogue
+https://veloxpeps.com/compounds/ipamorelin/
+Buy Ipamorelin research peptides UK from Velox Peptides. Selective growth hormone secretagogue (ghrelin receptor agonist), HPLC-verified ≥99% purity
+
+### Buy KPV UK – Anti-Inflammatory Peptide
+https://veloxpeps.com/compounds/kpv/
+Buy KPV research peptides UK from Velox Peptides. Lys-Pro-Val, C-terminal alpha-MSH fragment, HPLC-verified ≥99% purity, Janoshik third-party tested, dispatched from the UK.
+
+### Buy Metabolic Research Peptides UK
+https://veloxpeps.com/compounds/metabolic/
+Buy metabolic research peptides UK from Velox — Retatrutide, MOTS-C and NAD+ across GLP-1/GIP/glucagon pathways.
+
+### Buy MOTS-C UK – Mitochondrial Peptide
+https://veloxpeps.com/compounds/mots-c/
+Buy MOTS-C research peptides UK from Velox Peptides. Mitochondrial-derived peptide and AMPK activator, HPLC-verified ≥99% purity, Janoshik third-party tested, dispatched from the UK.
+
+### Buy NAD+ UK - Research Reagent
+https://veloxpeps.com/compounds/nad-plus/
+Buy NAD+ research reagent UK from Velox Peptides. Nicotinamide Adenine Dinucleotide, HPLC-verified 99.5% purity, dispatched from the UK from £54
+
+### Buy Recovery Research Peptides UK
+https://veloxpeps.com/compounds/recovery/
+Buy recovery research peptides UK from Velox — BPC-157, TB-500 and KPV for angiogenic and tissue-repair research.
+
+### Buy Retatrutide UK — ≥99% HPLC-Verified
+https://veloxpeps.com/compounds/retatrutide/
+Buy Retatrutide research peptides UK. GLP-1/GIP/glucagon triple agonist, HPLC-verified ≥99% purity, Janoshik third-party tested, dispatched from the UK.
+
+### Buy Selank UK - Anxiolytic Research Peptide
+https://veloxpeps.com/compounds/selank/
+Buy Selank research peptides UK from Velox Peptides. Synthetic tuftsin analogue heptapeptide (TKPRPGP), HPLC-verified ≥99% purity, third-party HPLC verified
+
+### Buy Semax UK – Neuropeptide Research
+https://veloxpeps.com/compounds/semax/
+Buy Semax research peptides UK. ACTH(4-7) Pro-Gly-Pro analogue for cognitive research, HPLC-verified ≥99% purity, Janoshik third-party tested, dispatched from the UK.
+
+### Buy TB-500 UK – Thymosin Beta-4 Peptide
+https://veloxpeps.com/compounds/tb-500/
+Buy TB-500 research peptides UK from Velox Peptides. Thymosin Beta-4 synthetic fragment, HPLC-verified ≥99% purity, dispatched from the UK from £29
+
+### Buy Tesamorelin UK – GHRH Peptide
+https://veloxpeps.com/compounds/tesamorelin/
+Buy Tesamorelin research peptides UK from Velox Peptides. Full-length GHRH analogue, HPLC-verified ≥99% purity, dispatched from the UK from £80
