@@ -183,44 +183,6 @@
       display: none;
     }
 
-    /* ── WHY PAY BY BANK explainer ────────────────────────────────── */
-    .fena-why-box {
-      border: 1px solid #1F2937;
-      border-radius: 8px;
-      background: #0D1117;
-      margin-bottom: 18px;
-      overflow: hidden;
-    }
-    .fena-why-box summary {
-      padding: 12px 16px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #9CA3AF;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .fena-why-box summary::-webkit-details-marker { display: none; }
-    .fena-why-box summary::before {
-      content: '▶';
-      font-size: 9px;
-      color: #01D3A0;
-      transition: transform .2s;
-    }
-    .fena-why-box[open] summary::before { transform: rotate(90deg); }
-    .fena-why-body {
-      padding: 0 16px 16px;
-      font-size: 13px;
-      color: #9CA3AF;
-      line-height: 1.7;
-    }
-    .fena-why-body p { margin: 0 0 8px; }
-    .fena-why-body p:last-child { margin: 0; }
-
     /* ── Manual bank transfer fallback ───────────────────────────── */
     .bank-fallback {
       border: 1px solid #1F2937;
@@ -332,8 +294,9 @@
 
     /* ── EU checkout: Fena (UK open banking) can't process EU payments, so hide
        it and make bank transfer the primary, prominent method. ───────────────── */
-    body.eu-checkout .fena-hero-card,
-    body.eu-checkout .fena-why-box { display: none !important; }
+    body.eu-checkout .fena-hero-card { display: none !important; }
+    /* Hide the STEP 2 "Payment" heading for INTL — bank transfer becomes primary. */
+    body.eu-checkout .co-pay-divider { display: none; }
 
     body.eu-checkout .bank-fallback {
       border: 2px solid #01D3A0;
@@ -427,47 +390,40 @@
     body.eu-checkout .bank-row-domestic { display: none; }
     body.eu-checkout .bank-fallback-note { display: none; }
 
-    /* ── UK checkout: give bank transfer EQUAL prominence to Fena ──────────────
-       Mirror the international treatment (open, card-styled, solid CTA) but keep
-       Fena visible above it, so the two sit as co-equal options. Scoped with
-       :not(.eu-checkout) so the international path is untouched. */
-    .pay-or-divider {
-      display: flex; align-items: center; gap: 14px;
-      margin: 22px 0 18px; color: #6B7280;
-      font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    /* ── Single-page checkout: delivery address fields ─────────────────────── */
+    .region-btns { display:flex; gap:8px; margin:0 0 18px; }
+    .region-btn {
+      flex:1; padding:10px 14px; background:#0d0d0d;
+      border:2px solid #1F2937; border-radius:6px;
+      color:#9CA3AF; font-size:13px; font-weight:600; cursor:pointer;
+      transition:border-color .15s,color .15s; text-align:center;
     }
-    .pay-or-divider::before, .pay-or-divider::after {
-      content: ''; flex: 1; height: 1px; background: #1F2937;
+    .region-btn:hover { border-color:#374151; color:#D1D5DB; }
+    .region-btn-active { border-color:#01D3A0 !important; color:#01D3A0 !important; }
+    .f-select { width:100%; background:#0d0d0d; border:1px solid #1F2937; border-radius:6px; color:#F9FAFB; font-size:14px; padding:10px 12px; appearance:none; -webkit-appearance:none; }
+    .f-select:focus { outline:none; border-color:#01D3A0; }
+    .intl-compliance-wrap { margin-top:12px; }
+    #intl-region-note {
+      display:none; margin:-6px 0 16px;
+      padding:8px 12px; background:#1a0f00; border:1px solid #FF6B00;
+      border-radius:6px; color:#FF6B00; font-size:12px; line-height:1.5;
     }
-    body.eu-checkout .pay-or-divider { display: none; }
+    /* Section divider between "Delivery" and "Payment" on the single page */
+    .co-pay-divider {
+      margin: 26px 0 20px; padding-top: 24px; border-top: 1px solid #1F2937;
+    }
+    .co-pay-divider .pay-page-eyebrow { margin-bottom: 4px; }
+    .co-pay-divider .co-pay-h {
+      font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -.01em; margin: 0 0 4px;
+    }
+    .co-pay-divider .co-pay-sub { font-size: 13px; color: #6B7280; line-height: 1.5; margin: 0; }
 
-    body:not(.eu-checkout) .bank-fallback {
-      border: 2px solid #01D3A0;
-      background: linear-gradient(135deg, #030f0b 0%, #020806 100%);
-      border-radius: 12px;
-      margin-bottom: 20px;
+    /* Implicit T&C acceptance line (replaces the old checkbox) */
+    .pay-implicit-note {
+      font-size: 12px; color: #6B7280; line-height: 1.55; margin: 14px 0 0; text-align: center;
     }
-    body:not(.eu-checkout) .bank-fallback > summary {
-      font-size: 18px; font-weight: 800; color: #fff;
-      letter-spacing: 0; text-transform: none;
-      padding: 18px 20px 12px;
-      cursor: default; pointer-events: none;   /* always-open co-equal panel */
-    }
-    body:not(.eu-checkout) .bank-fallback > summary::before { display: none; }
-    body:not(.eu-checkout) .bank-fallback-body { padding: 0 20px 20px; border-top: none; }
-    body:not(.eu-checkout) .bank-note-amber {
-      background: rgba(1,211,160,.07);
-      border-color: rgba(1,211,160,.32);
-      color: #cdd3d9;
-    }
-    body:not(.eu-checkout) #bank-pay-btn {
-      width: 100%; min-height: 56px;
-      background: #01D3A0; color: #04140f;
-      font-size: 17px; font-weight: 800;
-      border: none; border-radius: 10px;
-      cursor: pointer; margin-top: 16px;
-    }
-    body:not(.eu-checkout) #bank-pay-btn:hover:not(:disabled) { background: #00c090; }
+    .pay-implicit-note a { color: #9CA3AF; text-decoration: underline; }
+    .pay-implicit-note a:hover { color: #01D3A0; }
 
     .crypto-teaser { font-size: 13px; color: #6B7280; text-align: center; margin: 16px 0 0; }
     .crypto-teaser a { color: #9CA3AF; text-decoration: underline; }
@@ -595,9 +551,8 @@
 <section class="checkout-steps">
   <div class="sec-i">
     <ol class="co-steps">
-      <li class="co-step co-step-done">✓ Delivery</li>
-      <li class="co-step co-step-active">2. Payment</li>
-      <li class="co-step">3. Confirmation</li>
+      <li class="co-step co-step-active">1. Your details &amp; payment</li>
+      <li class="co-step">2. Confirmation</li>
     </ol>
   </div>
 </section>
@@ -607,11 +562,86 @@
     <div class="co-grid">
       <div class="co-form-col">
         <div class="pay-page-eyebrow">SECURE CHECKOUT</div>
-        <h1 class="page-h1">Pay by Bank</h1>
-        <p class="page-lede" style="margin-bottom:22px;">Instant, secure bank payment via UK FCA-authorised open banking. No card details required - direct from your account.</p>
+        <h1 class="page-h1">Checkout</h1>
+        <p class="page-lede" style="margin-bottom:22px;">Enter your delivery details and pay — everything on one page. Instant Pay by Bank via UK FCA-authorised open banking, no card details required.</p>
 
         <!-- ── PAYMENT FORM ─────────────────────────────────────────── -->
-        <form id="payment-form" class="co-form">
+        <form id="payment-form" class="co-form" novalidate>
+
+          <!-- ── DELIVERY DETAILS (single-page checkout) ───────────── -->
+          <h2 class="sec-t">Shipping region</h2>
+          <div class="region-btns">
+            <button type="button" class="region-btn region-btn-active" id="region-uk">🇬🇧 United Kingdom</button>
+            <button type="button" class="region-btn" id="region-intl">🌍 Rest of World</button>
+          </div>
+          <div id="intl-region-note">🌍 International orders: pay by bank transfer using the GBP IBAN/BIC details shown below.</div>
+
+          <h2 class="sec-t">Contact</h2>
+          <div class="f-grid-2">
+            <div class="f-row"><label class="f-lbl" for="sh-fname">First name *</label><input class="f-inp" id="sh-fname" name="fname" required></div>
+            <div class="f-row"><label class="f-lbl" for="sh-lname">Last name *</label><input class="f-inp" id="sh-lname" name="lname" required></div>
+            <div class="f-row f-full"><label class="f-lbl" for="sh-email">Email address *</label><input class="f-inp" id="sh-email" name="email" type="email" required></div>
+            <div class="f-row f-full"><label class="f-lbl" for="sh-phone">Mobile number <span style="font-weight:400;color:#6b7280;font-size:12px;">(optional)</span></label><input class="f-inp" id="sh-phone" name="phone" type="tel" placeholder="+44 7..."></div>
+          </div>
+
+          <h2 class="sec-t">Delivery address</h2>
+          <div class="f-grid-2">
+            <div class="f-row f-full"><label class="f-lbl" for="sh-addr1">Address line 1 *</label><input class="f-inp" id="sh-addr1" name="addr1" required></div>
+            <div class="f-row f-full"><label class="f-lbl" for="sh-addr2">Address line 2</label><input class="f-inp" id="sh-addr2" name="addr2"></div>
+            <div class="f-row"><label class="f-lbl" for="sh-city">City *</label><input class="f-inp" id="sh-city" name="city" required></div>
+            <div class="f-row"><label class="f-lbl" for="sh-post">Postcode *</label><input class="f-inp" id="sh-post" name="postcode" required></div>
+            <div id="uk-country-wrap" class="f-row f-full"><label class="f-lbl" for="sh-country">Country</label><input class="f-inp" id="sh-country" name="country" value="United Kingdom" readonly></div>
+            <div id="intl-country-wrap" class="f-row f-full" style="display:none">
+              <label class="f-lbl" for="sh-intl-country">Country *</label>
+              <select class="f-select" id="sh-intl-country" name="intl_country">
+                <option value="">Select your country…</option>
+              </select>
+            </div>
+          </div>
+
+          <h2 class="sec-t">Delivery method</h2>
+          <div class="ship-opts" id="ship-uk">
+            <label class="ship-opt">
+              <input type="radio" name="shipping" value="24" checked>
+              <div class="ship-opt-main">
+                <div class="ship-opt-name">Royal Mail Tracked 24</div>
+                <div class="ship-opt-sub">1–2 working days, tracked. UK only. Free over £100.</div>
+              </div>
+              <div class="ship-opt-price" id="ship-price-24">£5.99</div>
+            </label>
+            <label class="ship-opt">
+              <input type="radio" name="shipping" value="48">
+              <div class="ship-opt-main">
+                <div class="ship-opt-name">Royal Mail Tracked 48</div>
+                <div class="ship-opt-sub">2–3 working days, tracked. UK only.</div>
+              </div>
+              <div class="ship-opt-price" id="ship-price-48">£3.80</div>
+            </label>
+          </div>
+          <div class="ship-opts" id="ship-intl" style="display:none">
+            <label class="ship-opt">
+              <input type="radio" name="shipping" value="intl">
+              <div class="ship-opt-main">
+                <div class="ship-opt-name">Royal Mail International Tracked</div>
+                <div class="ship-opt-sub" id="ship-intl-sub">Tracked worldwide — select your country for the exact rate.</div>
+              </div>
+              <div class="ship-opt-price" id="ship-price-intl">£9.99</div>
+            </label>
+          </div>
+
+          <div id="intl-compliance-wrap" style="display:none" class="intl-compliance-wrap">
+            <label class="co-ack">
+              <input type="checkbox" name="intl-compliance" required>
+              <span>I confirm I am responsible for compliance with all local import regulations in my country. This product is for in vitro research use only and I accept full responsibility for its importation and lawful use.</span>
+            </label>
+          </div>
+
+          <!-- ── Divider into the Payment section ──────────────────── -->
+          <div class="co-pay-divider">
+            <div class="pay-page-eyebrow">STEP 2</div>
+            <h2 class="co-pay-h">Payment</h2>
+            <p class="co-pay-sub">Instant, secure bank payment — no card details required.</p>
+          </div>
 
           <!-- ── FENA PRIMARY CARD ─────────────────────────────────── -->
           <div class="fena-hero-card">
@@ -682,29 +712,11 @@
           </div>
           <!-- /fena-hero-card -->
 
-          <!-- ── WHY PAY BY BANK? ───────────────────────────────────── -->
-          <details class="fena-why-box" open>
-            <summary>Why pay by bank? (the honest reason)</summary>
-            <div class="fena-why-body">
-              <p style="color:#cdd3d9"><strong style="color:#01D3A0">The honest reason:</strong> research compounds are treated as &ldquo;high-risk&rdquo; by the card networks, so card processors charge us roughly <strong style="color:#fff">15&ndash;20% per order</strong> - when they&rsquo;ll work with us at all. We&rsquo;d rather not bake that into your prices. Pay by Bank costs us a fraction of that, so we keep prices lower and pass the saving straight to you instead of handing it to the card companies.</p>
-              <p>Open banking lets you pay directly from your current account without entering any card details. Your bank authenticates the payment - the same way you'd approve any transaction in your banking app.</p>
-              <p>It's regulated by the FCA (the same body that regulates UK banks), so it carries the same protections as a standard bank transfer - with the speed and simplicity of a one-click payment.</p>
-              <p>Money goes directly to us. No card processors, no stored card data, no risk of card fraud.</p>
-            </div>
-          </details>
-
-          <!-- ── Terms & Conditions ─────────────────────────────────── -->
-          <label class="co-ack">
-            <input type="checkbox" name="terms" required>
-            <span>I have read and accept the <a href="/legal/terms/" target="_blank">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank">Research Use Policy</a>.</span>
-          </label>
-
           <!-- ── Error display (used by checkout.js for bank path) ──── -->
           <div class="co-err" id="co-err"></div>
 
-          <!-- ── BANK TRANSFER — co-equal option (open by default on UK) ────── -->
-          <div class="pay-or-divider">or pay by bank transfer</div>
-          <details class="bank-fallback" id="bank-transfer-details" open>
+          <!-- ── BANK TRANSFER — co-equal option (opened dynamically for INTL) ────── -->
+          <details class="bank-fallback" id="bank-transfer-details">
             <summary><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#01D3A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M3 21h18"/><path d="M4 21V10"/><path d="M20 21V10"/><path d="M3 10l9-6 9 6"/><path d="M8 21v-6"/><path d="M12 21v-6"/><path d="M16 21v-6"/></svg>Pay by bank transfer</summary>
             <div class="bank-fallback-body">
               <p class="eu-pay-intro"><strong style="color:#01D3A0">How to pay — international orders.</strong> We accept payment by bank transfer in GBP. Follow the three steps below — it only takes a minute.</p>
@@ -749,7 +761,9 @@
 
           <p class="crypto-teaser">Prefer crypto? <a href="mailto:support@veloxpeps.com?subject=Pay%20by%20crypto%20for%20my%20order">Email us and we&rsquo;ll send a secure link &rarr;</a></p>
 
-          <a href="/checkout/shipping/" class="co-back">&larr; Back to delivery</a>
+          <p class="pay-implicit-note">By placing your order you agree to our <a href="/legal/terms/" target="_blank">Terms &amp; Conditions</a> and <a href="/legal/research-use-policy/" target="_blank">Research Use Policy</a>. All products are supplied for in vitro research use only.</p>
+
+          <a href="/cart/" class="co-back">&larr; Back to order</a>
 
           <!-- Hidden billing fields - checkout.js compatibility only -->
           <div style="display:none" aria-hidden="true">
@@ -786,12 +800,12 @@
 
         <div class="co-sum-rows">
           <div class="co-sum-row"><span>Subtotal</span><span id="co-subtotal">&pound;0.00</span></div>
-          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">&pound;3.80</span></div>
+          <div class="co-sum-row"><span id="co-shipping-label">Royal Mail Tracked 24</span><span id="co-shipping">&pound;5.99</span></div>
           <div class="co-sum-row co-discount-line" id="co-discount-line" style="display:none">
             <span>Discount (<span id="co-discount-label"></span>)</span>
             <span id="co-discount-amount" class="co-discount-saving">&minus;&pound;0.00</span>
           </div>
-          <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">&pound;3.80</span></div>
+          <div class="co-sum-row co-sum-total"><span>Total</span><span id="co-total">&pound;5.99</span></div>
           <div class="co-sum-row co-savings-row" id="co-savings-row" style="display:none;color:#01D3A0;font-weight:700;margin-top:2px">
             <span>You save vs. RRP</span>
             <span id="co-savings-amount">&minus;&pound;0.00</span>
@@ -1118,11 +1132,11 @@
     fenaBtn.addEventListener('click', function () {
       clearErr();
 
-      // 1. Validate terms
-      var form  = document.getElementById('payment-form');
-      var terms = form ? form.querySelector('input[name="terms"]') : null;
-      if (!terms || !terms.checked) {
-        showErr('Please accept the Terms & Conditions and Research Use Policy before paying.');
+      // 1. Validate + persist the delivery address (single-page checkout).
+      //    vpCollectAddress (checkout.js) validates required fields, focuses the
+      //    first missing one, and saves the address into vp_checkout. It also
+      //    surfaces its own inline error, so we just bail if it returns false.
+      if (typeof window.vpCollectAddress === 'function' && !window.vpCollectAddress()) {
         return;
       }
 
@@ -1311,47 +1325,11 @@
 <script src="/assets/js/conversion.js" defer></script>
 <script src="/assets/js/animations.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
-  <script>
-  /* International orders: Fena (UK open banking) can't process them, so hide Fena
-     and make bank transfer the primary method. Region is stored by the checkout step. */
-  (function () {
-    function readChk() {
-      try { return JSON.parse(sessionStorage.getItem('vp_checkout') || localStorage.getItem('vp_checkout') || '{}'); }
-      catch (e) { return {}; }
-    }
-    function isIntl() { var r = String((readChk().region || '')).toUpperCase(); return r === 'INTL' || r === 'EU'; }
-    // Mirror the live order total into the prominent "Amount to send" badge.
-    function syncIntlAmount() {
-      var val = document.getElementById('intl-amount-val');
-      var total = document.getElementById('co-total');
-      if (val && total && total.textContent.trim()) val.textContent = total.textContent.trim();
-    }
-    function apply() {
-      if (!isIntl()) return;
-      document.body.classList.add('eu-checkout');
-      // Page heading + lede are Fena-specific — rewrite for international bank transfer.
-      var h1 = document.querySelector('.page-h1');
-      if (h1) h1.textContent = 'Pay by bank transfer';
-      var lede = document.querySelector('.page-lede');
-      if (lede) lede.textContent = 'International orders are paid by bank transfer in GBP. Confirm your order, then send the exact total using your order ID as the reference.';
-      var bf = document.querySelector('.bank-fallback');
-      if (bf) {
-        bf.open = true;                                  // always-open primary panel
-        var sum = bf.querySelector('summary');
-        if (sum) sum.textContent = 'Pay by bank transfer';
-      }
-      var btn = document.getElementById('bank-pay-btn');
-      if (btn) btn.textContent = 'CONFIRM ORDER & GET PAYMENT DETAILS →';
-      syncIntlAmount();
-      // Totals are rendered by checkout.js after this runs; re-sync shortly + on reprice.
-      setTimeout(syncIntlAmount, 150);
-      setTimeout(syncIntlAmount, 600);
-      try { document.addEventListener('vp:cart-repriced', syncIntlAmount); } catch (e) {}
-    }
-    if (document.readyState !== 'loading') apply();
-    else document.addEventListener('DOMContentLoaded', apply);
-  })();
-  </script>
+  <!-- International (INTL) handling is now live on this single page: the region
+       toggle calls applyRegion() → applyRegionPaymentUI() in checkout.js, which
+       adds body.eu-checkout, rewrites the heading/lede, opens the bank panel and
+       syncs the "Amount to send" badge. The old load-time auto-apply script was
+       removed to avoid double-handling now that region is chosen here. -->
 
   <script>
   /* Checkout order-bump — one-tap add of Bacteriostatic Water, the consumable

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SHIPPING_FLAT = 3.80;
+  var SHIPPING_FLAT = 5.99;   // Royal Mail Tracked 24 (default checkout method — shown here so there's no surprise at payment)
   var FREE_THRESHOLD = 100;
 
   function getCart() {

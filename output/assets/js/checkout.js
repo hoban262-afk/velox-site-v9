@@ -111,6 +111,9 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  // Trimmed value of an input by id (empty string if missing).
+  function gv(id) { var el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; }
+
   // Selected UK shipping method ('48' default | '24' express). Falls back to the
   // value stored at the shipping step so it carries through to the payment page.
   function shipMethod() {
@@ -305,6 +308,10 @@
     if (shipEl) shipEl.textContent = shipping === 0 ? 'FREE' : fmt(shipping);
     if (totEl)  totEl.textContent  = fmt(total);
     if (shpLbl) shpLbl.textContent = r === 'INTL' ? 'Royal Mail International Tracked' : (shipMethod() === '24' ? 'Royal Mail Tracked 24' : 'Royal Mail Tracked 48');
+    // Single-page checkout (international): mirror the live total into the prominent
+    // "Amount to send" badge whenever the summary re-renders.
+    var iav = document.getElementById('intl-amount-val');
+    if (iav && document.body && document.body.classList.contains('eu-checkout')) iav.textContent = fmt(total);
     if (saving > 0) {
       if (discLine) discLine.style.display = '';
       if (discLbl)  discLbl.textContent = promo.label;
@@ -384,14 +391,22 @@
   var affiliateApplied = null;      // { id, code, discount_pct } — affiliate ref code applied
   var personalCode = null;          // { code, value, basis, priority, applies_to } — per-email code (server-validated)
 
-  // ── SHIPPING PAGE ─────────────────────────────────────────────────────────
+  // ── DELIVERY ADDRESS (standalone shipping page OR single-page checkout) ─────
+  // The address fields live on the merged /checkout/payment/ page now (single-page
+  // checkout), but the legacy /checkout/shipping/ page still works as a fallback.
+  // Setup keys off the presence of the address fields, not a specific form, so the
+  // region toggle / delivery method / country dropdown / prefill all run wherever
+  // the fields appear. vpCollectAddress() (validate + persist) is shared by the
+  // standalone submit AND the single-page pay buttons.
   var shippingForm = document.getElementById('shipping-form');
-  if (shippingForm) {
+  var activeRegion = 'UK';
+  var vpCollectAddress = null;   // shared validate+persist for the delivery address
+  if (document.getElementById('region-uk')) {
 
     // Restore region from sessionStorage if returning to this page
     var savedChk = {};
     try { savedChk = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (ex) {}
-    var activeRegion = (savedChk.region === 'INTL' || savedChk.region === 'EU') ? 'INTL' : 'UK';
+    activeRegion = (savedChk.region === 'INTL' || savedChk.region === 'EU') ? 'INTL' : 'UK';
 
     var regionUkBtn        = document.getElementById('region-uk');
     var regionIntlBtn      = document.getElementById('region-intl');
@@ -423,6 +438,7 @@
 
     function applyRegion(r) {
       activeRegion = r;
+      try { payRegion = r; } catch (e) {}   // keep the payment block's region in sync (single-page checkout)
       if (regionUkBtn)   regionUkBtn.classList.toggle('region-btn-active', r === 'UK');
       if (regionIntlBtn) regionIntlBtn.classList.toggle('region-btn-active', r === 'INTL');
       if (ukCountryWrap)      ukCountryWrap.style.display      = r === 'UK' ? '' : 'none';
@@ -430,7 +446,43 @@
       if (intlComplianceWrap) intlComplianceWrap.style.display = r === 'INTL' ? '' : 'none';
       if (intlRegionNote)     intlRegionNote.style.display     = r === 'INTL' ? '' : 'none';
       updateShipping(r);
+      // Persist region (+ zone) immediately so the charge engine and the region-
+      // dependent payment UI see it the moment the customer toggles it on the
+      // single-page checkout — no submit required.
+      try {
+        var st = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}');
+        st.region = r;
+        if (r === 'INTL') { st.zone = st.zone || currentZone(); }
+        sessionStorage.setItem('vp_checkout', JSON.stringify(st));
+        localStorage.setItem('vp_checkout', JSON.stringify(st));
+      } catch (e) {}
       renderCartSummary(cart, r);
+      applyRegionPaymentUI(r);
+    }
+
+    // Region-dependent payment UI — only relevant on the single-page checkout,
+    // where the Fena (UK open banking) card and the bank-transfer panel share the
+    // page. International can't use Fena, so it's hidden and bank transfer becomes
+    // the primary, always-open method (driven by the .eu-checkout body class).
+    function applyRegionPaymentUI(r) {
+      if (!document.getElementById('payment-form')) return;
+      var intl = (r === 'INTL');
+      try { document.body.classList.toggle('eu-checkout', intl); } catch (e) {}
+      var h1 = document.querySelector('.page-h1');
+      if (h1) h1.textContent = intl ? 'Pay by bank transfer' : 'Checkout';
+      var lede = document.querySelector('.page-lede');
+      if (lede) lede.textContent = intl
+        ? 'International orders are paid by bank transfer in GBP. Confirm your order, then send the exact total using your order ID as the reference.'
+        : 'Enter your delivery details and pay — everything on one page.';
+      var bf = document.querySelector('.bank-fallback');
+      if (bf && intl) bf.open = true;
+      var bankBtn = document.getElementById('bank-pay-btn');
+      if (bankBtn) bankBtn.textContent = intl
+        ? 'CONFIRM ORDER & GET PAYMENT DETAILS →'
+        : 'CONFIRM ORDER & GET BANK DETAILS →';
+      var iav = document.getElementById('intl-amount-val');
+      var tot = document.getElementById('co-total');
+      if (iav && tot && tot.textContent.trim()) iav.textContent = tot.textContent.trim();
     }
 
     if (regionUkBtn)   regionUkBtn.addEventListener('click', function () { applyRegion('UK'); });
@@ -502,32 +554,46 @@
       })();
     }
 
-    shippingForm.addEventListener('submit', function (e) {
-      e.preventDefault();
+    // Validate the delivery address, then merge it into vp_checkout. Returns true
+    // on success, false (with an inline error + focus on the first gap) otherwise.
+    // Shared by the standalone shipping submit and BOTH single-page pay buttons.
+    // Phone is optional (removed as a barrier); the research-use tick is gone too
+    // (the entry age-gate already collects eligibility). International keeps the
+    // import-compliance declaration — a stronger, order-specific legal protection.
+    vpCollectAddress = function () {
       var errEl = document.getElementById('co-err');
 
-      var required = ['sh-fname', 'sh-lname', 'sh-email', 'sh-phone', 'sh-addr1', 'sh-city', 'sh-post'];
+      var required = ['sh-fname', 'sh-lname', 'sh-email', 'sh-addr1', 'sh-city', 'sh-post'];
       var missing = required.filter(function (id) {
         var el = document.getElementById(id);
         return !el || !el.value.trim();
       });
 
-      var ack = shippingForm.querySelector('input[name="ack"]');
-      if (ack && !ack.checked) missing.push('ack');
+      // Basic email sanity check — cheap guard against typos that break dispatch emails.
+      var emailEl = document.getElementById('sh-email');
+      if (emailEl && emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+        if (missing.indexOf('sh-email') === -1) missing.push('sh-email');
+      }
 
-      // International-specific validation
       if (activeRegion === 'INTL') {
         var intlCountryEl = document.getElementById('sh-intl-country');
-        if (!intlCountryEl || !intlCountryEl.value) missing.push('intl-country');
-        var intlComp = shippingForm.querySelector('input[name="intl-compliance"]');
+        if (!intlCountryEl || !intlCountryEl.value) missing.push('sh-intl-country');
+        var intlComp = document.querySelector('input[name="intl-compliance"]');
         if (intlComp && !intlComp.checked) missing.push('intl-compliance');
       }
 
       if (missing.length) {
         if (errEl) errEl.textContent = activeRegion === 'INTL'
-          ? 'Please fill in all required fields, select your country, and tick both acknowledgements.'
-          : 'Please fill in all required fields and tick the acknowledgement.';
-        return;
+          ? 'Please fill in your name, email and full delivery address, select your country, and confirm the import declaration.'
+          : 'Please fill in your name, email and full delivery address.';
+        var firstId = missing[0] === 'intl-compliance' ? null : missing[0];
+        var firstEl = firstId ? document.getElementById(firstId) : null;
+        if (firstEl && firstEl.focus) {
+          try { firstEl.focus(); firstEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+        } else if (errEl && errEl.scrollIntoView) {
+          try { errEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+        }
+        return false;
       }
       if (errEl) errEl.textContent = '';
 
@@ -536,14 +602,14 @@
         : 'United Kingdom';
 
       var data = {
-        fname:       document.getElementById('sh-fname').value.trim(),
-        lname:       document.getElementById('sh-lname').value.trim(),
-        email:       document.getElementById('sh-email').value.trim(),
-        phone:       document.getElementById('sh-phone').value.trim(),
-        addr1:       document.getElementById('sh-addr1').value.trim(),
+        fname:       gv('sh-fname'),
+        lname:       gv('sh-lname'),
+        email:       gv('sh-email'),
+        phone:       gv('sh-phone'),
+        addr1:       gv('sh-addr1'),
         addr2:       (document.getElementById('sh-addr2') || {}).value || '',
-        city:        document.getElementById('sh-city').value.trim(),
-        postcode:    document.getElementById('sh-post').value.trim(),
+        city:        gv('sh-city'),
+        postcode:    gv('sh-post'),
         country:     country,
         region:      activeRegion,
         zone:        activeRegion === 'INTL' ? zoneForCountry(country) : null,
@@ -551,10 +617,24 @@
         ship_method: shipMethod(),
       };
 
-      try { sessionStorage.setItem('vp_checkout', JSON.stringify(data)); } catch (ex) {}
+      try {
+        var existing = {};
+        try { existing = JSON.parse(sessionStorage.getItem('vp_checkout') || '{}'); } catch (e) {}
+        var merged = Object.assign({}, existing, data);
+        sessionStorage.setItem('vp_checkout', JSON.stringify(merged));
+        localStorage.setItem('vp_checkout', JSON.stringify(merged));
+      } catch (ex) {}
+      return true;
+    };
+    try { window.vpCollectAddress = vpCollectAddress; } catch (e) {}
 
-      window.location.href = '/checkout/payment/';
-    });
+    // Legacy standalone shipping page: collect the address then advance to payment.
+    if (shippingForm) {
+      shippingForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (vpCollectAddress()) window.location.href = '/checkout/payment/';
+      });
+    }
   }
 
   // ── PAYMENT PAGE ──────────────────────────────────────────────────────────
@@ -826,18 +906,20 @@
     paymentForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var errEl = document.getElementById('co-err');
-      var terms = paymentForm.querySelector('input[name="terms"]');
-      if (!terms || !terms.checked) {
-        if (errEl) errEl.textContent = 'Please accept the Terms & Conditions and Research Use Policy.';
-        return;
-      }
+      // Single-page checkout: validate + persist the delivery address first.
+      // (Accepting the Terms is now implicit — stated next to the pay buttons —
+      // matching the entry age-gate, so there's no extra checkbox to tick.)
+      if (typeof vpCollectAddress === 'function' && !vpCollectAddress()) return;
       if (errEl) errEl.textContent = '';
+
+      // Region may have been chosen on this same page — read the live value.
+      var region = currentRegion();
 
       var submitBtn = paymentForm.querySelector('button[type="submit"]');
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Processing…'; }
 
       var ref        = 'VP-' + todayStr() + '-' + randChars(4);
-      var t          = cartTotals(cart, payRegion);
+      var t          = cartTotals(cart, region);
       var promo      = bestPromoGBP(cart, appliedDiscount);
       var saving     = savingInCurrency(promo.saving);
       var ptsSaving  = savingInCurrency(appliedPointsSavingGBP);
@@ -858,7 +940,7 @@
         existing.total                = finalTotal;
         existing.cart_snapshot        = JSON.stringify(cart);
         existing.currency             = 'GBP';
-        existing.region               = payRegion;
+        existing.region               = region;
         existing.payment_method       = 'bank';
         existing.affiliate_id         = affiliateApplied ? affiliateApplied.id   : null;
         existing.affiliate_code_used  = affiliateApplied ? affiliateApplied.code : null;

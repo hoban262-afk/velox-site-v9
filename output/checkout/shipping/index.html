@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Single-page checkout: delivery + payment are now collected together on /checkout/payment/.
+       Redirect any old links/bookmarks straight there (replace = no back-button trap). -->
+  <script>try{location.replace('/checkout/payment/');}catch(e){location.href='/checkout/payment/';}</script>
   <title>Delivery Details - Checkout - Velox Peptides</title>
   <meta name="description" content="Enter your delivery address. UK: Royal Mail Tracked 24. Worldwide: Royal Mail International Tracked.">
   <style>
