@@ -248,6 +248,25 @@
   }
 
   render();
+
+  // ── GA4 view_cart (once, on the cart page, when it has items) ──────────────
+  try {
+    if (document.getElementById('cart-items') && window.vpGA) {
+      var vcCart = getCart();
+      if (vcCart.length) {
+        var vcValue = 0;
+        var vcItems = vcCart.map(function (it) {
+          var price = parseFloat(it.price) || 0;
+          var qty = it.qty || 1;
+          vcValue += price * qty;
+          return { item_id: it.slug || it.name, item_name: it.name,
+                   item_variant: it.size || '', price: price, quantity: qty };
+        });
+        window.vpGA('view_cart', { currency: 'GBP', value: Math.round(vcValue * 100) / 100, items: vcItems });
+      }
+    }
+  } catch (e) {}
+
   // Re-render once Velox Peps Pro status resolves (free shipping + member prices
   // appear without a manual refresh).
   try { window.addEventListener('velox:member', render); } catch (e) {}

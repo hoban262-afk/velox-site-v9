@@ -145,6 +145,10 @@
     localStorage.setItem('vp_cart', JSON.stringify(cart));
     updateCartCount();
     if (window.vpTrack) window.vpTrack('add_to_cart');
+    if (window.vpGA) window.vpGA('add_to_cart', {
+      currency: 'GBP', value: price,
+      items: [{ item_id: slug, item_name: name, item_variant: size, price: price, quantity: 1 }],
+    });
     if (window.toast) window.toast('Added to order \u2014 ' + name);
   });
 
@@ -172,6 +176,9 @@
       }).then(function (res) {
         if (res.ok && res.d && res.d.success) {
           try { localStorage.setItem('velox_subscribed', '1'); } catch (e) {}
+          if (!res.d.already) {
+            try { if (window.vpGA) window.vpGA('generate_lead', { currency: 'GBP', value: 0, method: 'newsletter_footer' }); } catch (e) {}
+          }
           nlInp.value = '';
           nlBtn.textContent = res.d.already ? 'Already sent ✓' : 'Code sent ✓';
           if (window.toast) window.toast(res.d.already
@@ -245,11 +252,49 @@
         else fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: p, keepalive: true }).catch(function () {});
       } catch (e) {}
     };
+
+    // ── GA4 ecommerce helper (gtag) ───────────────────────────────────────────
+    // Thin, always-safe wrapper around gtag so page scripts can fire GA4
+    // ecommerce events without repeating the guard. Never throws, never blocks.
+    window.vpGA = function (event, params) {
+      try {
+        if (typeof window.gtag === 'function') window.gtag('event', event, params || {});
+      } catch (e) {}
+    };
+    // Read the current cart as GA4 `items[]` + summed value. Used by
+    // begin_checkout / view_cart callers that don't already have line items.
+    window.vpGACartItems = function () {
+      var out = { items: [], value: 0 };
+      try {
+        var cart = JSON.parse(localStorage.getItem('vp_cart') || '[]');
+        for (var i = 0; i < cart.length; i++) {
+          var it = cart[i];
+          var qty = it.qty || 1;
+          var price = parseFloat(it.price) || 0;
+          out.items.push({
+            item_id: it.slug || it.name || '',
+            item_name: it.name || it.slug || '',
+            item_variant: it.size || '',
+            price: price,
+            quantity: qty,
+          });
+          out.value += price * qty;
+        }
+        out.value = Math.round(out.value * 100) / 100;
+      } catch (e) {}
+      return out;
+    };
+
     // Fire begin_checkout once when the visitor reaches the cart/checkout page.
     if (/^\/(cart|checkout)/.test(location.pathname)) {
       try {
         var seen = sessionStorage.getItem('vp_chk');
-        if (!seen) { sessionStorage.setItem('vp_chk', '1'); window.vpTrack('begin_checkout'); }
+        if (!seen) {
+          sessionStorage.setItem('vp_chk', '1');
+          window.vpTrack('begin_checkout');
+          var _bc = window.vpGACartItems();
+          window.vpGA('begin_checkout', { currency: 'GBP', value: _bc.value, items: _bc.items });
+        }
       } catch (e) { window.vpTrack('begin_checkout'); }
     }
 

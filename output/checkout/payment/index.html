@@ -1148,6 +1148,16 @@
       }
       // Funnel: a valid Pay-by-Bank attempt was initiated (per-method drop-off).
       try { if (window.vpTrack) window.vpTrack('payment_method_selected', { method: 'fena' }); } catch (e) {}
+      // GA4 add_payment_info (open-banking rail).
+      try {
+        if (window.vpGA) {
+          var _pi = window.vpGACartItems ? window.vpGACartItems() : { items: [], value: 0 };
+          window.vpGA('add_payment_info', {
+            currency: 'GBP', value: _pi.value,
+            payment_type: 'Open Banking', items: _pi.items,
+          });
+        }
+      } catch (e) {}
       // Charge the EXACT total checkout.js rendered (see #co-total). Never
       // re-derive it here — the parallel recompute overcharged when a code,
       // points, or Pro shipping was in play (ticket #2943).

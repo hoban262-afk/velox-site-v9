@@ -105,6 +105,10 @@
         .then(function (res) {
           if (res.ok && res.d.success) {
             try { localStorage.setItem('velox_subscribed', '1'); } catch (e) {}
+            // GA4 generate_lead (new newsletter subscriber only).
+            if (!res.d.already) {
+              try { if (window.vpGA) window.vpGA('generate_lead', { currency: 'GBP', value: 0, method: 'newsletter_popup' }); } catch (e) {}
+            }
             render(successBody(res.d.codeHint, res.d.already));
           } else {
             submit.disabled = false; submit.innerHTML = 'Email me the handbook &rarr;';

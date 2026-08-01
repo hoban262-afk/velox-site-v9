@@ -159,6 +159,8 @@
     try {
       var r = await sb.auth.signUp({ email: email, password: pw, options: { data: { name: name } } });
       if (r.error) { msg('auth-msg-register', r.error.message || 'Could not create account.'); $('rg-btn').disabled = false; return; }
+      // GA4 sign_up (account creation succeeded).
+      try { if (typeof gtag === 'function') gtag('event', 'sign_up', { method: 'email' }); } catch (e) {}
       // If email confirmation is required, there's no active session yet
       if (!r.data.session) { msg('auth-msg-register', 'Account created — check your email to confirm, then sign in.', true); $('rg-btn').disabled = false; return; }
       await afterAuth();

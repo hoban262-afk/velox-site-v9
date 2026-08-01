@@ -624,6 +624,19 @@
         sessionStorage.setItem('vp_checkout', JSON.stringify(merged));
         localStorage.setItem('vp_checkout', JSON.stringify(merged));
       } catch (ex) {}
+
+      // ── GA4 add_shipping_info (once per session, when a valid address is saved)
+      try {
+        if (window.vpGA && sessionStorage.getItem('vp_ship_fired') !== '1') {
+          sessionStorage.setItem('vp_ship_fired', '1');
+          var _si = window.vpGACartItems ? window.vpGACartItems() : { items: [], value: 0 };
+          window.vpGA('add_shipping_info', {
+            currency: 'GBP', value: _si.value,
+            shipping_tier: data.ship_method || '', items: _si.items,
+          });
+        }
+      } catch (ex) {}
+
       return true;
     };
     try { window.vpCollectAddress = vpCollectAddress; } catch (e) {}
@@ -912,6 +925,17 @@
       if (typeof vpCollectAddress === 'function' && !vpCollectAddress()) return;
       if (errEl) errEl.textContent = '';
 
+      // GA4 add_payment_info (bank-transfer rail).
+      try {
+        if (window.vpGA) {
+          var _pi = window.vpGACartItems ? window.vpGACartItems() : { items: [], value: 0 };
+          window.vpGA('add_payment_info', {
+            currency: 'GBP', value: _pi.value,
+            payment_type: 'Bank Transfer', items: _pi.items,
+          });
+        }
+      } catch (ex) {}
+
       // Region may have been chosen on this same page — read the live value.
       var region = currentRegion();
 
@@ -1005,6 +1029,22 @@
     var alreadyFired = sessionStorage.getItem('vp_order_fired') === '1';
     if (!alreadyFired && chk.orderRef && chk.email) {
       try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
+
+      // ── GA4 purchase (bank rail) ──────────────────────────────────────────
+      try {
+        if (window.vpGA) window.vpGA('purchase', {
+          transaction_id: chk.orderRef,
+          currency: chk.currency || 'GBP',
+          value: Number(chk.total) || 0,
+          shipping: Number(chk.shipping) || 0,
+          coupon: chk.discount_code || undefined,
+          items: confirmedCart.map(function (item) {
+            return { item_id: item.slug || item.name, item_name: item.name,
+                     item_variant: item.size, price: Number(item.price) || 0,
+                     quantity: item.qty || 1 };
+          }),
+        });
+      } catch (ex) {}
 
       var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
         .filter(Boolean).join(', ');
