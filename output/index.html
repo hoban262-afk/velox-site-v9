@@ -575,9 +575,9 @@ html{scroll-behavior:smooth}
     <a class="hero-panel hp-block" href="https://verify.janoshik.com/tests/165920-Sample_1_K9X8LPDYNFSM" target="_blank" rel="noopener nofollow" style="text-decoration:none;display:block">
       <div class="hp-lbl">LATEST BATCH REPORT - JANOSHIK #165920</div>
       <div class="hp-rows">
-        <div class="hp-r"><span class="hp-k">Compound</span><span class="hp-v">Retatrutide</span></div>
+        <div class="hp-r hp-r-keep"><span class="hp-k">Compound</span><span class="hp-v">Retatrutide</span></div>
         <div class="hp-r"><span class="hp-k">CAS Number</span><span class="hp-v">2381089-83-2</span></div>
-        <div class="hp-r"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.15% - PASS &#x2713;</span></div>
+        <div class="hp-r hp-r-keep"><span class="hp-k">HPLC Purity</span><span class="hp-v ok">99.15% - PASS &#x2713;</span></div>
         <div class="hp-r"><span class="hp-k">Measured Content</span><span class="hp-v ok">10.93 mg - full label</span></div>
         <div class="hp-r"><span class="hp-k">Test Type</span><span class="hp-v ok">Anonymous blind test &#x2713;</span></div>
         <div class="hp-r"><span class="hp-k">Testing Lab</span><span class="hp-v">Janoshik Analytical</span></div>
@@ -593,33 +593,13 @@ html{scroll-behavior:smooth}
   </div>
 </section>
 
-<!-- ── Velox Research Assistant trust strip (ChatGPT store, verified domain) ─ -->
-<section class="hp-sec" aria-label="Velox Research Assistant on ChatGPT" style="padding:22px 20px 0">
-  <div class="sec-i" style="max-width:1080px;margin:0 auto;padding:0 20px">
-    <a class="vra-strip" href="https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant" target="_blank" rel="noopener">
-      <div class="vra-ic"><img src="/assets/images/icon-192.png" alt="Velox Research Assistant" width="60" height="60" loading="lazy" decoding="async"></div>
-      <div class="vra-body">
-        <span class="vra-eyebrow">★ Now on the ChatGPT store · Verified by veloxpeps.com</span>
-        <h2>Ask the Velox Research Assistant</h2>
-        <p>A free AI reference for research peptides — mechanisms, comparisons, reconstitution maths and UK regulatory status, every answer built on our HPLC batch-verified compound data. <span class="vra-legal">In vitro research reference only — not medical or dosing advice.</span></p>
-      </div>
-      <span class="vra-cta">Open in ChatGPT →</span>
-    </a>
-  </div>
-</section>
 <style>
-  .vra-strip{display:flex;align-items:center;gap:22px;background:linear-gradient(120deg,rgba(1,211,160,.09),rgba(1,211,160,.02) 62%);border:1px solid rgba(1,211,160,.3);border-radius:18px;padding:22px 26px;text-decoration:none;color:#fff;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-  .vra-strip:hover{transform:translateY(-3px);border-color:rgba(1,211,160,.5);box-shadow:0 20px 50px -26px rgba(1,211,160,.4)}
-  .vra-ic{flex:0 0 auto;width:60px;height:60px;border-radius:15px;overflow:hidden;border:1px solid rgba(1,211,160,.25)}
-  .vra-ic img{width:100%;height:100%;object-fit:cover;display:block}
-  .vra-body{flex:1;min-width:0}
-  .vra-eyebrow{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#01D3A0}
-  .vra-body h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(24px,3vw,32px);line-height:1;letter-spacing:-.3px;margin:8px 0 8px}
-  .vra-body p{color:#9aa3ad;font-size:14px;line-height:1.55;margin:0;max-width:640px}
-  .vra-legal{color:#6b7a7a}
-  .vra-cta{flex:0 0 auto;align-self:center;background:#01D3A0;color:#04140f;font-weight:800;font-size:14.5px;padding:12px 22px;border-radius:10px;white-space:nowrap}
-  .vra-strip:hover .vra-cta{filter:brightness(1.05)}
-  @media(max-width:720px){.vra-strip{flex-direction:column;align-items:flex-start}.vra-cta{align-self:stretch;text-align:center}}
+  /* Compact batch report card on mobile — keep purity summary, hide detail rows */
+  @media(max-width:720px){
+    .hero-panel .hp-r:not(.hp-r-keep){display:none;}
+    .hero-panel .hp-tags{display:none;}
+    .hero-panel .hp-rows{margin-bottom:4px;}
+  }
 </style>
 
 <style>
@@ -765,71 +745,6 @@ html{scroll-behavior:smooth}
   </div>
 </div>
 
-<section class="hp-sec">
-  <div class="vp-vs">
-    <div class="vp-vs-eyebrow">Why Velox</div>
-    <h2 class="vp-vs-title">The research peptide market is full of fakes. <em>We're built to be the opposite.</em></h2>
-    <p class="vp-vs-sub">Anyone can claim &ldquo;99% purity.&rdquo; We document it - every batch, every order. Here's how we compare to a typical seller.</p>
-    <p style="margin:6px 0 0"><a href="/about/" style="color:#01D3A0;font-weight:600;text-decoration:none">Meet the team behind Velox &rarr;</a></p>
-    <div class="vp-vs-table">
-      <div class="vp-vs-row vp-vs-head">
-        <div class="vp-vs-cell lab"></div>
-        <div class="vp-vs-cell them">Typical sellers</div>
-        <div class="vp-vs-cell us">Velox Peptides</div>
-      </div>
-      <div class="vp-vs-row">
-        <div class="vp-vs-cell lab">Testing</div>
-        <div class="vp-vs-cell them">Untested, or &ldquo;in-house&rdquo; claims you can't verify</div>
-        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Independently HPLC-tested by a third-party lab</div>
-      </div>
-      <div class="vp-vs-row">
-        <div class="vp-vs-cell lab">Documentation</div>
-        <div class="vp-vs-cell them">No certificate, or one generic PDF reused for everything</div>
-        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Batch-specific Certificate of Analysis with every order</div>
-      </div>
-      <div class="vp-vs-row">
-        <div class="vp-vs-cell lab">Who you're buying from</div>
-        <div class="vp-vs-cell them">Anonymous, no company details, no address</div>
-        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>CRP Labs Ltd - registered UK company (NI738125)</div>
-      </div>
-      <div class="vp-vs-row">
-        <div class="vp-vs-cell lab">Payment</div>
-        <div class="vp-vs-cell them">Crypto-only, or card details to an unknown processor</div>
-        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Pay by Bank via Fena (FCA-regulated) - no card details stored</div>
-      </div>
-      <div class="vp-vs-row">
-        <div class="vp-vs-cell lab">Dispatch</div>
-        <div class="vp-vs-cell them">&ldquo;Allow 2&ndash;4 weeks,&rdquo; untracked, sometimes never arrives</div>
-        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Dispatched from the UK within 24h, Royal Mail Tracked 24</div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="vp-aov">
-  <div class="vp-aov-i">
-    <div class="vp-aov-eyebrow">Stock up &amp; save</div>
-    <h2 class="vp-aov-title">Free UK shipping over &pound;100 - <em>and the more you order, the less you pay</em></h2>
-    <div class="vp-aov-tiers">
-      <div class="vp-aov-tier hi">
-        <div class="vp-aov-tier-v">&pound;100</div>
-        <div class="vp-aov-tier-l">Free UK shipping</div>
-      </div>
-      <div class="vp-aov-tier">
-        <div class="vp-aov-tier-v">&minus;5%</div>
-        <div class="vp-aov-tier-l">Spend &pound;75</div>
-      </div>
-      <div class="vp-aov-tier">
-        <div class="vp-aov-tier-v">&minus;10%</div>
-        <div class="vp-aov-tier-l">Spend &pound;150</div>
-      </div>
-      <div class="vp-aov-tier">
-        <div class="vp-aov-tier-v">&minus;20%</div>
-        <div class="vp-aov-tier-l">Spend &pound;250</div>
-      </div>
-    </div>
-    <p class="vp-aov-note">Volume discounts apply automatically at checkout. Or start with a curated <a href="/stacks/">research bundle</a> - multiple HPLC-verified compounds in one order.</p>
-  </div>
-</section>
 <section class="hp-sec hp-sec-featured">
   <div class="sec-i">
     <div class="hp-block hp-feat-block">
@@ -1108,6 +1023,72 @@ html{scroll-behavior:smooth}
         <a class="btn-o" href="/compounds/">Browse the full catalogue &rarr;</a>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="hp-sec">
+  <div class="vp-vs">
+    <div class="vp-vs-eyebrow">Why Velox</div>
+    <h2 class="vp-vs-title">The research peptide market is full of fakes. <em>We're built to be the opposite.</em></h2>
+    <p class="vp-vs-sub">Anyone can claim &ldquo;99% purity.&rdquo; We document it - every batch, every order. Here's how we compare to a typical seller.</p>
+    <p style="margin:6px 0 0"><a href="/about/" style="color:#01D3A0;font-weight:600;text-decoration:none">Meet the team behind Velox &rarr;</a></p>
+    <div class="vp-vs-table">
+      <div class="vp-vs-row vp-vs-head">
+        <div class="vp-vs-cell lab"></div>
+        <div class="vp-vs-cell them">Typical sellers</div>
+        <div class="vp-vs-cell us">Velox Peptides</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Testing</div>
+        <div class="vp-vs-cell them">Untested, or &ldquo;in-house&rdquo; claims you can't verify</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Independently HPLC-tested by a third-party lab</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Documentation</div>
+        <div class="vp-vs-cell them">No certificate, or one generic PDF reused for everything</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Batch-specific Certificate of Analysis with every order</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Who you're buying from</div>
+        <div class="vp-vs-cell them">Anonymous, no company details, no address</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>CRP Labs Ltd - registered UK company (NI738125)</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Payment</div>
+        <div class="vp-vs-cell them">Crypto-only, or card details to an unknown processor</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Pay by Bank via Fena (FCA-regulated) - no card details stored</div>
+      </div>
+      <div class="vp-vs-row">
+        <div class="vp-vs-cell lab">Dispatch</div>
+        <div class="vp-vs-cell them">&ldquo;Allow 2&ndash;4 weeks,&rdquo; untracked, sometimes never arrives</div>
+        <div class="vp-vs-cell us"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Dispatched from the UK within 24h, Royal Mail Tracked 24</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="vp-aov">
+  <div class="vp-aov-i">
+    <div class="vp-aov-eyebrow">Stock up &amp; save</div>
+    <h2 class="vp-aov-title">Free UK shipping over &pound;100 - <em>and the more you order, the less you pay</em></h2>
+    <div class="vp-aov-tiers">
+      <div class="vp-aov-tier hi">
+        <div class="vp-aov-tier-v">&pound;100</div>
+        <div class="vp-aov-tier-l">Free UK shipping</div>
+      </div>
+      <div class="vp-aov-tier">
+        <div class="vp-aov-tier-v">&minus;5%</div>
+        <div class="vp-aov-tier-l">Spend &pound;75</div>
+      </div>
+      <div class="vp-aov-tier">
+        <div class="vp-aov-tier-v">&minus;10%</div>
+        <div class="vp-aov-tier-l">Spend &pound;150</div>
+      </div>
+      <div class="vp-aov-tier">
+        <div class="vp-aov-tier-v">&minus;20%</div>
+        <div class="vp-aov-tier-l">Spend &pound;250</div>
+      </div>
+    </div>
+    <p class="vp-aov-note">Volume discounts apply automatically at checkout. Or start with a curated <a href="/stacks/">research bundle</a> - multiple HPLC-verified compounds in one order.</p>
   </div>
 </section>
 

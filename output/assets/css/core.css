@@ -2156,6 +2156,9 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 #vpww .vpww-sub{font-weight:600;font-size:12.5px;color:#bdeede;letter-spacing:.02em;}
 #vpww .vpww-cta{font-weight:800;font-size:12.5px;color:#021712;background:#01D3A0;border-radius:999px;padding:4px 12px;white-space:nowrap;}
 #vpww:hover .vpww-cta{background:#fff;}
+#vpww .vpww-main{display:inline-flex;align-items:center;gap:11px;flex-wrap:wrap;justify-content:center;text-decoration:none;}
+#vpww .vpww-gpt{font-weight:800;font-size:12.5px;color:#021712;background:#01D3A0;border-radius:999px;padding:4px 12px;white-space:nowrap;text-decoration:none;}
+#vpww .vpww-gpt:hover{background:#fff;}
 #vpww .vpww-x{position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:0;
   color:rgba(255,255,255,.7);font-size:22px;line-height:1;cursor:pointer;padding:0 4px;}
 #vpww .vpww-x:hover{color:#fff;}
@@ -2165,6 +2168,7 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
   #vpww .vpww-lead{font-size:12.5px;}
   #vpww .vpww-sub{font-size:11px;flex-basis:100%;}
   #vpww .vpww-cta{font-size:11.5px;padding:3px 10px;}
+  #vpww .vpww-gpt{font-size:11.5px;padding:3px 10px;}
 }
 
 /* -- Teal announcement banner (VERY TOP of page) -- */

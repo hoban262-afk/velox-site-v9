@@ -233,10 +233,14 @@
       fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
     }
 
-    // Funnel-event beacon (add_to_cart, begin_checkout). Same anonymous sid, no PII.
-    window.vpTrack = function (event) {
+    // Funnel-event beacon (add_to_cart, begin_checkout, payment_method_selected,
+    // purchase). Same anonymous sid, no PII. Optional `meta` carries small
+    // non-PII context, e.g. vpTrack('payment_method_selected', { method:'fena' }).
+    window.vpTrack = function (event, meta) {
       try {
-        var p = JSON.stringify({ sid: sid, event: event, path: location.pathname });
+        var obj = { sid: sid, event: event, path: location.pathname };
+        if (meta && typeof meta === 'object') obj.meta = meta;
+        var p = JSON.stringify(obj);
         if (navigator.sendBeacon) navigator.sendBeacon('/api/track', new Blob([p], { type: 'application/json' }));
         else fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: p, keepalive: true }).catch(function () {});
       } catch (e) {}
@@ -431,16 +435,17 @@
 
     function boot() {
       if (document.getElementById('vpww')) return;
-      var bar = document.createElement('a');
+      var bar = document.createElement('div');
       bar.id = 'vpww';
-      bar.href = '/compounds/';
-      bar.setAttribute('aria-label', 'Now shipping worldwide — shop the catalogue');
+      bar.setAttribute('aria-label', 'Now shipping worldwide, and the Velox Research Assistant on ChatGPT');
       bar.innerHTML =
         '<span class="vpww-in">' +
-          '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
-          '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
-          '<span class="vpww-sub">60+ countries &middot; tracked delivery &middot; GBP</span>' +
-          '<span class="vpww-cta">Shop now &rarr;</span>' +
+          '<a class="vpww-main" href="/compounds/">' +
+            '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
+            '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
+            '<span class="vpww-sub">60+ countries &middot; tracked &middot; GBP</span>' +
+          '</a>' +
+          '<a class="vpww-gpt" href="https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant" target="_blank" rel="noopener">&#9733; Now on ChatGPT &rarr;</a>' +
         '</span>';
       // Insert directly below the site header (falls back to top of body).
       var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
