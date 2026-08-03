@@ -1052,6 +1052,7 @@
   function actionTypeLabel(t) {
     return ({
       email_reply: 'Email reply', content_draft: 'Content draft', reorder: 'Reorder',
+      social_post: 'Social post',
       vat_summary: 'VAT summary', reconciliation: 'Reconciliation', anomaly: 'Anomaly', shipping: 'Shipping'
     })[t] || t;
   }
