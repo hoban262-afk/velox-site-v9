@@ -105,6 +105,7 @@
     .s-dispatched    { background:rgba(74,159,224,.1);   color:#4a9fe0; }
     .s-cancelled     { background:rgba(248,113,113,.1);  color:#f87171; }
     .s-superseded    { background:rgba(168,131,255,.1);  color:#a883ff; }
+    .s-test          { background:rgba(245,158,11,.14);  color:#f59e0b; }
 
     .status-select   { background:var(--bg3,#111); border:1px solid var(--brd,#1a1a1a); color:var(--t2,#9ca3af); padding:3px 6px; border-radius:3px; font-size:11px; cursor:pointer; }
 
@@ -630,6 +631,7 @@
             <option value="dispatched">dispatched</option>
             <option value="cancelled">cancelled</option>
             <option value="superseded">superseded</option>
+            <option value="test">test</option>
           </select>
           <button class="btn-p" id="ord-create" style="width:auto;padding:9px 18px">Create order</button>
         </div>
@@ -650,6 +652,7 @@
             <option value="dispatched">dispatched</option>
             <option value="cancelled">cancelled</option>
             <option value="superseded">superseded</option>
+            <option value="test">test</option>
           </select>
         </div>
         <div class="vxo-pills" id="ord-pills" style="margin-bottom:14px">
@@ -659,6 +662,7 @@
           <button type="button" class="vxo-pill" data-st="dispatched" onclick="vxoFilter(this)">Dispatched</button>
           <button type="button" class="vxo-pill" data-st="cancelled" onclick="vxoFilter(this)">Cancelled</button>
           <button type="button" class="vxo-pill" data-st="superseded" onclick="vxoFilter(this)">Superseded</button>
+          <button type="button" class="vxo-pill" data-st="test" onclick="vxoFilter(this)">Test</button>
         </div>
         <div id="orders-table-wrap"><div class="adm-loading">Loading&hellip;</div></div>
       </div>

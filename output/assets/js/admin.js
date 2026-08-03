@@ -31,7 +31,7 @@
   }
 
   function statusBadge(s) {
-    var cls = { paid:'s-paid', dispatched:'s-dispatched', cancelled:'s-cancelled', pending:'s-pending', superseded:'s-superseded' }[s] || 's-pending';
+    var cls = { paid:'s-paid', dispatched:'s-dispatched', cancelled:'s-cancelled', pending:'s-pending', superseded:'s-superseded', test:'s-test' }[s] || 's-pending';
     return '<span class="status-badge ' + cls + '">' + esc(s) + '</span>';
   }
 
@@ -1644,7 +1644,7 @@
           '<td>' + statusBadge(o.status) + '</td>' +
           '<td onclick="event.stopPropagation()">' +
             '<select class="status-select" onchange="updateOrderStatus(\'' + o.id + '\', this.value)">' +
-              ['pending','paid','dispatched','cancelled','superseded'].map(function (s) {
+              ['pending','paid','dispatched','cancelled','superseded','test'].map(function (s) {
                 return '<option value="' + s + '"' + (o.status === s ? ' selected' : '') + '>' + s + '</option>';
               }).join('') +
             '</select>' +
