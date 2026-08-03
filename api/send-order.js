@@ -34,7 +34,7 @@ function orderTotalsRows(d) {
   return `
     <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${sym}${d.order_subtotal}</td></tr>
     <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (${shippingLabel})</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : sym + d.shipping_cost}</td></tr>
-    ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;${sym}${d.discount_saving}</td></tr>` : ''}
+    ${parseFloat(d.discount_saving) > 0 ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount${d.discount_code ? ` (${d.discount_code})` : ''}</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;${sym}${d.discount_saving}</td></tr>` : ''}
     <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
     <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">${sym}${d.order_total}</td></tr>`;
 }
@@ -306,7 +306,7 @@ function buildAdminHtml(d, itemsHtml) {
         ${itemRows(itemsHtml)}
         <tr><td style="font-size:13px;color:#888;padding:4px 0">Subtotal</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${currencySymbol(d)}${d.order_subtotal}</td></tr>
         <tr><td style="font-size:13px;color:#888;padding:4px 0">Delivery (${d.shipping_method || 'Royal Mail Tracked 24'})</td><td align="right" style="font-size:13px;color:#888;padding:4px 0">${parseFloat(d.shipping_cost) === 0 ? 'FREE' : currencySymbol(d) + d.shipping_cost}</td></tr>
-        ${d.discount_code ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount (${d.discount_code})</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;${currencySymbol(d)}${d.discount_saving}</td></tr>` : ''}
+        ${parseFloat(d.discount_saving) > 0 ? `<tr><td style="font-size:13px;color:#888;padding:4px 0">Discount${d.discount_code ? ` (${d.discount_code})` : ''}</td><td align="right" style="font-size:13px;color:#01D3A0;padding:4px 0">&minus;${currencySymbol(d)}${d.discount_saving}</td></tr>` : ''}
         <tr><td colspan="2" style="border-top:1px solid #1a1a1a;padding-top:10px;font-size:0;line-height:0">&nbsp;</td></tr>
         <tr><td style="font-size:15px;font-weight:700;color:#fff;padding-top:4px">Total</td><td align="right" style="font-size:18px;font-weight:700;color:#fff;padding-top:4px">${currencySymbol(d)}${d.order_total}</td></tr>
       </table>
@@ -543,8 +543,8 @@ async function buildPayloadFromOrderId(orderId) {
     shipping_method: 'Royal Mail Tracked 24',
     order_items: orderItemsText,
     order_subtotal: subtotal.toFixed(2),
-    shipping_cost: Math.max(0, Number((total - subtotal).toFixed(2))).toFixed(2),
-    discount_code: '', discount_saving: '0.00',
+    shipping_cost: Math.max(0, num(o.shipping)).toFixed(2),
+    discount_code: '', discount_saving: Math.max(0, num(o.discount)).toFixed(2),
     order_total: total.toFixed(2),
     currency: 'GBP', region: 'UK', payment_method: 'fena',
   };
