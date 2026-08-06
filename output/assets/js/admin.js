@@ -316,6 +316,69 @@
     if (s < 86400) return Math.floor(s / 3600) + 'h ago';
     return Math.floor(s / 86400) + 'd ago';
   }
+  // ── Daily Pulse ─────────────────────────────────────────────────────────────
+  async function loadPulse() {
+    if (!window._sb) return;
+    var body = document.getElementById('pulse-body');
+    try {
+      var s = await window._sb.auth.getSession();
+      var token = s && s.data && s.data.session && s.data.session.access_token;
+      if (!token) { if (body) body.innerHTML = '<div class="adm-empty">Sign in to view.</div>'; return; }
+      var r = await fetch('/api/admin/pulse', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { if (body) body.innerHTML = '<div class="adm-empty">Could not load: ' + esc((d && d.error) || ('HTTP ' + r.status)) + '</div>'; return; }
+      renderPulse(d);
+    } catch (e) { if (body) body.innerHTML = '<div class="adm-empty">Could not load: ' + esc(e.message) + '</div>'; }
+  }
+  function renderPulse(d) {
+    function money(v) { return '£' + Number(v || 0).toFixed(2); }
+    function num(v) { return String(Number(v || 0)); }
+    var dateEl = document.getElementById('pulse-date');
+    if (dateEl && d.today) {
+      try { dateEl.textContent = new Date(d.today + 'T12:00:00Z').toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }); }
+      catch (e) { dateEl.textContent = d.today; }
+    }
+    var sales = d.sales || {}, ops = d.ops || {}, stock = d.stock || {}, traffic = d.traffic || {}, aud = d.audience || {};
+    function card(label, value, sub) {
+      return '<div class="stat-card"><div class="stat-label">' + esc(label) + '</div>' +
+        '<div class="stat-value">' + value + '</div>' +
+        (sub ? '<div style="font-size:11px;color:var(--t3,#6b7280);margin-top:2px">' + sub + '</div>' : '') + '</div>';
+    }
+    var wow = sales.wowPct;
+    var wowStr = (wow == null) ? '' : ((wow >= 0 ? '▲ +' : '▼ ') + wow + '% WoW');
+    var wowColor = (wow == null) ? '' : (wow >= 0 ? '#01D3A0' : '#f87171');
+    var wowSub = wowStr ? '<span style="color:' + wowColor + '">' + wowStr + '</span>' : '';
+
+    var salesRow = '<div class="stat-grid" style="margin-bottom:14px">' +
+      card('Today', money((sales.today || {}).revenue), num((sales.today || {}).orders) + ' orders') +
+      card('Yesterday', money((sales.yesterday || {}).revenue), num((sales.yesterday || {}).orders) + ' orders') +
+      card('Last 7 days', money((sales.last7 || {}).revenue), num((sales.last7 || {}).orders) + ' orders' + (wowSub ? ' · ' + wowSub : '')) +
+      card('Prior 7 days', money((sales.prior7 || {}).revenue), num((sales.prior7 || {}).orders) + ' orders') +
+      '</div>';
+
+    var dispColor = (ops.toDispatch > 0) ? '#f5a623' : '#01D3A0';
+    var opsRow = '<div class="stat-grid" style="margin-bottom:14px">' +
+      card('To dispatch', '<span style="color:' + dispColor + '">' + num(ops.toDispatch) + '</span>', 'paid, not sent') +
+      card('Pending pay', num(ops.pending), 'awaiting bank') +
+      card('Sessions today', num(traffic.today), '7d avg ' + num(traffic.avg7) + (traffic.today >= traffic.avg7 ? ' ▲' : ' ▼')) +
+      card('Active subs', num(aud.activeSubs), '+' + num(aud.newYesterday) + ' yesterday') +
+      '</div>';
+
+    var out = stock.out || [], low = stock.low || [];
+    var stockHtml = '';
+    if (out.length || low.length) {
+      var chips = [];
+      out.forEach(function (v) { chips.push('<span style="display:inline-block;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35);color:#f87171;font-size:11px;padding:3px 9px;border-radius:999px;margin:3px 4px 0 0">' + esc(v.label) + ' — OUT</span>'); });
+      low.forEach(function (v) { chips.push('<span style="display:inline-block;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);color:#f5a623;font-size:11px;padding:3px 9px;border-radius:999px;margin:3px 4px 0 0">' + esc(v.label) + ' — ' + num(v.qty) + ' left</span>'); });
+      stockHtml = '<div style="margin-top:2px"><div class="stat-label" style="margin-bottom:4px">Stock alerts (' + out.length + ' out · ' + low.length + ' low)</div>' + chips.join('') + '</div>';
+    } else {
+      stockHtml = '<div class="stat-label" style="color:#01D3A0">✓ All variants in stock</div>';
+    }
+
+    var body = document.getElementById('pulse-body');
+    if (body) body.innerHTML = salesRow + opsRow + stockHtml;
+  }
+
   function loadHealth() {
     if (!window._sb) return;
     var rb = document.getElementById('health-refresh');
@@ -393,6 +456,7 @@
   // ── Data loaders ──────────────────────────────────────────────────────────
 
   function loadAllData() {
+    loadPulse();
     loadOrders();
     loadMargins();
     loadInterest();
@@ -427,6 +491,7 @@
     _autoRefreshSet = true;
     function refresh() {
       try {
+        loadPulse();
         loadOrders(); loadActions(); loadInterest(); loadSubscribers();
         loadMarketing(); loadAnalytics(); loadHealth(); loadDeal();
         loadMargins(); loadReviews(); loadDesignLab();
