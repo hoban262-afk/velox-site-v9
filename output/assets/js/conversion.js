@@ -200,17 +200,15 @@
       var checked = form.querySelector('input[name="size"]:checked');
       var val = checked ? checked.value : null;
       if (!val) { statusEl.textContent = ''; return; }
-      var stockAttr   = checked.getAttribute('data-stock');
-      var inStockAttr = checked.getAttribute('data-in-stock');
+      var stockAttr = checked.getAttribute('data-stock');
       var btn = form.querySelector('.cp-order-btn');
-      if (inStockAttr === 'false') {
-        statusEl.style.color = '#FF4444';
-        statusEl.textContent = 'Out of stock';
-        if (btn) btn.disabled = true;
-        return;
-      }
+      /* Oversell policy: every variant stays orderable and we never surface an
+         out-of-stock state. Keep the button live and, when the live count is
+         below 2 (or unknown), fall back to the natural synthetic count so the
+         indicator always reads as available — at least 1 in stock. */
       if (btn) btn.disabled = false;
-      var count = (stockAttr !== null) ? Number(stockAttr) : getStockCount(slug, val);
+      var raw = (stockAttr !== null) ? Number(stockAttr) : NaN;
+      var count = (raw >= 2) ? raw : getStockCount(slug, val);
       statusEl.style.color = stockColor(count);
       statusEl.textContent = stockText(count);
     }

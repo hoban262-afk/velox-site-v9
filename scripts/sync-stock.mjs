@@ -55,6 +55,23 @@ async function main() {
     S.retatrutide[norm('10mg 10-pack')] = { qty: dqPack, inStock: dqPack > 0 };
   }
 
+  // ── Oversell policy (owner directive) ────────────────────────────────
+  // Never surface an out-of-stock state to customers: every catalogued
+  // variant stays purchasable. Force in-stock and floor the displayed qty so
+  // no "Out of stock" badge is baked and the order button is never disabled.
+  // Genuinely-zero variants get MIN_DISPLAY_QTY; the product-page script
+  // renders a natural count for anything below 2. Variants deleted from
+  // Supabase are still pruned (that is catalogue structure, not stock).
+  // Fulfilment of oversold orders is handled operationally, not by the site.
+  const MIN_DISPLAY_QTY = 1;
+  for (const slug of Object.keys(S)) {
+    for (const nSize of Object.keys(S[slug])) {
+      const v = S[slug][nSize];
+      v.inStock = true;
+      if (!(Number(v.qty) > 0)) v.qty = MIN_DISPLAY_QTY;
+    }
+  }
+
   let touched = 0;
 
   // Collect product + supply pages

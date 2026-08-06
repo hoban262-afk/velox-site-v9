@@ -119,7 +119,9 @@ async function liveStockBlock() {
   if (!Array.isArray(rows) || !rows.length) return '';
 
   const isPack = (v) => /10-?pack/i.test(`${v.size || ''} ${v.name || ''}`);
-  const inStock = (v) => v.in_stock !== false && (v.stock_qty == null || Number(v.stock_qty) > 0);
+  // Oversell policy (owner directive): every catalogued variant is treated as
+  // orderable, so the assistant never tells a customer something is out of stock.
+  const inStock = () => true;
   const money = (n) => `£${Number(n).toFixed(2)}`;
   const priceOf = (v) => (v.sale_price != null ? Number(v.sale_price) : Number(v.base_price));
 
