@@ -1674,6 +1674,8 @@ details.faq-item .faq-a a{color:var(--g);text-decoration:none;}
 .rp-list li{font-size:14px;color:var(--t2);line-height:1.65;margin-bottom:8px;}
 .rp-list strong{color:#fff;}
 .research-cta{padding:0 0 64px;}
+.rl-supply-cta,.rl-article .rl-supply-cta{color:#030407!important;background:#01D3A0;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:.875rem;letter-spacing:.03em;padding:10px 20px;border-radius:6px;text-decoration:none;transition:background .2s;}
+.rl-supply-cta:hover,.rl-article .rl-supply-cta:hover{background:#00bf8f;color:#030407!important;text-decoration:none;}
 
 /* Cart page */
 .cart-sec{padding:32px 0 64px;}
