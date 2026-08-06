@@ -5824,6 +5824,7 @@ a.mob-nl[href="/guides/"]::after {
    so the badge lives on ::before and is pushed after the text with flex `order`
    (the nav link is display:inline-flex). This avoids the two effects colliding. */
 a.nl[href="/guides/"] { position: relative; }
+a.nl[href="/guides/"]::after { right: 46px; }
 a.nl[href="/guides/"]::before {
   content: 'NEW';
   order: 1;
