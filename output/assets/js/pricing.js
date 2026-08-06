@@ -279,7 +279,9 @@
 
       var badge = label.querySelector('.cp-size-badge');
       if (badge) {
-        if (v.sale_price != null) {
+        // Only a genuine markdown (sale < base) is a "DEAL". A stale sale_price
+        // equal to base_price must never surface a phantom "DEAL · 0% OFF" badge.
+        if (v.sale_price != null && Number(v.sale_price) < Number(v.base_price)) {
           badge.textContent = 'DEAL · ' + pct(v.base_price, v.sale_price) + '% OFF';
           badge.className = 'cp-size-badge cp-badge-save'; badge.style.display = '';
         } else if (v.compare_at != null && v.compare_at > price) {

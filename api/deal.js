@@ -75,6 +75,21 @@ module.exports = async function handler(req, res) {
       if (!deal) return res.status(200).json({ deal: null });
     }
 
+    // Self-heal away from an OUT-OF-STOCK featured deal. A deal on a variant that
+    // can't be bought just bleeds clicks (and confuses customers who chat in about
+    // a "live deal" they can't add to cart). rotateDeal only ever picks in_stock
+    // variants, so force-rotating here swaps to a purchasable deal — or hides the
+    // widget entirely if nothing eligible is in stock.
+    if (deal) {
+      const sr = await sb(`product_variants?slug=eq.${encodeURIComponent(deal.slug)}&size=eq.${encodeURIComponent(deal.size)}&select=in_stock&limit=1`);
+      const srows = sr.ok ? await sr.json().catch(() => []) : [];
+      const inStock = Array.isArray(srows) && srows[0] ? srows[0].in_stock !== false : true;
+      if (!inStock) {
+        deal = await rotateDeal(SUPABASE_URL, SERVICE, { force: true }).catch(() => null);
+        if (!deal) return res.status(200).json({ deal: null });
+      }
+    }
+
     res.setHeader('Cache-Control', 'no-store');
     const shaped = await shape(SUPABASE_URL, SERVICE, sb, sbHeaders, deal);
     return res.status(200).json({ deal: shaped });
