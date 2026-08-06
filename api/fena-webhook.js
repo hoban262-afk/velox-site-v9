@@ -288,7 +288,9 @@ export default async function handler(req) {
       body: JSON.stringify({ order_id: order.id }),
     }).catch((e) => console.error(`[fena-webhook] ${path} trigger failed:`, e.message));
     const jobs = [trigger('/api/clickdrop/push'), trigger('/api/xero/create-invoice')];
-    if (thisPathPaid) jobs.push(trigger('/api/send-order'));
+    // GA4 server-side purchase + order alert fire ONLY when this path won the
+    // pending→paid race, so the browser path + Fena retries can't double-count.
+    if (thisPathPaid) { jobs.push(trigger('/api/send-order')); jobs.push(trigger('/api/ga/purchase')); }
     await Promise.allSettled(jobs);
   }
 

@@ -15,6 +15,7 @@
  * Response: { success: true, order_ref } | { success:false } only for hard misconfig.
  */
 const { sendEmails } = require('./send-order');
+const { sendPurchase } = require('../lib/ga-mp');
 
 const SB_URL     = process.env.SUPABASE_URL;
 const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -208,6 +209,15 @@ module.exports = async function handler(req, res) {
       console.log(`[confirm-fena-payment] Emails sent for ${orderRef}`);
     } catch (e) {
       console.error(`[confirm-fena-payment] Email send failed (non-fatal) for ${orderRef}:`, e.message);
+    }
+
+    // ── GA4 server-side purchase (ad-blocker-proof, fires once per paid order) ──
+    // This is the browser return path, so the request carries the visitor's _ga
+    // cookie → real client_id → correct channel attribution.
+    try {
+      await sendPurchase({ ...order, notes: orderRef }, { cookieHeader: req.headers.cookie || '' });
+    } catch (e) {
+      console.error(`[confirm-fena-payment] GA4 purchase send failed (non-fatal) for ${orderRef}:`, e.message);
     }
   } else {
     console.log(`[confirm-fena-payment] Skipping emails for ${orderRef} — other path already sent`);

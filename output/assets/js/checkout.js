@@ -1030,13 +1030,17 @@
     if (!alreadyFired && chk.orderRef && chk.email) {
       try { sessionStorage.setItem('vp_order_fired', '1'); } catch (ex) {}
 
-      // ── GA4 purchase (bank rail) ──────────────────────────────────────────
+      // ── GA4 funnel event (bank rail) ──────────────────────────────────────
+      // NOTE: this is `add_payment_info`, NOT `purchase`. On pay-by-bank the
+      // order is still 'pending' here — the customer hasn't transferred money
+      // yet. The real `purchase` conversion is fired SERVER-SIDE when the order
+      // flips to 'paid' (api/confirm-fena-payment.js + api/ga/purchase.js via
+      // lib/ga-mp.js), which is ad-blocker-proof and matches the orders table.
       try {
-        if (window.vpGA) window.vpGA('purchase', {
-          transaction_id: chk.orderRef,
+        if (window.vpGA) window.vpGA('add_payment_info', {
           currency: chk.currency || 'GBP',
           value: Number(chk.total) || 0,
-          shipping: Number(chk.shipping) || 0,
+          payment_type: 'Pay by Bank',
           coupon: chk.discount_code || undefined,
           items: confirmedCart.map(function (item) {
             return { item_id: item.slug || item.name, item_name: item.name,
