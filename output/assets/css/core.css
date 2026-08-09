@@ -1436,6 +1436,26 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .ft-cr{font-family:var(--mono);font-size:9px;color:var(--t4);}
 .ft-disc{font-family:var(--mono);font-size:9px;color:var(--t4);line-height:1.55;}
 
+/* News/guide footer variant (.footer-* markup). Same look as the main .ft-*
+   footer above — these class names ship on the article-style guide pages and
+   were previously unstyled, leaving a raw bullet-list footer. */
+.site-footer .footer-inner{max-width:1280px;margin:0 auto;}
+.site-footer .footer-cols{display:grid;grid-template-columns:280px repeat(3,1fr);gap:48px;margin-bottom:40px;}
+.footer-col{display:flex;flex-direction:column;gap:0;}
+.footer-logo-link{display:inline-block;}
+.footer-logo-link img{display:block;height:auto;max-width:130px;}
+.footer-tagline{font-size:12px;color:var(--t3);line-height:1.7;margin:12px 0 0;}
+.footer-co{font-size:12px;color:var(--t3);line-height:1.7;margin:10px 0 0;}
+.footer-col-hdr{font-family:var(--mono);font-size:9px;font-weight:400;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;margin:0 0 12px;}
+.footer-links{list-style:none;margin:0;padding:0;}
+.footer-links li{margin:0;}
+.footer-links a{font-size:12px;color:var(--t3);text-decoration:none;padding:3px 0;display:block;transition:color .15s;}
+.footer-links a:hover{color:#fff;}
+.site-footer .footer-bottom{border-top:1px solid var(--brd);padding-top:20px;}
+.footer-bottom p{font-family:var(--mono);font-size:9px;color:var(--t4);line-height:1.55;margin:0;}
+@media (max-width:1024px){.site-footer .footer-cols{grid-template-columns:1fr 1fr;gap:28px;}}
+@media (max-width:479px){.site-footer .footer-cols{grid-template-columns:1fr;gap:24px;}}
+
 /* Compliance block */
 .compliance-block{background:rgba(245,200,66,.05);border-top:1px solid rgba(245,200,66,.15);border-bottom:1px solid rgba(245,200,66,.15);padding:14px 32px;margin-top:48px;}
 .cb-i{max-width:1280px;margin:0 auto;font-family:var(--mono);font-size:9px;color:rgba(245,200,66,.6);line-height:1.65;letter-spacing:.03em;}
