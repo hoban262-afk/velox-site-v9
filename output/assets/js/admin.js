@@ -996,7 +996,13 @@
   async function loadDeal() {
     if (!window._sb) return;
     try {
-      var pv = await window._sb.from('product_variants').select('slug,size,name,base_price').order('name', { ascending: true });
+      // Only offer variants that can actually run as a deal — in stock AND
+      // discountable. Featuring an out-of-stock item makes /api/deal silently
+      // force-rotate to a random product, so the admin's pick never sticks.
+      var pv = await window._sb.from('product_variants')
+        .select('slug,size,name,base_price')
+        .eq('in_stock', true).eq('discountable', true)
+        .order('name', { ascending: true });
       DEAL_VARIANTS = pv.data || [];
     } catch (e) { DEAL_VARIANTS = []; }
     var sel = document.getElementById('deal-product');

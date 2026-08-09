@@ -74,12 +74,18 @@ module.exports = async function handler(req, res) {
 
       // 2) Work out the discounted price from the variant's base price.
       const pr = await fetch(
-        `${SUPABASE_URL}/rest/v1/product_variants?slug=eq.${encodeURIComponent(slug)}&size=eq.${encodeURIComponent(size)}&select=base_price&limit=1`,
+        `${SUPABASE_URL}/rest/v1/product_variants?slug=eq.${encodeURIComponent(slug)}&size=eq.${encodeURIComponent(size)}&select=base_price,in_stock&limit=1`,
         { headers: sbHeaders }
       );
       const pv = pr.ok ? await pr.json() : [];
       const variant = Array.isArray(pv) ? pv[0] : null;
       if (!variant) return res.status(400).json({ error: 'Product not found.' });
+      // Reject out-of-stock picks outright. Otherwise the public /api/deal
+      // "out-of-stock self-heal" would immediately force-rotate this deal to a
+      // random in-stock product, so the admin's selection would never appear.
+      if (variant.in_stock === false) {
+        return res.status(400).json({ error: 'That product is out of stock — pick an in-stock product for the deal.' });
+      }
       const base = n(variant.base_price);
       const dealPrice = Math.round(base * (1 - pct / 100) * 100) / 100;
 
