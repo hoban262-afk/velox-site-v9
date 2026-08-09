@@ -996,19 +996,21 @@
   async function loadDeal() {
     if (!window._sb) return;
     try {
-      // Only offer variants that can actually run as a deal — in stock AND
-      // discountable. Featuring an out-of-stock item makes /api/deal silently
-      // force-rotate to a random product, so the admin's pick never sticks.
+      // Offer every discountable variant — INCLUDING out-of-stock ones. The
+      // admin is allowed to feature anything they like; out-of-stock picks are
+      // just labelled and warned about at save time (see saveDeal). We also
+      // pin admin picks so /api/deal never force-rotates them away.
       var pv = await window._sb.from('product_variants')
-        .select('slug,size,name,base_price')
-        .eq('in_stock', true).eq('discountable', true)
+        .select('slug,size,name,base_price,in_stock')
+        .eq('discountable', true)
         .order('name', { ascending: true });
       DEAL_VARIANTS = pv.data || [];
     } catch (e) { DEAL_VARIANTS = []; }
     var sel = document.getElementById('deal-product');
     if (sel) {
       sel.innerHTML = '<option value="">— choose a product —</option>' + DEAL_VARIANTS.map(function (v) {
-        return '<option value="' + esc(v.slug) + '|' + esc(v.size) + '">' + esc(v.name) + ' · ' + esc(v.size) + ' (£' + Number(v.base_price).toFixed(2) + ')</option>';
+        var oos = v.in_stock === false ? ' — OUT OF STOCK' : '';
+        return '<option value="' + esc(v.slug) + '|' + esc(v.size) + '">' + esc(v.name) + ' · ' + esc(v.size) + ' (£' + Number(v.base_price).toFixed(2) + ')' + oos + '</option>';
       }).join('');
     }
     try {
@@ -1071,6 +1073,14 @@
     if (!key) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Pick a product.'; } return; }
     if (!(pct > 0 && pct <= 95)) { if (msg) { msg.style.color = '#f87171'; msg.textContent = 'Discount must be 1–95%.'; } return; }
     var parts = key.split('|');
+    // Out-of-stock warning: let the admin feature it anyway, but make them confirm.
+    var picked = DEAL_VARIANTS.filter(function (x) { return x.slug === parts[0] && x.size === parts[1]; })[0];
+    if (picked && picked.in_stock === false) {
+      if (!confirm('“' + picked.name + ' · ' + picked.size + '” is OUT OF STOCK. Customers won\'t be able to buy it. List it as the Deal of the Week anyway?')) {
+        if (msg) { msg.style.color = '#9ca3af'; msg.textContent = 'Cancelled — out of stock.'; }
+        return;
+      }
+    }
     var endsVal = (document.getElementById('deal-ends') || {}).value;
     var body = {
       slug: parts[0], size: parts[1], discount_pct: pct,

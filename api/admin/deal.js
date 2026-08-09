@@ -80,12 +80,9 @@ module.exports = async function handler(req, res) {
       const pv = pr.ok ? await pr.json() : [];
       const variant = Array.isArray(pv) ? pv[0] : null;
       if (!variant) return res.status(400).json({ error: 'Product not found.' });
-      // Reject out-of-stock picks outright. Otherwise the public /api/deal
-      // "out-of-stock self-heal" would immediately force-rotate this deal to a
-      // random in-stock product, so the admin's selection would never appear.
-      if (variant.in_stock === false) {
-        return res.status(400).json({ error: 'That product is out of stock — pick an in-stock product for the deal.' });
-      }
+      // Out-of-stock is allowed: an admin may deliberately feature anything.
+      // The row is pinned below so the public /api/deal "out-of-stock self-heal"
+      // won't force-rotate this deliberate pick away.
       const base = n(variant.base_price);
       const dealPrice = Math.round(base * (1 - pct / 100) * 100) / 100;
 
@@ -106,6 +103,9 @@ module.exports = async function handler(req, res) {
         active,
         applied,
         prev_sale_price: applied ? prevSale : null,
+        // Admin-chosen deals are pinned: /api/deal must respect the pick even
+        // when the variant is out of stock, instead of force-rotating it away.
+        pinned: true,
         updated_at: new Date().toISOString(),
       };
 
