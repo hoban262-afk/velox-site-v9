@@ -85,7 +85,7 @@ function emailPayloadFromOrder(order) {
     order_items:     orderItemsText,
     order_subtotal:  subtotal.toFixed(2),
     shipping_cost:   Math.max(0, n(order.shipping)).toFixed(2),
-    discount_code:   '',
+    discount_code:   order.discount_code || '',
     discount_saving: Math.max(0, n(order.discount)).toFixed(2),
     order_total:     total.toFixed(2),
     currency:        'GBP',
@@ -180,6 +180,19 @@ module.exports = async function handler(req, res) {
           order.status = 'paid';
           // Set email_sent_at flag (best-effort, column may not exist yet)
           sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { email_sent_at: new Date().toISOString() }).catch(() => {});
+          // Increment used_count for one-time personal discount codes
+          if (order.discount_code) {
+            try {
+              const codeRows = await sbGet(`personal_codes?code=eq.${encodeURIComponent(order.discount_code)}&select=used_count&limit=1`);
+              if (codeRows && codeRows[0]) {
+                const newCount = (Number(codeRows[0].used_count) || 0) + 1;
+                await sbPatch(`personal_codes?code=eq.${encodeURIComponent(order.discount_code)}`, { used_count: newCount });
+                console.log(`[confirm-fena-payment] Incremented used_count for code ${order.discount_code} → ${newCount}`);
+              }
+            } catch (e) {
+              console.error(`[confirm-fena-payment] personal_codes used_count increment failed (non-fatal):`, e.message);
+            }
+          }
         }
       }
       console.log(`[confirm-fena-payment] Order ${orderRef} → paid (thisPathPaid=${thisPathPaid})`);

@@ -216,7 +216,7 @@ export default async function handler(req) {
     const filter = orderUuid
       ? `id=eq.${encodeURIComponent(orderUuid)}`
       : `notes=eq.${encodeURIComponent(reference)}`;
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?${filter}&select=id,status,fena_payment_id&order=created_at.desc&limit=1`, { headers: sbHeaders });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?${filter}&select=id,status,fena_payment_id,discount_code&order=created_at.desc&limit=1`, { headers: sbHeaders });
     const rows = r.ok ? await r.json() : [];
     order = Array.isArray(rows) ? rows[0] : null;
   } catch (e) {
@@ -265,6 +265,23 @@ export default async function handler(req) {
       }
       if (thisPathPaid) {
         console.log(`[fena-webhook] Order ${order.id} → paid (won race)`);
+        // Increment used_count for one-time personal discount codes
+        if (order.discount_code) {
+          try {
+            const cr = await fetch(`${SUPABASE_URL}/rest/v1/personal_codes?code=eq.${encodeURIComponent(order.discount_code)}&select=used_count&limit=1`, { headers: sbHeaders });
+            const codeRows = cr.ok ? await cr.json() : [];
+            if (codeRows && codeRows[0]) {
+              const newCount = (Number(codeRows[0].used_count) || 0) + 1;
+              await fetch(`${SUPABASE_URL}/rest/v1/personal_codes?code=eq.${encodeURIComponent(order.discount_code)}`, {
+                method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' },
+                body: JSON.stringify({ used_count: newCount }),
+              });
+              console.log(`[fena-webhook] Incremented used_count for code ${order.discount_code} → ${newCount}`);
+            }
+          } catch (e) {
+            console.error(`[fena-webhook] personal_codes used_count increment failed (non-fatal):`, e.message);
+          }
+        }
       } else {
         console.log(`[fena-webhook] Order ${order.id} — lost race to confirm-fena-payment, skipping emails`);
       }

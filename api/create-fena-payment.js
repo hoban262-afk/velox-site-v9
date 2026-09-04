@@ -259,6 +259,7 @@ export default async function handler(req) {
         subtotal:       n(meta.subtotal) || n(amountStr),
         total:          n(meta.total)    || n(amountStr),
         discount:       n(meta.discount_saving) || 0,
+        discount_code:  meta.discount_code || null,
         shipping:       n(meta.shipping)         || 0,
         status:         'pending',
         payment_method: 'fena',

@@ -1124,6 +1124,7 @@
               subtotal:        Number(chk.subtotal) || Number(chk.total) || 0,  // pre-discount, drives points
               total:           Number(chk.total) || 0,
               discount:        Number(chk.discount_saving) || 0,
+              discount_code:   chk.discount_code || null,
               shipping:        Number(chk.shipping) || 0,
               payment_method:  chk.payment_method || 'bank',
               notes:           chk.orderRef || '',
