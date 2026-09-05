@@ -708,6 +708,16 @@
             </button>
             <div id="fena-pay-err" class="fena-pay-err"></div>
 
+            <!-- Secondary option: email a Pay-by-Bank link instead of paying inline.
+                 For paying on another device (bank app on phone), forwarding the
+                 link to whoever's paying, or a clean retry. Same Fena rail — NOT a
+                 card option. Lives inside .fena-hero-card so it's auto-hidden for
+                 INTL (which has no Fena). -->
+            <p class="fena-email-link-wrap" style="text-align:center;margin:12px 0 0">
+              <a href="#" id="fena-email-link" style="font-size:12.5px;color:#9CA3AF;text-decoration:underline">Prefer to pay on your phone, or send the link to someone else? Email me a payment link</a>
+            </p>
+            <div id="fena-email-link-msg" style="display:none;text-align:center;font-size:12.5px;margin:8px 0 0"></div>
+
             <p class="fena-powered">Powered by Fena &middot; UK FCA Authorised &middot; Open Banking</p>
           </div>
           <!-- /fena-hero-card -->
@@ -1325,6 +1335,116 @@
               'Instant payment is temporarily unavailable. Please use manual bank transfer below - your order is still reserved.'
             );
           }
+        });
+    });
+  }
+
+  // ── Secondary: "email me a payment link" ───────────────────────────────────
+  // Self-serve variant of the Pay-by-Bank flow for paying on another device,
+  // forwarding the link to whoever's paying, or a clean retry. It hits the SAME
+  // /api/create-fena-payment endpoint (all its guards + pending-order insert
+  // apply) with email_link:true, so the server emails the hosted link instead of
+  // us redirecting. It reads the SAME authoritativeTotals() source as PAY NOW, so
+  // the amount can never drift from the button (the #2943 lesson). Deliberately
+  // self-contained — it does not touch the PAY NOW handler above.
+  var emailLink    = document.getElementById('fena-email-link');
+  var emailLinkMsg = document.getElementById('fena-email-link-msg');
+  function emailLinkSay(msg, color) {
+    if (!emailLinkMsg) return;
+    emailLinkMsg.textContent = msg;
+    emailLinkMsg.style.color = color || '#9CA3AF';
+    emailLinkMsg.style.display = 'block';
+  }
+  if (emailLink) {
+    emailLink.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      if (emailLinkMsg) emailLinkMsg.style.display = 'none';
+      clearErr();
+
+      // Need a validated address (for the order row) + an email to send to.
+      if (typeof window.vpCollectAddress === 'function' && !window.vpCollectAddress()) return;
+      var cart = getCart();
+      if (!cart.length) { emailLinkSay('Your order appears to be empty. Please return to the shop.', '#f87171'); return; }
+      var chk = getChk();
+      if (!chk.email) { emailLinkSay('Please enter your email address above so we know where to send the link.', '#f87171'); return; }
+
+      // Same total source as PAY NOW — authoritative totals, with the same fallback.
+      var A = authoritativeTotals();
+      var t = cartTotals(cart);
+      var promo, saving, ship, total, ptsSaving;
+      if (A) {
+        saving = Number(A.discount_saving) || 0; ptsSaving = Number(A.points_saving) || 0;
+        ship = Number(A.shipping) || 0; total = Number(A.total);
+        promo = { code: A.discount_code || '', saving: saving };
+        t.subtotal = (typeof A.subtotal === 'number') ? A.subtotal : t.subtotal;
+      } else {
+        promo = bestPromo(cart); saving = promo.saving; ptsSaving = 0;
+        var discSub = Math.max(0, t.subtotal - saving);
+        ship = discSub >= FREE_THRESHOLD ? 0 : shipRate(); total = discSub + ship;
+      }
+      var totalPence = Math.round(total * 100);
+      var ref = 'VP-' + todayStr() + '-' + randChars(4);
+
+      var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country].filter(Boolean).join(', ');
+      var productsList = cart.map(function (item) {
+        return item.name + ' ' + item.size + ' x' + (item.qty || 1) + ' - ' + fmtPounds(item.price * (item.qty || 1));
+      }).join('\n');
+      var structuredItems = cart.map(function (item) {
+        return { name: item.name, slug: item.slug, size: item.size, qty: item.qty || 1, price: item.price };
+      });
+
+      // Persist the session too, so paying on THIS device also settles cleanly.
+      try {
+        var session = Object.assign({}, chk, {
+          orderRef: ref, subtotal: t.subtotal, shipping: ship, discount_code: promo.code,
+          discount_saving: saving, points_saving: ptsSaving, total: total,
+          cart_snapshot: JSON.stringify(cart), payment_method: 'fena', currency: 'GBP', region: 'UK',
+        });
+        sessionStorage.setItem('vp_checkout', JSON.stringify(session));
+        sessionStorage.removeItem('vp_order_fired');
+        localStorage.setItem('vp_checkout', JSON.stringify(session));
+      } catch (ex) {}
+
+      var metadata = {
+        customer_name: ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
+        customer_email: chk.email || '', customer_phone: chk.phone || '',
+        fname: chk.fname || '', lname: chk.lname || '',
+        addr1: chk.addr1 || '', addr2: chk.addr2 || '', city: chk.city || '',
+        postcode: chk.postcode || '', country: chk.country || 'United Kingdom',
+        shipping_address: shippingAddr, shipping_method: 'Royal Mail Tracked 24',
+        order_items: productsList, items: structuredItems,
+        subtotal: t.subtotal.toFixed(2), shipping: ship.toFixed(2),
+        discount_code: promo.code, discount_saving: saving.toFixed(2),
+        points_saving: ptsSaving.toFixed(2), points_redeemed: Number(chk.points_redeemed) || 0,
+        total: total.toFixed(2), currency: 'GBP', region: 'UK',
+        sid: (function () { try { return localStorage.getItem('vp_sid') || null; } catch (e) { return null; } })(),
+      };
+
+      emailLink.style.pointerEvents = 'none';
+      emailLinkSay('Sending your payment link…');
+
+      var _sbTok = (function () { try { var r = localStorage.getItem('sb-stkjdtyhaxejxqmbzyua-auth-token'); return r ? (JSON.parse(r) || {}).access_token : null; } catch (e) { return null; } })();
+      var _hdrs = { 'Content-Type': 'application/json' };
+      if (_sbTok) _hdrs.Authorization = 'Bearer ' + _sbTok;
+
+      fetch('/api/create-fena-payment', {
+        method: 'POST', headers: _hdrs,
+        body: JSON.stringify({ amount_pence: totalPence, reference: ref, description: 'Velox Peptides Research Order', metadata: metadata, email_link: true }),
+      })
+        .then(function (resp) { return resp.json().then(function (data) { return { resp: resp, data: data }; }); })
+        .then(function (r) {
+          emailLink.style.pointerEvents = '';
+          if (!r.resp.ok || !r.data.paymentUrl) throw new Error(r.data.error || ('HTTP ' + r.resp.status));
+          if (r.data.emailed === false) {
+            emailLinkSay('We couldn’t email the link, but you can still pay here now — tap PAY NOW above.', '#f5a623');
+          } else {
+            emailLinkSay('Sent — check ' + chk.email + ' for a secure payment link. Open it on any device to pay.', '#01D3A0');
+          }
+        })
+        .catch(function (e) {
+          emailLink.style.pointerEvents = '';
+          console.error('[fena-email-link] Failed:', e.message);
+          emailLinkSay('Couldn’t send the link right now. Please tap PAY NOW above, or use bank transfer below.', '#f87171');
         });
     });
   }

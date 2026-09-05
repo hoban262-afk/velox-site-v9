@@ -18,6 +18,77 @@
 export const config = { runtime: 'edge' };
 
 const FENA_ENDPOINT = 'https://epos.api.prod-gcp.fena.co/open/payments/single/create-and-process';
+const LOGO = 'https://veloxpeps.com/assets/images/veloxpeps2.png';
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Branded "complete your payment" email — mirrors api/send-payment-link.js's
+// buildEmailHtml so the self-serve (create-fena-payment) and admin
+// (send-payment-link) flows send an identical-looking mail. Sent edge-side via
+// the Resend REST API (the Node SDK can't run in an edge function).
+function buildEmailHtml(customerName, ref, amountStr, paymentUrl) {
+  const first = String(customerName || '').trim().split(/\s+/)[0] || 'there';
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><title>Complete your payment</title>
+<style>:root{color-scheme:dark;supported-color-schemes:dark}</style></head>
+<body style="margin:0;padding:0;background:#030407;font-family:Arial,Helvetica,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#030407">
+<tr><td align="center" style="padding:32px 16px">
+<table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;overflow:hidden">
+  <tr><td style="background:#01D3A0;height:4px;font-size:0;line-height:0">&nbsp;</td></tr>
+  <tr><td align="center" style="padding:32px 40px 20px">
+    <img src="${LOGO}" alt="Velox Peptides" width="160" style="max-width:160px;height:auto;display:block;border:0"></td></tr>
+  <tr><td style="padding:0 40px 8px">
+    <p style="margin:0 0 14px;font-size:15px;color:#fff">Hi ${esc(first)},</p>
+    <p style="margin:0 0 14px;font-size:14px;color:#c7ccd4;line-height:1.6">
+      Here's a secure link to complete payment for your Velox Peptides order
+      <strong style="color:#fff">${esc(ref)}</strong>. Payment is handled by Fena open banking —
+      you authorise it directly in your own banking app, and no card or bank details are stored on our site.</p></td></tr>
+  <tr><td align="center" style="padding:8px 40px 6px">
+    <a href="${esc(paymentUrl)}" style="display:inline-block;background:#01D3A0;color:#021;text-decoration:none;font-weight:700;font-size:15px;padding:14px 34px;border-radius:8px">
+      Pay £${esc(amountStr)} securely →</a></td></tr>
+  <tr><td align="center" style="padding:2px 40px 22px">
+    <p style="margin:0;font-size:11px;color:#6b7280">If the button doesn't work, paste this into your browser:<br>
+      <span style="color:#9ca3af;word-break:break-all">${esc(paymentUrl)}</span></p></td></tr>
+  <tr><td style="padding:0 40px 30px">
+    <p style="margin:0;font-size:12px;color:#6b7280;line-height:1.6">
+      Prefer to pay another way, or having trouble? Just reply to this email and we'll help.
+      This link is for order ${esc(ref)} only.</p></td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+// Best-effort branded email of the Fena hosted link via the Resend REST API.
+// Returns true only on a confirmed Resend 2xx; never throws (a failed email
+// must not fail the payment — the frontend can still surface the link).
+async function emailPaymentLink({ to, customerName, ref, amountStr, paymentUrl }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || !to || !paymentUrl) return false;
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from:     'Velox Peptides <orders@veloxpeps.com>',
+        to,
+        reply_to: 'support@veloxpeps.com',
+        subject:  `Complete your payment — order ${ref}`,
+        html:     buildEmailHtml(customerName, ref, amountStr, paymentUrl),
+      }),
+    });
+    if (!r.ok) {
+      console.error('[create-fena-payment] Resend link email failed:', r.status, (await r.text()).slice(0, 200));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('[create-fena-payment] Resend link email threw (non-fatal):', e.message);
+    return false;
+  }
+}
 
 // Ask Fena's own public status endpoint whether a payment id has settled.
 // Same contract used by confirm-fena-payment.js / fena-webhook.js / recovery.
@@ -351,8 +422,25 @@ export default async function handler(req) {
       } catch (e) { /* non-fatal */ }
     }
 
+    // ── Self-serve "email me a payment link" ─────────────────────────────────
+    // When the checkout asks for the link by email (email_link:true) instead of
+    // redirecting, deliver the SAME hosted link by mail so the customer can pay
+    // on another device / later. Best-effort: `emailed` tells the frontend
+    // whether to say "sent — check your inbox" or fall back to showing the link.
+    let emailed = false;
+    if (body.email_link) {
+      emailed = await emailPaymentLink({
+        to:           meta.customer_email || body.customerEmail || '',
+        customerName: meta.customer_name  || fullName,
+        ref:          paymentRef,
+        amountStr,
+        paymentUrl,
+      });
+      if (emailed) console.log(`[create-fena-payment] link emailed for order ${supabaseOrderId || 'none'} (${paymentRef})`);
+    }
+
     console.log(`[create-fena-payment] SUCCESS fenaId=${fenaPaymentId}`);
-    return new Response(JSON.stringify({ paymentUrl, fenaPaymentId, orderId: supabaseOrderId || null }), {
+    return new Response(JSON.stringify({ paymentUrl, fenaPaymentId, orderId: supabaseOrderId || null, emailed }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' },
     });
