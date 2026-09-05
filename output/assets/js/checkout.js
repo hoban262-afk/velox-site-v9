@@ -723,6 +723,18 @@
       try { document.dispatchEvent(new Event('vp:discount-applied')); } catch (e) {}
     }
 
+    // Email used to validate email-bound codes (welcome / first-order / personal).
+    // vp_checkout.email is only written once the delivery-address step is saved, so
+    // a logged-in (or just-typed) shopper who applies a code first would wrongly get
+    // "enter your email above". Fall back to the live email field so whatever's on
+    // screen — including the value auto-prefilled for signed-in users — is used.
+    function codeEmail() {
+      var e = '';
+      try { e = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (ex) {}
+      if (!e) { var el = document.getElementById('sh-email'); if (el && el.value) e = el.value; }
+      return String(e || '').trim();
+    }
+
     function handleApply() {
       if (!discountInput || !discountMsg) return;
       var code = discountInput.value.trim();
@@ -742,8 +754,7 @@
 
       // Unique newsletter welcome code (VELOX-XXXXXX) — validate server-side
       if (/^VELOX-/i.test(code)) {
-        var chkEmail = '';
-        try { chkEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+        var chkEmail = codeEmail();
         discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
         fetch('/api/newsletter/validate', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -772,8 +783,7 @@
 
       // Design Lab first-order code — validated per customer (no prior paid order).
       if (code.toUpperCase() === 'DESIGN10') {
-        var foEmail = '';
-        try { foEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+        var foEmail = codeEmail();
         if (!foEmail) { discountMsg.innerHTML = '<span class="dc-err">Enter your email above first, then apply the code.</span>'; return; }
         discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
         fetch('/api/first-order/validate', {
@@ -800,8 +810,7 @@
 
       // Personal / per-email code (server-validated, e.g. GERALDINE40). Bound to
       // the checkout email; overrides other item discounts at 40% off full price.
-      var pcEmail = '';
-      try { pcEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+      var pcEmail = codeEmail();
       discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
       fetch('/api/personal-code/validate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
