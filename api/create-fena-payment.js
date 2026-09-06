@@ -25,6 +25,36 @@ function esc(s) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// Campaign attribution captured by core.js (window.vpAttr) and stored on the
+// order, so we can tell which advert produced which sale. This is caller-supplied
+// data on a public endpoint, so the shape is whitelisted, not trusted: fixed key
+// set, one level of nesting, hard length caps. Returns null when there is
+// nothing to attribute.
+const ATTR_KEYS = ['source', 'medium', 'campaign', 'content', 'term', 'gclid', 'fbclid', 'ttclid', 'msclkid', 'landing'];
+function cleanTouch(t) {
+  if (!t || typeof t !== 'object' || Array.isArray(t)) return null;
+  const out = {};
+  for (const k of ATTR_KEYS) {
+    if (t[k] == null) continue;
+    const v = String(t[k]).replace(/[^\w .:/+-]/g, '').slice(0, 120);
+    if (v) out[k] = v;
+  }
+  return Object.keys(out).length ? out : null;
+}
+function cleanAttribution(a) {
+  if (!a || typeof a !== 'object' || Array.isArray(a)) return null;
+  const out = {};
+  const first = cleanTouch(a.first);
+  const last  = cleanTouch(a.last);
+  if (first) out.first = first;
+  if (last)  out.last  = last;
+  if (a.ref != null) {
+    const ref = String(a.ref).replace(/[^a-z0-9_-]/gi, '').slice(0, 32);
+    if (ref) out.ref = ref;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
 // Branded "complete your payment" email — mirrors api/send-payment-link.js's
 // buildEmailHtml so the self-serve (create-fena-payment) and admin
 // (send-payment-link) flows send an identical-looking mail. Sent edge-side via
@@ -344,6 +374,7 @@ export default async function handler(req) {
         ship_country:   meta.country  || 'GB',
         ship_phone:     meta.customer_phone || null,
         sid:            (typeof meta.sid === 'string' && meta.sid.length <= 64) ? meta.sid : null,
+        attribution:    cleanAttribution(meta.attribution),
       };
       const ins = await fetch(`${SB_URL}/rest/v1/orders`, {
         method:  'POST',

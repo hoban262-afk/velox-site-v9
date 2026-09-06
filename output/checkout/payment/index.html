@@ -1257,6 +1257,8 @@
         currency:         'GBP',
         region:           'UK',
         sid:              (function () { try { return localStorage.getItem('vp_sid') || null; } catch (e) { return null; } })(),
+        // Which advert/affiliate produced this order (null for direct/organic).
+        attribution:      (function () { try { return window.vpAttr ? window.vpAttr() : null; } catch (e) { return null; } })(),
       };
 
       // 7. Disable button + start spinner text
@@ -1418,6 +1420,8 @@
         points_saving: ptsSaving.toFixed(2), points_redeemed: Number(chk.points_redeemed) || 0,
         total: total.toFixed(2), currency: 'GBP', region: 'UK',
         sid: (function () { try { return localStorage.getItem('vp_sid') || null; } catch (e) { return null; } })(),
+        // Which advert/affiliate produced this order (null for direct/organic).
+        attribution: (function () { try { return window.vpAttr ? window.vpAttr() : null; } catch (e) { return null; } })(),
       };
 
       emailLink.style.pointerEvents = 'none';

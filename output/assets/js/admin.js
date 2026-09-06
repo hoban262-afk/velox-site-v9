@@ -2335,6 +2335,12 @@
       });
   }
 
+  // Affiliate discount + commission is a fixed pool of subtotal; the affiliate
+  // picks the split in their own portal. Mirrored by the DB constraint
+  // chk_aff_total_30 and by POOL/MIN_SIDE in assets/js/affiliate.js — change all
+  // three together.
+  var AFF_POOL = 30, AFF_MIN_SIDE = 5, AFF_DEFAULT_COMMISSION = 20;
+
   function affStatusBadge(s) {
     var cls = { pending_approval:'s-pending', active:'s-paid', rejected:'s-cancelled', disabled:'s-cancelled' }[s] || 's-pending';
     var label = { pending_approval:'pending approval', active:'active', rejected:'rejected', disabled:'disabled' }[s] || s;
@@ -2352,9 +2358,12 @@
     if (!affs.length) { el.innerHTML = '<p class="adm-empty">No affiliate applications yet.</p>'; return; }
     function affCard(a) {
       var rid = 'aff-' + a.id;
+      // Show both halves of the split — the commission alone doesn't tell you
+      // what the order actually costs you.
       var commission = (a.commission_type === 'flat')
         ? ('£' + Number(a.commission_rate || 0).toFixed(2) + ' flat')
-        : (Number(a.commission_rate || 0) + '% of subtotal');
+        : (Number(a.commission_pct != null ? a.commission_pct : a.commission_rate || 0) + '% commission &middot; ' +
+           Number(a.discount_pct || 0) + '% customer');
       var head =
         '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">' +
           '<div><span style="color:#fff;font-weight:700">' + esc(a.name) + '</span> ' + affStatusBadge(a.status) +
@@ -2371,7 +2380,7 @@
       var typeSel = '<select id="' + rid + '-type" class="status-select">' +
         '<option value="percentage"' + (a.commission_type !== 'flat' ? ' selected' : '') + '>% of subtotal</option>' +
         '<option value="flat"' + (a.commission_type === 'flat' ? ' selected' : '') + '>£ flat</option></select>';
-      var rateInput = '<input id="' + rid + '-rate" class="status-select" style="max-width:90px" type="number" step="0.01" min="0" value="' + (a.commission_rate != null ? a.commission_rate : 10) + '">';
+      var rateInput = '<input id="' + rid + '-rate" class="status-select" style="max-width:90px" type="number" step="0.01" min="0" value="' + (a.commission_rate != null ? a.commission_rate : AFF_DEFAULT_COMMISSION) + '">';
       var controls = '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px">' + codeInput + typeSel + rateInput;
       if (a.status === 'pending_approval') {
         controls += '<button class="btn-p" style="width:auto;padding:8px 16px" onclick="affApprove(\'' + a.id + '\')">Approve</button>' +
@@ -2402,8 +2411,21 @@
     if (!code) { setAffMsg(id, 'Enter a unique code first.'); return; }
     if (isNaN(rate) || rate < 0) { setAffMsg(id, 'Enter a valid commission rate.'); return; }
     setAffMsg(id, 'Saving…', true);
+    // This screen used to write commission_rate only, but /api/affiliate/validate
+    // reads commission_pct — so an affiliate approved at 15% here was silently
+    // paid 10% at checkout. Write both, and set the matching customer discount so
+    // the pair still totals the 30% pool the DB constraint enforces.
+    var patch = { status: 'active', ref_code: code, commission_type: type, commission_rate: rate };
+    if (type !== 'flat') {
+      if (rate < AFF_MIN_SIDE || rate > AFF_POOL - AFF_MIN_SIDE) {
+        setAffMsg(id, 'Commission must be between ' + AFF_MIN_SIDE + '% and ' + (AFF_POOL - AFF_MIN_SIDE) + '% (the rest becomes the customer discount).');
+        return;
+      }
+      patch.commission_pct = rate;
+      patch.discount_pct   = AFF_POOL - rate;
+    }
     window._sb.from('affiliates')
-      .update({ status: 'active', ref_code: code, commission_type: type, commission_rate: rate })
+      .update(patch)
       .eq('id', id)
       .then(function (r) {
         if (r.error) setAffMsg(id, /duplicate|unique/i.test(r.error.message) ? 'That code is already taken — pick another.' : r.error.message);

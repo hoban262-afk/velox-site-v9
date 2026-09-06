@@ -89,7 +89,7 @@ module.exports = async function handler(req, res) {
     const sinceISO  = new Date(sincePull).toISOString();
 
     const [vRes, pRes] = await Promise.all([
-      sb(`visits?select=sid,path,ref,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.desc&limit=50000`),
+      sb(`visits?select=sid,path,ref,utm,created_at&created_at=gte.${encodeURIComponent(sinceISO)}&order=created_at.desc&limit=50000`),
       sb('profiles?select=loyalty_tier,lifetime_points,loyalty_points&deleted_at=is.null'),
     ]);
     const visits   = vRes.ok ? await vRes.json() : [];
@@ -109,7 +109,7 @@ module.exports = async function handler(req, res) {
 
     const curVis = new Set(), prevVis = new Set();
     let curViews = 0, prevViews = 0;
-    const pageMap = {}, pageVis = {}, refMap = {};
+    const pageMap = {}, pageVis = {}, refMap = {}, campMap = {};
 
     for (const v of visits) {
       const t = new Date(v.created_at).getTime();
@@ -121,6 +121,20 @@ module.exports = async function handler(req, res) {
         (pageVis[path] = pageVis[path] || new Set()).add(v.sid);
         const src = refSource(v.ref);
         refMap[src] = (refMap[src] || 0) + 1;
+        // Campaign landings (visits.utm is only set on a tagged arrival), keyed
+        // the same way the admin keys orders so clicks and sales line up.
+        if (v.utm && typeof v.utm === 'object') {
+          const key = [v.utm.source || '?', v.utm.medium || '?', v.utm.campaign || '?'].join(' / ');
+          const c = campMap[key] || (campMap[key] = {
+            key,
+            source: v.utm.source || null,
+            medium: v.utm.medium || null,
+            campaign: v.utm.campaign || null,
+            clicks: 0,
+            _sids: new Set(),
+          });
+          c.clicks++; c._sids.add(v.sid);
+        }
         let idx = Math.floor((t - winStart) / stepMs);
         if (idx < 0) idx = 0; if (idx > N - 1) idx = N - 1;
         series[idx]._sids.add(v.sid); series[idx].pageviews++;
@@ -136,6 +150,9 @@ module.exports = async function handler(req, res) {
     const topReferrers = Object.keys(refMap)
       .map((s) => ({ source: s, count: refMap[s] }))
       .sort((a, b) => b.count - a.count).slice(0, 10);
+    const campaigns = Object.values(campMap)
+      .map((c) => { const out = { ...c, visitors: c._sids.size }; delete out._sids; return out; })
+      .sort((a, b) => b.visitors - a.visitors).slice(0, 20);
 
     // ── loyalty (window-independent) ─────────────────────────────────────
     const tiers = { Bronze: 0, Silver: 0, Gold: 0, Platinum: 0 };
@@ -157,7 +174,7 @@ module.exports = async function handler(req, res) {
           visitorsPrev: hasWin ? prevVis.size : null,
           pageviewsPrev: hasWin ? prevViews : null,
         },
-        series, topPages, topReferrers,
+        series, topPages, topReferrers, campaigns,
         tracked: visits.length > 0,
       },
       loyalty: { members: profiles.length, tiers, pointsLive, pointsLifetime },

@@ -223,6 +223,80 @@
   } catch (e) {}
 })();
 
+// ── Campaign attribution (utm_* + ad-platform click IDs) ─────────────────────
+// Without this we cannot tell which advert produced which order — the single
+// hard prerequisite for spending anything on paid acquisition.
+//
+// Two touches are kept, because they answer different questions:
+//   first — what originally introduced this person to us (90-day window)
+//   last  — what brought them back on the visit that converted
+// Ad platforms report against last click, so `last` is the one to reconcile
+// with Meta/Google. `first` stops long consideration cycles being miscredited
+// to a final branded search.
+//
+// Direct/organic visits never overwrite a stored touch: a landing page with no
+// campaign params leaves both untouched, so the attribution survives the
+// visitor wandering the site before buying.
+(function () {
+  var KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  var CLICK_IDS = ['gclid', 'fbclid', 'ttclid', 'msclkid'];
+  var NINETY_DAYS = 90 * 864e5;
+
+  function clean(v) { return String(v || '').replace(/[^\w .:/+-]/g, '').slice(0, 120); }
+
+  // Read the campaign params off the current URL, or null if there are none.
+  function fromUrl() {
+    var q, out = {}, i, v;
+    try { q = new URLSearchParams(location.search); } catch (e) { return null; }
+    for (i = 0; i < KEYS.length; i++) {
+      v = clean(q.get(KEYS[i]));
+      if (v) out[KEYS[i].slice(4)] = v;          // utm_source -> source
+    }
+    for (i = 0; i < CLICK_IDS.length; i++) {
+      v = clean(q.get(CLICK_IDS[i]));
+      if (v) out[CLICK_IDS[i]] = v;
+    }
+    if (!Object.keys(out).length) return null;
+    // A bare gclid/fbclid with no utm_source still tells us the platform.
+    if (!out.source) {
+      if (out.gclid)       out.source = 'google';
+      else if (out.fbclid) out.source = 'facebook';
+      else if (out.ttclid) out.source = 'tiktok';
+      else if (out.msclkid) out.source = 'bing';
+    }
+    if (!out.medium && (out.gclid || out.fbclid || out.ttclid || out.msclkid)) out.medium = 'cpc';
+    out.ts = Date.now();
+    out.landing = location.pathname.slice(0, 200);
+    return out;
+  }
+
+  // window.vpAttr() — the attribution snapshot to attach to an order.
+  // Returns null when there is nothing to attribute (direct/organic).
+  window.vpAttr = function () {
+    var s = null, ref = null;
+    try { s = JSON.parse(localStorage.getItem('vp_attr') || 'null'); } catch (e) {}
+    try { var r = JSON.parse(localStorage.getItem('vp_ref') || 'null'); if (r && r.code) ref = r.code; } catch (e) {}
+    if (!s && !ref) return null;
+    var out = {};
+    if (s && s.first) out.first = s.first;
+    if (s && s.last)  out.last  = s.last;
+    if (ref) out.ref = ref;
+    return Object.keys(out).length ? out : null;
+  };
+
+  try {
+    var hit = fromUrl();
+    window.vpAttrHit = hit;                        // this page view's params, for the beacon
+    if (!hit) return;                              // direct/organic — keep what we have
+    var store = null;
+    try { store = JSON.parse(localStorage.getItem('vp_attr') || 'null'); } catch (e) {}
+    if (!store || typeof store !== 'object') store = {};
+    if (!store.first || !store.first.ts || (Date.now() - store.first.ts) > NINETY_DAYS) store.first = hit;
+    store.last = hit;
+    try { localStorage.setItem('vp_attr', JSON.stringify(store)); } catch (e) {}
+  } catch (e) {}
+})();
+
 // ── First-party analytics beacon (no cookies, no PII) ─────────────────────────
 (function () {
   try {
@@ -233,7 +307,11 @@
       sid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
       try { localStorage.setItem('vp_sid', sid); } catch (e) {}
     }
-    var payload = JSON.stringify({ sid: sid, path: location.pathname, ref: document.referrer || '' });
+    // `utm` is only present on a campaign landing hit, so paid sessions are
+    // identifiable in `visits` even if the visitor never reaches checkout.
+    var visit = { sid: sid, path: location.pathname, ref: document.referrer || '' };
+    if (window.vpAttrHit) visit.utm = window.vpAttrHit;
+    var payload = JSON.stringify(visit);
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
     } else {

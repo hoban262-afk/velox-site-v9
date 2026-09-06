@@ -866,19 +866,42 @@
       });
     }
 
-    // ── Pre-fill a captured affiliate ?ref= code (set in core.js) ──────────
-    // If the customer arrived via an affiliate link, pre-fill the discount field
-    // so they can see it and click Apply. Don't auto-submit — the customer may
-    // want to use a different code or skip the discount entirely.
-    (function prefillRef() {
+    // ── Auto-apply a captured affiliate ?ref= code (set in core.js) ────────
+    // This used to only pre-fill the field and wait for an Apply click. Almost
+    // nobody clicked, so the affiliate lost their commission and we lost the
+    // attribution — the referral looked like organic traffic. The code came from
+    // the affiliate's own link, so applying it is what both parties already
+    // expect; the customer can still clear the field and use a different one.
+    //
+    // Validated directly against /api/affiliate/validate rather than through
+    // handleApply(), which would first try the welcome/personal-code endpoints
+    // and could surface a red error on page load. A code that no longer
+    // validates fails silently and leaves the field empty.
+    (function autoApplyRef() {
       try {
         if (!discountInput || appliedDiscount || affiliateApplied || welcomeCodeApplied) return;
         if ((window.VELOX_MEMBER_PCT || 0) > 0) return;
         if (discountInput.value.trim()) return;
         var stored = JSON.parse(localStorage.getItem('vp_ref') || 'null');
         if (!stored || !stored.code || !stored.ts) return;
-        if (Date.now() - stored.ts > 30 * 864e5) return; // expired
-        discountInput.value = stored.code;
+        if (Date.now() - stored.ts > 30 * 864e5) return; // outside attribution window
+        var code = String(stored.code).toUpperCase();
+        discountInput.value = code;
+        fetch('/api/affiliate/validate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          // The customer may have started typing their own code while this was
+          // in flight — never overwrite that.
+          if (discountInput.value.toUpperCase() !== code) return;
+          if (appliedDiscount || affiliateApplied || welcomeCodeApplied) return;
+          if (!d || !d.valid) { discountInput.value = ''; return; }
+          affiliateApplied = { id: d.affiliate_id, code: code, discount_pct: d.discount_pct };
+          var saving = Math.round(discountableGBP(cart) * d.discount_pct) / 100;
+          applyDiscountResult({ code: code, type: 'percentage', value: d.discount_pct, saving: saving });
+        }).catch(function () {
+          if (discountInput.value.toUpperCase() === code) discountInput.value = '';
+        });
       } catch (e) {}
     })();
 
@@ -1151,6 +1174,8 @@
               ship_country:    chk.country || 'GB',
               ship_phone:      chk.phone || null,
               sid:             (function () { try { return localStorage.getItem('vp_sid') || null; } catch (e) { return null; } })(),
+              // Which advert/affiliate produced this order (null for direct/organic).
+              attribution:     (function () { try { return window.vpAttr ? window.vpAttr() : null; } catch (e) { return null; } })(),
             }]);
             if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
           } catch (sbErr) {

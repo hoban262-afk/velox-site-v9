@@ -57,7 +57,11 @@ module.exports = async function handler(req, res) {
         user_id: user.id, name, email,
         payout_details: payout, promo_method: promo || null,
         status: 'pending_approval', commission_type: 'percentage',
-        commission_rate: 10, commission_pct: 10, discount_pct: 10,
+        // Default split of the 30% pool (DB constraint chk_aff_total_30 requires
+        // discount_pct + commission_pct = 30). The affiliate can re-split it in
+        // their portal once approved. commission_pct is the live field read by
+        // /api/affiliate/validate; commission_rate is the legacy mirror.
+        commission_rate: 20, commission_pct: 20, discount_pct: 10,
       }]),
     });
     if (!ins.ok) {
