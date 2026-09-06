@@ -54,18 +54,30 @@ module.exports = async function handler(req, res) {
   const meta  = cleanMeta(b.meta);
   const utm   = cleanUtm(b.utm);
 
-  // Don't make the visitor wait on the DB write.
-  res.status(204).end();
+  // Finish the DB write BEFORE responding. This used to answer 204 first and
+  // then await the insert, which looks like a free win but isn't: Vercel freezes
+  // the function the moment the response ends, so the in-flight fetch to
+  // Supabase was killed mid-request. That surfaced as intermittent
+  // "[track] beacon error fetch failed" in the runtime logs and, more
+  // damagingly, as visits that silently never landed — so the traffic numbers
+  // undercounted by an unknown amount.
+  //
+  // Nothing waits on this response: the browser sends it via navigator.sendBeacon
+  // (or fetch with keepalive), both of which are fire-and-forget from the page's
+  // point of view. The extra ~50ms costs the visitor nothing.
   const sbHeaders = { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
+  // Cap the work so a slow or unreachable Supabase can't hold the function open.
+  const timeout = () => (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(3000) : undefined;
   try {
     if (event && ALLOWED_EVENTS.has(event)) {
-      await fetch(`${SUPABASE_URL}/rest/v1/events`, {
-        method: 'POST', headers: sbHeaders,
+      const e = await fetch(`${SUPABASE_URL}/rest/v1/events`, {
+        method: 'POST', headers: sbHeaders, signal: timeout(),
         body: JSON.stringify(meta ? { sid, event, path, meta } : { sid, event, path }),
       });
+      if (!e.ok) console.error('[track] events insert failed', e.status, (await e.text().catch(() => '')).slice(0, 200));
     } else {
       const r = await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
-        method: 'POST', headers: sbHeaders,
+        method: 'POST', headers: sbHeaders, signal: timeout(),
         body: JSON.stringify(utm ? { sid, path, ref, utm } : { sid, path, ref }),
       });
       // Self-heal: a `visits` schema drift (e.g. the optional `ref`/`utm` column
@@ -80,14 +92,14 @@ module.exports = async function handler(req, res) {
           let ok = false;
           if (utm) {
             const r2 = await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
-              method: 'POST', headers: sbHeaders,
+              method: 'POST', headers: sbHeaders, signal: timeout(),
               body: JSON.stringify({ sid, path, ref }),
             });
             ok = r2.ok;
           }
           if (!ok) {
             await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
-              method: 'POST', headers: sbHeaders,
+              method: 'POST', headers: sbHeaders, signal: timeout(),
               body: JSON.stringify({ sid, path }),
             });
           }
@@ -95,4 +107,5 @@ module.exports = async function handler(req, res) {
       }
     }
   } catch (e) { console.error('[track] beacon error', e && e.message); }
+  res.status(204).end();
 };
