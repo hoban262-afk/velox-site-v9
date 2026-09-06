@@ -152,8 +152,11 @@ They need an email from you with the code, the new 20% terms, links, and how the
 
 ### Phase 1 — prerequisites, 2–4 weeks
 
-- Resolve card payments (see `CARD-PAYMENTS-OPTIONS.md`). Investigate directly how a UK peptide seller is live on Shopify Payments — that is the single most valuable unknown here.
-- Decide on a separate legal entity for the advertised brand.
+> **Superseded — see `ADS-CAMPAIGN-PLAN.md` §6 for the current sequencing.** The "how is a UK peptide seller live on Shopify Payments?" question below has since been answered: they're on Shopify Payments (= Stripe in the UK), they're only four months old, and the likely answer is enforcement lag plus MATCH-list risk we shouldn't take on. Consequence: **card payments are no longer a prerequisite** — they're a longer-term parallel track, and blocking the ad test on them means never testing. The real blocker turned out to be the missing Meta pixel.
+
+- ~~Resolve card payments (see `CARD-PAYMENTS-OPTIONS.md`). Investigate directly how a UK peptide seller is live on Shopify Payments — that is the single most valuable unknown here.~~ **Answered — `CARD-PAYMENTS-OPTIONS.md` §6.** Now a parallel track on a months-long clock, not a gate.
+- Decide on a separate legal entity for the advertised brand. **Still a genuine gate.**
+- **Build the Meta pixel + Conversions API.** Not in the original plan; it's the actual blocker.
 - Match the offer stack: first-order discount, free UK shipping, reviews widget, subscriptions.
 
 ### Phase 2 — paid test, once Phase 1 is done

@@ -8,7 +8,7 @@
 
 ## TL;DR
 
-- **Do NOT bolt on Stripe / PayPal / Square / Shopify Payments.** They explicitly ban research peptides in the UK and will freeze the account. This is the same de-banking pattern that already cost us Wise and GoCardless. A naive card integration makes things *worse*, not better.
+- **Do NOT bolt on Stripe / PayPal / Square / Shopify Payments.** ⚠️ *My original reasoning here was partly wrong — see the [6 Sep addendum](#6-addendum-6-september-2026--what-verifiedvials-is-actually-doing) for the corrected, better-evidenced version. The recommendation is unchanged; the justification is different.* Short version: the policies do not name peptides, so onboarding often succeeds — but termination on manual review is the real risk, and it carries MATCH-list exposure that would be far more damaging than Pay-by-Bank friction.
 - **Direct card acceptance IS possible** for a UK research-peptide seller, but only via a **dedicated high-risk acquirer**, and it comes with real cost (4–8% fees, a 5–15% rolling reserve held 90–180 days) and a genuine ongoing freeze/termination risk driven by chargebacks. It should be a **secondary rail, never the sole one.**
 - **The single biggest quick win is smaller than "add cards":** the customer asked for a **payment link**. Fena can already generate hosted payment links, and we can serve one manually today with zero new risk. That directly solves the Anisha-style friction without touching the merchant-risk profile.
 - **My recommendation:** (1) ship a low-risk "send a payment link" capability first; (2) treat true card acceptance as an optional Phase 2 via a high-risk acquirer **with LegitScript**, only if the AOV/lost-order maths justify the cost and freeze exposure; (3) keep crypto (NOWPayments / BTCPay) as de-banking insurance, not as the card answer. Details and reasoning below.
@@ -105,7 +105,78 @@ Suggested sequence:
 
 ---
 
+## 6. Addendum (6 September 2026) — what VerifiedVials is actually doing
+
+Added after competitor research for `PAID-ACQUISITION-PLAN.md` raised an obvious challenge to this document: **a direct UK competitor is live on full card checkout right now.** If they can, why can't we? I chased it properly. The answer changes the reasoning above, and it is worth reading before you act on §3.
+
+### I was wrong about the policy wording
+
+My original TL;DR said Stripe and Shopify Payments "explicitly ban research peptides in the UK". **They don't.** Fetching the actual documents:
+
+- **Shopify's processor list** confirms UK Shopify Payments is processed by **Stripe Payments Europe Ltd**, governed by Stripe's Prohibited and Restricted Businesses list. So there is only one policy in play, not two.
+- **Stripe's UK restricted list** prohibits *"pseudo-pharmaceuticals or nutraceuticals that are not safe or make harmful claims"* and *"**incorrectly labelled** research chemicals"*. **Peptides are not a named category.**
+
+That distinction matters. The prohibition bites on **conduct** — health claims and mislabelling — not on the product itself. A correctly-labelled, claim-free research-chemical store isn't automatically excluded by the text. That's almost certainly why automated underwriting lets these merchants through.
+
+The confident "Shopify bans peptides outright" claims are traceable to **high-risk-broker marketing blogs** — companies selling merchant accounts, who benefit from you believing the mainstream door is shut. Several are cited in my own Sources list below. I should have checked them against primary documents the first time. Noted.
+
+### What they're actually running — verified, not inferred
+
+Their public Shopify payments config returns:
+
+```
+shopifyPaymentsEnabled: true
+offsiteConfigs: null          ← no third-party gateway
+dynamicCheckoutPrioritization: [ShopifyPay, PayPal, ApplePay, AmazonPay, GooglePay]
+shopId 77642137700 · 0s9mwh-eh.myshopify.com · GBP · Belfast NI
+```
+
+So it's genuinely Shopify Payments on Stripe rails. No clever gateway, no loophole.
+
+### But here is the part that settles it
+
+**Their earliest product was created 2026-04-30. They are roughly four months old.**
+
+Four months at modest volume sits comfortably inside the window *before* Stripe's manual review typically triggers. Onboarding is largely automated; termination is not. You are not looking at a durable arrangement — you're looking at a countdown that hasn't finished.
+
+And their exposure is **worse than yours would be.** Their bundles are titled "Inflammation & Tissue Repair", "Cellular Repair & Regeneration", "Growth Hormone & IGF-1 Signalling" — those are therapeutic claims, which is precisely the *pseudo-pharmaceutical* trigger in the clause that would be used against them. They've tripped the conduct hook that the policy actually enforces.
+
+### What this means for you
+
+**The recommendation in §3 stands — but "they're doing it so we can" is not a valid argument, and this is why.** Copying them means:
+
+1. **Termination risk**, not rejection risk. Rejection costs nothing. Termination mid-trading freezes settlement funds for 90–180 days and strands in-flight orders.
+2. **MATCH-list exposure.** A Stripe/Shopify termination for a prohibited-business reason can land CRP Labs on the card-network MATCH list — effectively a 5-year industry blacklist that makes *every* future acquirer relationship, including the high-risk ones in §2, far harder. **This is the asymmetry that decides it.** You have already been de-banked twice. A third event with MATCH attached is materially worse than the Pay-by-Bank friction it would be solving.
+3. It would sit directly on top of your operating entity — which loops straight into the separate-entity question in `ADS-CAMPAIGN-PLAN.md` §7.
+
+**Worth watching:** check back on verifiedvials.com's checkout in 3–6 months. If they're still on Shopify Payments in early 2027, my enforcement-lag read was wrong and the whole question deserves reopening. If their checkout has changed, you'll have watched the outcome for free.
+
+### What I could *not* establish
+
+Being straight about the limits of this:
+
+- **Which processors genuinely serve UK peptide merchants — unresolved.** Essentially every search result was broker SEO marketing, with unverifiable rates. The one likely-genuine source (OffshoreCorpTalk) was bot-walled at 403; I did not read it and am not counting it.
+- **Shutdown evidence is weaker than I'd like.** Plenty of "banned from Shopify Payments" complaints exist, but I could not confirm any specific one was a peptide seller. The 90–180-day-freeze and MATCH narrative is directionally well-supported but comes largely from broker blogs repeating each other. Treat point 2 above as *high-consequence-if-true*, not as verified fact.
+- **peptidesciences.com was bot-walled (403)** — unknown, not evidence of absence.
+
+What I *did* verify empirically: no established peptide vendor I could reach uses Shopify. Limitless Life → BigCommerce. Swiss Chems → WooCommerce, with navigation literally structured as "How To Pay: Cards / Wallets / Crypto". Small sample, but the pattern among *survivors* is self-hosted cart + specialist acquirer + crypto fallback — never a mainstream platform gateway. The four-month-old shop is the outlier, not the model.
+
+### The one genuinely open route
+
+**A third-party gateway on Shopify** (`offsiteConfigs`, sidestepping Stripe entirely) was not explored and is not covered by any of this. If you want card payments badly enough to keep pushing, that's where the remaining possibility lives — and it's compatible with Option 1 in §2. It needs a dedicated investigation aimed at UK high-risk acquirers, past the bot-walls.
+
+---
+
 ## Sources
+
+**Primary documents (fetched directly, 6 Sep 2026):**
+- [Stripe Restricted Businesses — UK](https://stripe.com/gb/legal/restricted-businesses)
+- [Shopify Payments Processor List](https://www.shopify.com/legal/processor-list)
+- [Shopify Payments Terms (GB)](https://www.shopify.com/legal/terms-payments-gb)
+- [Shopify Payments eligibility](https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/eligibility)
+- [Shopify Acceptable Use Policy](https://www.shopify.com/legal/aup)
+
+**Secondary — ⚠️ note that most of the below are high-risk brokers marketing their own services, and several overstate the mainstream policies. Retained for traceability, not as authority:**
 - [Peptide Payment Processing in 2026 (Coinmonks/Medium)](https://medium.com/coinmonks/peptide-payment-processing-in-2026-how-research-chemical-companies-are-finally-accepting-card-d87867be0eb8)
 - [10 Best Payment Processors for Peptide Merchants 2026 (PayRam)](https://payram.com/blog/best-payment-processors-for-peptide-merchants)
 - [Peptide Merchant Account 2026 (Unison)](https://www.unisonpayment.com/industries/peptides)
