@@ -537,7 +537,17 @@
       // First-party funnel close: records the paid conversion + method into the
       // `events` table so the cart→payment→purchase funnel can be measured by
       // method without relying on GA4. Deduped via the same per-ref key below.
-      try { if (window.vpTrack) window.vpTrack('purchase', { method: paymentMethod || 'fena', ref: ref }); } catch (e) {}
+      // `value`/`currency` also feed the Meta Purchase event (fired inside
+      // vpTrack); `ref` doubles as the dedupe key for both the pixel and the
+      // server-side Conversions API copy.
+      try {
+        if (window.vpTrack) window.vpTrack('purchase', {
+          method: paymentMethod || 'fena',
+          ref: ref,
+          value: Number(chk.total) || 0,
+          currency: pcCurrency || 'GBP',
+        });
+      } catch (e) {}
       localStorage.setItem(key, '1');
     } catch (e) {}
   }

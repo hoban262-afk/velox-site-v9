@@ -56,9 +56,29 @@ I checked. `output/index.html` carries GA4 (`G-YFPX0Q1G50`) and nothing else. No
 
 This matters more than it sounds. Without a pixel firing purchase events, Meta's delivery algorithm has no conversion signal to optimise toward. You'd be forced to optimise for link clicks or landing-page views — which reliably buys you the cheapest, worst traffic on the platform. A conversion-optimised campaign and a click-optimised one at the same budget are not the same experiment; the click-optimised one will underperform and you'll wrongly conclude the channel doesn't work.
 
-**Build:** pixel + Conversions API server-side, firing `ViewContent`, `AddToCart`, `InitiateCheckout`, `Purchase`. Your first-party `events` table already captures exactly these five events with a `sid` — the server-side CAPI feed can be built straight off it, which also makes it resistant to iOS/ad-blocker loss. Roughly a day's work. I can do this.
-
 **Seeding caveat:** Meta needs ~50 conversions per week per ad set to exit the learning phase. You will do nowhere near that. Plan to optimise for `InitiateCheckout` (which you'll get maybe 5–10× more of) rather than `Purchase`, and accept that delivery stays semi-learning throughout the test.
+
+#### ✅ Built — 6 September 2026
+
+Both halves are shipped and dormant. Nothing loads or sends until you add the IDs, so this is live on the site right now doing precisely nothing.
+
+- **Browser pixel** — `output/assets/js/core.js`. Fires `PageView` plus `ViewContent`, `AddToCart`, `InitiateCheckout`, `AddPaymentInfo`, `Purchase`, with basket/product values attached.
+- **Conversions API** — `lib/meta-capi.js`, called from `api/track.js` for funnel events and from `api/confirm-fena-payment.js` for the authoritative purchase. Server-side events survive ad-blockers and iOS, which the pixel alone does not.
+- **Deduplication** — every event is deliberately sent twice (browser + server) sharing one `event_id`. Meta collapses the pair. Get this wrong and every conversion counts twice, reported CPA halves, and it looks like great news right up until you scale spend on it. Both halves derive the id from one place in `core.js`; there's a test asserting they match.
+- **The purchase event fires twice on purpose, from different moments.** The browser fires on the confirmation page (order may still be `pending`). The server fires from the path that flips the order to `paid` — real money, matched against the orders table. Same id, so Meta keeps one.
+
+**Three things only you can do:**
+
+1. **Create the pixel** in Meta Events Manager (your Business account — I can't and shouldn't create accounts for you). Copy the pixel ID.
+2. **Set the pixel ID** in `output/assets/js/core.js` — one line near the top, `var VP_FB_PIXEL_ID = '';`. It's public by design, so it belongs in the code rather than in env.
+3. **Generate a Conversions API token** (Events Manager → Settings → Conversions API) and add to Vercel env, along with the pixel ID:
+   - `META_PIXEL_ID`
+   - `META_CAPI_TOKEN` — **secret, don't paste it into chat or commit it**
+   - `META_CAPI_TEST_CODE` — optional, for verification. **Remove it once verified** — events sent with a test code are excluded from optimisation, so leaving it in means Meta never learns from your conversions.
+
+**Verify** in Events Manager → Test Events: browse a product, add to cart, and confirm both a browser and a server event arrive for each — shown as one deduplicated event, not two.
+
+**One decision left to you: advanced matching.** `META_CAPI_ADVANCED_MATCHING=1` sends the customer's email as a SHA-256 hash with the purchase event, which materially improves attribution. **It's off by default because it's a privacy call, not a technical one.** Hashed or not, it's still processing personal data for advertising under UK GDPR, and your privacy policy should cover it before you switch it on. The system works without it — `fbc` (the ad click id) is the strongest signal anyway and needs no PII.
 
 ### 2.2 Card payments — the constraint you'll have to live with
 
@@ -220,7 +240,7 @@ Hard stop regardless: **ad account restriction.** If Meta rejects creatives repe
 ## 6. Sequencing — what I'd actually do, in order
 
 1. **Email the three affiliates.** Still free, still unstarted, still the highest ROI action available. Brandon King's PeptideStack is a vendor-comparison site — the highest-intent traffic in the category, and it costs you nothing until it produces a sale. Codes and terms are in `PAID-ACQUISITION-PLAN.md` §5. **This needs you, today.**
-2. **Meta pixel + CAPI.** ~1 day, built off the existing `events` table. I can do this. **This is the one genuine blocker** — without conversion signal the test is much weaker and you'd be buying an unreliable answer.
+2. ~~**Meta pixel + CAPI.**~~ **Built — see §2.1.** Needs three things from you: create the pixel, paste the ID into `core.js`, add the CAPI token to Vercel env.
 3. **Decide on the separate entity** — see §7. Needs you and your accountant. Resolve before the first ad goes live, not after.
 4. **Ship the Fena payment-link flow** and strengthen the Pay-by-Bank explainer at checkout. Cheap, low-risk, recovers some of the conversion gap.
 5. **Launch the £336 test** on Pay-by-Bank economics. Do not wait for cards.

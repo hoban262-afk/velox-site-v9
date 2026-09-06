@@ -297,6 +297,70 @@
   } catch (e) {}
 })();
 
+// ── Meta pixel ────────────────────────────────────────────────────────────────
+// Browser half of the Meta conversion setup. The server half lives in
+// `api/track.js` and posts the same events to the Conversions API; the two are
+// deduplicated by Meta on (event_name, event_id), which is why every event here
+// carries an explicit eventID and why that same id is sent on the beacon.
+//
+// Set VP_FB_PIXEL_ID to the pixel ID from Meta Events Manager. While it is
+// empty every function below is a no-op, so this is safe to ship un-configured
+// — nothing loads and nothing is sent until the ID is filled in.
+var VP_FB_PIXEL_ID = '';
+
+(function () {
+  window.vpFBReady = false;
+  window.vpFB = function () {};
+  window.vpFBIds = function () { return {}; };
+  try {
+    if (!VP_FB_PIXEL_ID) return;
+    if (location.pathname.indexOf('/admin') === 0) return;   // never track the admin
+
+    /* eslint-disable */
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+      t = b.createElement(e); t.async = !0; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    /* eslint-enable */
+
+    window.fbq('init', VP_FB_PIXEL_ID);
+    window.fbq('track', 'PageView');
+    window.vpFBReady = true;
+
+    // Fire a Meta standard event. Never throws, never blocks.
+    window.vpFB = function (event, params, eventId) {
+      try {
+        if (typeof window.fbq !== 'function') return;
+        window.fbq('track', event, params || {}, eventId ? { eventID: eventId } : undefined);
+      } catch (e) {}
+    };
+
+    // The browser-side match signals Meta uses to join a CAPI event to a real
+    // person: _fbp (set by the pixel above) and _fbc (derived from fbclid).
+    // Both are first-party cookies and neither is PII. Passing them to the
+    // server is what makes the server-side copy of the event matchable at all.
+    window.vpFBIds = function () {
+      var out = {};
+      try {
+        var m = document.cookie.match(/(?:^|;\s*)_fbp=([^;]+)/);
+        if (m) out.fbp = decodeURIComponent(m[1]).slice(0, 128);
+        var c = document.cookie.match(/(?:^|;\s*)_fbc=([^;]+)/);
+        if (c) out.fbc = decodeURIComponent(c[1]).slice(0, 128);
+        // On a fresh ad click the _fbc cookie may not be written yet; Meta's
+        // documented fallback format reconstructs it from the fbclid in the URL.
+        if (!out.fbc) {
+          var q = new URLSearchParams(location.search);
+          var id = q.get('fbclid');
+          if (id) out.fbc = ('fb.1.' + Date.now() + '.' + id).slice(0, 128);
+        }
+      } catch (e) {}
+      return out;
+    };
+  } catch (e) {}
+})();
+
 // ── First-party analytics beacon (no cookies, no PII) ─────────────────────────
 (function () {
   try {
@@ -318,13 +382,52 @@
       fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
     }
 
+    // Our funnel event names -> Meta standard events. Anything not listed here
+    // stays first-party only, which is deliberate: sending Meta a non-standard
+    // event name gets it ignored rather than counted.
+    var FB_EVENT = {
+      product_view: 'ViewContent',
+      add_to_cart: 'AddToCart',
+      begin_checkout: 'InitiateCheckout',
+      payment_method_selected: 'AddPaymentInfo',
+      purchase: 'Purchase',
+    };
+
     // Funnel-event beacon (add_to_cart, begin_checkout, payment_method_selected,
     // purchase). Same anonymous sid, no PII. Optional `meta` carries small
     // non-PII context, e.g. vpTrack('payment_method_selected', { method:'fena' }).
+    //
+    // This is also the single place the Meta pixel is fired from. Doing both
+    // here — rather than sprinkling fbq() through the page scripts — means the
+    // browser event and the server-side Conversions API copy are guaranteed to
+    // share one event_id, which is the whole basis of Meta's deduplication. Fire
+    // them separately and every conversion gets counted twice.
     window.vpTrack = function (event, meta) {
       try {
         var obj = { sid: sid, event: event, path: location.pathname };
         if (meta && typeof meta === 'object') obj.meta = meta;
+
+        // Stable id where we have one (an order ref survives a refresh, so a
+        // reloaded confirmation page can't double-count a purchase), random
+        // otherwise.
+        var eid = (meta && meta.ref)
+          ? String(event + '.' + meta.ref)
+          : (event + '.' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+
+        var fbEvent = FB_EVENT[event];
+        if (fbEvent && window.vpFBReady) {
+          var params = { currency: (meta && meta.currency) || 'GBP' };
+          if (meta && meta.value != null) params.value = Number(meta.value) || 0;
+          if (meta && meta.content_id) params.content_ids = [String(meta.content_id)];
+          if (event === 'product_view' || event === 'add_to_cart') params.content_type = 'product';
+          window.vpFB(fbEvent, params, eid);
+          // Only tell the server to mirror events the pixel actually fired, so
+          // the two halves can never disagree about what happened.
+          obj.fb = window.vpFBIds();
+          obj.fb.eid = eid;
+          obj.fb.event = fbEvent;
+        }
+
         var p = JSON.stringify(obj);
         if (navigator.sendBeacon) navigator.sendBeacon('/api/track', new Blob([p], { type: 'application/json' }));
         else fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: p, keepalive: true }).catch(function () {});
@@ -369,8 +472,10 @@
         var seen = sessionStorage.getItem('vp_chk');
         if (!seen) {
           sessionStorage.setItem('vp_chk', '1');
-          window.vpTrack('begin_checkout');
           var _bc = window.vpGACartItems();
+          // Value first, then track — Meta optimises far better on an
+          // InitiateCheckout that carries a basket value than a bare one.
+          window.vpTrack('begin_checkout', { value: _bc.value, currency: 'GBP' });
           window.vpGA('begin_checkout', { currency: 'GBP', value: _bc.value, items: _bc.items });
         }
       } catch (e) { window.vpTrack('begin_checkout'); }
