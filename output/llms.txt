@@ -168,6 +168,7 @@ For a single-fetch digest of the definitive answer to every research guide and c
 
 - [GLP-1 &amp; Physical Activity: Daily Steps Fell 11% (ENDO 2026)](https://veloxpeps.com/guides/glp-1-physical-activity-endo-2026/): ENDO 2026 steps study (n=753): daily step counts fell 11% after starting a GLP-1 receptor agonist. What the data show...
 - [TRIUMPH-1: Retatrutide 28.3% Weight Loss (Phase 3, 2026)](https://veloxpeps.com/guides/retatrutide-triumph-1/): TRIUMPH-1 Phase 3 (ADA 2026): retatrutide 12 mg reported 28.3% weight loss at 80 weeks in 2,339 adults with obesity —...
+- [Tirzepatide vs Semaglutide: New Safety Data (2026)](https://veloxpeps.com/guides/tirzepatide-semaglutide-safety-meta-analysis-2026/): A 2026 Clinical Obesity meta-analysis (41,381 patients) found tirzepatide cut more weight than semaglutide, but nearly doubled the serious-adverse-event rate.
 
 ## Free research tools
 
