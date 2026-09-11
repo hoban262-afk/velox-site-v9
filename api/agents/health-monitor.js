@@ -33,6 +33,10 @@ function authorised(req) {
   return false;
 }
 
+const CONFIRM_ATTEMPTS = 3;          // 1 probe + 2 confirmations
+const CONFIRM_DELAY_MS  = 20000;     // spaced to clear a :00/:30 cron burst
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function withTimeout(p, ms) {
   return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
 }
@@ -72,7 +76,21 @@ module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Not configured' });
   if (!authorised(req)) return res.status(401).json({ error: 'Unauthorized' });
 
-  const [siteOk, dbOk] = await Promise.all([checkSite(), checkDb()]);
+  // Confirm before crying wolf. A single failed probe is usually a transient
+  // PostgREST timeout during the cron burst, not an outage — and because
+  // saveState can't write while the DB is unreachable, prevStatus stays 'up',
+  // so every blip re-alerted. Re-probe up to twice, 20s apart, and only treat
+  // it as down if it's still failing.
+  let siteOk, dbOk;
+  for (let attempt = 0; attempt < CONFIRM_ATTEMPTS; attempt++) {
+    if (attempt) await sleep(CONFIRM_DELAY_MS);
+    [siteOk, dbOk] = await Promise.all([checkSite(), checkDb()]);
+    if (siteOk && dbOk) break;
+    if (attempt < CONFIRM_ATTEMPTS - 1) {
+      console.log(`[health-monitor] probe ${attempt + 1} failed (site=${siteOk} db=${dbOk}) — re-checking in ${CONFIRM_DELAY_MS / 1000}s`);
+    }
+  }
+
   const failures = [];
   if (!siteOk) failures.push('website');
   if (!dbOk) failures.push('database');
