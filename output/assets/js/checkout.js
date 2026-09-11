@@ -1085,32 +1085,9 @@
       var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
         .filter(Boolean).join(', ');
 
-      fetch('/api/send-order', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          order_number:    chk.orderRef,
-          customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-          customer_email:  chk.email,
-          customer_phone:  chk.phone    || '',
-          addr1:           chk.addr1    || '',
-          addr2:           chk.addr2    || '',
-          city:            chk.city     || '',
-          postcode:        chk.postcode || '',
-          country:         chk.country  || 'United Kingdom',
-          shipping_address: shippingAddr,
-          shipping_method: shippingMethod,
-          order_items:     productsList,
-          order_subtotal:  (Number(chk.subtotal)        || 0).toFixed(2),
-          shipping_cost:   (Number(chk.shipping)         || 0).toFixed(2),
-          discount_code:   chk.discount_code              || '',
-          discount_saving: (Number(chk.discount_saving)  || 0).toFixed(2),
-          order_total:     (Number(chk.total)             || 0).toFixed(2),
-          currency:        chk.currency || 'GBP',
-          region:          confRegion,
-          payment_method:  'bank',
-        })
-      }).catch(function () {});
+      // Order alerts (admin push/WhatsApp/email + customer bank-details email)
+      // are fired from the Supabase save below, once the row exists — the
+      // server builds them from the stored order, not from this page.
 
       try {
         fetch(
@@ -1177,7 +1154,16 @@
               // Which advert/affiliate produced this order (null for direct/organic).
               attribution:     (function () { try { return window.vpAttr ? window.vpAttr() : null; } catch (e) { return null; } })(),
             }]);
-            if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
+            if (r.error) {
+              console.error('[checkout] Supabase order save failed:', r.error.message);
+            } else if (chk.orderRef) {
+              fetch('/api/send-order', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ order_ref: chk.orderRef }),
+                keepalive: true,
+              }).catch(function () {});
+            }
           } catch (sbErr) {
             console.error('[checkout] Supabase save threw:', sbErr);
           }

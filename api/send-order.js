@@ -544,14 +544,94 @@ async function buildPayloadFromOrderId(orderId) {
     order_items: orderItemsText,
     order_subtotal: subtotal.toFixed(2),
     shipping_cost: Math.max(0, num(o.shipping)).toFixed(2),
-    discount_code: '', discount_saving: Math.max(0, num(o.discount)).toFixed(2),
+    discount_code: o.discount_code || '', discount_saving: Math.max(0, num(o.discount)).toFixed(2),
     order_total: total.toFixed(2),
-    currency: 'GBP', region: 'UK', payment_method: 'fena',
+    currency: 'GBP', region: 'UK', payment_method: o.payment_method || 'fena',
   };
+}
+
+// ── Public path: bank-transfer checkout ────────────────────────────────────
+// The bank-transfer checkout runs in the customer's browser, so it can't pass
+// the admin auth above. Since d119fca (5 Jun) it was getting 401s, and no bank
+// order sent the admin push/WhatsApp/email or the customer's bank-details email.
+//
+// This path accepts ONLY { order_ref }. Everything that goes into the emails is
+// read from the stored row, never the request, so it can't be used as a relay.
+// It only fires for a pending bank order created in the last 15 minutes, and
+// the bank_notified_at claim below means each order can alert at most once.
+const BANK_REF_RE = /^VP-\d{8}-[A-HJ-NP-Z2-9]{4}$/;
+const BANK_WINDOW_MS = 15 * 60 * 1000;
+
+async function handleBankOrderPlaced(ref, res) {
+  const SB_URL = process.env.SUPABASE_URL, SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SB_URL || !SB_SERVICE) return res.status(500).json({ error: 'Not configured' });
+
+  // Atomic claim: only the request that flips bank_notified_at from null wins.
+  const since = new Date(Date.now() - BANK_WINDOW_MS).toISOString();
+  const filter = [
+    `notes=eq.${encodeURIComponent(ref)}`,
+    'payment_method=eq.bank',
+    'status=eq.pending',
+    'bank_notified_at=is.null',
+    `created_at=gte.${encodeURIComponent(since)}`,
+  ].join('&');
+  const claim = await fetch(`${SB_URL}/rest/v1/orders?${filter}&select=id`, {
+    method: 'PATCH',
+    headers: {
+      apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`,
+      'Content-Type': 'application/json', Prefer: 'return=representation',
+    },
+    body: JSON.stringify({ bank_notified_at: new Date().toISOString() }),
+  });
+  if (!claim.ok) {
+    console.error(`[send-order] bank claim failed for ${ref}: ${claim.status} ${await claim.text().catch(() => '')}`);
+    return res.status(500).json({ error: 'Claim failed' });
+  }
+  const rows = await claim.json().catch(() => []);
+  const row = Array.isArray(rows) ? rows[0] : null;
+  // Same response whether it didn't match or was already sent: don't leak which.
+  if (!row) return res.status(200).json({ ok: true });
+
+  const payload = await buildPayloadFromOrderId(row.id);
+  if (!payload) return res.status(200).json({ ok: true });
+  payload.order_number = ref;
+  payload.payment_method = 'bank';
+  try {
+    await sendEmails(payload, ref);
+  } catch (e) {
+    // The claim above is taken before the send. Leaving it set after a failure
+    // means this order can never alert again and the customer never receives
+    // the bank details, so release it and let a later attempt retry.
+    await fetch(`${SB_URL}/rest/v1/orders?id=eq.${row.id}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`,
+        'Content-Type': 'application/json', Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ bank_notified_at: null }),
+    }).catch(() => {});
+    console.error(`[send-order] bank send failed for ${ref}, claim released: ${e.message}`);
+    return res.status(500).json({ error: 'Send failed' });
+  }
+  console.log(`[send-order] bank order alert sent for ${ref}`);
+  return res.status(200).json({ ok: true });
 }
 
 async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  const body = req.body || {};
+  const keys = Object.keys(body);
+  if (keys.length === 1 && keys[0] === 'order_ref') {
+    const ref = String(body.order_ref || '');
+    if (!BANK_REF_RE.test(ref)) return res.status(400).json({ error: 'Bad ref' });
+    try { return await handleBankOrderPlaced(ref, res); }
+    catch (e) {
+      console.error('[send-order] bank path error:', e.message);
+      return res.status(500).json({ error: 'Failed' });
+    }
+  }
+
   if (!(await isAuthorized(req))) return res.status(401).json({ error: 'Unauthorized' });
   try {
     let payload = req.body || {};
