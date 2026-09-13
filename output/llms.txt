@@ -170,6 +170,7 @@ For a single-fetch digest of the definitive answer to every research guide and c
 - [TRIUMPH-1: Retatrutide 28.3% Weight Loss (Phase 3, 2026)](https://veloxpeps.com/guides/retatrutide-triumph-1/): TRIUMPH-1 Phase 3 (ADA 2026): retatrutide 12 mg reported 28.3% weight loss at 80 weeks in 2,339 adults with obesity —...
 - [Tirzepatide vs Semaglutide: New Safety Data (2026)](https://veloxpeps.com/guides/tirzepatide-semaglutide-safety-meta-analysis-2026/): A 2026 Clinical Obesity meta-analysis (41,381 patients) found tirzepatide cut more weight than semaglutide, but nearly doubled the serious-adverse-event rate.
 - [Retatrutide vs Mazdutide: Trial Data Compared](https://veloxpeps.com/guides/retatrutide-vs-mazdutide/): Mazdutide, the first GLP-1/glucagon dual agonist approved anywhere (China, 2025), reports smaller GLORY-1/DREAMS trial losses than retatrutide's TRIUMPH data.
+- [CRB-913: A Non-Incretin Oral Obesity Drug](https://veloxpeps.com/guides/crb-913-canyon-1-obesity-trial-2026/): Corbus Pharmaceuticals (11 Sept 2026) announced a 14 Sept 2026 conference call to discuss topline Phase 1b CANYON-1 data (n=240, NCT07310901) for CRB-913, a peripherally restricted oral CB1 inverse agonist for obesity — an entirely non-incretin mechanism distinct from GLP-1-class compounds like retatrutide; explains why the first-generation CB1 drug rimonabant was withdrawn in 2008/09 over psychiatric adverse events and how CRB-913's peripheral restriction is designed to avoid that.
 
 ## Free research tools
 
