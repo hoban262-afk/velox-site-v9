@@ -25,6 +25,46 @@ and the exact copy. Work top to bottom.*
 
 ---
 
+## 0.5 Policy probe — one ad, £5/day, before you build anything else
+
+*Added 13 September 2026. Reason: 2026 enforcement data shows **64% of
+supplement ad accounts were reviewed at least once in Q1 2026, up 41%
+quarter-on-quarter**. Assume you will be reviewed. Several industry sources
+state flatly that Meta prohibits peptide advertising — our copy is written to
+survive review, but approval is not guaranteed. Find that out for £15, not
+after building ten ad placements and teaching the account to expect
+rejections.*
+
+**Build exactly this and nothing more:**
+
+| Setting | Value |
+|---|---|
+| Campaign | `VP-Policy-Probe-2026-09` (separate campaign — delete it after) |
+| Objective | Sales → InitiateCheckout (same as the real thing) |
+| Ad set | `probe` · £5/day · UK · 25–55 · no interests |
+| Ad | **`static_publiccoa` only** (§4 Ad 2) — most defensible creative: educational destination, zero product claims |
+| Destination | `https://veloxpeps.com/about/coa-library/` |
+
+**Read it like this:**
+
+| Outcome | Meaning | Do |
+|---|---|---|
+| Approved, runs 72h clean | Category risk is manageable | Build §1–§4 in full, launch the £336 test. Kill the probe campaign. |
+| Approved, then flagged mid-flight | Creative passed review but triggered a downstream signal | Stop. Tell Claude the exact rejection wording before touching anything. |
+| Rejected on review | Creative or category blocked | **Do not resubmit variants.** One appeal, stating research-use-only and pointing at the COA page. Then stop and reassess — the account is worth more than the test. |
+| Account restricted | Category-level enforcement | Stop entirely. Do not open a second ad account — that's a circumvention signal and it can attach to the *domain*. |
+
+**The £15 buys the answer to "can we advertise at all?", which every number in
+`GO-FULL-TIME-GATE.md` Gate 0 is downstream of.** Probe spend counts toward
+the £336 — it's the first three days of it, not extra budget.
+
+⚠ **Never** respond to a rejection by spinning up a fresh ad account, a new
+page, or a second domain. ~17% of 2026 bans are circumvention signals, and
+recycled/flagged **domains** are explicitly among them. veloxpeps.com is the
+asset; an ad account is replaceable, the domain is not.
+
+---
+
 ## 1. Campaign settings
 
 | Setting | Value |
@@ -181,6 +221,8 @@ worth more than the test.
 ## 6. Launch-day checklist
 
 - [ ] Pixel verified deduplicating (§0)
+- [ ] **Policy probe passed — approved and ran 72h clean (§0.5)**
+- [ ] Probe campaign `VP-Policy-Probe-2026-09` deleted
 - [ ] `META_CAPI_TEST_CODE` removed from Vercel
 - [ ] Campaign `VP-Cold-Prospect-2026-09`, ABO, Sales → InitiateCheckout
 - [ ] Ad set A `broad-uk` £7/day · Ad set B `interest-stack` £5/day

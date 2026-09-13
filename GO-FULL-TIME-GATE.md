@@ -111,6 +111,13 @@ thinking.
 
 - Pixel is live and dormant; complete the three activation steps and run the
   **£336 / 28-day Meta test** per `ADS-BUILD-PACK.md`.
+- **Gate 0a — can we advertise at all?** Run the £5/day single-ad policy probe
+  (`ADS-BUILD-PACK.md` §0.5) *before* the full build. 64% of supplement ad
+  accounts were reviewed in Q1 2026; if the category is blocked for us, Gate 0
+  fails for a reason that has nothing to do with CAC, and the honest
+  conclusion is that paid social is not a channel we own — shift the whole
+  plan's weight onto affiliates, SEO/content and newsletter placements, none
+  of which have platform-policy risk.
 - **Pass:** blended CAC ≤ £40 with a stable or improving trend, or CAC ≤ £80
   clearly attributable to Pay-by-Bank checkout friction (channel plausible,
   payment method the constraint).
