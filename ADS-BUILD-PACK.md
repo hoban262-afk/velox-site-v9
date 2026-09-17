@@ -408,6 +408,27 @@ real. No faces needed. Text overlay on first frame: "Dispatch day."
 
 ### Ad 5 · `static_price` → `https://veloxpeps.com/compounds/` · CTA: **Shop Now**
 
+> ⚠️ **HELD FROM THE 21 SEP LAUNCH. Do not build this ad on Monday.**
+>
+> "Up to half the price of most UK suppliers" is a comparative price claim, and
+> as of 17 Sep 2026 **nothing in this repo substantiates it.** There is no price
+> survey, no competitor price list, no dated screenshots. The only real number
+> we hold is our own £29 (`output/compounds/index.html`). The "£31 vs £46" in
+> the image note below was illustrative and was never sourced.
+>
+> This is not Meta-policy caution, it's advertising law. **CAP 3.33** requires
+> comparisons with identifiable competitors to be verifiable, and 3.35 requires
+> that they compare products meeting the same need. ASA rules bind Velox as the
+> advertiser regardless of what Meta approves — and a competitor who sees this
+> ad is the single most likely person to complain about it.
+>
+> **To unhold it:** run the price survey in `LAUNCH-RUNBOOK.md` — five named UK
+> suppliers, same compound, same vial size, dated screenshots filed in the repo.
+> Then set the claim to whatever the data actually supports, which may well be
+> weaker than "half". If the survey says we're 15% cheaper, the ad says 15%.
+>
+> The other seven ads are unaffected. Launch without this one.
+
 *Sharpened. The main UK competitor now runs a standing "we're not the cheapest,
 compare on documentation" ad — they have pre-loaded a defence against exactly
 this angle, which is good evidence the angle bites. So don't argue cheap;
@@ -462,20 +483,28 @@ is both true and the reason we don't advertise one.*
 ### Ad 8 · `offer_firstorder` → `https://veloxpeps.com/compounds/` · CTA: **Shop Now**
 
 *Straight offer ad — the competitor runs several and they appear to pass review
-fine. **Declan picks the offer before build**; free UK shipping is the
-lowest-margin-risk of the three.*
+fine.*
 
-**Offer options (choose one, don't run all three):**
-free UK shipping on first order · 10% off first order · free BAC water with first order
+**Offer: 10% off first order.** Decided 17 Sep 2026. The two rejected
+alternatives were free UK shipping (cheaper to give away, but invisible in the
+creative — it reads as a logistics note, not an offer) and free BAC water
+(consumable-adjacent, and pairing a reconstitution solvent with a research
+compound edges toward implying use — exactly the register §0.5 rule 4 keeps us
+out of). A flat percentage is the safest thing to put in a headline: it says
+nothing about the product.
+
+**Before this ad runs, the discount code must exist and be tested** — see
+`LAUNCH-RUNBOOK.md`. An offer ad pointing at a code that errors at checkout is
+worse than no offer ad.
 
 **Primary text**
-> Free UK shipping on your first order. *(← swap for the chosen offer)*
+> 10% off your first order at Velox.
 >
 > UK-held stock, next-working-day Royal Mail, every batch tested on two instruments with the certificate published on the site before you order.
 >
 > For laboratory research use only. Not for human or veterinary use. Terms apply.
 
-**Headline:** Free UK shipping, first order
+**Headline:** 10% off your first order
 **Description:** UK stock. Public COAs.
 **Image:** packed parcel, clean background. No vials visible.
 
@@ -545,7 +574,11 @@ worth more than the test.
 - [ ] `META_CAPI_TEST_CODE` removed from Vercel after verification
 - [ ] Ad account: business, GBP, 2FA on, backup admin (Luke)
 - [ ] Payment method + billing threshold set
-- [ ] Entity decision resolved (`ADS-CAMPAIGN-PLAN.md` §7)
+- [x] ~~Entity decision resolved~~ — **decided 17 Sep 2026: run the £336 test
+      under CRP Labs Ltd as-is.** Entity resolution is no longer a launch
+      blocker; it becomes a hard condition on *scaling* spend. See
+      `GO-FULL-TIME-GATE.md` Gate 0. This supersedes `ADS-CAMPAIGN-PLAN.md` §7,
+      which says resolve before the first ad goes live.
 
 **Page**
 - [ ] Page name reads as a laboratory supplier, not a shop (§0.5 rule 7)
@@ -554,8 +587,11 @@ worth more than the test.
 **Build**
 - [ ] Campaign `VP-Cold-Prospect-2026-09`, ABO, Sales → InitiateCheckout
 - [ ] Ad set A `broad-uk` £7/day · Ad set B `interest-stack` £5/day
-- [ ] **Eight** ads in each, named exactly as §4
-- [ ] Offer chosen for `offer_firstorder` and the copy swapped accordingly
+- [ ] **Seven** ads in each, named exactly as §4 — `static_price` (Ad 5) is
+      **held from launch** until the price comparison is substantiated. See
+      `LAUNCH-RUNBOOK.md` and §4 Ad 5.
+- [x] ~~Offer chosen~~ — 10% off first order (17 Sep). Discount code still has
+      to be created and test-ordered before Ad 8 runs.
 - [ ] URL parameters string on every ad
 - [ ] Every destination is a `veloxpeps.com` URL — no chat apps, no link-in-bio
 

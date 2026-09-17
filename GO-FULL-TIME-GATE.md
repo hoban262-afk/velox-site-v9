@@ -162,6 +162,33 @@ thinking.
   That's an unrun experiment, not a negative result — rerun it on the §0.5
   reserve channels before concluding anything about CAC.
 
+#### Gate 0b — the entity condition *(decided 17 Sep 2026)*
+
+`ADS-CAMPAIGN-PLAN.md` §7 said resolve the trading-entity question before the
+first ad goes live. **That is overridden.** The £336 test runs under **CRP Labs
+Ltd** as it stands, because the test is £336 and 28 days, the ad account is
+disposable, and waiting on an entity restructure to learn our CPC costs more in
+delay than it saves in risk.
+
+What that buys is information, not permission. So the condition moves rather
+than disappearing:
+
+> **No ad spend above £12/day, and no second channel funded from ad budget,
+> until the entity question is resolved in writing.** Passing Gate 0 on CAC is
+> necessary but not sufficient — a good CAC number with an unresolved entity is
+> a reason to do the entity work, not a reason to scale.
+
+The reasoning is asymmetry. At £336 the exposure is the £336 and an ad account.
+At £3,000/month the exposure is a trading history, a payment processor
+relationship, and a customer base sitting under a structure nobody decided on
+deliberately — and CRP Labs has already been de-banked once (see
+`business-payments`). The failure mode isn't losing ad money; it's building
+something real on a foundation that was supposed to be provisional.
+
+**Practically:** if Gate 0 passes, the next task is not "increase the budget",
+it is "resolve the entity, then increase the budget." Put it in the Gate 1
+prerequisites, not the nice-to-haves.
+
 ### Gate 1 — first person goes full-time
 
 All four, simultaneously:

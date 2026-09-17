@@ -1,0 +1,6 @@
+{
+  "name": "velox-ad-creatives",
+  "private": true,
+  "description": "Isolated tooling for rendering Meta ad creatives. Not part of the site build.",
+  "devDependencies": { "playwright": "1.63.0" }
+}
