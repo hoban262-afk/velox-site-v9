@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Runs the Meta pixel / CAPI test suite. Each file is a separate process
- * because they mutate process.env and require.cache to test configuration
- * states (pixel configured vs not, advanced matching on vs off).
+ * Runs the whole test suite. Each file is a separate process because the Meta
+ * ones mutate process.env and require.cache to test configuration states
+ * (pixel configured vs not, advanced matching on vs off).
  *
- *   npm run test:meta
+ *   npm test        (alias: npm run test:meta)
  */
 const { spawnSync } = require('child_process');
 const path = require('path');
@@ -13,6 +13,7 @@ const FILES = [
   'meta-pixel-test.js',        // browser pixel + the dedup property
   'meta-capi-test.js',         // server payload shape, privacy, fail-safe
   'track-integration-test.js', // real handler: DB + CAPI + freeze regression
+  'compliance-test.js',        // MHRA research-use gate, both directions
 ];
 
 let failed = 0;

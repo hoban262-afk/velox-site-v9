@@ -33,7 +33,17 @@ push. Hence:
 - The static site lives in `output/` — 200 baked HTML pages. Shared JS is
   `output/assets/js/core.js`; serverless functions in `/api`; shared server
   code in `/lib`.
-- Tests: `npm run test:meta` (Meta pixel/CAPI suite, 55 assertions —
-  dedup, privacy, freeze-bug regression). `npm run compliance` for content.
+- Tests: `npm test` runs everything — the Meta pixel/CAPI suite (dedup,
+  privacy, freeze-bug regression) plus `compliance-test.js`.
+  `npm run compliance` lints `output/` for content violations.
 - Research-use-only compliance: no health claims, no dosing, no human-use
-  language anywhere on the site or in generated content.
+  language anywhere on the site or in generated content. The rules engine is
+  `lib/compliance.js`, shared by the pre-deploy lint, the weekly live-site
+  audit agent, and the marketing autopilot. **It is deliberately
+  conservative**: the site must be able to publish research-framed education
+  (negated disclaimers, comparison tables, FAQ questions, reporting on other
+  sellers' lawsuits, and citation titles it cannot rewrite). Every exemption
+  in there exists because a real page tripped it. If you loosen a rule, add
+  the matching both-directions assertions to `scripts/test/compliance-test.js`
+  — §1 proves real violations still fail, §3 proves the exemption can't be
+  used as a loophole.
