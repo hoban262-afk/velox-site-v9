@@ -180,6 +180,53 @@ Ad 5 is kept, sharpened, and still does not name them (see §4).
 This is why the rules above are rules and not preferences. VerifiedVials
 proves the door is open; it does not prove we can walk through it carelessly.
 
+### The domain name itself is not a risk
+
+Asked and answered 17 Sep 2026. `veloxpeps.com` carries a category signal, but
+so does `verifiedvials.com` — a *product form* in the domain — and that account
+has run two months clean. Peptivitalis' domain was the blandest thing about
+them and they still lost the Page. The classifier reacts to claims, not to
+brand etymology.
+
+It is also staying regardless: changing domains after a Google manual action is
+the circumvention pattern, not an escape from it.
+
+What *is* adjustable, and free: the **Page name** doesn't have to match the
+domain. The site already presents as `og:site_name` **Velox Peptides**, schema
+`legalName` **CRP Labs Ltd**, company **NI738125**, with a real Holywood
+address. So run the Page as **Velox Peptides** and let the payer disclaimer
+read **CRP Labs Ltd** (cf. Peptivitalis' burner network paying as "Interdog
+Media Limited"). "Peps" then appears nowhere except the URL.
+
+### Accepted risk — the purity figure on `/compounds/` stays
+
+**Decision, Declan, 17 Sep 2026.** The landing page for Ads 3, 4, 5 and 8 is
+titled *"Buy Research Peptides UK – HPLC-Verified ≥99% | Velox"*, and the same
+figure is in its meta description plus 14 other pages'. That is close to the
+wording Peptivitalis was running when their Page was disabled (*"≥99% purity by
+RP-HPLC"*), and Meta reads landing pages at ad review as well as for
+domain-level classification.
+
+It stays anyway, deliberately, because:
+
+- the claim is **substantiated** — Janoshik Analytical batch reports on
+  `/about/coa-library/` show 99.3%, 99.5% etc. per lot. It is legal under
+  ASA/CAP; this is a platform-classification risk, not a compliance breach;
+- Google Shopping is gone, so **organic is load-bearing**, and these are
+  ranking titles. Stripping them has a certain cost to pay down an uncertain risk.
+
+**Consequences to hold in mind, since this is a bet and not a non-issue:**
+
+1. **If an ad is rejected, check this first.** Don't start rewriting creative —
+   the creative is clean of purity figures by design. The landing page is the
+   most likely culprit and it is a one-line change to test.
+2. **Never let the figure migrate into the creative.** The §4 ban is unchanged
+   and this decision does not soften it. Page metadata is a judgement call;
+   ad copy is not.
+3. **It is reversible in minutes.** If the 72-hour watch goes badly, rewriting
+   the `/compounds/` title and description is the first lever to pull, ahead of
+   pausing the campaign.
+
 ⚠ **Never** respond to a rejection by spinning up a fresh ad account, a new
 Page, or a second domain. ~17% of 2026 bans are circumvention signals, and
 recycled/flagged **domains** are explicitly among them. Google's own suspension
@@ -290,14 +337,21 @@ going to end up in reporting and in Declan's head as a claim we can't evidence.
 ### Ad 1 · `static_twotests` → `https://veloxpeps.com/about/coa-library/` · CTA: **Learn More**
 
 **Primary text**
-> Two instruments, every batch, before anything ships.
+> Two instruments, every batch, before anything ships — and we don't run them ourselves.
 >
-> HPLC for purity, mass spec for identity — because a purity number tells you how much of the sample matched the expected peak, not what the sample actually is. The certificate is published on the site with the batch number on it.
+> HPLC for purity, mass spec for identity, independently by Janoshik Analytical. A purity number tells you how much of the sample matched the expected peak; it doesn't tell you what the sample is. That's the second test. Both results are published on the site against the lot number.
 >
 > For laboratory research use only. Not for human or veterinary use. Terms apply.
 
-**Headline:** Every batch. Two instruments.
-**Description:** HPLC and mass spec. Certificates public.
+**Headline:** Tested by a lab that isn't us
+**Description:** Janoshik Analytical. Published by lot.
+
+> **Name the lab.** Janoshik Analytical is ISO-accredited and independently
+> recognised in this category — naming it is a stronger credibility signal than
+> any adjective we could write, and it is a statement of fact about a testing
+> arrangement rather than a claim about a product. It carries no health-claim
+> risk. The earlier draft said only "two instruments" and left our single
+> best third-party proof point sitting unused on the COA page.
 **Image:** clean flat-lay of a printed COA beside a sealed vial, white background. No syringes, no people, **no readable compound name on the label** — blur or angle it out.
 
 ### Ad 2 · `static_publiccoa` → `https://veloxpeps.com/about/coa-library/` · CTA: **Learn More**
@@ -305,13 +359,22 @@ going to end up in reporting and in Declan's head as a claim we can't evidence.
 **Primary text**
 > Ask most suppliers for a certificate of analysis. Wait three days. Get a blurry JPEG with the batch number cropped off.
 >
-> Ours are on the website. Batch-matched, no email required, nothing to request. Read them before you order rather than after.
+> Ours are published on the site — lot number, HPLC purity, mass-spec confirmation and the name of the lab that ran it. Read them before you order rather than after.
 >
 > For laboratory research use only. Not for human or veterinary use. Terms apply.
 
 **Headline:** COAs shouldn't be a secret
-**Description:** Public. Batch-matched. Check before you buy.
+**Description:** Published by lot. Check before you buy.
 **Image:** screenshot of the COA library index page — the *list* view, not an individual certificate, so no compound name is legible. It's the product.
+
+> ⚠ **Copy was softened 17 Sep 2026 — don't revert it.** The earlier draft said
+> *"no email required, nothing to request."* The site's own header ticker reads
+> **"BATCH DOCUMENTATION ON REQUEST"**, and the library publishes batch *data*
+> as on-page reports rather than downloadable PDF certificates. The original
+> line promised more than the page delivers, which is an ASA substantiation
+> problem before it is a Meta one — and the contradiction is visible to any
+> reviewer who clicks through. If the PDFs are ever published directly, this ad
+> can go back to the stronger claim and the ticker should change with it.
 
 ### Ad 3 · `vid_fulfilment` → `https://veloxpeps.com/compounds/` · CTA: **Shop Now**
 
@@ -501,6 +564,15 @@ worth more than the test.
 - [ ] No purity figure anywhere in the creative
 - [ ] No "three-test" / "sterility" / "endotoxin" / "LAL"
 - [ ] Research-use-only line present on **all eight**
+
+**Landing-page pass — click every ad's destination and read it as a reviewer**
+*Meta checks the page, not just the ad. An ad whose claim the landing page
+contradicts is the easiest possible rejection.*
+- [ ] Every claim in the ad is actually visible on the page it lands on
+- [ ] No ad promises documentation the page makes you request *(see Ad 2 note)*
+- [ ] `/about/coa-library/` meta description no longer says **"under construction"** — it currently does, while the page shows 17 live batch reports *(open item, see below)*
+- [ ] Header ticker "BATCH DOCUMENTATION ON REQUEST" reconciled with whatever the ads claim
+- [ ] Accepted risk on the `/compounds/` purity title re-read and still accepted (§0.5)
 
 **After launch**
 - [ ] 72-hour policy watch scheduled (§0.5) — check once daily, days 1–3
