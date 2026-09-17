@@ -25,43 +25,97 @@ and the exact copy. Work top to bottom.*
 
 ---
 
-## 0.5 Policy probe — one ad, £5/day, before you build anything else
+## 0.5 ⛔ STOP — do not launch this on Meta
 
-*Added 13 September 2026. Reason: 2026 enforcement data shows **64% of
-supplement ad accounts were reviewed at least once in Q1 2026, up 41%
-quarter-on-quarter**. Assume you will be reviewed. Several industry sources
-state flatly that Meta prohibits peptide advertising — our copy is written to
-survive review, but approval is not guaranteed. Find that out for £15, not
-after building ten ad placements and teaching the account to expect
-rejections.*
+> **Status as of 17 September 2026: everything below §0.5 is ON HOLD.**
+> A £5/day "policy probe" was specified here on 13 Sep. It was **cancelled on
+> 17 Sep** — not on principle, but because the experiment had already been run
+> by someone else, in our country, in our category, on our exact copy, and we
+> can read the result for free.
 
-**Build exactly this and nothing more:**
+### The evidence: Peptivitalis, from the Meta Ad Library
 
-| Setting | Value |
-|---|---|
-| Campaign | `VP-Policy-Probe-2026-09` (separate campaign — delete it after) |
-| Objective | Sales → InitiateCheckout (same as the real thing) |
-| Ad set | `probe` · £5/day · UK · 25–55 · no interests |
-| Ad | **`static_publiccoa` only** (§4 Ad 2) — most defensible creative: educational destination, zero product claims |
-| Destination | `https://veloxpeps.com/about/coa-library/` |
+`peptivitalis.com` is a UK research-peptide supplier positioned almost
+identically to us. Their complete Meta ad history:
 
-**Read it like this:**
-
-| Outcome | Meaning | Do |
+| Dates | Ad | Outcome |
 |---|---|---|
-| Approved, runs 72h clean | Category risk is manageable | Build §1–§4 in full, launch the £336 test. Kill the probe campaign. |
-| Approved, then flagged mid-flight | Creative passed review but triggered a downstream signal | Stop. Tell Claude the exact rejection wording before touching anything. |
-| Rejected on review | Creative or category blocked | **Do not resubmit variants.** One appeal, stating research-use-only and pointing at the COA page. Then stop and reassess — the account is worth more than the test. |
-| Account restricted | Category-level enforcement | Stop entirely. Do not open a second ad account — that's a circumvention signal and it can attach to the *domain*. |
+| 15 Aug – 6 Sep | Video — "Research peptides and laboratory reagents, dispatched from the UK… tested by more than one independent laboratory" | ran 22 days |
+| 20 – 23 Aug | — | 3 days |
+| 31 Aug – 3 Sep | COA-process ad → WhatsApp destination | 3 days |
+| 3 – 6 Sep | "UK supplier of research peptides for laboratory use. **≥99% purity by RP-HPLC, independently verified, lot-matched certificate of analysis with every order. Research use only.**" | 3 days |
+| **7 Sep** | 20 hrs, <100 impressions | **Page DISABLED** — *"This ad was run by an account or Page we later disabled for not following our Advertising Standards."* |
+| 12 Sep | rebuilt as new Page "Peptivitalis **UK**" | died in **2 hours** |
+| 13 Sep → | same, purity claim softened to ≥98% | live at time of writing |
 
-**The £15 buys the answer to "can we advertise at all?", which every number in
-`GO-FULL-TIME-GATE.md` Gate 0 is downstream of.** Probe spend counts toward
-the £336 — it's the first three days of it, not extra budget.
+**Compare their 3–6 Sep copy to §4 Ad 1 below. It is the same ad.** Same
+country, same category, same research-use-only posture, same COA-as-the-product
+angle — written independently, three weeks apart. Meta disabled their Page.
+
+Their response was to spin up a new Page and come back. **That is exactly the
+circumvention behaviour that escalates to domain-level action.** We do not copy
+it. See the warning at the end of this section.
+
+### The category picture (Meta Ad Library, UK, 17 Sep 2026)
+
+- **"retatrutide", ~13 active ads.** Advertisers: *Academic Boost Zone,
+  Knowledge Bridge Center, Insight Portal, Smart Resource World, Scroll for
+  Deals*. Identical copy, junk destination domains (barglooop, dealworldz,
+  promograb, snapdealz, grabandwin), nearly all **"Paid for by Interdog Media
+  Limited and others"** — one buyer, seven disposable pages. Several show
+  **"Total active time 12 hrs."** Zero legitimate branded vendors.
+- **"peptides", ~13,000 active ads** — essentially all cosmetics (collagen,
+  Sephora, NipandFab). Not our category; don't be fooled by the volume.
+- **What survives for months:** oral BPC-157 *capsule* sellers (Aueral, live
+  since Dec 2025; Zorla; Forester Nutrition), a free-ebook lead magnet (Iron
+  Gorillas, live since 25 May), and education products (MedLoria peptide
+  certification).
+
+**The dividing line is product form, not compliance language.** Zorla makes
+florid healing claims and runs for weeks. Peptivitalis said "research use only"
+and lost its Page. Vials get killed; capsules, ebooks and courses do not.
+
+### Why we don't spend the £15 anyway
+
+The probe was designed to buy information. It no longer buys any — we know the
+likely outcome. What it would still buy is **exposure of the domain**, and the
+downside there is not symmetric:
+
+- Meta runs **domain-level classification separately from ad review**, crawling
+  the site and reading pixel event payloads. Penalties tier from stripped event
+  parameters → blocked AddToCart/Purchase events → all event sharing blocked.
+- Per Meta's Business Help Center, **events lost during a domain block are
+  permanently unavailable even if the domain is later unblocked**, and appeals
+  are largely automated.
+- Google already made a **manual, human** ruling on this exact domain and
+  catalogue on **21 June 2026** (Merchant Center suspension — see
+  `BACKLINK-CAMPAIGN.md`). Don't volunteer for a second platform to do the same.
 
 ⚠ **Never** respond to a rejection by spinning up a fresh ad account, a new
-page, or a second domain. ~17% of 2026 bans are circumvention signals, and
-recycled/flagged **domains** are explicitly among them. veloxpeps.com is the
-asset; an ad account is replaceable, the domain is not.
+Page, or a second domain. ~17% of 2026 bans are circumvention signals, and
+recycled/flagged **domains** are explicitly among them. Google's own suspension
+email carries the identical warning ("related Merchant Center accounts may also
+get suspended"). veloxpeps.com is the asset; an ad account is replaceable, the
+domain is not.
+
+### Where the £336 goes instead
+
+| Priority | Channel | Why |
+|---|---|---|
+| 1 | **Direct newsletter / podcast sponsorship** | No platform gatekeeper — the publisher decides. Health/fitness podcast CPM ~$27; sub-5k-download shows sell flat $300–500/episode; newsletter CPMs $15–30 via Paved / beehiiv. Our budget actually buys inventory here. |
+| 2 | **Microsoft / Bing Search, ~£100** | Their healthcare blocklist is brand-name-based (Craze, OxyElite Pro…); "peptide", "SARM", "GLP-1", "retatrutide" do **not** appear. No categorical ban like Google's. Genuinely untested — worth falsifying. Start with non-GLP-1 SKUs. |
+| 3 | **Reddit Ads, £5/day** | Policy names steroids and HGH, not peptides. Precise subreddit targeting, trivially cheap to test. |
+| — | X, TikTok, Snapchat, Pinterest | Explicit supplement/prescription bans. Closed. |
+| — | Taboola / Outbrain | A readable test needs £900–1,900/mo. Budget-excluded. |
+
+⚠ Direct placements bypass *platform* policy, **not UK law**. ASA/CAP and MHRA
+bind us as the advertiser on every channel. The copy discipline in §4 —
+especially the "Never, in any ad" list — applies word for word to a podcast
+read or a newsletter blurb.
+
+*The ad copy in §1–§6 below is kept because it is good, compliant copy and it
+ports directly to newsletter and podcast placements. Do not use it to build a
+Meta campaign.*
 
 ---
 
@@ -220,9 +274,14 @@ worth more than the test.
 
 ## 6. Launch-day checklist
 
+> ⛔ **This checklist is suspended — see §0.5.** There is no Meta launch day
+> pending. It is kept only so that, if the category position ever changes
+> (Meta policy shift, or we move to a product form that isn't an injectable
+> research vial), the build is ready. Re-read §0.5 in full before ticking
+> anything here.
+
 - [ ] Pixel verified deduplicating (§0)
-- [ ] **Policy probe passed — approved and ran 72h clean (§0.5)**
-- [ ] Probe campaign `VP-Policy-Probe-2026-09` deleted
+- [ ] **§0.5 re-checked — Meta hold explicitly lifted, with a reason**
 - [ ] `META_CAPI_TEST_CODE` removed from Vercel
 - [ ] Campaign `VP-Cold-Prospect-2026-09`, ABO, Sales → InitiateCheckout
 - [ ] Ad set A `broad-uk` £7/day · Ad set B `interest-stack` £5/day

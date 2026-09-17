@@ -109,21 +109,47 @@ thinking.
 
 ### Gate 0 — prove you can buy a customer *(now — no quitting, no borrowing)*
 
-- Pixel is live and dormant; complete the three activation steps and run the
-  **£336 / 28-day Meta test** per `ADS-BUILD-PACK.md`.
-- **Gate 0a — can we advertise at all?** Run the £5/day single-ad policy probe
-  (`ADS-BUILD-PACK.md` §0.5) *before* the full build. 64% of supplement ad
-  accounts were reviewed in Q1 2026; if the category is blocked for us, Gate 0
-  fails for a reason that has nothing to do with CAC, and the honest
-  conclusion is that paid social is not a channel we own — shift the whole
-  plan's weight onto affiliates, SEO/content and newsletter placements, none
-  of which have platform-policy risk.
+- Run the **£336 / 28-day cold-traffic test** — but see Gate 0a: it is no
+  longer a Meta test. Channel ranking and budget split in
+  `ADS-BUILD-PACK.md` §0.5.
+- **Gate 0a — can we advertise at all? ANSWERED, 17 Sep 2026: not on the big
+  platforms.** This was going to be a £5/day probe on Meta. It didn't need to
+  be run, because the evidence already existed:
+  - **Google** suspended Merchant Center on **21 Jun 2026** for "Forbidden
+    pharmaceuticals" — never reinstated; 22 of 23 products still blocked in the
+    UK, applied by a **manual human review** of this domain. Shopping is closed.
+    (The ~242 clicks/28 days are free listings, not a channel we can turn up.)
+  - **Meta** — UK competitor `peptivitalis.com` ran near-identical
+    research-use-only copy from 15 Aug and had its **Page disabled on 7 Sep**.
+    Every active UK retatrutide advertiser is a disposable burner page with an
+    ad lifespan measured in hours. Full evidence in `ADS-BUILD-PACK.md` §0.5.
+  - Testing it ourselves risks **domain-level** classification, where lost
+    events are permanently unrecoverable. The domain is the one asset we can't
+    replace, and one platform has already ruled on it by hand.
+
+  **Consequence for this gate:** Gate 0 can no longer be read as a verdict on
+  paid social, because we aren't buying paid social. It becomes a verdict on
+  the channels we can actually own — and two things follow, neither a
+  formality:
+
+  1. **The £336 is reallocated** — direct newsletter/podcast sponsorship first
+     (no gatekeeper, and the budget buys real inventory), Bing search second
+     (no categorical ban; genuinely untested), Reddit third.
+  2. **The weight of the whole plan shifts onto affiliates, SEO/content and
+     newsletter placements.** That was always the stated fallback; it is now
+     the main case. These are slower to compound than paid social, so the
+     go-full-time timeline below should be re-read on the assumption that paid
+     traffic **never** arrives — not that it arrives later.
+
+  ⚠ Do **not** treat "we can't advertise" as a reason to open a second ad
+  account, Page or domain. Both platforms punish that at the domain level, and
+  Google's suspension email says so explicitly.
 - **Pass:** blended CAC ≤ £40 with a stable or improving trend, or CAC ≤ £80
   clearly attributable to Pay-by-Bank checkout friction (channel plausible,
   payment method the constraint).
-- **Fail:** CAC > £80 with no trend, or repeated creative rejections
-  threatening the ad account. If it fails, the loan question answers itself:
-  there is nothing yet worth borrowing to scale.
+- **Fail:** CAC > £80 with no trend across the channels in §0.5. If it fails,
+  the loan question answers itself: there is nothing yet worth borrowing to
+  scale.
 
 ### Gate 1 — first person goes full-time
 
