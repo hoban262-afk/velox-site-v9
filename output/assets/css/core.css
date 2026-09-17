@@ -9,7 +9,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#080808;color:#fff;line
   --bl:#4A9FE0;--bld:rgba(74,159,224,.1);
   --rd:#E53E3E;--rdd:rgba(229,62,62,.12);
   --gld:#F5C842;--ydd:rgba(245,200,66,.08);
-  --t1:#fff;--t2:#9CA3AF;--t3:#6B7280;--t4:#374151;
+  --t1:#fff;--t2:#9CA3AF;--t3:#868D99;--t4:#374151;
   --mono:'DM Mono',monospace;--disp:'Barlow Condensed',sans-serif;
   --r:6px;--rl:10px;
 }
@@ -2578,7 +2578,7 @@ a.eg-btn-p {
 .eg-btn-p:hover { background: #00b388 !important; }
 .eg-btn-p:disabled {
   background: #2a2d33 !important;
-  color: #6B7280 !important;
+  color: #868D99 !important;
   cursor: not-allowed !important;
   transform: none !important;
 }
@@ -2686,7 +2686,7 @@ a.eg-btn-p {
 }
 .hp-stat-d {
   font-size: 12px;
-  color: #6B7280;
+  color: #868D99;
   line-height: 1.5;
 }
 
@@ -2745,7 +2745,7 @@ a.eg-btn-p {
   font-size: 12px;
 }
 .hcd-row:last-child { border-bottom: none; }
-.hcd-k { font-family: var(--mono); font-size: 10px; color: #6B7280; letter-spacing: .04em; }
+.hcd-k { font-family: var(--mono); font-size: 10px; color: #868D99; letter-spacing: .04em; }
 .hcd-v { color: #fff; }
 .hcd-result { color: #01D3A0; font-weight: 700; }
 
@@ -2807,7 +2807,7 @@ a.eg-btn-p {
 .hp-aff-stat-l {
   font-family: var(--mono);
   font-size: 9px;
-  color: #6B7280;
+  color: #868D99;
   letter-spacing: .1em;
 }
 
@@ -2855,7 +2855,7 @@ a.eg-btn-p {
 }
 .hp-comm-sub {
   font-size: 14px;
-  color: #6B7280;
+  color: #868D99;
   line-height: 1.6;
 }
 
@@ -3579,7 +3579,7 @@ img {
   font-family: 'DM Mono', monospace !important;
   font-size: 12px !important;
   font-weight: 400 !important;
-  color: #555 !important;
+  color: #8a8a8a !important;
   text-decoration: line-through !important;
   letter-spacing: .02em !important;
   line-height: 1 !important;
@@ -3717,7 +3717,7 @@ img {
   font-family: 'DM Mono', monospace;
   font-size: 12px;
   font-weight: 400;
-  color: #555;
+  color: #8a8a8a;
   text-decoration: line-through;
   letter-spacing: .02em;
   line-height: 1;
@@ -3884,7 +3884,7 @@ img {
 .sc-cp-price {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
-  color: #555;
+  color: #8a8a8a;
   white-space: nowrap;
 }
 .sc-cp-price::before { content: '·'; color: rgba(255,255,255,.12); margin-right: 4px; }
@@ -5324,7 +5324,7 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #01D3A0 !im
   /* Struck-out original price: own line, muted, small */
   .cc-was {
     font-size: 0.75rem !important;
-    color: #555 !important;
+    color: #8a8a8a !important;
     line-height: 1.2 !important;
   }
 
@@ -5736,7 +5736,7 @@ body.page-stacks-root article.stack-card .stack-card-action { color: #01D3A0 !im
   padding-top: 9px;
   border-top: 1px solid rgba(1,211,160,0.12);
   font-size: 11px;
-  color: #6B7280;
+  color: #868D99;
   line-height: 1.5;
 }
 
@@ -5886,7 +5886,7 @@ a.nl[href="/guides/"]::before {
 .cp-order::before { display: none; }
 .cp-order { background: #0b0d11; border-color: rgba(255,255,255,.08); }
 .cp-size-opt { background: #0e1116; border-color: rgba(255,255,255,.07); }
-.cp-size-was { color: #6B7280; }
+.cp-size-was { color: #868D99; }
 .cp-order-meta li { font-size: 10px; }
 /* vp-vol-note carries inline styles, so override with !important */
 .vp-vol-note { background: transparent !important; border: none !important;
@@ -5923,9 +5923,9 @@ a.nl[href="/guides/"]::before {
 .vp-search{position:relative}
 .vp-search-box{display:flex;align-items:center;gap:8px;background:#0d0d0d;border:1px solid #1f262d;border-radius:999px;padding:7px 14px}
 .vp-search-nav .vp-search-box{min-width:190px}
-.vp-search-box svg{width:16px;height:16px;flex:0 0 auto;color:#6b7280}
+.vp-search-box svg{width:16px;height:16px;flex:0 0 auto;color:#868d99}
 .vp-search-input{flex:1;min-width:0;background:transparent;border:0;outline:none;box-shadow:none;border-radius:0;-webkit-appearance:none;appearance:none;color:#fff;font:inherit;font-size:14px}
-.vp-search-input::placeholder{color:#6b7280}
+.vp-search-input::placeholder{color:#868d99}
 .vp-search-input::-webkit-search-decoration,.vp-search-input::-webkit-search-cancel-button,.vp-search-input::-webkit-search-results-button,.vp-search-input::-webkit-search-results-decoration{-webkit-appearance:none;appearance:none}
 .vp-search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;min-width:240px;background:#0d0d0d;border:1px solid #1f262d;border-radius:10px;max-height:360px;overflow-y:auto;z-index:1000;box-shadow:0 16px 40px -12px rgba(0,0,0,.8)}
 .vp-search-results[hidden]{display:none}
