@@ -23,6 +23,24 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  // ── info: admin-only live label status for one/more C&D order identifiers ──
+  //   GET /api/clickdrop/info?id=1046   → { ok, status, count, orders:[{ orderIdentifier,
+  //     orderReference, printedOn, manifestedOn, shippedOn, trackingNumber, ... }] }
+  // Read-only diagnostic so the admin can see whether a label has printed and what
+  // tracking number Royal Mail assigned, without waiting on the despatch-sync cron.
+  if (action === 'info') {
+    if (!(await cd.requireAdmin(req))) return res.status(403).json({ error: 'Admin only' });
+    if (!cd.configured()) return res.status(500).json({ error: 'Click & Drop not configured' });
+    const raw = (req.query && (req.query.id || req.query.ids)) || (req.body && (req.body.id || req.body.ids)) || '';
+    const ids = String(raw).split(',').map((s) => s.trim()).filter(Boolean);
+    if (!ids.length) return res.status(400).json({ error: 'Missing id' });
+    try {
+      return res.status(200).json(await cd.getOrdersInfoDiag(ids));
+    } catch (e) {
+      return res.status(502).json({ error: 'Lookup failed', detail: e.message });
+    }
+  }
+
   // ── push: admin OR trusted internal secret (fena-webhook / cron) ──
   if (action === 'push') {
     if (req.method !== 'POST') return res.status(405).end();
