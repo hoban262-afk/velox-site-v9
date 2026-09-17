@@ -637,7 +637,7 @@ html{scroll-behavior:smooth}
 </style>
 <section class="dotd" id="dotd-sec" hidden aria-label="Deal of the week">
   <a class="dotd-card" id="dotd-link" href="#">
-    <div class="dotd-imgwrap"><img id="dotd-img" alt="" loading="lazy"></div>
+    <div class="dotd-imgwrap"><img id="dotd-img" alt="" width="200" height="200" decoding="async" fetchpriority="high"></div>
     <div class="dotd-body">
       <div class="dotd-eyebrow">&#9733; Deal of the Week</div>
       <div class="dotd-name" id="dotd-name"></div>
@@ -669,7 +669,13 @@ html{scroll-behavior:smooth}
     var sec = document.getElementById('dotd-sec'); if (!sec) return;
     document.getElementById('dotd-link').href = deal.url;
     var img = document.getElementById('dotd-img');
-    img.onerror = function () { this.parentNode.style.display = 'none'; };
+    // Prefer the lightweight .webp; if a slug has no webp yet, fall back to the
+    // .png once, and only hide the image if neither format loads.
+    img.onerror = function () {
+      if (!this.dataset.fb && deal.image_fallback && deal.image_fallback !== this.src) {
+        this.dataset.fb = '1'; this.src = deal.image_fallback;
+      } else { this.parentNode.style.display = 'none'; }
+    };
     img.src = deal.image; img.alt = deal.name;
     document.getElementById('dotd-name').textContent = deal.name + ' · ' + deal.size;
     var hl = document.getElementById('dotd-headline');

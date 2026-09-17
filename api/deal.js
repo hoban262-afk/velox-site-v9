@@ -15,6 +15,20 @@ const { rotateDeal } = require('../lib/deal-rotate');
 const n = (v) => { const x = Number(v); return Number.isFinite(x) ? x : 0; };
 const round2 = (x) => Math.round(x * 100) / 100;
 
+// Product slug → image basename. Slugs are hyphenated (bpc-157) but the image
+// files are not (bpc157), so a naive `${slug}.png` 404s for half the catalogue
+// and the homepage hides the Deal image entirely. This map mirrors each PDP's
+// hero image. We serve the .webp (≈67 KB) instead of the .png (≈1 MB) — the
+// single biggest LCP win on the homepage — and the frontend falls back to .png
+// if a given slug has no .webp yet (e.g. dihexa).
+const IMG_BASENAME = {
+  'bpc-157': 'bpc157', 'bpc157-tb500-mix': 'bpc157tb500', 'cjc-1295': 'cjc1295wodac',
+  'dihexa': 'dihexa', 'dsip': 'dsip', 'ghk-cu': 'ghkcu', 'glutathione': 'glutathione',
+  'ipamorelin': 'ipamorelin', 'kpv': 'kpv10mg', 'mots-c': 'motsc', 'nad-plus': 'nadplus',
+  'retatrutide': 'retatrutide', 'selank': 'selank', 'semax': 'semax', 'tb-500': 'tb500',
+  'tesamorelin': 'tesamorelin',
+};
+
 // Shape a deal_of_day row + its product into the public payload.
 //
 // The badge percentage is ALWAYS derived from the real prices (base vs the price
@@ -46,10 +60,12 @@ async function shape(SUPABASE_URL, SERVICE, sb, sbHeaders, deal) {
 
   const dealPrice = deal.applied && sale != null ? sale : target;
   const realPct = base > 0 && dealPrice < base ? Math.round((1 - dealPrice / base) * 100) : 0;
+  const imgBase = IMG_BASENAME[deal.slug] || deal.slug;
   return {
     slug: deal.slug, size: deal.size, name: prod.name, headline: deal.headline || null,
     base_price: base, deal_price: dealPrice, discount_pct: realPct, applied: !!deal.applied,
-    ends_at: deal.ends_at || null, url: `/compounds/${deal.slug}/`, image: `/assets/images/${deal.slug}.png`,
+    ends_at: deal.ends_at || null, url: `/compounds/${deal.slug}/`,
+    image: `/assets/images/${imgBase}.webp`, image_fallback: `/assets/images/${imgBase}.png`,
   };
 }
 
