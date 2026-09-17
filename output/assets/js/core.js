@@ -667,10 +667,18 @@ var VP_FB_PIXEL_ID = '';
 })();
 
 // ── Worldwide shipping announcement banner ────────────────────────────────────
-// We now ship to 60+ countries (UK + international, GBP, tracked). Show a bold
-// full-width banner at the very top of every page, above the marquee. Dismissible
-// and remembered per browser. Skipped on admin and on the checkout flow (where a
-// shipping nudge would just distract). Add ?wwbanner=1 to force it back for testing.
+// We now ship to 60+ countries (UK + international, GBP, tracked). A bold
+// full-width banner sits at the very top of every page, below the header.
+// Dismissible and remembered per browser. Skipped on admin and on the checkout
+// flow (where a shipping nudge would just distract). Add ?wwbanner=1 to force it.
+//
+// The banner is baked statically into the page HTML (below </header>) so it is
+// present at first paint — this is what keeps it out of the Cumulative Layout
+// Shift budget. A tiny inline script next to the baked markup removes it
+// pre-paint for visitors who have already dismissed it, so there is no reverse
+// shift either. This IIFE now only (a) wires the dismiss button on the baked
+// banner, and (b) falls back to injecting the banner on the handful of pages
+// that have no static <header class="site-header"> to anchor it to.
 (function () {
   try {
     if (window.__vpWWBanner) return; window.__vpWWBanner = true;
@@ -680,37 +688,47 @@ var VP_FB_PIXEL_ID = '';
     var force = /[?&]wwbanner=1/.test(location.search);
     if (localStorage.getItem(KEY) && !force) return; // already dismissed
 
-    function boot() {
-      if (document.getElementById('vpww')) return;
-      var bar = document.createElement('div');
-      bar.id = 'vpww';
-      bar.setAttribute('aria-label', 'Now shipping worldwide, and the Velox Research Assistant on ChatGPT');
-      bar.innerHTML =
-        '<span class="vpww-in">' +
-          '<a class="vpww-main" href="/compounds/">' +
-            '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
-            '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
-            '<span class="vpww-sub">60+ countries &middot; tracked &middot; GBP</span>' +
-          '</a>' +
-          '<a class="vpww-gpt" href="https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant" target="_blank" rel="noopener">&#9733; Now on ChatGPT &rarr;</a>' +
-        '</span>';
-      // Insert directly below the site header (falls back to top of body).
-      var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
-      if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
-      else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
-      else document.body.appendChild(bar);
-
-      var close = document.createElement('button');
-      close.className = 'vpww-x';
-      close.type = 'button';
-      close.setAttribute('aria-label', 'Dismiss announcement');
-      close.innerHTML = '&times;';
+    function wireClose(bar) {
+      var close = bar.querySelector('.vpww-x');
+      if (!close) {
+        close = document.createElement('button');
+        close.className = 'vpww-x';
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Dismiss announcement');
+        close.innerHTML = '&times;';
+        bar.appendChild(close);
+      }
+      if (close.__vpwwWired) return;
+      close.__vpwwWired = true;
       close.addEventListener('click', function (e) {
         e.preventDefault(); e.stopPropagation();
         try { localStorage.setItem(KEY, '1'); } catch (err) {}
         bar.remove();
       });
-      bar.appendChild(close);
+    }
+
+    function boot() {
+      var bar = document.getElementById('vpww');
+      if (!bar) {
+        // Fallback: page has no baked banner (no static site-header to anchor it).
+        bar = document.createElement('div');
+        bar.id = 'vpww';
+        bar.setAttribute('aria-label', 'Now shipping worldwide, and the Velox Research Assistant on ChatGPT');
+        bar.innerHTML =
+          '<span class="vpww-in">' +
+            '<a class="vpww-main" href="/compounds/">' +
+              '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
+              '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
+              '<span class="vpww-sub">60+ countries &middot; tracked &middot; GBP</span>' +
+            '</a>' +
+            '<a class="vpww-gpt" href="https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant" target="_blank" rel="noopener">&#9733; Now on ChatGPT &rarr;</a>' +
+          '</span>';
+        var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
+        if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+        else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
+        else document.body.appendChild(bar);
+      }
+      wireClose(bar);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   } catch (e) { if (window.console) console.error('[vpww]', e && e.message); }
