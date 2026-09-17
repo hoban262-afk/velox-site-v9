@@ -109,47 +109,58 @@ thinking.
 
 ### Gate 0 — prove you can buy a customer *(now — no quitting, no borrowing)*
 
-- Run the **£336 / 28-day cold-traffic test** — but see Gate 0a: it is no
-  longer a Meta test. Channel ranking and budget split in
-  `ADS-BUILD-PACK.md` §0.5.
-- **Gate 0a — can we advertise at all? ANSWERED, 17 Sep 2026: not on the big
-  platforms.** This was going to be a £5/day probe on Meta. It didn't need to
-  be run, because the evidence already existed:
-  - **Google** suspended Merchant Center on **21 Jun 2026** for "Forbidden
-    pharmaceuticals" — never reinstated; 22 of 23 products still blocked in the
-    UK, applied by a **manual human review** of this domain. Shopping is closed.
-    (The ~242 clicks/28 days are free listings, not a channel we can turn up.)
-  - **Meta** — UK competitor `peptivitalis.com` ran near-identical
-    research-use-only copy from 15 Aug and had its **Page disabled on 7 Sep**.
-    Every active UK retatrutide advertiser is a disposable burner page with an
-    ad lifespan measured in hours. Full evidence in `ADS-BUILD-PACK.md` §0.5.
-  - Testing it ourselves risks **domain-level** classification, where lost
-    events are permanently unrecoverable. The domain is the one asset we can't
-    replace, and one platform has already ruled on it by hand.
+- Run the **£336 / 28-day cold-traffic test** on Meta, built exactly as
+  `ADS-BUILD-PACK.md` §1–§4 specifies.
+- **Gate 0a — can we advertise at all? Answered 17 Sep 2026: yes on Meta, no
+  on Google Shopping.** The two platforms have to be scored separately, and
+  the earlier version of this bullet got Meta wrong.
+  - **Google Shopping — closed, and treat it as permanently closed.** Merchant
+    Center suspended **21 Jun 2026** for "Forbidden pharmaceuticals", never
+    reinstated; 22 of 23 products still blocked in the UK, applied by a
+    **manual human review** of this domain. A human looked at veloxpeps.com and
+    ruled. The ~242 clicks/28 days are free listings, not a dial we can turn.
+  - **Meta — open, conditionally.** UK competitor `verifiedvials.com` has run
+    **~250 ads continuously since 16 July 2026**, selling research peptide
+    vials — our exact product form, our country — with no enforcement action
+    and 13 ads live today. The category is not categorically banned here the
+    way it is on Google.
+  - **The condition is the copy discipline, and it is not optional.** A second
+    competitor, `peptivitalis.com`, ran the same category with a stated purity
+    spec and one WhatsApp destination and had its **Page disabled on 7 Sep**,
+    then rebuilt under a new Page and died in two hours. The difference between
+    the two is written up as seven rules in `ADS-BUILD-PACK.md` §0.5. Follow
+    them or don't run the test.
+  - **The residual risk is still domain-level.** Meta classifies the domain
+    separately from ad review, and events lost to a domain block are
+    permanently unrecoverable. That is why §0.5 has a 72-hour policy watch and
+    a hard "one appeal, then stop" rule.
 
-  **Consequence for this gate:** Gate 0 can no longer be read as a verdict on
-  paid social, because we aren't buying paid social. It becomes a verdict on
-  the channels we can actually own — and two things follow, neither a
-  formality:
+  **Consequence for this gate:** Gate 0 means what it originally meant — a real
+  verdict on paid social, bought for £336. Two riders:
 
-  1. **The £336 is reallocated** — direct newsletter/podcast sponsorship first
-     (no gatekeeper, and the budget buys real inventory), Bing search second
-     (no categorical ban; genuinely untested), Reddit third.
-  2. **The weight of the whole plan shifts onto affiliates, SEO/content and
-     newsletter placements.** That was always the stated fallback; it is now
-     the main case. These are slower to compound than paid social, so the
-     go-full-time timeline below should be re-read on the assumption that paid
-     traffic **never** arrives — not that it arrives later.
+  1. **Google Shopping stays out of every forecast in this document.** Any
+     revenue line that assumed Shopping would come back should be deleted, not
+     deferred.
+  2. **Meta is viable but fragile, so don't build the full-time case on it
+     alone.** Affiliates, SEO/content and newsletter placements remain the
+     compounding assets; paid social is the fast, revocable one. If §0.5's
+     72-hour watch goes badly, the reserve channel list in that section
+     (newsletter/podcast → Bing → Reddit) is the fallback and the £336 moves
+     there.
 
-  ⚠ Do **not** treat "we can't advertise" as a reason to open a second ad
-  account, Page or domain. Both platforms punish that at the domain level, and
-  Google's suspension email says so explicitly.
+  ⚠ Whatever happens, do **not** open a second ad account, Page or domain in
+  response to enforcement. Both platforms punish that at the domain level, and
+  Google's suspension email says so explicitly. Peptivitalis tried it and lasted
+  two hours.
 - **Pass:** blended CAC ≤ £40 with a stable or improving trend, or CAC ≤ £80
   clearly attributable to Pay-by-Bank checkout friction (channel plausible,
   payment method the constraint).
-- **Fail:** CAC > £80 with no trend across the channels in §0.5. If it fails,
+- **Fail:** CAC > £80 after 28 days with no improving trend. If it fails,
   the loan question answers itself: there is nothing yet worth borrowing to
   scale.
+- **Void, not fail:** the campaign is stopped by policy before it spends ~£200.
+  That's an unrun experiment, not a negative result — rerun it on the §0.5
+  reserve channels before concluding anything about CAC.
 
 ### Gate 1 — first person goes full-time
 
