@@ -482,8 +482,27 @@ var VP_FB_PIXEL_ID = '';
     }
 
     // ── Live-presence heartbeat (powers the admin "live on site" counter) ──
+    // Throttled via localStorage, not just setInterval. This is a multi-page
+    // static site, so every navigation reloads core.js and restarts the timer —
+    // the interval alone therefore never throttled anything, and a browsing
+    // session wrote once per page view on top of once per minute per open tab.
+    // The presence row is keyed by `sid`, which is itself in localStorage, so
+    // all tabs in a browser share one row; sharing the throttle there collapses
+    // them to one write stream instead of one per tab.
+    //
+    // PING_MS must stay comfortably under the "live" cutoff in
+    // api/admin/live.js or the counter reads 0 between beats.
+    var PING_MS = 150000;   // idle tab writes at most this often
+    var PING_MIN = 120000;  // ignore any ping closer than this to the last one
     function vpPing() {
       if (document.visibilityState === 'hidden') return;
+      try {
+        var last = parseInt(localStorage.getItem('vp_ping') || '0', 10) || 0;
+        var now = Date.now();
+        // Guard against a clock jump backwards leaving us permanently throttled.
+        if (last <= now && now - last < PING_MIN) return;
+        localStorage.setItem('vp_ping', String(now));
+      } catch (e) {}
       var p = JSON.stringify({ sid: sid });
       if (navigator.sendBeacon) {
         navigator.sendBeacon('/api/presence', new Blob([p], { type: 'application/json' }));
@@ -492,7 +511,7 @@ var VP_FB_PIXEL_ID = '';
       }
     }
     vpPing();
-    setInterval(vpPing, 60000);
+    setInterval(vpPing, PING_MS);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') vpPing(); });
   } catch (e) {}
 }());

@@ -152,11 +152,16 @@ function dueStage(order) {
 async function isUnsubscribed(email) {
   const e = encodeURIComponent(String(email).toLowerCase());
   try {
-    const [a, b] = await Promise.all([
+    const [a, b, c] = await Promise.all([
       sbGet(`subscribers?email=eq.${e}&unsubscribed_at=not.is.null&select=email&limit=1`).catch(() => []),
       sbGet(`newsletter_codes?email=eq.${e}&unsubscribed_at=not.is.null&select=email&limit=1`).catch(() => []),
+      // Authoritative opt-out store (migration 011) — covers guest buyers who
+      // exist in `orders` but in neither newsletter table.
+      sbGet(`email_suppressions?email=eq.${e}&select=email&limit=1`).catch(() => []),
     ]);
-    return (Array.isArray(a) && a.length > 0) || (Array.isArray(b) && b.length > 0);
+    return (Array.isArray(a) && a.length > 0) || (Array.isArray(b) && b.length > 0) || (Array.isArray(c) && c.length > 0);
+  // Fails open by design: skipping parks the stage permanently, so a
+  // transient 504 must never be allowed to silence a real customer.
   } catch { return false; }
 }
 
