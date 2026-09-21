@@ -3,7 +3,7 @@
  * Self-contained, vanilla JS, no dependencies. Loaded site-wide except
  * /checkout and /account. Fires 10s after first load, once per session.
  *
- * SALE MODE (temporary): while the 7-day BIG30WEEK window is open the popup
+ * SALE MODE (temporary): while the BIG30WEEK window is open (to 1 Oct) the popup
  * leads with the 30%-off sale instead of the standard 10% welcome offer. It is
  * SELF-EXPIRING — once SALE_END passes it reverts to the normal handbook copy
  * with no deploy needed. Keep SALE_END in sync with assets/js/core.js.
@@ -14,10 +14,20 @@
 (function () {
   'use strict';
 
-  // ── Sale-week config ──────────────────────────────────────────────────────
+  // ── Sale config ───────────────────────────────────────────────────────────
   var SALE_CODE = 'BIG30WEEK';
-  var SALE_END  = Date.parse('2026-09-28T23:59:59+01:00'); // sync w/ core.js
+  var SALE_END  = Date.parse('2026-10-01T23:59:59+01:00'); // sync w/ core.js + discount-codes.js
   function saleOn() { return Date.now() < SALE_END; }
+  // Human deadline ("1 October") derived from SALE_END so the wording can never
+  // contradict the timer. Pinned to Europe/London so an overseas visitor doesn't
+  // see the date roll over into the next day.
+  function saleEndLabel() {
+    try {
+      return new Date(SALE_END).toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'long', timeZone: 'Europe/London'
+      });
+    } catch (e) { return '1 October'; }
+  }
   function saleFmt() {
     var t = Math.max(0, Math.floor((SALE_END - Date.now()) / 1000));
     var d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600),
@@ -110,14 +120,14 @@
   // (it is public and shareable), then still capture the email for the handbook.
   function saleBody() {
     return '' +
-      '<span class="vp-nl-pill">Newsletter week &middot; 7 days only</span>' +
+      '<span class="vp-nl-pill">Limited time &middot; ends ' + saleEndLabel() + '</span>' +
       '<h2 class="vp-nl-h"><em>30% off</em> everything</h2>' +
       '<p class="vp-nl-sub">Our biggest discount of the year, for the Velox research community. Use the code below at checkout &mdash; no minimum, no limit on uses.</p>' +
       '<div class="vp-nl-codebox">' +
         '<span><span class="lbl">Your code</span><span class="val">' + SALE_CODE + '</span></span>' +
         '<span class="vp-nl-timer" id="vp-nl-timer">' + saleFmt() + '</span>' +
       '</div>' +
-      '<p class="vp-nl-share">&#127873; Share it with friends &amp; family &mdash; anyone can use it, for the next 7 days.</p>' +
+      '<p class="vp-nl-share">&#127873; Share it with friends &amp; family &mdash; anyone can use it, until ' + saleEndLabel() + '.</p>' +
       '<p class="vp-nl-sub" style="margin-bottom:12px">Want the free Researcher&rsquo;s Handbook too? Drop your email &mdash; reconstitution, storage &amp; CoA guidance (PDF).</p>' +
       '<input class="vp-nl-input" id="vp-nl-email" type="email" placeholder="Your email address" autocomplete="email">' +
       '<button class="vp-nl-btn" id="vp-nl-submit">Email me the handbook &rarr;</button>' +

@@ -31,14 +31,16 @@ var DISCOUNT_CODES = [
   // Newsletter subscriber thank-you code (sale week broadcast). Stacks on the
   // catalogue Deal of the Week pricing. Disable (active:false) after the sale.
   { code: "INSIDER10", type: "percentage", value: 10, active: true },
-  { code: "BIG30WEEK", type: "percentage", value: 30, active: true, expires: "2026-09-28T23:59:59+01:00" },
-  // Big 30%-off, 7-day public sale — broadcast to the full subscriber + customer
-  // list (Sep 2026) and openly shareable with friends & family. Percentage code
+  { code: "BIG30WEEK", type: "percentage", value: 30, active: true, expires: "2026-10-01T23:59:59+01:00" },
+  // Big 30%-off public sale — broadcast to the full subscriber + customer list
+  // (Sep 2026) and openly shareable with friends & family. Percentage code
   // applies to the subtotal (after volume pricing), no usage cap, no per-customer
   // check — anyone can use it, unlimited times.
-  // SELF-EXPIRING: `expires` switches it off automatically at the end of the
-  // 7-day window (same deadline as the countdown bar in core.js) — no deploy
-  // needed. Remove the entry entirely next time you tidy this file.
+  // Runs to 1 Oct 23:59 so end-of-month payday lands inside the window.
+  // SELF-EXPIRING: `expires` switches it off automatically at that deadline
+  // (shared with the countdown bar in core.js and the sale popup in
+  // newsletter-popup.js) — no deploy needed. Remove the entry when you next
+  // tidy this file.
   // NOTE: DESIGN10 (Design Lab first-order code) is intentionally NOT here —
   // it is validated server-side per customer via /api/first-order/validate so it
   // only works on a first order, not as a reusable public code.

@@ -734,23 +734,27 @@ var VP_FB_PIXEL_ID = '';
   } catch (e) { if (window.console) console.error('[vpww]', e && e.message); }
 })();
 
-// ── Sale-week countdown banner (TEMPORARY — 7-day 30% off, Sep 2026) ─────────
+// ── Sale countdown banner (TEMPORARY — 30% off, ends 1 Oct 2026) ─────────────
 // Promotes the public BIG30WEEK code to the newsletter community with a live
-// countdown. SELF-EXPIRING: once SALE_END passes this IIFE no-ops, the bar is
-// removed and the standard worldwide-shipping banner (#vpww) takes its slot
-// back automatically — no deploy required to revert the UI.
+// countdown. Runs to 1 Oct 23:59 so the last day of the month (payday for most
+// of the list) is still inside the window.
+// SELF-EXPIRING: once SALE_END passes this IIFE no-ops, the bar is removed and
+// the standard worldwide-shipping banner (#vpww) takes its slot back
+// automatically — no deploy required to revert the UI.
 //
 // It reuses #vpww's exact position in the DOM (hiding it while the sale runs)
 // so swapping one bar for another costs ~no Cumulative Layout Shift.
 //
-// WHEN THE WINDOW CLOSES: also set BIG30WEEK active:false in
-// assets/js/discount-codes.js — the code itself stays live until you do.
-// Keep SALE_END in sync with assets/js/newsletter-popup.js.
+// The code itself self-expires on the same instant (`expires` field in
+// assets/js/discount-codes.js), so nothing needs touching when the window
+// closes. Keep SALE_END in sync with newsletter-popup.js and discount-codes.js
+// — all three must carry the same timestamp or the copy will contradict the
+// checkout.
 (function () {
   try {
     if (window.__vpSaleBar) return; window.__vpSaleBar = true;
     var SALE_CODE = 'BIG30WEEK';
-    var SALE_END  = Date.parse('2026-09-28T23:59:59+01:00'); // sync w/ newsletter-popup.js
+    var SALE_END  = Date.parse('2026-10-01T23:59:59+01:00'); // sync w/ newsletter-popup.js + discount-codes.js
     if (!(Date.now() < SALE_END)) return;                    // window closed → normal banner
 
     var path = location.pathname || '';
@@ -758,7 +762,7 @@ var VP_FB_PIXEL_ID = '';
     var KEY = 'vp_sale_bar_big30week';
     var force = /[?&]salebar=1/.test(location.search);
     // Session-scoped dismissal: hiding it for this visit, not forever — the
-    // offer only runs 7 days and we want it back on the next session.
+    // offer is short-lived and we want it back on the next session.
     try { if (sessionStorage.getItem(KEY) && !force) return; } catch (e) {}
 
     function injectCss() {
