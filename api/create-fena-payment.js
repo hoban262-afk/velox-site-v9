@@ -268,11 +268,26 @@ export default async function handler(req) {
   // Legit discounts reduce the TOTAL, not the subtotal, so they don't trip this.
   if (SB_URL && SB_SERVICE && Array.isArray(meta.items) && meta.items.length) {
     try {
-      const vr = await fetch(`${SB_URL}/rest/v1/product_variants?select=slug,size,base_price,sale_price`, {
+      const vr = await fetch(`${SB_URL}/rest/v1/product_variants?select=slug,size,base_price,sale_price,in_stock`, {
         headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
       });
       if (vr.ok) {
         const variants = await vr.json();
+        // ── Stock guard (source of truth = product_variants.in_stock) ───────────
+        // Reject any basket line whose variant is DEFINITIVELY out of stock
+        // (in_stock === false in the DB). Unknown variants or a DB hiccup fall
+        // through untouched (fail open) so legitimate orders are never lost. This
+        // is the real "can't be ordered" enforcement — the buy form is static and
+        // the client can be tampered, so stock must be checked server-side.
+        const stockMap = {};
+        variants.forEach((v) => { stockMap[`${v.slug}|${v.size}`] = v.in_stock; });
+        for (const it of meta.items) {
+          if (stockMap[`${it.slug || ''}|${it.size || ''}`] === false) {
+            console.warn(`[create-fena-payment] STOCK GUARD: ${it.slug}|${it.size} out of stock — rejecting`);
+            return new Response(JSON.stringify({ error: `Sorry, ${it.name || it.slug || 'an item'}${it.size ? ' (' + it.size + ')' : ''} is currently out of stock. Please remove it from your basket and try again.` }),
+              { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
+          }
+        }
         const priceMap = {};
         variants.forEach((v) => { priceMap[`${v.slug}|${v.size}`] = (v.sale_price != null ? Number(v.sale_price) : Number(v.base_price)); });
         let dbSubtotal = 0, allKnown = true;

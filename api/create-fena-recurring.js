@@ -100,14 +100,15 @@ export default async function handler(req) {
     // Subscribe-&-save: fixed monthly basket, priced from product_variants (DB truth).
     items = Array.isArray(body.items) ? body.items : [];
     if (!items.length) return json({ error: 'No items to subscribe to' }, 400);
-    const vr = await fetch(`${SB_URL}/rest/v1/product_variants?select=slug,size,base_price,sale_price`, { headers: sbHeaders });
+    const vr = await fetch(`${SB_URL}/rest/v1/product_variants?select=slug,size,base_price,sale_price,in_stock`, { headers: sbHeaders });
     const variants = vr.ok ? await vr.json() : [];
-    const priceMap = {};
-    variants.forEach((v) => { priceMap[`${v.slug}|${v.size}`] = (v.sale_price != null ? Number(v.sale_price) : Number(v.base_price)); });
+    const priceMap = {}, stockMap = {};
+    variants.forEach((v) => { priceMap[`${v.slug}|${v.size}`] = (v.sale_price != null ? Number(v.sale_price) : Number(v.base_price)); stockMap[`${v.slug}|${v.size}`] = v.in_stock; });
     let subtotal = 0;
     for (const it of items) {
       const p = priceMap[`${it.slug || ''}|${it.size || ''}`];
       if (p == null) return json({ error: `Unknown item: ${it.slug || '?'}` }, 400);
+      if (stockMap[`${it.slug || ''}|${it.size || ''}`] === false) return json({ error: `Sorry, ${it.slug || 'that item'}${it.size ? ' (' + it.size + ')' : ''} is currently out of stock.` }, 409);
       subtotal += p * (Number(it.qty) || 1);
     }
     // Apply the member's tier discount to the recurring basket if they're Pro.
