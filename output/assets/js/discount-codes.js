@@ -31,6 +31,12 @@ var DISCOUNT_CODES = [
   // Newsletter subscriber thank-you code (sale week broadcast). Stacks on the
   // catalogue Deal of the Week pricing. Disable (active:false) after the sale.
   { code: "INSIDER10", type: "percentage", value: 10, active: true },
+  { code: "BIG30WEEK", type: "percentage", value: 30, active: true },
+  // Big 30%-off, 7-day public sale — broadcast to the full subscriber + customer
+  // list (Sep 2026) and openly shareable with friends & family. Percentage code
+  // applies to the subtotal (after volume pricing), no usage cap, no per-customer
+  // check — anyone can use it, unlimited times. DISABLE (set active:false) as soon
+  // as the 7-day window ends.
   // NOTE: DESIGN10 (Design Lab first-order code) is intentionally NOT here —
   // it is validated server-side per customer via /api/first-order/validate so it
   // only works on a first order, not as a reusable public code.
