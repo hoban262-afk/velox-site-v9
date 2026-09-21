@@ -1486,14 +1486,45 @@
      re-renders the order summary AND republishes __vpCheckoutTotals — the same
      single source of truth the Pay-by-Bank (Fena) charge engine reads. There is
      NO separate charge-path maths here (that drift caused the #2943 overcharge).
-     Self-hides when the cart is empty or already contains bac water. */
+     Self-hides when the cart is empty or already contains bac water.
+
+     IT MUST NEVER OFFER A VARIANT THE CHECKOUT API REJECTS. api/create-fena-*.js
+     refuses any line in lib/force-oos.mjs with a 409, and the bump hides itself
+     after adding — so offering a pulled variant strands the customer at the last
+     step of the funnel with no obvious way to undo it. That happened: the bump
+     was hardcoded to 10ml while 10ml was pulled from sale.
+     BUMP_CANDIDATES is therefore tried in order and the first one that is NOT
+     force-OOS wins; if every size is pulled the bump hides. */
   (function () {
-    var BUMP = { slug: 'bacteriostatic-water', name: 'Bac Water', size: '10ml', price: 9.99, url: '/supplies/bacteriostatic-water/' };
+    // Mirror of lib/force-oos.mjs. This page is static HTML and cannot import the
+    // ESM module, so the list is duplicated — scripts/test/order-bump-test.js
+    // fails the build if the two ever disagree. Update BOTH or neither.
+    var FORCE_OOS = { 'bacteriostatic-water': ['10ml'] };
+    function isForcedOos(slug, size) {
+      var sizes = FORCE_OOS[String(slug || '').toLowerCase()] || [];
+      var target = String(size || '').toLowerCase();
+      for (var i = 0; i < sizes.length; i++) if (String(sizes[i]).toLowerCase() === target) return true;
+      return false;
+    }
+
+    // Preference order: the larger vial is the better attach, so it leads and we
+    // fall back to the smaller one only when it is unavailable.
+    var BUMP_CANDIDATES = [
+      { slug: 'bacteriostatic-water', name: 'Bac Water', size: '10ml', price: 9.99, url: '/supplies/bacteriostatic-water/' },
+      { slug: 'bacteriostatic-water', name: 'Bac Water', size: '3ml',  price: 4.99, url: '/supplies/bacteriostatic-water/' }
+    ];
+    var BUMP = null;
+    for (var bi = 0; bi < BUMP_CANDIDATES.length; bi++) {
+      if (!isForcedOos(BUMP_CANDIDATES[bi].slug, BUMP_CANDIDATES[bi].size)) { BUMP = BUMP_CANDIDATES[bi]; break; }
+    }
+
     function getCart() { try { return JSON.parse(localStorage.getItem('vp_cart') || '[]'); } catch (e) { return []; } }
-    function hasBump(cart) { return cart.some(function (i) { return String(i.slug || '').toLowerCase() === BUMP.slug; }); }
+    function hasBump(cart) { return cart.some(function (i) { return String(i.slug || '').toLowerCase() === 'bacteriostatic-water'; }); }
 
     var box = document.getElementById('co-bump');
     if (!box) return;
+    // Every size pulled from sale — offer nothing rather than a guaranteed 409.
+    if (!BUMP) { box.hidden = true; return; }
     var btn     = document.getElementById('co-bump-add');
     var nameEl  = document.getElementById('co-bump-name');
     var sizeEl  = document.getElementById('co-bump-size');

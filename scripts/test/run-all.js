@@ -14,6 +14,7 @@ const FILES = [
   'meta-capi-test.js',         // server payload shape, privacy, fail-safe
   'track-integration-test.js', // real handler: DB + CAPI + freeze regression
   'compliance-test.js',        // MHRA research-use gate, both directions
+  'order-bump-test.js',        // bump never offers a force-OOS variant (409 trap)
 ];
 
 let failed = 0;
