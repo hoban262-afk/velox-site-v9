@@ -734,6 +734,115 @@ var VP_FB_PIXEL_ID = '';
   } catch (e) { if (window.console) console.error('[vpww]', e && e.message); }
 })();
 
+// ── Sale-week countdown banner (TEMPORARY — 7-day 30% off, Sep 2026) ─────────
+// Promotes the public BIG30WEEK code to the newsletter community with a live
+// countdown. SELF-EXPIRING: once SALE_END passes this IIFE no-ops, the bar is
+// removed and the standard worldwide-shipping banner (#vpww) takes its slot
+// back automatically — no deploy required to revert the UI.
+//
+// It reuses #vpww's exact position in the DOM (hiding it while the sale runs)
+// so swapping one bar for another costs ~no Cumulative Layout Shift.
+//
+// WHEN THE WINDOW CLOSES: also set BIG30WEEK active:false in
+// assets/js/discount-codes.js — the code itself stays live until you do.
+// Keep SALE_END in sync with assets/js/newsletter-popup.js.
+(function () {
+  try {
+    if (window.__vpSaleBar) return; window.__vpSaleBar = true;
+    var SALE_CODE = 'BIG30WEEK';
+    var SALE_END  = Date.parse('2026-09-28T23:59:59+01:00'); // sync w/ newsletter-popup.js
+    if (!(Date.now() < SALE_END)) return;                    // window closed → normal banner
+
+    var path = location.pathname || '';
+    if (/^\/admin\b/.test(path) || /^\/checkout\b/.test(path)) return; // owner UI + payment flow
+    var KEY = 'vp_sale_bar_big30week';
+    var force = /[?&]salebar=1/.test(location.search);
+    // Session-scoped dismissal: hiding it for this visit, not forever — the
+    // offer only runs 7 days and we want it back on the next session.
+    try { if (sessionStorage.getItem(KEY) && !force) return; } catch (e) {}
+
+    function injectCss() {
+      if (document.getElementById('vpsale-css')) return;
+      var s = document.createElement('style');
+      s.id = 'vpsale-css';
+      s.textContent =
+        '#vpsale{position:relative;background:linear-gradient(90deg,#04120e,#0b2c23 45%,#0b2c23 55%,#04120e);border-top:1px solid rgba(1,211,160,.22);border-bottom:1px solid rgba(1,211,160,.22);font-family:Inter,Arial,sans-serif;color:#fff}' +
+        '#vpsale .vps-in{display:flex;align-items:center;justify-content:center;gap:10px 14px;flex-wrap:wrap;padding:9px 38px 9px 14px;text-align:center;line-height:1.3}' +
+        '#vpsale .vps-badge{background:#01D3A0;color:#021;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap}' +
+        '#vpsale .vps-lead{font-size:13.5px;font-weight:600;color:#E5E7EB}' +
+        '#vpsale .vps-lead b{color:#fff;font-weight:800}' +
+        '#vpsale .vps-code{font-family:"DM Mono","Courier New",monospace;color:#01D3A0;font-weight:700;letter-spacing:.06em;background:rgba(1,211,160,.1);border:1px dashed rgba(1,211,160,.45);border-radius:4px;padding:2px 7px;white-space:nowrap}' +
+        '#vpsale .vps-timer{font-family:"DM Mono","Courier New",monospace;font-size:13px;font-weight:700;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:3px 9px;font-variant-numeric:tabular-nums;white-space:nowrap}' +
+        '#vpsale a.vps-cta{color:#01D3A0;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}' +
+        '#vpsale a.vps-cta:hover{text-decoration:underline}' +
+        '#vpsale .vps-x{position:absolute;top:50%;right:10px;transform:translateY(-50%);background:none;border:none;color:#6B7280;font-size:20px;line-height:1;cursor:pointer;padding:4px 6px}' +
+        '#vpsale .vps-x:hover{color:#fff}' +
+        // Phones: drop the "share with friends & family" clause (the popup and
+        // the email both carry it) so the bar stays one tight line-pair instead
+        // of eating three lines of viewport above the fold.
+        '@media(max-width:600px){#vpsale .vps-in{gap:4px 8px;padding:7px 28px 7px 10px}#vpsale .vps-lead{font-size:12px}#vpsale .vps-share,#vpsale .vps-badge{display:none}#vpsale .vps-timer{font-size:11.5px;padding:2px 7px}#vpsale a.vps-cta{font-size:12px}}';
+      document.head.appendChild(s);
+    }
+
+    // "6d 23h 04m 09s" — days drop off once we're inside the last 24h.
+    function fmt(ms) {
+      var t = Math.max(0, Math.floor(ms / 1000));
+      var d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600),
+          m = Math.floor((t % 3600) / 60), s = t % 60;
+      function p(n) { return (n < 10 ? '0' : '') + n; }
+      return (d > 0 ? d + 'd ' : '') + p(h) + 'h ' + p(m) + 'm ' + p(s) + 's';
+    }
+
+    function boot() {
+      injectCss();
+      var bar = document.createElement('div');
+      bar.id = 'vpsale';
+      bar.setAttribute('role', 'region');
+      bar.setAttribute('aria-label', '30% off sale, limited time');
+      bar.innerHTML =
+        '<span class="vps-in">' +
+          '<span class="vps-badge">Newsletter week</span>' +
+          '<span class="vps-lead"><b>30% OFF EVERYTHING</b> &middot; code <span class="vps-code">' + SALE_CODE + '</span><span class="vps-share"> &middot; share it with friends &amp; family</span></span>' +
+          '<span class="vps-timer" id="vps-timer" aria-live="off">&nbsp;</span>' +
+          '<a class="vps-cta" href="/compounds/">Shop now &rarr;</a>' +
+        '</span>' +
+        '<button class="vps-x" type="button" aria-label="Dismiss offer banner">&times;</button>';
+
+      // Take over #vpww's slot so the swap costs no layout shift.
+      var ww = document.getElementById('vpww');
+      var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
+      if (ww && ww.parentNode) { ww.style.display = 'none'; ww.parentNode.insertBefore(bar, ww); }
+      else if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+      else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
+      else document.body.appendChild(bar);
+
+      var timerEl = bar.querySelector('#vps-timer');
+      var iv = setInterval(tick, 1000);
+      function restoreWw() { if (ww) ww.style.display = ''; }
+      function tick() {
+        var left = SALE_END - Date.now();
+        if (left <= 0) {            // expired mid-session → clean revert
+          clearInterval(iv);
+          bar.remove();
+          restoreWw();
+          return;
+        }
+        timerEl.textContent = 'Ends in ' + fmt(left);
+      }
+      tick();
+
+      bar.querySelector('.vps-x').addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        try { sessionStorage.setItem(KEY, '1'); } catch (err) {}
+        clearInterval(iv);
+        bar.remove();
+        restoreWw();
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  } catch (e) { if (window.console) console.error('[vpsale]', e && e.message); }
+})();
+
 /* ── Velox on-site assistant — load the chat bubble on every page except admin ── */
 (function () {
   try {
