@@ -121,8 +121,8 @@
   function saleBody() {
     return '' +
       '<span class="vp-nl-pill">Limited time &middot; ends ' + saleEndLabel() + '</span>' +
-      '<h2 class="vp-nl-h"><em>30% off</em> everything</h2>' +
-      '<p class="vp-nl-sub">Our biggest discount of the year, for the Velox research community. Use the code below at checkout &mdash; no minimum, no limit on uses.</p>' +
+      '<h2 class="vp-nl-h"><em>30% off</em> single vials</h2>' +
+      '<p class="vp-nl-sub">Our biggest discount of the year, for the Velox research community. Use the code below at checkout &mdash; no minimum, no limit on uses. Applies to single vials; bacteriostatic water and 10-packs are excluded.</p>' +
       '<div class="vp-nl-codebox">' +
         '<span><span class="lbl">Your code</span><span class="val">' + SALE_CODE + '</span></span>' +
         '<span class="vp-nl-timer" id="vp-nl-timer">' + saleFmt() + '</span>' +

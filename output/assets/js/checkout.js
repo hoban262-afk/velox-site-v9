@@ -156,7 +156,8 @@
       ? Math.round(subtotal * match.value) / 100
       : Math.min(match.value, subtotal);
     saving = Math.round(saving * 100) / 100;
-    return { code: match.code, type: match.type, value: match.value, saving: saving };
+    return { code: match.code, type: match.type, value: match.value, saving: saving,
+             maxVialPct: (typeof match.maxVialPct === 'number' ? match.maxVialPct : null) };
   }
 
   // Savings are GBP everywhere now (UK + international both charge in GBP).
@@ -177,6 +178,19 @@
   // SPEND ladder — input is the discountable vial subtotal in GBP, not a unit count.
   function vpVolumeRate(spend) { return spend >= 250 ? 0.20 : (spend >= 200 ? 0.15 : (spend >= 150 ? 0.10 : (spend >= 75 ? 0.05 : 0))); }
   var MAX_VIAL_PCT = 0.25; // stacking cap: vial-side discount (volume OR code) never exceeds this share of the vial base
+
+  // A single code may lift that ceiling FOR ITSELF via a `maxVialPct` field in
+  // discount-codes.js — needed because a headline 30% sale would otherwise be
+  // silently paid out at 25% and contradict its own advertising. Deliberately
+  // opt-in: every other code, and the volume track, keep the 25% guard.
+  // ABS_MAX_VIAL_PCT is a backstop so a mistyped 3 (meaning 0.3) can't give the
+  // store away, and the ceiling can never be lowered below the default.
+  var ABS_MAX_VIAL_PCT = 0.5;
+  function codeCapPct(d) {
+    var p = (d && typeof d.maxVialPct === 'number') ? d.maxVialPct : 0;
+    if (!(p > MAX_VIAL_PCT)) return MAX_VIAL_PCT;
+    return Math.min(p, ABS_MAX_VIAL_PCT);
+  }
 
   // 10-PACK volume discount — a SEPARATE system that applies ONLY to 10-packs and stacks
   // 10-packs together (total count of 10-pack units across the basket):
@@ -242,14 +256,16 @@
     var rate = vpVolumeRate(base);
     var volSaving = Math.round(base * rate * 100) / 100;
 
-    var vialPromo, vialLabel, vialCode;
+    var vialPromo, vialLabel, vialCode, capPct;
     if (volSaving > codeSaving) {
       vialPromo = volSaving; vialLabel = 'Volume discount −' + Math.round(rate * 100) + '%'; vialCode = 'VOLUME-' + Math.round(rate * 100);
+      capPct = MAX_VIAL_PCT;               // volume track always keeps the standard guard
     } else {
       vialPromo = codeSaving; vialLabel = codeDiscount ? codeDiscount.code : ''; vialCode = codeDiscount ? codeDiscount.code : '';
+      capPct = codeCapPct(codeDiscount);   // a code may raise the ceiling for itself only
     }
-    // Stacking cap — never let the vial-side discount exceed MAX_VIAL_PCT of the vial base.
-    var vialCapGBP = Math.round(base * MAX_VIAL_PCT * 100) / 100;
+    // Stacking cap — never let the vial-side discount exceed capPct of the vial base.
+    var vialCapGBP = Math.round(base * capPct * 100) / 100;
     if (vialPromo > vialCapGBP) vialPromo = vialCapGBP;
 
     var packRate = packVolumeRate(packQty(cart));

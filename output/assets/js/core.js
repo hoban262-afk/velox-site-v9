@@ -806,7 +806,7 @@ var VP_FB_PIXEL_ID = '';
       bar.innerHTML =
         '<span class="vps-in">' +
           '<span class="vps-badge">Newsletter week</span>' +
-          '<span class="vps-lead"><b>30% OFF EVERYTHING</b> &middot; code <span class="vps-code">' + SALE_CODE + '</span><span class="vps-share"> &middot; share it with friends &amp; family</span></span>' +
+          '<span class="vps-lead"><b>30% OFF SINGLE VIALS</b> &middot; code <span class="vps-code">' + SALE_CODE + '</span><span class="vps-share"> &middot; share it with friends &amp; family</span></span>' +
           '<span class="vps-timer" id="vps-timer" aria-live="off">&nbsp;</span>' +
           '<a class="vps-cta" href="/compounds/">Shop now &rarr;</a>' +
         '</span>' +
