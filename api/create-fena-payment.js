@@ -17,6 +17,8 @@
 
 export const config = { runtime: 'edge' };
 
+import { isForcedOos } from '../lib/force-oos.mjs';
+
 const FENA_ENDPOINT = 'https://epos.api.prod-gcp.fena.co/open/payments/single/create-and-process';
 const LOGO = 'https://veloxpeps.com/assets/images/veloxpeps2.png';
 
@@ -260,6 +262,23 @@ export default async function handler(req) {
   const fullName = (meta.customer_name || `${meta.fname || ''} ${meta.lname || ''}`).trim() || 'Customer';
   let supabaseOrderId = orderId || '';
 
+  // ── Stock guard: block only variants explicitly pulled from sale ────────────
+  // The store oversells by design — every catalogued variant stays purchasable
+  // even when product_variants.in_stock is false (fulfilment handled off-site).
+  // The ONLY exceptions are the FORCE_OOS denylist in lib/force-oos.mjs (mirrored
+  // by scripts/sync-stock.mjs, which bakes the matching "Out of stock" UI). This
+  // runs independently of the DB fetch below, so a denylisted item is blocked
+  // even if Supabase is unreachable — the one thing we always refuse to sell.
+  if (Array.isArray(meta.items)) {
+    for (const it of meta.items) {
+      if (isForcedOos(it.slug, it.size)) {
+        console.warn(`[create-fena-payment] STOCK GUARD: ${it.slug}|${it.size} pulled from sale — rejecting`);
+        return new Response(JSON.stringify({ error: `Sorry, ${it.name || it.slug || 'an item'}${it.size ? ' (' + it.size + ')' : ''} is currently unavailable. Please remove it from your basket and try again.` }),
+          { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
+      }
+    }
+  }
+
   // ── Server-side price guard (source of truth = product_variants) ────────────
   // Recompute the pre-discount subtotal from the DB. If the basket is priced
   // BELOW source-of-truth, the client prices were tampered or badly stale —
@@ -268,26 +287,11 @@ export default async function handler(req) {
   // Legit discounts reduce the TOTAL, not the subtotal, so they don't trip this.
   if (SB_URL && SB_SERVICE && Array.isArray(meta.items) && meta.items.length) {
     try {
-      const vr = await fetch(`${SB_URL}/rest/v1/product_variants?select=slug,size,base_price,sale_price,in_stock`, {
+      const vr = await fetch(`${SB_URL}/rest/v1/product_variants?select=slug,size,base_price,sale_price`, {
         headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` },
       });
       if (vr.ok) {
         const variants = await vr.json();
-        // ── Stock guard (source of truth = product_variants.in_stock) ───────────
-        // Reject any basket line whose variant is DEFINITIVELY out of stock
-        // (in_stock === false in the DB). Unknown variants or a DB hiccup fall
-        // through untouched (fail open) so legitimate orders are never lost. This
-        // is the real "can't be ordered" enforcement — the buy form is static and
-        // the client can be tampered, so stock must be checked server-side.
-        const stockMap = {};
-        variants.forEach((v) => { stockMap[`${v.slug}|${v.size}`] = v.in_stock; });
-        for (const it of meta.items) {
-          if (stockMap[`${it.slug || ''}|${it.size || ''}`] === false) {
-            console.warn(`[create-fena-payment] STOCK GUARD: ${it.slug}|${it.size} out of stock — rejecting`);
-            return new Response(JSON.stringify({ error: `Sorry, ${it.name || it.slug || 'an item'}${it.size ? ' (' + it.size + ')' : ''} is currently out of stock. Please remove it from your basket and try again.` }),
-              { status: 409, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://veloxpeps.com' } });
-          }
-        }
         const priceMap = {};
         variants.forEach((v) => { priceMap[`${v.slug}|${v.size}`] = (v.sale_price != null ? Number(v.sale_price) : Number(v.base_price)); });
         let dbSubtotal = 0, allKnown = true;

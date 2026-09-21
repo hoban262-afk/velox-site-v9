@@ -13,6 +13,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { FORCE_OOS } from '../lib/force-oos.mjs';
 
 const ROOT   = process.cwd();
 const OUT    = join(ROOT, 'output');
@@ -76,13 +77,9 @@ async function main() {
   // Overrides the oversell policy above for variants with a genuine supply
   // problem the owner wants pulled from sale. These get the real OOS state
   // baked (disabled radio, "Out of stock" badge, checked moved to an in-stock
-  // size). Keyed slug → array of sizes (matched normalised). Mirrors the
-  // server-side stock guard in api/create-fena-payment.js, which independently
-  // blocks checkout for any variant with product_variants.in_stock = false.
-  // To restock: remove the entry here (and flip the JSON-LD offer availability
-  // on the product page back to InStock) once product_variants is updated.
-  // (2026-09-21 Declan: 10ml bac water — supply issue, make non-orderable.)
-  const FORCE_OOS = { 'bacteriostatic-water': ['10ml'] };
+  // size). The list lives in lib/force-oos.mjs — the single source of truth
+  // shared with the server-side checkout guards in api/create-fena-*.js, so the
+  // baked UI and the payment block can never drift apart.
   for (const slug of Object.keys(FORCE_OOS)) {
     for (const size of FORCE_OOS[slug]) {
       const nSize = norm(size);
