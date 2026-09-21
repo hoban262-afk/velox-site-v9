@@ -31,13 +31,34 @@ var DISCOUNT_CODES = [
   // Newsletter subscriber thank-you code (sale week broadcast). Stacks on the
   // catalogue Deal of the Week pricing. Disable (active:false) after the sale.
   { code: "INSIDER10", type: "percentage", value: 10, active: true },
-  { code: "BIG30WEEK", type: "percentage", value: 30, active: true },
+  { code: "BIG30WEEK", type: "percentage", value: 30, active: true, expires: "2026-09-28T23:59:59+01:00" },
   // Big 30%-off, 7-day public sale — broadcast to the full subscriber + customer
   // list (Sep 2026) and openly shareable with friends & family. Percentage code
   // applies to the subtotal (after volume pricing), no usage cap, no per-customer
-  // check — anyone can use it, unlimited times. DISABLE (set active:false) as soon
-  // as the 7-day window ends.
+  // check — anyone can use it, unlimited times.
+  // SELF-EXPIRING: `expires` switches it off automatically at the end of the
+  // 7-day window (same deadline as the countdown bar in core.js) — no deploy
+  // needed. Remove the entry entirely next time you tidy this file.
   // NOTE: DESIGN10 (Design Lab first-order code) is intentionally NOT here —
   // it is validated server-side per customer via /api/first-order/validate so it
   // only works on a first order, not as a reusable public code.
 ];
+
+// ── Auto-expiry ─────────────────────────────────────────────────────────────
+// Optional `expires` field (any Date.parse-able string, e.g. an ISO timestamp
+// with an explicit offset). Once the moment passes, the code is flipped to
+// active:false right here at load time — so every consumer that already tests
+// `.active` (assets/js/checkout.js and /checkout/payment/) honours the deadline
+// with no changes of their own. A code with no `expires` runs until you disable
+// it by hand, exactly as before.
+(function () {
+  try {
+    var now = Date.now();
+    for (var i = 0; i < DISCOUNT_CODES.length; i++) {
+      var c = DISCOUNT_CODES[i];
+      if (!c || !c.expires) continue;
+      var t = Date.parse(c.expires);
+      if (!isNaN(t) && now >= t) c.active = false;
+    }
+  } catch (e) { /* never block checkout over promo config */ }
+}());
