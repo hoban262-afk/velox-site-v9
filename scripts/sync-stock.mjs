@@ -72,6 +72,24 @@ async function main() {
     }
   }
 
+  // ── Owner override: force specific variants OUT of stock ─────────────────
+  // Overrides the oversell policy above for variants with a genuine supply
+  // problem the owner wants pulled from sale. These get the real OOS state
+  // baked (disabled radio, "Out of stock" badge, checked moved to an in-stock
+  // size). Keyed slug → array of sizes (matched normalised). Mirrors the
+  // server-side stock guard in api/create-fena-payment.js, which independently
+  // blocks checkout for any variant with product_variants.in_stock = false.
+  // To restock: remove the entry here (and flip the JSON-LD offer availability
+  // on the product page back to InStock) once product_variants is updated.
+  // (2026-09-21 Declan: 10ml bac water — supply issue, make non-orderable.)
+  const FORCE_OOS = { 'bacteriostatic-water': ['10ml'] };
+  for (const slug of Object.keys(FORCE_OOS)) {
+    for (const size of FORCE_OOS[slug]) {
+      const nSize = norm(size);
+      if (S[slug] && S[slug][nSize]) { S[slug][nSize].inStock = false; S[slug][nSize].qty = 0; }
+    }
+  }
+
   let touched = 0;
 
   // Collect product + supply pages
