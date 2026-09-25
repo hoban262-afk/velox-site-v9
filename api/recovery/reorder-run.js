@@ -57,11 +57,16 @@ function signReorderToken(orderId) {
 async function isUnsubscribed(email) {
   const e = encodeURIComponent(String(email).toLowerCase());
   try {
-    const [a, b] = await Promise.all([
+    const [a, b, c] = await Promise.all([
       sbGet(`subscribers?email=eq.${e}&unsubscribed_at=not.is.null&select=email&limit=1`).catch(() => []),
       sbGet(`newsletter_codes?email=eq.${e}&unsubscribed_at=not.is.null&select=email&limit=1`).catch(() => []),
+      // Authoritative opt-out store (migration 011) — covers guest buyers who
+      // exist in `orders` but in neither newsletter table.
+      sbGet(`email_suppressions?email=eq.${e}&select=email&limit=1`).catch(() => []),
     ]);
-    return (Array.isArray(a) && a.length) || (Array.isArray(b) && b.length);
+    return (Array.isArray(a) && a.length) || (Array.isArray(b) && b.length) || (Array.isArray(c) && c.length);
+  // Fails open by design: skipping parks the record permanently, so a
+  // transient 504 must never be allowed to silence a real customer.
   } catch { return false; }
 }
 

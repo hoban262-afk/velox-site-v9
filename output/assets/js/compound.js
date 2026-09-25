@@ -27,7 +27,12 @@
   }
 
   // First-party funnel beacon: product page viewed (once per page load).
-  if (window.vpTrack) window.vpTrack('product_view');
+  // value/content_id also populate the Meta ViewContent event fired by vpTrack.
+  if (window.vpTrack) window.vpTrack('product_view', {
+    value: activePrice.value,
+    currency: 'GBP',
+    content_id: form.getAttribute('data-compound') || '',
+  });
 
   var sizeInputs = form.querySelectorAll('input[name="size"]');
   sizeInputs.forEach(function (input) {
@@ -97,7 +102,8 @@
     }
 
     // First-party funnel beacon: item added to cart.
-    if (window.vpTrack) window.vpTrack('add_to_cart');
+    // value/content_id also populate the Meta AddToCart event fired by vpTrack.
+    if (window.vpTrack) window.vpTrack('add_to_cart', { value: price, currency: 'GBP', content_id: slug });
 
     if (window.toast) window.toast('Added to order');
   });

@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const { Resend } = require('resend');
 const { sendWhatsApp } = require('../../lib/notify-whatsapp');
 const { renderEmail, emailParagraph, emailCodeBox } = require('../../lib/email-layout');
+const { allow } = require('../../lib/rate-limit');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -71,6 +72,15 @@ module.exports = async function handler(req, res) {
   var ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
 
   try {
+    // ── Burst guard: max 5 attempts per IP per minute ───────────────────────
+    // The hourly cap below only counts codes that were successfully issued, so
+    // it does not throttle rapid-fire attempts that fail or hit the "already
+    // subscribed" path. Fails open — the hourly cap is the real backstop and a
+    // database blip should not block genuine signups.
+    if (!(await allow('newsletter-signup', ip, 5, 60, true))) {
+      return res.status(429).json({ error: 'Too many attempts. Please wait a moment and try again.' });
+    }
+
     // ── IP rate limit: max 20 new signups per IP per hour ──────────────────
     var sinceISO = new Date(Date.now() - 3600 * 1000).toISOString();
     var ipRes = await sb('newsletter_codes?ip=eq.' + encodeURIComponent(ip) +

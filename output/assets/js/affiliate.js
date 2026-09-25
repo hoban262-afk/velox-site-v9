@@ -129,8 +129,14 @@
   }
 
   // ── Split picker ──
+  // The affiliate divides a fixed pool between their own commission and the
+  // discount their customers get. Mirrored by the DB constraint
+  // chk_aff_total_30 (discount_pct + commission_pct = POOL), so these numbers
+  // must stay in step with that constraint and with the copy in
+  // /affiliate/index.html.
+  var POOL = 30, MIN_SIDE = 5, DEFAULT_COMMISSION = 20;
   function updateSplitDisplay(comm) {
-    var disc = 20 - comm;
+    var disc = POOL - comm;
     var d = $('split-commission-display'); if (d) d.textContent = comm;
     var cv = $('split-commission-val');   if (cv) cv.textContent = comm + '%';
     var dv = $('split-discount-val');     if (dv) dv.textContent = disc + '%';
@@ -142,7 +148,7 @@
     var splitMsg = $('split-msg');
     if (!slider) return;
 
-    var current = Number(affiliate.commission_pct) || 10;
+    var current = Number(affiliate.commission_pct) || DEFAULT_COMMISSION;
     slider.value = current;
     updateSplitDisplay(current);
 
@@ -154,9 +160,9 @@
       saveBtn._wired = true;
       saveBtn.addEventListener('click', async function () {
         var comm = Number(slider.value);
-        var disc = 20 - comm;
-        if (comm < 5 || comm > 15) {
-          splitMsg.textContent = 'Commission must be between 5% and 15%.';
+        var disc = POOL - comm;
+        if (comm < MIN_SIDE || comm > POOL - MIN_SIDE) {
+          splitMsg.textContent = 'Commission must be between ' + MIN_SIDE + '% and ' + (POOL - MIN_SIDE) + '%.';
           splitMsg.className = 'auth-msg err'; return;
         }
         saveBtn.disabled = true; saveBtn.textContent = 'Saving…';

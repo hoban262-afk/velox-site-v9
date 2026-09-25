@@ -223,6 +223,144 @@
   } catch (e) {}
 })();
 
+// ── Campaign attribution (utm_* + ad-platform click IDs) ─────────────────────
+// Without this we cannot tell which advert produced which order — the single
+// hard prerequisite for spending anything on paid acquisition.
+//
+// Two touches are kept, because they answer different questions:
+//   first — what originally introduced this person to us (90-day window)
+//   last  — what brought them back on the visit that converted
+// Ad platforms report against last click, so `last` is the one to reconcile
+// with Meta/Google. `first` stops long consideration cycles being miscredited
+// to a final branded search.
+//
+// Direct/organic visits never overwrite a stored touch: a landing page with no
+// campaign params leaves both untouched, so the attribution survives the
+// visitor wandering the site before buying.
+(function () {
+  var KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  var CLICK_IDS = ['gclid', 'fbclid', 'ttclid', 'msclkid'];
+  var NINETY_DAYS = 90 * 864e5;
+
+  function clean(v) { return String(v || '').replace(/[^\w .:/+-]/g, '').slice(0, 120); }
+
+  // Read the campaign params off the current URL, or null if there are none.
+  function fromUrl() {
+    var q, out = {}, i, v;
+    try { q = new URLSearchParams(location.search); } catch (e) { return null; }
+    for (i = 0; i < KEYS.length; i++) {
+      v = clean(q.get(KEYS[i]));
+      if (v) out[KEYS[i].slice(4)] = v;          // utm_source -> source
+    }
+    for (i = 0; i < CLICK_IDS.length; i++) {
+      v = clean(q.get(CLICK_IDS[i]));
+      if (v) out[CLICK_IDS[i]] = v;
+    }
+    if (!Object.keys(out).length) return null;
+    // A bare gclid/fbclid with no utm_source still tells us the platform.
+    if (!out.source) {
+      if (out.gclid)       out.source = 'google';
+      else if (out.fbclid) out.source = 'facebook';
+      else if (out.ttclid) out.source = 'tiktok';
+      else if (out.msclkid) out.source = 'bing';
+    }
+    if (!out.medium && (out.gclid || out.fbclid || out.ttclid || out.msclkid)) out.medium = 'cpc';
+    out.ts = Date.now();
+    out.landing = location.pathname.slice(0, 200);
+    return out;
+  }
+
+  // window.vpAttr() — the attribution snapshot to attach to an order.
+  // Returns null when there is nothing to attribute (direct/organic).
+  window.vpAttr = function () {
+    var s = null, ref = null;
+    try { s = JSON.parse(localStorage.getItem('vp_attr') || 'null'); } catch (e) {}
+    try { var r = JSON.parse(localStorage.getItem('vp_ref') || 'null'); if (r && r.code) ref = r.code; } catch (e) {}
+    if (!s && !ref) return null;
+    var out = {};
+    if (s && s.first) out.first = s.first;
+    if (s && s.last)  out.last  = s.last;
+    if (ref) out.ref = ref;
+    return Object.keys(out).length ? out : null;
+  };
+
+  try {
+    var hit = fromUrl();
+    window.vpAttrHit = hit;                        // this page view's params, for the beacon
+    if (!hit) return;                              // direct/organic — keep what we have
+    var store = null;
+    try { store = JSON.parse(localStorage.getItem('vp_attr') || 'null'); } catch (e) {}
+    if (!store || typeof store !== 'object') store = {};
+    if (!store.first || !store.first.ts || (Date.now() - store.first.ts) > NINETY_DAYS) store.first = hit;
+    store.last = hit;
+    try { localStorage.setItem('vp_attr', JSON.stringify(store)); } catch (e) {}
+  } catch (e) {}
+})();
+
+// ── Meta pixel ────────────────────────────────────────────────────────────────
+// Browser half of the Meta conversion setup. The server half lives in
+// `api/track.js` and posts the same events to the Conversions API; the two are
+// deduplicated by Meta on (event_name, event_id), which is why every event here
+// carries an explicit eventID and why that same id is sent on the beacon.
+//
+// Set VP_FB_PIXEL_ID to the pixel ID from Meta Events Manager. While it is
+// empty every function below is a no-op, so this is safe to ship un-configured
+// — nothing loads and nothing is sent until the ID is filled in.
+var VP_FB_PIXEL_ID = '';
+
+(function () {
+  window.vpFBReady = false;
+  window.vpFB = function () {};
+  window.vpFBIds = function () { return {}; };
+  try {
+    if (!VP_FB_PIXEL_ID) return;
+    if (location.pathname.indexOf('/admin') === 0) return;   // never track the admin
+
+    /* eslint-disable */
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+      t = b.createElement(e); t.async = !0; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    /* eslint-enable */
+
+    window.fbq('init', VP_FB_PIXEL_ID);
+    window.fbq('track', 'PageView');
+    window.vpFBReady = true;
+
+    // Fire a Meta standard event. Never throws, never blocks.
+    window.vpFB = function (event, params, eventId) {
+      try {
+        if (typeof window.fbq !== 'function') return;
+        window.fbq('track', event, params || {}, eventId ? { eventID: eventId } : undefined);
+      } catch (e) {}
+    };
+
+    // The browser-side match signals Meta uses to join a CAPI event to a real
+    // person: _fbp (set by the pixel above) and _fbc (derived from fbclid).
+    // Both are first-party cookies and neither is PII. Passing them to the
+    // server is what makes the server-side copy of the event matchable at all.
+    window.vpFBIds = function () {
+      var out = {};
+      try {
+        var m = document.cookie.match(/(?:^|;\s*)_fbp=([^;]+)/);
+        if (m) out.fbp = decodeURIComponent(m[1]).slice(0, 128);
+        var c = document.cookie.match(/(?:^|;\s*)_fbc=([^;]+)/);
+        if (c) out.fbc = decodeURIComponent(c[1]).slice(0, 128);
+        // On a fresh ad click the _fbc cookie may not be written yet; Meta's
+        // documented fallback format reconstructs it from the fbclid in the URL.
+        if (!out.fbc) {
+          var q = new URLSearchParams(location.search);
+          var id = q.get('fbclid');
+          if (id) out.fbc = ('fb.1.' + Date.now() + '.' + id).slice(0, 128);
+        }
+      } catch (e) {}
+      return out;
+    };
+  } catch (e) {}
+})();
+
 // ── First-party analytics beacon (no cookies, no PII) ─────────────────────────
 (function () {
   try {
@@ -233,20 +371,63 @@
       sid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
       try { localStorage.setItem('vp_sid', sid); } catch (e) {}
     }
-    var payload = JSON.stringify({ sid: sid, path: location.pathname, ref: document.referrer || '' });
+    // `utm` is only present on a campaign landing hit, so paid sessions are
+    // identifiable in `visits` even if the visitor never reaches checkout.
+    var visit = { sid: sid, path: location.pathname, ref: document.referrer || '' };
+    if (window.vpAttrHit) visit.utm = window.vpAttrHit;
+    var payload = JSON.stringify(visit);
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
     } else {
       fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
     }
 
+    // Our funnel event names -> Meta standard events. Anything not listed here
+    // stays first-party only, which is deliberate: sending Meta a non-standard
+    // event name gets it ignored rather than counted.
+    var FB_EVENT = {
+      product_view: 'ViewContent',
+      add_to_cart: 'AddToCart',
+      begin_checkout: 'InitiateCheckout',
+      payment_method_selected: 'AddPaymentInfo',
+      purchase: 'Purchase',
+    };
+
     // Funnel-event beacon (add_to_cart, begin_checkout, payment_method_selected,
     // purchase). Same anonymous sid, no PII. Optional `meta` carries small
     // non-PII context, e.g. vpTrack('payment_method_selected', { method:'fena' }).
+    //
+    // This is also the single place the Meta pixel is fired from. Doing both
+    // here — rather than sprinkling fbq() through the page scripts — means the
+    // browser event and the server-side Conversions API copy are guaranteed to
+    // share one event_id, which is the whole basis of Meta's deduplication. Fire
+    // them separately and every conversion gets counted twice.
     window.vpTrack = function (event, meta) {
       try {
         var obj = { sid: sid, event: event, path: location.pathname };
         if (meta && typeof meta === 'object') obj.meta = meta;
+
+        // Stable id where we have one (an order ref survives a refresh, so a
+        // reloaded confirmation page can't double-count a purchase), random
+        // otherwise.
+        var eid = (meta && meta.ref)
+          ? String(event + '.' + meta.ref)
+          : (event + '.' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+
+        var fbEvent = FB_EVENT[event];
+        if (fbEvent && window.vpFBReady) {
+          var params = { currency: (meta && meta.currency) || 'GBP' };
+          if (meta && meta.value != null) params.value = Number(meta.value) || 0;
+          if (meta && meta.content_id) params.content_ids = [String(meta.content_id)];
+          if (event === 'product_view' || event === 'add_to_cart') params.content_type = 'product';
+          window.vpFB(fbEvent, params, eid);
+          // Only tell the server to mirror events the pixel actually fired, so
+          // the two halves can never disagree about what happened.
+          obj.fb = window.vpFBIds();
+          obj.fb.eid = eid;
+          obj.fb.event = fbEvent;
+        }
+
         var p = JSON.stringify(obj);
         if (navigator.sendBeacon) navigator.sendBeacon('/api/track', new Blob([p], { type: 'application/json' }));
         else fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: p, keepalive: true }).catch(function () {});
@@ -291,16 +472,37 @@
         var seen = sessionStorage.getItem('vp_chk');
         if (!seen) {
           sessionStorage.setItem('vp_chk', '1');
-          window.vpTrack('begin_checkout');
           var _bc = window.vpGACartItems();
+          // Value first, then track — Meta optimises far better on an
+          // InitiateCheckout that carries a basket value than a bare one.
+          window.vpTrack('begin_checkout', { value: _bc.value, currency: 'GBP' });
           window.vpGA('begin_checkout', { currency: 'GBP', value: _bc.value, items: _bc.items });
         }
       } catch (e) { window.vpTrack('begin_checkout'); }
     }
 
     // ── Live-presence heartbeat (powers the admin "live on site" counter) ──
+    // Throttled via localStorage, not just setInterval. This is a multi-page
+    // static site, so every navigation reloads core.js and restarts the timer —
+    // the interval alone therefore never throttled anything, and a browsing
+    // session wrote once per page view on top of once per minute per open tab.
+    // The presence row is keyed by `sid`, which is itself in localStorage, so
+    // all tabs in a browser share one row; sharing the throttle there collapses
+    // them to one write stream instead of one per tab.
+    //
+    // PING_MS must stay comfortably under the "live" cutoff in
+    // api/admin/live.js or the counter reads 0 between beats.
+    var PING_MS = 150000;   // idle tab writes at most this often
+    var PING_MIN = 120000;  // ignore any ping closer than this to the last one
     function vpPing() {
       if (document.visibilityState === 'hidden') return;
+      try {
+        var last = parseInt(localStorage.getItem('vp_ping') || '0', 10) || 0;
+        var now = Date.now();
+        // Guard against a clock jump backwards leaving us permanently throttled.
+        if (last <= now && now - last < PING_MIN) return;
+        localStorage.setItem('vp_ping', String(now));
+      } catch (e) {}
       var p = JSON.stringify({ sid: sid });
       if (navigator.sendBeacon) {
         navigator.sendBeacon('/api/presence', new Blob([p], { type: 'application/json' }));
@@ -309,7 +511,7 @@
       }
     }
     vpPing();
-    setInterval(vpPing, 60000);
+    setInterval(vpPing, PING_MS);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') vpPing(); });
   } catch (e) {}
 }());
@@ -465,10 +667,18 @@
 })();
 
 // ── Worldwide shipping announcement banner ────────────────────────────────────
-// We now ship to 60+ countries (UK + international, GBP, tracked). Show a bold
-// full-width banner at the very top of every page, above the marquee. Dismissible
-// and remembered per browser. Skipped on admin and on the checkout flow (where a
-// shipping nudge would just distract). Add ?wwbanner=1 to force it back for testing.
+// We now ship to 60+ countries (UK + international, GBP, tracked). A bold
+// full-width banner sits at the very top of every page, below the header.
+// Dismissible and remembered per browser. Skipped on admin and on the checkout
+// flow (where a shipping nudge would just distract). Add ?wwbanner=1 to force it.
+//
+// The banner is baked statically into the page HTML (below </header>) so it is
+// present at first paint — this is what keeps it out of the Cumulative Layout
+// Shift budget. A tiny inline script next to the baked markup removes it
+// pre-paint for visitors who have already dismissed it, so there is no reverse
+// shift either. This IIFE now only (a) wires the dismiss button on the baked
+// banner, and (b) falls back to injecting the banner on the handful of pages
+// that have no static <header class="site-header"> to anchor it to.
 (function () {
   try {
     if (window.__vpWWBanner) return; window.__vpWWBanner = true;
@@ -478,40 +688,163 @@
     var force = /[?&]wwbanner=1/.test(location.search);
     if (localStorage.getItem(KEY) && !force) return; // already dismissed
 
-    function boot() {
-      if (document.getElementById('vpww')) return;
-      var bar = document.createElement('div');
-      bar.id = 'vpww';
-      bar.setAttribute('aria-label', 'Now shipping worldwide, and the Velox Research Assistant on ChatGPT');
-      bar.innerHTML =
-        '<span class="vpww-in">' +
-          '<a class="vpww-main" href="/compounds/">' +
-            '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
-            '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
-            '<span class="vpww-sub">60+ countries &middot; tracked &middot; GBP</span>' +
-          '</a>' +
-          '<a class="vpww-gpt" href="https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant" target="_blank" rel="noopener">&#9733; Now on ChatGPT &rarr;</a>' +
-        '</span>';
-      // Insert directly below the site header (falls back to top of body).
-      var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
-      if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
-      else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
-      else document.body.appendChild(bar);
-
-      var close = document.createElement('button');
-      close.className = 'vpww-x';
-      close.type = 'button';
-      close.setAttribute('aria-label', 'Dismiss announcement');
-      close.innerHTML = '&times;';
+    function wireClose(bar) {
+      var close = bar.querySelector('.vpww-x');
+      if (!close) {
+        close = document.createElement('button');
+        close.className = 'vpww-x';
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Dismiss announcement');
+        close.innerHTML = '&times;';
+        bar.appendChild(close);
+      }
+      if (close.__vpwwWired) return;
+      close.__vpwwWired = true;
       close.addEventListener('click', function (e) {
         e.preventDefault(); e.stopPropagation();
         try { localStorage.setItem(KEY, '1'); } catch (err) {}
         bar.remove();
       });
-      bar.appendChild(close);
+    }
+
+    function boot() {
+      var bar = document.getElementById('vpww');
+      if (!bar) {
+        // Fallback: page has no baked banner (no static site-header to anchor it).
+        bar = document.createElement('div');
+        bar.id = 'vpww';
+        bar.setAttribute('aria-label', 'Now shipping worldwide, and the Velox Research Assistant on ChatGPT');
+        bar.innerHTML =
+          '<span class="vpww-in">' +
+            '<a class="vpww-main" href="/compounds/">' +
+              '<span class="vpww-globe" aria-hidden="true">🌍</span>' +
+              '<span class="vpww-lead">NOW SHIPPING WORLDWIDE</span>' +
+              '<span class="vpww-sub">60+ countries &middot; tracked &middot; GBP</span>' +
+            '</a>' +
+            '<a class="vpww-gpt" href="https://chatgpt.com/g/g-6a5e9382b4748191b8beaac2548e8f9f-velox-research-assistant" target="_blank" rel="noopener">&#9733; Now on ChatGPT &rarr;</a>' +
+          '</span>';
+        var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
+        if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+        else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
+        else document.body.appendChild(bar);
+      }
+      wireClose(bar);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
   } catch (e) { if (window.console) console.error('[vpww]', e && e.message); }
+})();
+
+// ── Sale countdown banner (TEMPORARY — 30% off, ends 1 Oct 2026) ─────────────
+// Promotes the public BIG30WEEK code to the newsletter community with a live
+// countdown. Runs to 1 Oct 23:59 so the last day of the month (payday for most
+// of the list) is still inside the window.
+// SELF-EXPIRING: once SALE_END passes this IIFE no-ops, the bar is removed and
+// the standard worldwide-shipping banner (#vpww) takes its slot back
+// automatically — no deploy required to revert the UI.
+//
+// It reuses #vpww's exact position in the DOM (hiding it while the sale runs)
+// so swapping one bar for another costs ~no Cumulative Layout Shift.
+//
+// The code itself self-expires on the same instant (`expires` field in
+// assets/js/discount-codes.js), so nothing needs touching when the window
+// closes. Keep SALE_END in sync with newsletter-popup.js and discount-codes.js
+// — all three must carry the same timestamp or the copy will contradict the
+// checkout.
+(function () {
+  try {
+    if (window.__vpSaleBar) return; window.__vpSaleBar = true;
+    var SALE_CODE = 'BIG30WEEK';
+    var SALE_END  = Date.parse('2026-10-01T23:59:59+01:00'); // sync w/ newsletter-popup.js + discount-codes.js
+    if (!(Date.now() < SALE_END)) return;                    // window closed → normal banner
+
+    var path = location.pathname || '';
+    if (/^\/admin\b/.test(path) || /^\/checkout\b/.test(path)) return; // owner UI + payment flow
+    var KEY = 'vp_sale_bar_big30week';
+    var force = /[?&]salebar=1/.test(location.search);
+    // Session-scoped dismissal: hiding it for this visit, not forever — the
+    // offer is short-lived and we want it back on the next session.
+    try { if (sessionStorage.getItem(KEY) && !force) return; } catch (e) {}
+
+    function injectCss() {
+      if (document.getElementById('vpsale-css')) return;
+      var s = document.createElement('style');
+      s.id = 'vpsale-css';
+      s.textContent =
+        '#vpsale{position:relative;background:linear-gradient(90deg,#04120e,#0b2c23 45%,#0b2c23 55%,#04120e);border-top:1px solid rgba(1,211,160,.22);border-bottom:1px solid rgba(1,211,160,.22);font-family:Inter,Arial,sans-serif;color:#fff}' +
+        '#vpsale .vps-in{display:flex;align-items:center;justify-content:center;gap:10px 14px;flex-wrap:wrap;padding:9px 38px 9px 14px;text-align:center;line-height:1.3}' +
+        '#vpsale .vps-badge{background:#01D3A0;color:#021;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap}' +
+        '#vpsale .vps-lead{font-size:13.5px;font-weight:600;color:#E5E7EB}' +
+        '#vpsale .vps-lead b{color:#fff;font-weight:800}' +
+        '#vpsale .vps-code{font-family:"DM Mono","Courier New",monospace;color:#01D3A0;font-weight:700;letter-spacing:.06em;background:rgba(1,211,160,.1);border:1px dashed rgba(1,211,160,.45);border-radius:4px;padding:2px 7px;white-space:nowrap}' +
+        '#vpsale .vps-timer{font-family:"DM Mono","Courier New",monospace;font-size:13px;font-weight:700;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:3px 9px;font-variant-numeric:tabular-nums;white-space:nowrap}' +
+        '#vpsale a.vps-cta{color:#01D3A0;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}' +
+        '#vpsale a.vps-cta:hover{text-decoration:underline}' +
+        '#vpsale .vps-x{position:absolute;top:50%;right:10px;transform:translateY(-50%);background:none;border:none;color:#6B7280;font-size:20px;line-height:1;cursor:pointer;padding:4px 6px}' +
+        '#vpsale .vps-x:hover{color:#fff}' +
+        // Phones: drop the "share with friends & family" clause (the popup and
+        // the email both carry it) so the bar stays one tight line-pair instead
+        // of eating three lines of viewport above the fold.
+        '@media(max-width:600px){#vpsale .vps-in{gap:4px 8px;padding:7px 28px 7px 10px}#vpsale .vps-lead{font-size:12px}#vpsale .vps-share,#vpsale .vps-badge{display:none}#vpsale .vps-timer{font-size:11.5px;padding:2px 7px}#vpsale a.vps-cta{font-size:12px}}';
+      document.head.appendChild(s);
+    }
+
+    // "6d 23h 04m 09s" — days drop off once we're inside the last 24h.
+    function fmt(ms) {
+      var t = Math.max(0, Math.floor(ms / 1000));
+      var d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600),
+          m = Math.floor((t % 3600) / 60), s = t % 60;
+      function p(n) { return (n < 10 ? '0' : '') + n; }
+      return (d > 0 ? d + 'd ' : '') + p(h) + 'h ' + p(m) + 'm ' + p(s) + 's';
+    }
+
+    function boot() {
+      injectCss();
+      var bar = document.createElement('div');
+      bar.id = 'vpsale';
+      bar.setAttribute('role', 'region');
+      bar.setAttribute('aria-label', '30% off sale, limited time');
+      bar.innerHTML =
+        '<span class="vps-in">' +
+          '<span class="vps-badge">Newsletter week</span>' +
+          '<span class="vps-lead"><b>30% OFF SINGLE VIALS</b> &middot; code <span class="vps-code">' + SALE_CODE + '</span><span class="vps-share"> &middot; share it with friends &amp; family</span></span>' +
+          '<span class="vps-timer" id="vps-timer" aria-live="off">&nbsp;</span>' +
+          '<a class="vps-cta" href="/compounds/">Shop now &rarr;</a>' +
+        '</span>' +
+        '<button class="vps-x" type="button" aria-label="Dismiss offer banner">&times;</button>';
+
+      // Take over #vpww's slot so the swap costs no layout shift.
+      var ww = document.getElementById('vpww');
+      var header = document.querySelector('header.site-header') || document.querySelector('.site-header');
+      if (ww && ww.parentNode) { ww.style.display = 'none'; ww.parentNode.insertBefore(bar, ww); }
+      else if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+      else if (document.body.firstChild) document.body.insertBefore(bar, document.body.firstChild);
+      else document.body.appendChild(bar);
+
+      var timerEl = bar.querySelector('#vps-timer');
+      var iv = setInterval(tick, 1000);
+      function restoreWw() { if (ww) ww.style.display = ''; }
+      function tick() {
+        var left = SALE_END - Date.now();
+        if (left <= 0) {            // expired mid-session → clean revert
+          clearInterval(iv);
+          bar.remove();
+          restoreWw();
+          return;
+        }
+        timerEl.textContent = 'Ends in ' + fmt(left);
+      }
+      tick();
+
+      bar.querySelector('.vps-x').addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        try { sessionStorage.setItem(KEY, '1'); } catch (err) {}
+        clearInterval(iv);
+        bar.remove();
+        restoreWw();
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  } catch (e) { if (window.console) console.error('[vpsale]', e && e.message); }
 })();
 
 /* ── Velox on-site assistant — load the chat bubble on every page except admin ── */

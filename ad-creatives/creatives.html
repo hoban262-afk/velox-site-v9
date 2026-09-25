@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Velox ad creatives</title>
+<style>
+  :root{
+    --bg:#0A0C10; --panel:#0d1017; --border:#1a1d24;
+    --accent:#01D3A0; --text:#ffffff; --muted:#9CA3AF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#333}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+  .creative{
+    position:relative;background:var(--bg);color:var(--text);
+    display:none;overflow:hidden;
+    border-left:14px solid var(--accent);
+    padding:var(--pad);
+  }
+  .creative.show{display:flex;flex-direction:column;justify-content:center}
+
+  .eyebrow{color:var(--accent);font-weight:800;letter-spacing:.14em;
+    font-size:var(--fs-eyebrow);text-transform:uppercase;margin-bottom:var(--gap-s)}
+  h1{font-size:var(--fs-h1);line-height:1.02;font-weight:800;letter-spacing:-.025em}
+  .sub{font-size:var(--fs-sub);color:var(--muted);line-height:1.45;margin-top:var(--gap-s);font-weight:400}
+  .ruo{position:absolute;left:var(--pad);bottom:calc(var(--pad) * .72);
+    font-size:var(--fs-ruo);color:#5b6270;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+
+  /* ---------- Ad 1 : two instruments ---------- */
+  .instruments{display:flex;gap:var(--gap-s);margin-top:var(--gap-m)}
+  .inst{flex:1;background:var(--panel);border:1px solid var(--border);
+    border-top:3px solid var(--accent);border-radius:10px;padding:var(--gap-s)}
+  .inst .k{font-size:var(--fs-instk);font-weight:800;letter-spacing:.06em}
+  .inst .v{font-size:var(--fs-instv);color:var(--muted);margin-top:.35em;line-height:1.35}
+  .lab{display:inline-flex;align-items:center;gap:.5em;margin-top:var(--gap-m);
+    background:rgba(1,211,160,.09);border:1px solid rgba(1,211,160,.35);
+    color:var(--accent);border-radius:999px;padding:.5em 1em;
+    font-size:var(--fs-badge);font-weight:700;letter-spacing:.04em}
+
+  /* ---------- Ad 2 : published library ---------- */
+  .rows{margin-top:var(--gap-m);display:flex;flex-direction:column;gap:calc(var(--gap-s) * .5)}
+  .row{background:var(--panel);border:1px solid var(--border);border-radius:8px;
+    padding:calc(var(--gap-s) * .72) var(--gap-s);display:flex;align-items:center;gap:var(--gap-s)}
+  .redact{height:var(--fs-row);border-radius:3px;background:#252a33;flex:0 0 auto}
+  .row .lot{font-size:var(--fs-row);color:var(--muted);font-variant-numeric:tabular-nums;font-weight:600}
+  .row .pass{margin-left:auto;font-size:var(--fs-row);color:var(--accent);font-weight:800;letter-spacing:.04em}
+
+  /* ---------- Ad 5 : price bars ---------- */
+  .bars{margin-top:var(--gap-m);display:flex;flex-direction:column;gap:var(--gap-s)}
+  .bar-wrap{display:flex;align-items:center;gap:var(--gap-s)}
+  .bar-lab{width:var(--barlab);font-size:var(--fs-row);color:var(--muted);font-weight:700;flex:0 0 auto}
+  .bar{height:var(--barh);border-radius:6px;display:flex;align-items:center;justify-content:flex-end;
+    padding-right:.7em;font-weight:800;font-size:var(--fs-row);color:#04120e}
+  .bar.them{background:#2a3038;color:var(--muted)}
+  .bar.us{background:var(--accent)}
+
+  /* ---------- Ad 7 : chromatogram ---------- */
+  .chart{margin-top:var(--gap-m);background:var(--panel);border:1px solid var(--border);
+    border-radius:10px;padding:var(--gap-s)}
+  .chart svg{display:block;width:100%;height:auto}
+  .legend{display:flex;gap:var(--gap-m);margin-top:var(--gap-s);font-size:var(--fs-badge);font-weight:700}
+  .legend i{display:inline-block;width:1em;height:.28em;border-radius:2px;vertical-align:middle;margin-right:.45em}
+</style>
+</head>
+<body>
+
+<!-- ===================== AD 1 ===================== -->
+<div class="creative" id="ad1">
+  <div class="eyebrow">Velox Peptides</div>
+  <h1>Tested by a lab<br>that isn't us.</h1>
+  <div class="instruments">
+    <div class="inst"><div class="k">HPLC</div><div class="v">How much of the sample is what it should be</div></div>
+    <div class="inst"><div class="k">MASS SPEC</div><div class="v">Whether the sample is that thing at all</div></div>
+  </div>
+  <div class="lab">&#10003;&nbsp; Janoshik Analytical &middot; independent &middot; ISO accredited</div>
+  <div class="ruo">For laboratory research use only</div>
+</div>
+
+<!-- ===================== AD 2 ===================== -->
+<div class="creative" id="ad2">
+  <div class="eyebrow">Certificate of analysis library</div>
+  <h1>COAs shouldn't<br>be a secret.</h1>
+  <div class="sub">Published on the site. By lot. Before you order.</div>
+  <div class="rows">
+    <div class="row"><span class="redact" style="width:22%"></span><span class="lot">LOT 2026-03B</span><span class="pass">PASS</span></div>
+    <div class="row"><span class="redact" style="width:30%"></span><span class="lot">LOT 2026-02A</span><span class="pass">PASS</span></div>
+    <div class="row"><span class="redact" style="width:17%"></span><span class="lot">LOT 2026-04C</span><span class="pass">PASS</span></div>
+    <div class="row"><span class="redact" style="width:26%"></span><span class="lot">LOT 2026-01D</span><span class="pass">PASS</span></div>
+  </div>
+  <div class="ruo">For laboratory research use only</div>
+</div>
+
+<!-- ===================== AD 5 ===================== -->
+<div class="creative" id="ad5">
+  <div class="eyebrow">Compare the documents first</div>
+  <h1>Same standard.<br>Not the same<br>invoice.</h1>
+  <!-- NUMBERS ARE PLACEHOLDERS. Velox £29 is real (output/compounds/index.html).
+       The comparison figure must come from the documented price survey before
+       this creative runs — see ad-creatives/README.md. Do not invent one. -->
+  <div class="bars">
+    <div class="bar-wrap"><div class="bar-lab">Typical UK<br>supplier</div><div class="bar them" style="width:82%">&pound;__</div></div>
+    <div class="bar-wrap"><div class="bar-lab">Velox</div><div class="bar us" style="width:52%">&pound;29</div></div>
+  </div>
+  <div class="sub">Like-for-like, same compound and vial size. Both independently tested.</div>
+  <div class="ruo">For laboratory research use only</div>
+</div>
+
+<!-- ===================== AD 6 ===================== -->
+<div class="creative" id="ad6">
+  <div class="eyebrow">Velox Peptides</div>
+  <h1>No hype.<br>Just the<br>paperwork.</h1>
+  <div class="sub">No before-and-afters. No testimonials.<br>No claims about what anything does.</div>
+  <div class="ruo">For laboratory research use only</div>
+</div>
+
+<!-- ===================== AD 7 ===================== -->
+<div class="creative" id="ad7">
+  <div class="eyebrow">Two tests, two instruments</div>
+  <h1>Purity isn't<br>identity.</h1>
+  <div class="chart">
+    <svg viewBox="0 0 600 190" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="170" x2="600" y2="170" stroke="#252a33" stroke-width="2"/>
+      <path d="M0,168 L70,166 L110,162 L150,168 L210,165 L250,60 L262,22 L274,60 L300,164 L360,167 L400,158 L430,167 L520,165 L600,167"
+            fill="none" stroke="#01D3A0" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M250,60 L262,22 L274,60 L300,164 L210,165 Z" fill="rgba(1,211,160,.13)"/>
+    </svg>
+  </div>
+  <div class="legend">
+    <span style="color:var(--accent)"><i style="background:var(--accent)"></i>HPLC &mdash; how much matched</span>
+    <span style="color:var(--muted)">Mass spec &mdash; run separately, not on this trace</span>
+  </div>
+  <div class="ruo">For laboratory research use only</div>
+</div>
+
+<script>
+// Render one creative at a given pixel size, driven by ?ad=ad1&w=1080&h=1350
+(function () {
+  var q = new URLSearchParams(location.search);
+  var id = q.get('ad') || 'ad1';
+  var w = parseInt(q.get('w') || '1080', 10);
+  var h = parseInt(q.get('h') || '1080', 10);
+
+  var el = document.getElementById(id);
+  if (!el) { document.body.innerHTML = 'unknown creative: ' + id; return; }
+
+  el.classList.add('show');
+  el.style.width = w + 'px';
+  el.style.height = h + 'px';
+
+  // Scale every dimension off the short edge so 1:1, 4:5 and 1.91:1 all stay balanced.
+  var base = Math.min(w, h);
+  var wide = (w / h) > 1.5;          // link/right-column format needs tighter type
+  var s = function (n) { return (base * n) + 'px'; };
+
+  el.style.setProperty('--pad',        s(wide ? 0.085 : 0.075));
+  el.style.setProperty('--gap-s',      s(0.030));
+  el.style.setProperty('--gap-m',      s(0.052));
+  el.style.setProperty('--fs-eyebrow', s(wide ? 0.030 : 0.027));
+  el.style.setProperty('--fs-h1',      s(wide ? 0.105 : 0.098));
+  el.style.setProperty('--fs-sub',     s(wide ? 0.037 : 0.034));
+  el.style.setProperty('--fs-ruo',     s(wide ? 0.022 : 0.020));
+  el.style.setProperty('--fs-instk',   s(0.040));
+  el.style.setProperty('--fs-instv',   s(0.028));
+  el.style.setProperty('--fs-badge',   s(0.026));
+  el.style.setProperty('--fs-row',     s(0.028));
+  el.style.setProperty('--barh',       s(0.085));
+  el.style.setProperty('--barlab',     s(0.20));
+  el.style.borderLeftWidth = Math.round(base * 0.013) + 'px';
+
+  document.body.style.background = '#0A0C10';
+  document.documentElement.setAttribute('data-ready', '1');
+})();
+</script>
+</body>
+</html>

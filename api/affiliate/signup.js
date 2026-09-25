@@ -13,12 +13,23 @@
  */
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE      = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const { allow, clientIp } = require('../../lib/rate-limit');
 
 function isEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '')); }
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Service not configured' });
+
+  // This endpoint creates a real Supabase Auth user with the service-role key,
+  // so an unthrottled caller could mass-create accounts. Genuine applications
+  // are rare and one-off, so the budget is deliberately tight and fails CLOSED
+  // — better to ask a real applicant to retry than to leave account creation
+  // open during a database blip.
+  const ip = clientIp(req);
+  if (!(await allow('affiliate-signup', ip, 3, 3600, false))) {
+    return res.status(429).json({ error: 'Too many applications from this connection. Please try again later.' });
+  }
 
   const b = req.body || {};
   const name    = String(b.name || '').trim();
@@ -57,7 +68,11 @@ module.exports = async function handler(req, res) {
         user_id: user.id, name, email,
         payout_details: payout, promo_method: promo || null,
         status: 'pending_approval', commission_type: 'percentage',
-        commission_rate: 10, commission_pct: 10, discount_pct: 10,
+        // Default split of the 30% pool (DB constraint chk_aff_total_30 requires
+        // discount_pct + commission_pct = 30). The affiliate can re-split it in
+        // their portal once approved. commission_pct is the live field read by
+        // /api/affiliate/validate; commission_rate is the legacy mirror.
+        commission_rate: 20, commission_pct: 20, discount_pct: 10,
       }]),
     });
     if (!ins.ok) {

@@ -13,6 +13,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { FORCE_OOS } from '../lib/force-oos.mjs';
 
 const ROOT   = process.cwd();
 const OUT    = join(ROOT, 'output');
@@ -69,6 +70,20 @@ async function main() {
       const v = S[slug][nSize];
       v.inStock = true;
       if (!(Number(v.qty) > 0)) v.qty = MIN_DISPLAY_QTY;
+    }
+  }
+
+  // ── Owner override: force specific variants OUT of stock ─────────────────
+  // Overrides the oversell policy above for variants with a genuine supply
+  // problem the owner wants pulled from sale. These get the real OOS state
+  // baked (disabled radio, "Out of stock" badge, checked moved to an in-stock
+  // size). The list lives in lib/force-oos.mjs — the single source of truth
+  // shared with the server-side checkout guards in api/create-fena-*.js, so the
+  // baked UI and the payment block can never drift apart.
+  for (const slug of Object.keys(FORCE_OOS)) {
+    for (const size of FORCE_OOS[slug]) {
+      const nSize = norm(size);
+      if (S[slug] && S[slug][nSize]) { S[slug][nSize].inStock = false; S[slug][nSize].qty = 0; }
     }
   }
 

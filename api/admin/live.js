@@ -29,7 +29,12 @@ module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SERVICE) return res.status(500).json({ error: 'Not configured' });
   if (!(await isAdmin(req))) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    const cutoff = new Date(Date.now() - 90 * 1000).toISOString();
+    // Must stay well above the browser heartbeat in output/assets/js/core.js
+    // (PING_MS, currently 150s) or the counter drops to 0 between beats. 300s
+    // tolerates one missed beat. The trade-off is that someone who just left
+    // still counts for up to ~5 minutes, which is the right way round for a
+    // presence counter — it flickers far less than it over-reports.
+    const cutoff = new Date(Date.now() - 300 * 1000).toISOString();
     const r = await fetch(
       `${SUPABASE_URL}/rest/v1/site_presence?last_seen=gte.${encodeURIComponent(cutoff)}&select=sid`,
       { headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, Prefer: 'count=exact', Range: '0-0' } }

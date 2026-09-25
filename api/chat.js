@@ -164,6 +164,31 @@ const ORDER_STAGE = {
   refunded:   'Refunded.',
 };
 
+// Beyond this many days since dispatch a parcel can no longer be "on its way":
+// the longest quoted delivery window is international at 7-14 working days, and our
+// own "not arrived, investigate with Royal Mail" escalation is 21 working days
+// (~30 calendar days). Past that, an order is delivered-long-ago or a support case,
+// never live transit. Presenting an old order as "on its way" (a June order surfaced
+// as freshly dispatched in September) misleads customers, so we flip the wording.
+const DISPATCH_TRANSIT_MAX_DAYS = 30;
+
+// Whole days between a timestamp and now (null if missing/unparseable).
+function daysSince(ts) {
+  if (!ts) return null;
+  const t = new Date(ts).getTime();
+  if (!Number.isFinite(t)) return null;
+  return Math.floor((Date.now() - t) / 86400000);
+}
+
+// Human date like "1 June 2026" (null if missing/unparseable).
+function fmtDate(ts) {
+  if (!ts) return null;
+  const t = new Date(ts);
+  return Number.isFinite(t.getTime())
+    ? t.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null;
+}
+
 // Returning-customer + order context. Pulls the most recent order by email and
 // turns the raw status into a friendly STAGE. No external tracking API: the exact
 // live status is reached via the Royal Mail link the model shares when dispatched.
@@ -182,18 +207,28 @@ async function customerContextBlock(email) {
   const itemList = Array.isArray(o.items) ? o.items.filter((i) => i && (i.name || i.slug)) : [];
   const items = itemList.map((i) => i.name || i.slug).join(', ');
   const reorderable = itemList.filter((i) => i.slug).map((i) => `${i.name || i.slug} (${i.slug})`).join(', ');
-  const stage = ORDER_STAGE[o.status] || `Status: ${o.status}.`;
+  const dispAge = o.status === 'dispatched' ? daysSince(o.dispatched_at || o.created_at) : null;
+  const isOldDispatch = dispAge !== null && dispAge > DISPATCH_TRANSIT_MAX_DAYS;
+  const dispWhen = fmtDate(o.dispatched_at || o.created_at);
+  const stage = isOldDispatch
+    ? `Dispatched${dispWhen ? ` on ${dispWhen}` : ''}, long since delivered. This is an old, completed order, NOT one currently in transit.`
+    : (ORDER_STAGE[o.status] || `Status: ${o.status}.`);
   let line = `\n\n# CUSTOMER CONTEXT, their order (use naturally, never read it out verbatim, never invent a status)\nReturning customer (${email}). Most recent order ${ref}. STAGE: ${stage}`;
   if (items) line += ` Items: ${items}.`;
   if (reorderable) line += ` If they want to reorder, offer it warmly and add items with the [[ADD:slug]] tag using these slugs: ${reorderable}.`;
   if (o.status === 'dispatched') {
-    if (o.tracking_number) {
+    if (isOldDispatch) {
+      // Old dispatch: delivered long ago, NOT live transit. Never imply it is on its
+      // way and never push the live tracking link as if the parcel is still moving.
+      line += ` This order was dispatched${dispWhen ? ` on ${dispWhen}` : ' some time ago'} (about ${dispAge} days ago) and will have arrived long ago, it is NOT currently in transit. Do NOT say it is "on its way" or share a live tracking link as if the parcel is moving. Do NOT bring this old order up unprompted, especially if they are asking about a different or new order. Only if they specifically say this past order never arrived, ask them to email support@veloxpeps.com with the order reference so we can look into it.`;
+    } else if (o.tracking_number) {
       const tn = String(o.tracking_number).replace(/\s+/g, '');
       line += ` Tracking number ${o.tracking_number}. Share this Royal Mail link so they can see the exact live status themselves: https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(tn)}`;
+      line += ' If they ask where it is: Tracked 24 normally arrives 1 to 2 working days after dispatch. If it has been more than 10 working days since dispatch, ask them to email support@veloxpeps.com with the order reference and tracking number so we can investigate with Royal Mail.';
     } else {
       line += ' No tracking number is on file yet. Tell them it is emailed at dispatch, and to contact support@veloxpeps.com if it has not arrived.';
+      line += ' If they ask where it is: Tracked 24 normally arrives 1 to 2 working days after dispatch. If it has been more than 10 working days since dispatch, ask them to email support@veloxpeps.com with the order reference and tracking number so we can investigate with Royal Mail.';
     }
-    line += ' If they ask where it is: Tracked 24 normally arrives 1 to 2 working days after dispatch. If it has been more than 10 working days since dispatch, ask them to email support@veloxpeps.com with the order reference and tracking number so we can investigate with Royal Mail.';
   }
   line += ' Answer order questions from this only. You may greet them as a returning customer and, where it fits, suggest restocking what they bought.';
   return line;
@@ -260,7 +295,7 @@ async function toolLookupOrder(input) {
   if (!email || !EMAIL_RE.test(email)) return { error: 'need_email', message: 'Ask the customer for the exact email they ordered with.' };
   const reference = String((input && input.reference) || '').trim();
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?customer_email=ilike.${encodeURIComponent(email)}&select=notes,status,tracking_number,items,created_at&order=created_at.desc&limit=8`, { headers: sbHeaders });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?customer_email=ilike.${encodeURIComponent(email)}&select=notes,status,tracking_number,items,created_at,dispatched_at&order=created_at.desc&limit=8`, { headers: sbHeaders });
     const rows = r.ok ? await r.json() : [];
     if (!Array.isArray(rows) || !rows.length) return { found: false, message: 'No order found under that email. Ask them to double check the email used at checkout, or contact support@veloxpeps.com with their order reference.' };
     let o = rows[0];
@@ -270,8 +305,21 @@ async function toolLookupOrder(input) {
       if (match) o = match;
     }
     const items = Array.isArray(o.items) ? o.items.map((i) => i && i.name).filter(Boolean).join(', ') : '';
-    const out = { found: true, reference: o.notes || null, status: o.status, stage: ORDER_STAGE[o.status] || `Status: ${o.status}`, items };
-    if (o.status === 'dispatched' && o.tracking_number) {
+    const dispAge = o.status === 'dispatched' ? daysSince(o.dispatched_at || o.created_at) : null;
+    const isOldDispatch = dispAge !== null && dispAge > DISPATCH_TRANSIT_MAX_DAYS;
+    const when = fmtDate(o.dispatched_at || o.created_at);
+    const stage = isOldDispatch
+      ? `Dispatched${when ? ` on ${when}` : ''} (about ${dispAge} days ago), long since delivered. This is an old, completed order, NOT currently in transit, do not imply it is on its way.`
+      : (ORDER_STAGE[o.status] || `Status: ${o.status}`);
+    const out = { found: true, reference: o.notes || null, status: o.status, stage, items };
+    if (o.status === 'dispatched') {
+      out.dispatched_on = when;
+      out.days_since_dispatch = dispAge;
+      out.historical = isOldDispatch;
+    }
+    // Only surface a live tracking link for genuinely recent dispatches, never for an
+    // old order that has long since been delivered.
+    if (o.status === 'dispatched' && o.tracking_number && !isOldDispatch) {
       const tn = String(o.tracking_number).replace(/\s+/g, '');
       out.tracking_number = o.tracking_number;
       out.tracking_url = `https://www.royalmail.com/track-your-item#/tracking-results/${encodeURIComponent(tn)}`;
@@ -464,7 +512,9 @@ Qualified researchers comparing suppliers. They care most about whether the prod
 - Velox Pro membership: /pro/ — £6.99/mo, 10% off everything + free Tracked 24.
 
 # ORDER STATUS, "where is my order?"
-- If a CUSTOMER CONTEXT block appears later in this prompt, answer from it. Give the plain stage in a sentence (awaiting payment, paid and being prepared, dispatched, or cancelled). If dispatched, give the tracking number and share the Royal Mail tracking link so they can see the exact live status themselves.
+- If a CUSTOMER CONTEXT block appears later in this prompt, answer from it. Give the plain stage in a sentence (awaiting payment, paid and being prepared, dispatched, or cancelled). If it is a RECENT dispatch, give the tracking number and share the Royal Mail tracking link so they can see the exact live status themselves.
+- NEVER imply an old order is currently in transit. Only say an order is "dispatched and on its way", or share a live tracking link, when the context/lookup shows it is a recent dispatch. If it is flagged as an old, long-since-delivered order (historical), say so plainly, do not present it as moving, and do not share the live tracking link as if the parcel is still on its way.
+- Do NOT volunteer a previous order's status unprompted, especially when the customer is asking about a different or new order. Only discuss a past order if they specifically ask about it. If they say an old order never arrived, point them to support@veloxpeps.com with the order reference.
 - If there is NO customer context (you don't know who they are), ask for the email they ordered with, and their order reference if they have it. Then you can help. Never guess or invent a status, a tracking number, or a delivery date.
 - If no order is found, ask them to double check the email used at checkout, and offer support@veloxpeps.com with their order reference.
 - We do not have a live tracking feed inside this chat. For the exact parcel status, the customer taps the Royal Mail link. That is normal and fine.

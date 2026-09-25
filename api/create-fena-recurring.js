@@ -23,6 +23,8 @@
 
 export const config = { runtime: 'edge' };
 
+import { isForcedOos } from '../lib/force-oos.mjs';
+
 const FENA_RECURRING_ENDPOINT =
   // override via env once confirmed against the live API
   globalThis.process?.env?.FENA_RECURRING_ENDPOINT ||
@@ -108,6 +110,9 @@ export default async function handler(req) {
     for (const it of items) {
       const p = priceMap[`${it.slug || ''}|${it.size || ''}`];
       if (p == null) return json({ error: `Unknown item: ${it.slug || '?'}` }, 400);
+      // Oversell by design (see lib/force-oos.mjs) — only block variants
+      // explicitly pulled from sale, not everything flagged out of stock.
+      if (isForcedOos(it.slug, it.size)) return json({ error: `Sorry, ${it.slug || 'that item'}${it.size ? ' (' + it.size + ')' : ''} is currently unavailable.` }, 409);
       subtotal += p * (Number(it.qty) || 1);
     }
     // Apply the member's tier discount to the recurring basket if they're Pro.

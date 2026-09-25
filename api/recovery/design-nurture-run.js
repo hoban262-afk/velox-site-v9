@@ -48,7 +48,18 @@ async function emailFor(userId) {
   try { const rows = await sbGet(`profiles?id=eq.${encodeURIComponent(userId)}&select=email&limit=1`); return (rows[0] && rows[0].email) || null; } catch { return null; }
 }
 async function isUnsubscribed(email) {
-  try { const rows = await sbGet(`subscribers?email=eq.${encodeURIComponent(email)}&unsubscribed_at=not.is.null&select=id&limit=1`); return Array.isArray(rows) && rows.length > 0; } catch { return false; }
+  const e = encodeURIComponent(String(email).toLowerCase());
+  try {
+    const [a, b, c] = await Promise.all([
+      sbGet(`subscribers?email=eq.${e}&unsubscribed_at=not.is.null&select=id&limit=1`).catch(() => []),
+      // This worker checked `subscribers` only, so a welcome-code holder who had
+      // opted out was still nurtured.
+      sbGet(`newsletter_codes?email=eq.${e}&unsubscribed_at=not.is.null&select=email&limit=1`).catch(() => []),
+      // Authoritative opt-out store (migration 011).
+      sbGet(`email_suppressions?email=eq.${e}&select=email&limit=1`).catch(() => []),
+    ]);
+    return (Array.isArray(a) && a.length > 0) || (Array.isArray(b) && b.length > 0) || (Array.isArray(c) && c.length > 0);
+  } catch { return false; }
 }
 async function hasPurchased(email) {
   try { const rows = await sbGet(`orders?customer_email=eq.${encodeURIComponent(email)}&status=in.(paid,dispatched)&select=id&limit=1`); return Array.isArray(rows) && rows.length > 0; } catch { return false; }

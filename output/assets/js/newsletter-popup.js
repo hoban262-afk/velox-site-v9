@@ -2,9 +2,50 @@
  * newsletter-popup.js — Velox Peptides handbook + 10%-off welcome popup
  * Self-contained, vanilla JS, no dependencies. Loaded site-wide except
  * /checkout and /account. Fires 10s after first load, once per session.
+ *
+ * SALE MODE (temporary): while the BIG30WEEK window is open (to 1 Oct) the popup
+ * leads with the 30%-off sale instead of the standard 10% welcome offer. It is
+ * SELF-EXPIRING — once SALE_END passes it reverts to the normal handbook copy
+ * with no deploy needed. Keep SALE_END in sync with assets/js/core.js.
+ * Note the signup itself still issues the usual VELOX- welcome code; the 30%
+ * is the public BIG30WEEK code, so nothing we promise here is contingent on
+ * subscribing (it is openly shareable by design).
  */
 (function () {
   'use strict';
+
+  // ── Sale config ───────────────────────────────────────────────────────────
+  var SALE_CODE = 'BIG30WEEK';
+  var SALE_END  = Date.parse('2026-10-01T23:59:59+01:00'); // sync w/ core.js + discount-codes.js
+  function saleOn() { return Date.now() < SALE_END; }
+  // Human deadline ("1 October") derived from SALE_END so the wording can never
+  // contradict the timer. Pinned to Europe/London so an overseas visitor doesn't
+  // see the date roll over into the next day.
+  function saleEndLabel() {
+    try {
+      return new Date(SALE_END).toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'long', timeZone: 'Europe/London'
+      });
+    } catch (e) { return '1 October'; }
+  }
+  function saleFmt() {
+    var t = Math.max(0, Math.floor((SALE_END - Date.now()) / 1000));
+    var d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600),
+        m = Math.floor((t % 3600) / 60), s = t % 60;
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    return (d > 0 ? d + 'd ' : '') + p(h) + 'h ' + p(m) + 'm ' + p(s) + 's';
+  }
+  var saleTick = null;
+  function startSaleTick() {
+    stopSaleTick();
+    saleTick = setInterval(function () {
+      var el = document.getElementById('vp-nl-timer');
+      if (!el) return stopSaleTick();
+      if (!saleOn()) { el.textContent = 'Offer ended'; return stopSaleTick(); }
+      el.textContent = saleFmt();
+    }, 1000);
+  }
+  function stopSaleTick() { if (saleTick) { clearInterval(saleTick); saleTick = null; } }
 
   // ── Suppression rules ─────────────────────────────────────────────────────
   var path = window.location.pathname;
@@ -42,7 +83,14 @@
       '.vp-nl-msg.err{color:#f87171}.vp-nl-msg.ok{color:#01D3A0}' +
       '.vp-nl-spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#021;border-radius:50%;animation:vp-nl-spin .7s linear infinite;vertical-align:middle}' +
       '@keyframes vp-nl-spin{to{transform:rotate(360deg)}}' +
-      '.vp-nl-codehint{font-family:"Courier New",monospace;color:#01D3A0;font-weight:700;letter-spacing:.06em}';
+      '.vp-nl-codehint{font-family:"Courier New",monospace;color:#01D3A0;font-weight:700;letter-spacing:.06em}' +
+      // Sale-week extras
+      '.vp-nl-pill{display:inline-block;background:#01D3A0;color:#021;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:3px;margin-bottom:14px}' +
+      '.vp-nl-codebox{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(1,211,160,.08);border:1px dashed rgba(1,211,160,.45);border-radius:8px;padding:12px 14px;margin:0 0 14px}' +
+      '.vp-nl-codebox .lbl{font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:3px}' +
+      '.vp-nl-codebox .val{font-family:"DM Mono","Courier New",monospace;font-size:17px;font-weight:700;color:#01D3A0;letter-spacing:.06em}' +
+      '.vp-nl-timer{font-family:"DM Mono","Courier New",monospace;font-size:14px;font-weight:700;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);border-radius:5px;padding:5px 9px;font-variant-numeric:tabular-nums;white-space:nowrap}' +
+      '.vp-nl-share{font-size:12.5px;color:#01D3A0;margin:0 0 16px;line-height:1.5;font-weight:600}';
     document.head.appendChild(s);
   }
 
@@ -51,12 +99,14 @@
 
   function close() {
     if (!overlay) return;
+    stopSaleTick();
     overlay.classList.remove('vp-show');
     document.removeEventListener('keydown', escHandler);
     setTimeout(function () { if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay); overlay = null; }, 220);
   }
 
   function defaultBody() {
+    if (saleOn()) return saleBody();
     return '' +
       '<h2 class="vp-nl-h"><em>Free</em> Researcher&rsquo;s Handbook + 10% off</h2>' +
       '<p class="vp-nl-sub">Join the Velox research community &mdash; get our reconstitution, storage &amp; CoA handbook (PDF), plus a 10% code for your first order. For research use only.</p>' +
@@ -66,13 +116,40 @@
       '<p class="vp-nl-fine">One-time use. No spam. Unsubscribe any time.<br>For research use only. Not for human consumption.</p>';
   }
 
+  // Sale-week variant: lead with the 30% off, give them the code immediately
+  // (it is public and shareable), then still capture the email for the handbook.
+  function saleBody() {
+    return '' +
+      '<span class="vp-nl-pill">Limited time &middot; ends ' + saleEndLabel() + '</span>' +
+      '<h2 class="vp-nl-h"><em>30% off</em> single vials</h2>' +
+      '<p class="vp-nl-sub">Our biggest discount of the year, for the Velox research community. Use the code below at checkout &mdash; no minimum, no limit on uses. Applies to single vials; bacteriostatic water and 10-packs are excluded.</p>' +
+      '<div class="vp-nl-codebox">' +
+        '<span><span class="lbl">Your code</span><span class="val">' + SALE_CODE + '</span></span>' +
+        '<span class="vp-nl-timer" id="vp-nl-timer">' + saleFmt() + '</span>' +
+      '</div>' +
+      '<p class="vp-nl-share">&#127873; Share it with friends &amp; family &mdash; anyone can use it, until ' + saleEndLabel() + '.</p>' +
+      '<p class="vp-nl-sub" style="margin-bottom:12px">Want the free Researcher&rsquo;s Handbook too? Drop your email &mdash; reconstitution, storage &amp; CoA guidance (PDF).</p>' +
+      '<input class="vp-nl-input" id="vp-nl-email" type="email" placeholder="Your email address" autocomplete="email">' +
+      '<button class="vp-nl-btn" id="vp-nl-submit">Email me the handbook &rarr;</button>' +
+      '<div class="vp-nl-msg" id="vp-nl-msg"></div>' +
+      '<p class="vp-nl-fine">No spam. Unsubscribe any time.<br>For research use only. Not for human consumption.</p>';
+  }
+
   function successBody(hint, already) {
+    var sale = saleOn()
+      ? '<div class="vp-nl-codebox">' +
+          '<span><span class="lbl">30% off this week</span><span class="val">' + SALE_CODE + '</span></span>' +
+          '<span class="vp-nl-timer" id="vp-nl-timer">' + saleFmt() + '</span>' +
+        '</div>' +
+        '<p class="vp-nl-share">&#127873; Share it with friends &amp; family &mdash; anyone can use it.</p>'
+      : '';
     return '' +
       '<h2 class="vp-nl-h">' + (already ? "You're on the list" : 'Check your inbox') + '</h2>' +
       '<p class="vp-nl-sub">' + (already
         ? "You're already subscribed — check your inbox for your handbook and code."
         : 'Your handbook and 10% off code are on the way. The code starts with <span class="vp-nl-codehint">VELOX-</span>') +
       '</p>' +
+      sale +
       '<button class="vp-nl-btn" id="vp-nl-done">Got it</button>' +
       '<p class="vp-nl-fine">For research use only. Not for human consumption.</p>';
   }
@@ -80,6 +157,7 @@
   function render(html) {
     modal.innerHTML = '<button class="vp-nl-close" aria-label="Close">&times;</button>' + html;
     modal.querySelector('.vp-nl-close').addEventListener('click', close);
+    if (document.getElementById('vp-nl-timer')) startSaleTick();
     wire();
   }
 

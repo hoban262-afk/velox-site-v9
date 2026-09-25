@@ -41,13 +41,39 @@ module.exports = async function handler(req, res) {
   try {
     var ts = new Date().toISOString();
     var hdrs = { apikey: SERVICE, Authorization: 'Bearer ' + SERVICE, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
-    // Mark unsubscribed in both stores (welcome-code holders + general subscribers)
-    await Promise.all([
+
+    // THE authoritative opt-out record. Keyed by email alone, so it also covers
+    // guest buyers and account holders who exist in `orders` / `profiles` but in
+    // neither newsletter table — previously those people saw a success page
+    // while nothing was actually recorded, and the reorder / review / restock /
+    // design-nurture sequences kept emailing them.
+    var suppression = fetch(SUPABASE_URL + '/rest/v1/email_suppressions?on_conflict=email', {
+      method: 'POST',
+      // ignore-duplicates, not merge: if they already opted out, the ORIGINAL
+      // suppressed_at is the compliance-relevant date and must not be reset by
+      // a second click on an old email.
+      headers: Object.assign({}, hdrs, { Prefer: 'resolution=ignore-duplicates,return=minimal' }),
+      body: JSON.stringify({ email: email, suppressed_at: ts, source: 'unsubscribe_link' }),
+    });
+
+    // Legacy stores kept in sync so existing admin counts and the broadcast
+    // query (which filters on subscribers.unsubscribed_at) stay correct.
+    var legacy = [
       fetch(SUPABASE_URL + '/rest/v1/newsletter_codes?email=eq.' + encodeURIComponent(email), {
         method: 'PATCH', headers: hdrs, body: JSON.stringify({ unsubscribed_at: ts }) }),
       fetch(SUPABASE_URL + '/rest/v1/subscribers?email=eq.' + encodeURIComponent(email), {
         method: 'PATCH', headers: hdrs, body: JSON.stringify({ unsubscribed_at: ts }) }),
-    ]);
+    ];
+
+    // The suppression row is the one that must land. If it fails we have to say
+    // so rather than show a success page we cannot honour.
+    var supRes = await suppression;
+    if (!supRes.ok) {
+      console.error('[newsletter/unsubscribe] suppression insert failed', supRes.status, (await supRes.text().catch(function () { return ''; })).slice(0, 200));
+      return res.status(502).send(page('We could not complete your request. Please email support@veloxpeps.com and we will remove you manually.'));
+    }
+    await Promise.all(legacy.map(function (p) { return p.catch(function () { return null; }); }));
+
     return res.status(200).send(page("You've been unsubscribed. You won't receive further emails from us."));
   } catch (e) {
     console.error('[newsletter/unsubscribe]', e.message);

@@ -156,7 +156,8 @@
       ? Math.round(subtotal * match.value) / 100
       : Math.min(match.value, subtotal);
     saving = Math.round(saving * 100) / 100;
-    return { code: match.code, type: match.type, value: match.value, saving: saving };
+    return { code: match.code, type: match.type, value: match.value, saving: saving,
+             maxVialPct: (typeof match.maxVialPct === 'number' ? match.maxVialPct : null) };
   }
 
   // Savings are GBP everywhere now (UK + international both charge in GBP).
@@ -177,6 +178,19 @@
   // SPEND ladder — input is the discountable vial subtotal in GBP, not a unit count.
   function vpVolumeRate(spend) { return spend >= 250 ? 0.20 : (spend >= 200 ? 0.15 : (spend >= 150 ? 0.10 : (spend >= 75 ? 0.05 : 0))); }
   var MAX_VIAL_PCT = 0.25; // stacking cap: vial-side discount (volume OR code) never exceeds this share of the vial base
+
+  // A single code may lift that ceiling FOR ITSELF via a `maxVialPct` field in
+  // discount-codes.js — needed because a headline 30% sale would otherwise be
+  // silently paid out at 25% and contradict its own advertising. Deliberately
+  // opt-in: every other code, and the volume track, keep the 25% guard.
+  // ABS_MAX_VIAL_PCT is a backstop so a mistyped 3 (meaning 0.3) can't give the
+  // store away, and the ceiling can never be lowered below the default.
+  var ABS_MAX_VIAL_PCT = 0.5;
+  function codeCapPct(d) {
+    var p = (d && typeof d.maxVialPct === 'number') ? d.maxVialPct : 0;
+    if (!(p > MAX_VIAL_PCT)) return MAX_VIAL_PCT;
+    return Math.min(p, ABS_MAX_VIAL_PCT);
+  }
 
   // 10-PACK volume discount — a SEPARATE system that applies ONLY to 10-packs and stacks
   // 10-packs together (total count of 10-pack units across the basket):
@@ -242,14 +256,16 @@
     var rate = vpVolumeRate(base);
     var volSaving = Math.round(base * rate * 100) / 100;
 
-    var vialPromo, vialLabel, vialCode;
+    var vialPromo, vialLabel, vialCode, capPct;
     if (volSaving > codeSaving) {
       vialPromo = volSaving; vialLabel = 'Volume discount −' + Math.round(rate * 100) + '%'; vialCode = 'VOLUME-' + Math.round(rate * 100);
+      capPct = MAX_VIAL_PCT;               // volume track always keeps the standard guard
     } else {
       vialPromo = codeSaving; vialLabel = codeDiscount ? codeDiscount.code : ''; vialCode = codeDiscount ? codeDiscount.code : '';
+      capPct = codeCapPct(codeDiscount);   // a code may raise the ceiling for itself only
     }
-    // Stacking cap — never let the vial-side discount exceed MAX_VIAL_PCT of the vial base.
-    var vialCapGBP = Math.round(base * MAX_VIAL_PCT * 100) / 100;
+    // Stacking cap — never let the vial-side discount exceed capPct of the vial base.
+    var vialCapGBP = Math.round(base * capPct * 100) / 100;
     if (vialPromo > vialCapGBP) vialPromo = vialCapGBP;
 
     var packRate = packVolumeRate(packQty(cart));
@@ -723,6 +739,18 @@
       try { document.dispatchEvent(new Event('vp:discount-applied')); } catch (e) {}
     }
 
+    // Email used to validate email-bound codes (welcome / first-order / personal).
+    // vp_checkout.email is only written once the delivery-address step is saved, so
+    // a logged-in (or just-typed) shopper who applies a code first would wrongly get
+    // "enter your email above". Fall back to the live email field so whatever's on
+    // screen — including the value auto-prefilled for signed-in users — is used.
+    function codeEmail() {
+      var e = '';
+      try { e = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (ex) {}
+      if (!e) { var el = document.getElementById('sh-email'); if (el && el.value) e = el.value; }
+      return String(e || '').trim();
+    }
+
     function handleApply() {
       if (!discountInput || !discountMsg) return;
       var code = discountInput.value.trim();
@@ -742,8 +770,7 @@
 
       // Unique newsletter welcome code (VELOX-XXXXXX) — validate server-side
       if (/^VELOX-/i.test(code)) {
-        var chkEmail = '';
-        try { chkEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+        var chkEmail = codeEmail();
         discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
         fetch('/api/newsletter/validate', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -772,8 +799,7 @@
 
       // Design Lab first-order code — validated per customer (no prior paid order).
       if (code.toUpperCase() === 'DESIGN10') {
-        var foEmail = '';
-        try { foEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+        var foEmail = codeEmail();
         if (!foEmail) { discountMsg.innerHTML = '<span class="dc-err">Enter your email above first, then apply the code.</span>'; return; }
         discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
         fetch('/api/first-order/validate', {
@@ -800,8 +826,7 @@
 
       // Personal / per-email code (server-validated, e.g. GERALDINE40). Bound to
       // the checkout email; overrides other item discounts at 40% off full price.
-      var pcEmail = '';
-      try { pcEmail = (JSON.parse(sessionStorage.getItem('vp_checkout') || '{}').email) || ''; } catch (e) {}
+      var pcEmail = codeEmail();
       discountMsg.innerHTML = '<span class="dc-ok">Checking…</span>';
       fetch('/api/personal-code/validate', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -857,19 +882,42 @@
       });
     }
 
-    // ── Pre-fill a captured affiliate ?ref= code (set in core.js) ──────────
-    // If the customer arrived via an affiliate link, pre-fill the discount field
-    // so they can see it and click Apply. Don't auto-submit — the customer may
-    // want to use a different code or skip the discount entirely.
-    (function prefillRef() {
+    // ── Auto-apply a captured affiliate ?ref= code (set in core.js) ────────
+    // This used to only pre-fill the field and wait for an Apply click. Almost
+    // nobody clicked, so the affiliate lost their commission and we lost the
+    // attribution — the referral looked like organic traffic. The code came from
+    // the affiliate's own link, so applying it is what both parties already
+    // expect; the customer can still clear the field and use a different one.
+    //
+    // Validated directly against /api/affiliate/validate rather than through
+    // handleApply(), which would first try the welcome/personal-code endpoints
+    // and could surface a red error on page load. A code that no longer
+    // validates fails silently and leaves the field empty.
+    (function autoApplyRef() {
       try {
         if (!discountInput || appliedDiscount || affiliateApplied || welcomeCodeApplied) return;
         if ((window.VELOX_MEMBER_PCT || 0) > 0) return;
         if (discountInput.value.trim()) return;
         var stored = JSON.parse(localStorage.getItem('vp_ref') || 'null');
         if (!stored || !stored.code || !stored.ts) return;
-        if (Date.now() - stored.ts > 30 * 864e5) return; // expired
-        discountInput.value = stored.code;
+        if (Date.now() - stored.ts > 30 * 864e5) return; // outside attribution window
+        var code = String(stored.code).toUpperCase();
+        discountInput.value = code;
+        fetch('/api/affiliate/validate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          // The customer may have started typing their own code while this was
+          // in flight — never overwrite that.
+          if (discountInput.value.toUpperCase() !== code) return;
+          if (appliedDiscount || affiliateApplied || welcomeCodeApplied) return;
+          if (!d || !d.valid) { discountInput.value = ''; return; }
+          affiliateApplied = { id: d.affiliate_id, code: code, discount_pct: d.discount_pct };
+          var saving = Math.round(discountableGBP(cart) * d.discount_pct) / 100;
+          applyDiscountResult({ code: code, type: 'percentage', value: d.discount_pct, saving: saving });
+        }).catch(function () {
+          if (discountInput.value.toUpperCase() === code) discountInput.value = '';
+        });
       } catch (e) {}
     })();
 
@@ -1053,32 +1101,9 @@
       var shippingAddr = [chk.addr1, chk.addr2, chk.city, chk.postcode, chk.country]
         .filter(Boolean).join(', ');
 
-      fetch('/api/send-order', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          order_number:    chk.orderRef,
-          customer_name:   ((chk.fname || '') + ' ' + (chk.lname || '')).trim(),
-          customer_email:  chk.email,
-          customer_phone:  chk.phone    || '',
-          addr1:           chk.addr1    || '',
-          addr2:           chk.addr2    || '',
-          city:            chk.city     || '',
-          postcode:        chk.postcode || '',
-          country:         chk.country  || 'United Kingdom',
-          shipping_address: shippingAddr,
-          shipping_method: shippingMethod,
-          order_items:     productsList,
-          order_subtotal:  (Number(chk.subtotal)        || 0).toFixed(2),
-          shipping_cost:   (Number(chk.shipping)         || 0).toFixed(2),
-          discount_code:   chk.discount_code              || '',
-          discount_saving: (Number(chk.discount_saving)  || 0).toFixed(2),
-          order_total:     (Number(chk.total)             || 0).toFixed(2),
-          currency:        chk.currency || 'GBP',
-          region:          confRegion,
-          payment_method:  'bank',
-        })
-      }).catch(function () {});
+      // Order alerts (admin push/WhatsApp/email + customer bank-details email)
+      // are fired from the Supabase save below, once the row exists — the
+      // server builds them from the stored order, not from this page.
 
       try {
         fetch(
@@ -1142,8 +1167,19 @@
               ship_country:    chk.country || 'GB',
               ship_phone:      chk.phone || null,
               sid:             (function () { try { return localStorage.getItem('vp_sid') || null; } catch (e) { return null; } })(),
+              // Which advert/affiliate produced this order (null for direct/organic).
+              attribution:     (function () { try { return window.vpAttr ? window.vpAttr() : null; } catch (e) { return null; } })(),
             }]);
-            if (r.error) console.error('[checkout] Supabase order save failed:', r.error.message);
+            if (r.error) {
+              console.error('[checkout] Supabase order save failed:', r.error.message);
+            } else if (chk.orderRef) {
+              fetch('/api/send-order', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ order_ref: chk.orderRef }),
+                keepalive: true,
+              }).catch(function () {});
+            }
           } catch (sbErr) {
             console.error('[checkout] Supabase save threw:', sbErr);
           }

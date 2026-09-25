@@ -368,7 +368,63 @@
         '<div><div style="font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Conversion funnel · ' + esc(periodLabel()) + '</div>' + funnel + '</div>' +
         '<div><div style="font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Top referrers</div>' + refsT + '</div>' +
       '</div>' +
+      '<div style="margin-top:22px"><div style="font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Campaigns · ' + esc(periodLabel()) + '</div>' + campaignsTable() + '</div>' +
       '<div style="margin-top:22px"><div style="font-size:12px;color:var(--t2,#9ca3af);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Top pages</div>' + pagesT + '</div>');
+  }
+
+  // ── Campaigns: what each advert actually produced ────────────────────────
+  // Joins tagged ad clicks (visits.utm, aggregated server-side) to the orders
+  // they generated (orders.attribution, captured at checkout). Revenue per
+  // campaign is the number to divide ad spend by — with contribution running
+  // ~£60-67 an order, a campaign only survives if CAC stays under it.
+  //
+  // Attributed on LAST touch, because that is what Meta and Google report
+  // against, so these rows can be reconciled against the ad platform directly.
+  // Campaigns with orders but no clicks in the window still show (someone
+  // clicked before the window and bought inside it) — clicks read as 0 there,
+  // so don't read those rows as an infinite conversion rate.
+  function campaignsTable() {
+    var wb = winBounds();
+    var rows = {};
+
+    ((OVERVIEW.traffic || {}).campaigns || []).forEach(function (c) {
+      rows[c.key] = { key: c.key, clicks: c.clicks, visitors: c.visitors, orders: 0, rev: 0 };
+    });
+
+    ORDERS.forEach(function (o) {
+      if (wb.since != null && new Date(o.created_at).getTime() < wb.since) return;
+      if (!isPaid(o)) return;                       // pending/cancelled aren't results
+      var a = o.attribution;
+      if (!a || typeof a !== 'object') return;
+      var t = a.last || a.first;
+      var key = t ? [t.source || '?', t.medium || '?', t.campaign || '?'].join(' / ')
+                  : (a.ref ? 'affiliate / referral / ' + a.ref : null);
+      if (!key) return;
+      var r = rows[key] || (rows[key] = { key: key, clicks: 0, visitors: 0, orders: 0, rev: 0 });
+      r.orders++; r.rev += Number(o.total) || 0;
+    });
+
+    var list = Object.keys(rows).map(function (k) { return rows[k]; })
+      .sort(function (a, b) { return (b.rev - a.rev) || (b.visitors - a.visitors); });
+
+    if (!list.length) {
+      return '<div class="adm-empty">No tagged campaign traffic in this window. Tag every paid and affiliate link with ' +
+        '<code>?utm_source=&amp;utm_medium=&amp;utm_campaign=</code> and orders will be credited back to it here. ' +
+        'Ad-platform click IDs (<code>gclid</code>, <code>fbclid</code>) are picked up automatically.</div>';
+    }
+
+    return '<table class="adm-table"><thead><tr><th>Source / medium / campaign</th><th>Clicks</th><th>Visitors</th><th>Orders</th><th>CVR</th><th>Revenue</th><th>Rev / visitor</th></tr></thead><tbody>' +
+      list.map(function (r) {
+        var cvr = r.visitors ? (r.orders / r.visitors * 100) : null;
+        var rpv = r.visitors ? (r.rev / r.visitors) : null;
+        return '<tr><td style="color:#fff">' + esc(r.key) + '</td>' +
+          '<td style="color:var(--t2,#9ca3af)">' + num(r.clicks) + '</td>' +
+          '<td style="color:var(--t2,#9ca3af)">' + num(r.visitors) + '</td>' +
+          '<td style="color:#fff;font-weight:600">' + num(r.orders) + '</td>' +
+          '<td style="color:var(--t2,#9ca3af)">' + (cvr == null ? '—' : pct1(cvr)) + '</td>' +
+          '<td style="color:var(--g,#01D3A0);font-weight:600">' + gbp2(r.rev) + '</td>' +
+          '<td style="color:var(--t2,#9ca3af)">' + (rpv == null ? '—' : gbp2(rpv)) + '</td></tr>';
+      }).join('') + '</tbody></table>';
   }
 
   function renderLoyalty() {

@@ -16,6 +16,7 @@
  */
 const { sendEmails } = require('./send-order');
 const { sendPurchase } = require('../lib/ga-mp');
+const { sendPurchase: sendMetaPurchase, clientIp: metaClientIp } = require('../lib/meta-capi');
 
 const SB_URL     = process.env.SUPABASE_URL;
 const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -231,6 +232,22 @@ module.exports = async function handler(req, res) {
       await sendPurchase({ ...order, notes: orderRef }, { cookieHeader: req.headers.cookie || '' });
     } catch (e) {
       console.error(`[confirm-fena-payment] GA4 purchase send failed (non-fatal) for ${orderRef}:`, e.message);
+    }
+
+    // ── Meta server-side Purchase (ad-blocker-proof, fires once per paid order) ──
+    // Same rationale as GA4 above, plus this is the copy that carries the email
+    // for advanced matching (when enabled) — the browser pixel never sees it.
+    // event_id is `purchase.<orderRef>`, identical to the one core.js sends from
+    // the confirmation page, so Meta dedupes the pair rather than double-counting.
+    try {
+      await sendMetaPurchase({ ...order, notes: orderRef }, {
+        orderRef,
+        cookieHeader: req.headers.cookie || '',
+        ip: metaClientIp(req),
+        userAgent: req.headers['user-agent'],
+      });
+    } catch (e) {
+      console.error(`[confirm-fena-payment] Meta purchase send failed (non-fatal) for ${orderRef}:`, e.message);
     }
   } else {
     console.log(`[confirm-fena-payment] Skipping emails for ${orderRef} — other path already sent`);

@@ -4,112 +4,113 @@
   "functions": {
     "api/design-lab/[action].js": { "maxDuration": 60 },
     "api/send-order.js": { "maxDuration": 30 },
-    "api/admin/marketing.js": { "maxDuration": 60 }
+    "api/admin/marketing.js": { "maxDuration": 60 },
+    "api/agents/health-monitor.js": { "maxDuration": 90 }
   },
   "crons": [
     {
       "path": "/api/recovery/run/",
-      "schedule": "*/5 * * * *"
+      "schedule": "2-57/5 * * * *"
     },
     {
       "path": "/api/recovery/sub-fulfil-run/",
-      "schedule": "0 7 * * *"
+      "schedule": "10 7 * * *"
     },
     {
       "path": "/api/recovery/reorder-run/",
-      "schedule": "0 10 * * *"
+      "schedule": "10 10 * * *"
     },
     {
       "path": "/api/recovery/welcome-run/",
-      "schedule": "0 * * * *"
+      "schedule": "11 * * * *"
     },
     {
       "path": "/api/recovery/restock-run/",
-      "schedule": "*/15 * * * *"
+      "schedule": "14-59/15 * * * *"
     },
     {
       "path": "/api/recovery/review-run/",
-      "schedule": "0 11 * * *"
+      "schedule": "10 11 * * *"
     },
     {
       "path": "/api/recovery/design-nurture-run/",
-      "schedule": "15 * * * *"
+      "schedule": "21 * * * *"
     },
     {
       "path": "/api/recovery/affiliate-commission-run/",
-      "schedule": "45 * * * *"
+      "schedule": "51 * * * *"
     },
     {
       "path": "/api/admin/insights-run/",
-      "schedule": "0 8 * * 1"
+      "schedule": "20 8 * * 1"
     },
     {
       "path": "/api/analytics/gsc-run/",
-      "schedule": "30 6 * * *"
+      "schedule": "25 6 * * *"
     },
     {
       "path": "/api/analytics/ga-run/",
-      "schedule": "0 6 * * *"
+      "schedule": "10 6 * * *"
     },
     {
       "path": "/api/agents/reorder-check/",
-      "schedule": "0 9 * * *"
+      "schedule": "10 9 * * *"
     },
     {
       "path": "/api/pack/sync/",
-      "schedule": "*/10 * * * *"
+      "schedule": "6-56/10 * * * *"
     },
     {
       "path": "/api/agents/run-approved/",
-      "schedule": "*/10 * * * *"
+      "schedule": "3-53/10 * * * *"
     },
     {
       "path": "/api/agents/support-autoreply/",
-      "schedule": "*/10 * * * *"
+      "schedule": "8-58/10 * * * *"
     },
     {
       "path": "/api/agents/daily-briefing/",
-      "schedule": "0 7 * * *"
+      "schedule": "35 7 * * *"
     },
     {
       "path": "/api/agents/weekly-finance/",
-      "schedule": "0 9 * * 1"
+      "schedule": "45 9 * * 1"
     },
     {
       "path": "/api/agents/compliance-audit/",
-      "schedule": "0 7 * * 0"
+      "schedule": "50 7 * * 0"
     },
     {
       "path": "/api/agents/health-monitor/",
-      "schedule": "*/15 * * * *"
+      "schedule": "4-49/15 * * * *"
     },
     {
       "path": "/api/agents/backup-run/",
-      "schedule": "0 5 * * 1"
+      "schedule": "20 5 * * 1"
     },
     {
       "path": "/api/agents/anomaly-watch/",
-      "schedule": "0 10 * * *"
+      "schedule": "35 10 * * *"
     },
     {
       "path": "/api/agents/content-draft/",
-      "schedule": "0 8 1 * *"
+      "schedule": "25 8 1 * *"
     },
     {
       "path": "/api/indexnow/",
-      "schedule": "30 6 * * *"
+      "schedule": "40 6 * * *"
     },
     {
       "path": "/api/deal-rotate/",
-      "schedule": "20 * * * *"
+      "schedule": "41 * * * *"
     },
     {
       "path": "/api/agents/chat-transcripts/?mode=flush",
-      "schedule": "*/15 * * * *"
+      "schedule": "9-54/15 * * * *"
     },
     {
       "path": "/api/agents/chat-transcripts/?mode=digest",
-      "schedule": "30 7 * * *"
+      "schedule": "55 7 * * *"
     }
   ],
   "headers": [
