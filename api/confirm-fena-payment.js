@@ -179,8 +179,6 @@ module.exports = async function handler(req, res) {
         thisPathPaid = Array.isArray(rows) && rows.length > 0;
         if (thisPathPaid) {
           order.status = 'paid';
-          // Set email_sent_at flag (best-effort, column may not exist yet)
-          sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { email_sent_at: new Date().toISOString() }).catch(() => {});
           // Increment used_count for one-time personal discount codes
           if (order.discount_code) {
             try {
@@ -221,6 +219,7 @@ module.exports = async function handler(req, res) {
     try {
       await sendEmails(emailPayloadFromOrder(order), orderRef);
       console.log(`[confirm-fena-payment] Emails sent for ${orderRef}`);
+      await sbPatch(`orders?id=eq.${encodeURIComponent(order.id)}`, { email_sent_at: new Date().toISOString() }).catch(() => {});
     } catch (e) {
       console.error(`[confirm-fena-payment] Email send failed (non-fatal) for ${orderRef}:`, e.message);
     }

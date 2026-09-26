@@ -640,9 +640,9 @@ async function handler(req, res) {
     // idempotencyKey (= order ref) dedupes emails if the browser-return path also fires.
     if (payload.order_id && !payload.order_items) {
       // ── DB-level idempotency: skip if emails already sent ──────────────────
-      // The confirm-fena-payment and fena-webhook paths set email_sent_at when
-      // they win the race. If it's already set, another path already sent — bail.
-      // Fails open if the column doesn't exist yet (select returns null for unknown cols).
+      // email_sent_at is set AFTER emails are successfully sent (by this function
+      // and by confirm-fena-payment). If it's already set, another path already
+      // sent — bail. Fails open if the column doesn't exist yet.
       const SB_URL = process.env.SUPABASE_URL, SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
       if (SB_URL && SB_SERVICE) {
         try {
@@ -667,6 +667,18 @@ async function handler(req, res) {
       idemKey = payload.order_number;
     }
     await sendEmails(payload, idemKey);
+    // Set email_sent_at AFTER emails are actually sent (not before) so the
+    // idempotency check above only skips when emails were genuinely delivered.
+    if (req.body && req.body.order_id) {
+      const SB = process.env.SUPABASE_URL, SK = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (SB && SK) {
+        await fetch(`${SB}/rest/v1/orders?id=eq.${encodeURIComponent(req.body.order_id)}`, {
+          method: 'PATCH',
+          headers: { apikey: SK, Authorization: `Bearer ${SK}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          body: JSON.stringify({ email_sent_at: new Date().toISOString() }),
+        }).catch(() => {});
+      }
+    }
     res.status(200).json({ ok: true });
   } catch (e) {
     console.error('[send-order] Error:', e.message);

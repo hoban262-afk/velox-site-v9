@@ -257,13 +257,6 @@ export default async function handler(req) {
       const rows = await pr.json().catch(() => []);
       thisPathPaid = Array.isArray(rows) && rows.length > 0;
       if (thisPathPaid) {
-        // Set email_sent_at flag (best-effort, column may not exist yet)
-        fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(order.id)}`, {
-          method: 'PATCH', headers: { ...sbHeaders, Prefer: 'return=minimal' },
-          body: JSON.stringify({ email_sent_at: new Date().toISOString() }),
-        }).catch(() => {});
-      }
-      if (thisPathPaid) {
         console.log(`[fena-webhook] Order ${order.id} → paid (won race)`);
         // Increment used_count for one-time personal discount codes
         if (order.discount_code) {
